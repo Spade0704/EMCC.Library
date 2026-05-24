@@ -1,0 +1,7 @@
+# Codex wiki: generated / ephemeral / confidential
+wiki.codex/_dashboards/
+wiki.codex/_inbox/
+wiki.codex/_confidential/
+wiki.codex/_brain_dump/
+wiki.codex/.obsidian/workspace*
+.DS_Store
