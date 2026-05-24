@@ -4,7 +4,7 @@ type: context_rules
 visibility: internal
 completion: 100
 status: ready
-last_updated: <YYYY-MM-DD>
+last_updated: 2026-05-24
 dependencies: []
 canon_sources: []
 unverified_claims: []
@@ -20,9 +20,9 @@ Unlike `INGEST_PROCEDURE.md` and `SEMANTIC_LINT_PROCEDURE.md` (which ship verbat
 
 Briefly describe what `Codex` is, who it serves, and what makes it distinctive. Two or three sentences are enough. The goal is to anchor an agent that has just opened this wiki for the first time.
 
-- **Domain:** `<one-line domain summary — e.g. "speculative-fiction worldbuilding wiki for Iron Soul">`
-- **Primary canon source:** `<e.g. "_canon/ YAMLs + 04-Contributing/CANON_PRINCIPLES.md">`
-- **Audience:** `<internal | mixed | public>`
+- **Domain:** Codex protocol documentation — the build-spec, operations, and architecture of the Codex scaffolding tool.
+- **Primary canon source:** `_canon/` (roster, topics, taxonomy, counts, timeline) + `_sources/raw/CODEX_BUILD_SPEC_v1_3.md`.
+- **Audience:** Codex builders + operators (internal).
 
 ## Question-Answering Behavior
 

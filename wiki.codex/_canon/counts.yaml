@@ -1,23 +1,20 @@
-# _template/_canon__SEP__counts.yaml — canonical numbers consolidated for cross-page consistency.
+# _canon/counts.yaml — canonical Codex numbers consolidated for cross-page consistency.
 # Consumed by:
 #   _scripts/check_canon_consistency.py (page-vs-canon enforced mode)
 #   _scripts/build_canon_drift_report.py (snapshot + diff over time)
 #
-# Schema (per spec v1.2 §2.5 + consumer-script implementation):
+# Schema (per spec v1.3 §2.5):
 #   - wrapper key: `counts` (list)
-#   - per-entry required keys: name (str), value (number or str)
-#   - drift report relaxes required to `name` only; consistency requires both.
-#
-# Every canonical number appearing in more than one page lives here so validators
-# can enforce cross-page consistency. Edit commented examples when project values
-# are known. Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+#   - per-entry required: name (str), value (number or str)
 
-counts: []
-
-# Example entries (uncomment + customize per project):
-#
-# - name: "<entity-population>"
-#   value: 12345
-#
-# - name: "<facility-count>"
-#   value: 7
+counts:
+  - name: "Codex automation scripts (base)"
+    value: 15
+  - name: "Codex cross-link scripts (v1.3 addition)"
+    value: 3
+  - name: "Codex automation scripts (v1.3 total)"
+    value: 18
+  - name: "Codex design principles (v1.3)"
+    value: 13
+  - name: "CLAUDE_CONTEXT_RULES.md required Q&A rules"
+    value: 4

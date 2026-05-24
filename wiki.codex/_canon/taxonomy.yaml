@@ -1,24 +1,24 @@
-# _template/_canon__SEP__taxonomy.yaml — structured classifications.
+# _canon/taxonomy.yaml — Codex subject classifications.
 # Consumed by:
-#   _scripts/check_canon_consistency.py (lookup_key = name; optional value_field = parent_name for hierarchical taxonomy)
+#   _scripts/check_canon_consistency.py (lookup_key = name; optional value_field = parent_name)
 #   _scripts/build_canon_drift_report.py (snapshot + diff over time)
 #
-# Schema (per spec v1.2 §2.5 + consumer-script implementation):
+# Schema (per spec v1.3 §2.5):
 #   - wrapper key: `categories` (list)
-#   - per-entry required keys: name (str)
-#   - per-entry optional keys: parent_name (str; hierarchical-link to parent category) + project-defined extension keys
+#   - per-entry required: name (str)
+#   - per-entry optional: parent_name (str; hierarchical link)
 #
-# Project-defined extension keys make this YAML flexible: ship classes / character
-# roles / faction tiers / episode arcs / etc. Edit commented examples when project
-# categories are known. Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+# Subject-matter categories only. Codex's page-type / status-band / visibility enums
+# are NOT taxonomy entries — they are documented as content on
+# 01-Architecture/Frontmatter-Schema.md (meta-schema, not Library taxonomy).
 
-categories: []
-
-# Example entries (uncomment + customize per project):
-#
-# - name: "<top-level-category>"
-#   tier: "<tier-name>"
-#
-# - name: "<sub-category>"
-#   parent_name: "<top-level-category>"
-#   alignment: "<neutral|allied|hostile>"
+categories:
+  - name: "Codex Operation"
+  - name: "Bootstrap"
+    parent_name: "Codex Operation"
+  - name: "Sync"
+    parent_name: "Codex Operation"
+  - name: "Ingest"
+    parent_name: "Codex Operation"
+  - name: "Maintenance"
+    parent_name: "Codex Operation"

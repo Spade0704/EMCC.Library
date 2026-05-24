@@ -5,3 +5,8 @@ wiki.codex/_confidential/
 wiki.codex/_brain_dump/
 wiki.codex/.obsidian/workspace*
 .DS_Store
+
+# Python bytecode + repo-root Obsidian workspace
+__pycache__/
+*.pyc
+.obsidian/

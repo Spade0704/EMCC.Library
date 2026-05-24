@@ -1,4 +1,4 @@
-# _template/_canon__SEP__topics.yaml — topic registry for cross-link generation.
+# _canon/topics.yaml — Codex topic registry for cross-link generation.
 # Consumed by:
 #   _scripts/build_topic_index.py     (P18.2 — word-boundary keyword + alias match)
 #   _scripts/cross_link_topics.py     (P18.3 — see-also block writer)
@@ -6,36 +6,42 @@
 #
 # Schema (per spec v1.3 §2.5):
 #   - wrapper key: `topics` (list)
-#   - per-entry required keys:
-#       name      (str)   — canonical topic name; lowercase snake_case convention.
-#       keywords  (list)  — word-boundary case-insensitive patterns scanned in H1/H2/intro_para_1.
-#   - per-entry optional keys:
-#       aliases        (list)        — alternate names accepted in frontmatter `topics:` lists.
-#                                       Counted alongside canonical name in match scanning.
-#       cross_manual   (bool)        — if true, allow cross-links across top-level folder
-#                                       boundaries; default false (folder-scoped linking).
-#       min_similarity (float|None)  — per-topic TF-IDF cosine threshold override;
-#                                       defaults from _config/cross_link.yaml when null.
+#   - per-entry required: name, keywords
+#   - per-entry optional: aliases, cross_manual, min_similarity
 #
-# Topics control which words/phrases trigger cross-page linking. Humans curate
-# topics: in page frontmatter to influence what gets linked; #18 validator
-# flags page topics that don't resolve in this registry (error) and registry
-# topics with no member pages (warning). Schema authority:
-# <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+# Note: keywords and aliases use flow-list form (`[a, b, c]`) because the
+# parse_config_yaml YAML-subset parser only accepts `- key: value` for block
+# list items (see _scripts/_lib/frontmatter.py).
 
-topics: []
+topics:
+  - name: codex_architecture
+    keywords: ["folder roles", "wiki structure", "three folder roles"]
 
-# Example entries (uncomment + customize per project):
-#
-# - name: example_topic
-#   keywords:
-#     - "example"
-#     - "examples"
-#   aliases: [exemplar, illustration]
-#   cross_manual: false
-#   min_similarity: 0.35
-#
-# - name: another_topic
-#   keywords:
-#     - "another"
-#   # aliases / cross_manual / min_similarity omitted → defaults applied.
+  - name: codex_operations
+    keywords: ["bootstrap", "sync", "ingest"]
+
+  - name: cross_link_generation
+    aliases: [see_also_block]
+    keywords: ["see also", "marker", "TF-IDF", "related_files", "cross-link"]
+
+  - name: canon_discipline
+    keywords: ["canon", "ground truth", "_canon"]
+
+  - name: frontmatter_schema
+    keywords: ["frontmatter", "YAML header"]
+
+  - name: ingest_procedure
+    keywords: ["ingest", "_inbox", "_sources/raw", "pending_triage"]
+
+  - name: iron_soul_reference
+    aliases: [scoria_prime]
+    keywords: ["Iron Soul", "Scoria Prime"]
+
+  - name: librarian_persona
+    keywords: ["Librarian", "persona drop-in"]
+
+  - name: framework_durability
+    keywords: ["load-bearing", "framework", "framework page"]
+
+  - name: status_bands
+    keywords: ["gap", "outlined", "solid", "ready"]
