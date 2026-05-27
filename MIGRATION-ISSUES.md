@@ -116,6 +116,18 @@ All 5 files raise `unittest.SkipTest` at module import time with MI-16 reason. N
 
 **Resolution:** B4 kept the canonical wiki-internal version (`wiki.codex/_sources/raw/README.md` → `wiki.codex/git/raw/README.md`). The root `Sources/Raw/README.md` was deleted as superseded. Root `Sources/` shell removed (now empty).
 
+### MI-17 — Codex scripts' WIKI_ROOT defaults broken at Library install post-restructure
+
+**Discovered:** 2026-05-27 post-PR-#4 CI red diagnostic (S002 wrap).
+
+**Description:** Every Codex script under `Biz.Automation/wikisys.library/_scripts/` defines its own `WIKI_ROOT = Path(__file__).resolve().parent.parent` (2 levels up from the script). `_lib/frontmatter.py` defines `WIKI_ROOT = Path(__file__).resolve().parent.parent.parent` (3 levels up, since it's one level deeper). Both worked when `_scripts/` lived at the install/wiki root. After S002's restructure (`_scripts/` moved to `Biz.Automation/wikisys.library/_scripts/`), these path-walks now resolve to `wikisys.library/` instead of Library's repo root.
+
+For BOOTSTRAPPED CONSUMING WIKIS the old math still works correctly (the bootstrapped layout retains `<wiki>/_scripts/` at the wiki root), so production usage is unaffected. The break only manifests when Codex scripts are invoked from Library's install location without an explicit wiki-path argument — primarily caught by `tests/_lib/test_frontmatter.py::test_wiki_root_resolves_correctly` since the other 13 scripts' default `WIKI_ROOT` isn't covered by their tests.
+
+**Partial resolution (this commit — small follow-up after S002 close):** `_lib/frontmatter.py::WIKI_ROOT` rewritten to use marker-based ancestor walk (`Home.md` for bootstrapped wikis OR `CLAUDE.md` + `module.json` co-existing for Library install). Handles both contexts correctly. Test updated to assert against either marker set. Result: 589/589 tests pass (down from 588/589 with 1 baseline failure).
+
+**Deferred to a follow-up sprint (S002b or S004):** Apply the same marker-walk pattern to the 13 other scripts (`steel_thread_tracker.py`, `validate_canon_integrity.py`, `validate_reveal_conceit.py`, `check_framework_briefing_sync.py`, `validate_terminology.py`, `update_dashboards.py`, `check_cross_refs.py`, `build_completion_dashboard.py`, `build_topic_index.py`, `cross_link_topics.py`, `check_canon_consistency.py`, `validate_topic_registry.py`, `delta_source_docs.py`). Cleanest implementation: factor `_find_wiki_root()` into `_lib/frontmatter.py` as a public helper, import + use across all scripts. Tests don't currently cover these scripts' default-WIKI_ROOT behavior, so adding tests is part of the follow-up scope.
+
 ## S002 dispositions for MI-10, MI-11, MI-12, MI-13 (resolved / carried)
 
 Per S002 architect plan §B9 disposition table:

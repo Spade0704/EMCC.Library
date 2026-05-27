@@ -14,7 +14,41 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent.parent
+def _find_wiki_root():
+    """Walk up from this file looking for a marker that identifies the WIKI_ROOT.
+
+    Post-S002 (Codex v1.1) restructure: `_lib/frontmatter.py` lives at
+    `Biz.Automation/wikisys.library/_scripts/_lib/frontmatter.py` in Library's install,
+    but at `<wiki>/_scripts/_lib/frontmatter.py` in a bootstrapped consuming-project wiki.
+    A hard-coded `parent.parent.parent` (3 levels) used to work for both because
+    `_scripts/` lived at the install/wiki root. Post-restructure it only works for
+    bootstrapped wikis; in Library's install it resolves to `wikisys.library/`, not
+    Library's repo root.
+
+    Marker-based search handles both contexts:
+    - Library install: marker is `CLAUDE.md` + `module.json` co-existing (Library
+      module-identity files).
+    - Bootstrapped wiki: marker is `Home.md` at the wiki root (per spec §2.2).
+
+    See MIGRATION-ISSUES.md MI-17 for the broader `WIKI_ROOT` issue across the rest of
+    the scripts in `_scripts/*.py` (also using `parent.parent` — same root cause, but no
+    tests cover them and they're typically invoked with explicit wiki-path arguments in
+    production, so deferred to a follow-up sprint).
+    """
+    here = Path(__file__).resolve()
+    for ancestor in here.parents:
+        if (ancestor / "Home.md").exists():
+            return ancestor  # bootstrapped wiki
+        if (ancestor / "CLAUDE.md").exists() and (ancestor / "module.json").exists():
+            return ancestor  # Library install
+    raise RuntimeError(
+        "WIKI_ROOT cannot be resolved — no marker found in any ancestor of "
+        f"{here}. Expected either Home.md (bootstrapped wiki) or "
+        "CLAUDE.md + module.json (Library install)."
+    )
+
+
+WIKI_ROOT = _find_wiki_root()
 
 
 SPEC_2_3_FM_FIELDS_DOC = """SSOT registry of fm field names defined by CODEX_BUILD_SPEC_v1_3.md §2.3.
