@@ -1,3 +1,10 @@
+> **ARCHIVED 2026-05-27 (S003b):** Historical reference. Pre-extraction snapshot (EOD 2026-05-01; 7.4% complete, 4/54 P-items). Post-extraction build state is carried by `tasks/sessions.md` Session 1 + Session 2 (S002) close entries. Codex shipped v1.0 in `project-codex` SHA `c106155` (2026-05-22) and v1.1 in Library S002 (2026-05-27).
+> Preserved for reference; do not update. Cross-link from current docs at your own risk.
+> See `tasks/sessions.md` S003b close entry for the archival decision context.
+> Original content below this line.
+
+---
+
 # Codex v1.0 — Build Progress
 
 > Snapshot of where we are and what's left. Pair with `tasks/todo.md` (active sprint, Goal-Driven) and `codex-build-plan.html` (readiness scoring per item). This file is the bird's-eye view; those two are the day-to-day.
