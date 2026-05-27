@@ -61,7 +61,7 @@ Mirrors the convention established by `EMCC.DFDU/MIGRATION-ISSUES.md` which exte
 
 **Net effect:** Library tree no longer carries two divergent copies of Codex automation scripts. Post-B5, `bootstrap.py` regenerates `wiki.codex/git/_scripts/` (or equivalent — depends on canonical-output tree decision) as drop-in for the dogfood wiki, sourced from wikisys.library.
 
-### MI-16 — bootstrap.py v1.0 shape tests retired; full canonical-shape rewrite deferred to S004
+### MI-16 — sync_from_kit v1.1 contract rewrite (RESOLVED in S004; was: v1.0 shape tests retired + rewrite deferred to S004)
 
 **Discovered:** Phase B5b (2026-05-27) during bootstrap.py canonical-output rewrite per spec section (c).
 
