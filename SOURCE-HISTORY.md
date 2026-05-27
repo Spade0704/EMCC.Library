@@ -32,9 +32,9 @@ Per `tasks/architect-notes.md` §S001 goes/stays inventory G1–G20:
 | G15 | `codex-build-plan.html` | `codex-build-plan.html` | Codex build plan (priorities P1–P54) |
 | G16 | `.claude/personas/CLAUDE.librarian.md` | `.claude/personas/CLAUDE.librarian.md` | Preserves project-codex layout per AC8 (Codex `bootstrap.py` + `test_phase6_full_chain_e2e.py::test_phase6_librarian_persona_files_byte_equivalent` reference `REPO_ROOT/.claude/personas/CLAUDE.librarian.md`; DFDU-style flat `personas/` is a Step 4 v1.1 follow-up). DFDU's auditor persona (`CLAUDE.auditor.md`) co-located here for Library's own Lattice 3.0 sessions. |
 | G17 | `Sources/Raw/` | `Sources/Raw/` | Source-archive convention root (README only at extraction) |
-| G18 | Curated Codex-class entries from `tasks/{lessons,architect-notes,sessions,auditor-notes}.md` | Library `tasks/` corresponding files | Curated; Lattice-class entries stay in project-codex |
-| G19 | `tasks/v1.1-backlog.md` | `tasks/v1.1-backlog.md` | Codex v1.1 backlog (full move) |
-| G20 | Curated Codex-class entries from `CHANGELOG.md` | `CHANGELOG.md` | Curated; Lattice-class entries stay in project-codex CHANGELOG |
+| G18 | Curated Codex-class entries from `tasks/{lessons,architect-notes,sessions,auditor-notes}.md` | DEFERRED to Step 4 | See MI-12. Project-codex history at SHA `ccf21b7` referenced as historical record. |
+| G19 | `tasks/v1.1-backlog.md` | `tasks/v1.1-backlog.md` | Codex v1.1 backlog (full verbatim move; 100% Codex by design) |
+| G20 | Curated Codex-class entries from `CHANGELOG.md` | DEFERRED to Step 4 | See MI-12. Project-codex CHANGELOG at SHA `ccf21b7` referenced. |
 
 ## What stayed in project-codex (now archive)
 
