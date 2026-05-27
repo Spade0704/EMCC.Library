@@ -15,6 +15,13 @@ canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §7"]
 unverified_claims: []
 ---
 
+> **ARCHIVED 2026-05-27 (S003b):** Historical reference. Codex v1.0 is built — the 8-phase build-Codex workflow described here documents the construction of the tool itself, complete as of `project-codex` SHA `c106155` (2026-05-22) → Library extraction Session 1 (2026-05-27). Now historical. Build-Codex-related ops are tracked in `tasks/sessions.md` S001 + S002 close entries.
+> Preserved for reference; do not update. Cross-link from current docs at your own risk.
+> See `tasks/sessions.md` S003b close entry for the archival decision context.
+> Original content below this line.
+
+---
+
 # Build Workflow — 8 Phases
 
 The order to follow when building Codex itself. Hard rule (Operating Preference #6 — see [[Claude-Behavior-Rules]]): build in this order. Don't write `bootstrap.py` before the scripts and templates exist.
