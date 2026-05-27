@@ -110,7 +110,7 @@ as content-only.
 ```
 Biz.Automation/wikisys.<projectname>/
     _scripts/       # build/extract/audit scripts (aviation's build_wiki/ goes here)
-    _templates/     # markdown/page/topic templates
+    _template/     # markdown/page/topic templates
     _config/        # extractor configs, keywords.yaml, etc.
     _canon/         # source-of-truth lists, verified claims, glossaries
     _context/       # OPTIONAL — context rules, ingest/lint procedures (Codex pattern)
@@ -274,7 +274,7 @@ portfolio frame wraps around them, never relocates them).
 ├── Biz.Automation/                   # OPTIONAL — present when project has automations
 │   ├── wikisys.<projectname>/        # REQUIRED if Biz.Automation/ exists
 │   │   ├── _scripts/                 # build/extract/audit scripts
-│   │   ├── _templates/               # markdown/page templates
+│   │   ├── _template/               # markdown/page templates
 │   │   ├── _config/                  # extractor configs, keywords, etc.
 │   │   ├── _canon/                   # source-of-truth lists, glossaries
 │   │   ├── _context/                 # OPTIONAL — context rules (Codex pattern)
@@ -416,7 +416,7 @@ file is moved, not deleted.
 3. Add `tasks/archive.md` as a stub IF current archive folder is empty;
    otherwise keep folder form.
 4. Create `0-Inbox/.gitkeep`.
-5. Create `Biz.Automation/wikisys.tat_app/{_scripts,_templates,_config,_canon}/.gitkeep`.
+5. Create `Biz.Automation/wikisys.tat_app/{_scripts,_template,_config,_canon}/.gitkeep`.
    Existing `.claude/skills/` (verify-flutter, go) STAY at `.claude/skills/`
    (workspace tooling, not portfolio automations).
 6. Create `wiki.tat_app/git/{raw,ideas}/`. Move `docs/grok/*` →
@@ -495,7 +495,7 @@ variance allowance. Canonical frame nests inside `git/`.
    → `git/Biz.Automation/`. Pascal_Case naming preserved.
 3. Move `git/automation/_future/{Lightspeed,Deputy,Stripe,Xero,Airwallex}_Sync/`,
    `_future/GHL_Integration/` → `git/Biz.Automation/_future/`.
-4. Create `git/Biz.Automation/wikisys.eddyandwolff/{_scripts,_templates,_config,_canon}/`.
+4. Create `git/Biz.Automation/wikisys.eddyandwolff/{_scripts,_template,_config,_canon}/`.
    Cross-cutting infrastructure scripts migrate here; per-automation
    scripts stay nested under `git/Biz.Automation/<name>/scripts/`.
 5. Move `git/Biz_Marketing.md`, `Biz_Operations.md`, `Biz_Automation.md`,
@@ -538,7 +538,7 @@ variance allowance. Canonical frame nests inside `git/`.
 3. `.claude/` stays at root.
 4. `nexus/lattice/` → `Biz.Automation/nexus/` (the Nexus Lattice
    framework — Architect/Craftsman/Auditor agents).
-5. Create `Biz.Automation/wikisys.isommelier/{_scripts,_templates,_config,_canon}/`.
+5. Create `Biz.Automation/wikisys.isommelier/{_scripts,_template,_config,_canon}/`.
    `setup-claude-plugin.ps1` (root) → `Biz.Automation/wikisys.isommelier/_scripts/`.
 6. Database/seed scripts in current root `scripts/` → stay at root as
    code-adjacent (database seeds belong to mvp). Optionally move to
@@ -580,7 +580,7 @@ module-specific files preserved at root.
    (`auto_scan.py`, `memory_sync.py`, `self_audit.py`,
    `task_processor.py`, `emcc_bootstrap.py`). These are EMCC's
    self-orchestration automations.
-4. `templates/` → `Biz.Automation/wikisys.emcc/_templates/` (consumer-project
+4. `templates/` → `Biz.Automation/wikisys.emcc/_template/` (consumer-project
    + department-starter templates).
 5. `_blueprints/` → `wiki.emcc/git/_blueprints/` (portfolio scan
    summaries, mined patterns, verified claims register — these are
@@ -687,9 +687,8 @@ wiki=codex). All other re-layout follows the canonical spec.
 1. Move `_scripts/` → `Biz.Automation/wikisys.library/_scripts/`
    (27 .py: 20 root scripts + `_lib/` 7 modules + `launchers/`).
 2. Move `_template/` → `Biz.Automation/wikisys.library/_template/`
-   (26 templates). **Canonical singular `_template/`** to match Codex's
-   existing folder name; canonical tree at lines 261–319 currently shows
-   `_templates/` plural — to be amended in same edit.
+   (26 templates). Canonical singular `_template/` matches Codex's
+   existing folder name (spec canonical form locked).
 3. Move `_config/` → `Biz.Automation/wikisys.library/_config/`
    (5 YAML + README).
 4. Move `Sources/Raw/` → `wiki.codex/git/raw/` per F7/F8
@@ -856,7 +855,7 @@ mentor/
 ├── Biz.Automation/
 │   ├── wikisys.mentor/
 │   │   ├── _scripts/.gitkeep
-│   │   ├── _templates/.gitkeep
+│   │   ├── _template/.gitkeep
 │   │   ├── _config/.gitkeep
 │   │   └── _canon/.gitkeep
 │   └── .gitkeep
