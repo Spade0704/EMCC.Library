@@ -4,35 +4,48 @@ EMCC.Library wraps the **Codex** protocol — the Librarian agent and the wiki s
 
 ## Status
 
-**Ready** as of 2026-05-27, master-plan Step 3 extraction (Session 1; commit history begins at `094e8a3` with Phase A session-open). The repo provides:
+**v1.1 — Ready** as of 2026-05-27 (Session 2 / S002 close). The canonical portfolio folder layout per `tasks/plans/portfolio-folder-structure-spec.md` section (a) + (c) is shipped:
 
-- `bootstrap.py` — one-time scaffold of a new wiki for a consuming project
-- `CODEX_BUILD_SPEC_v1_3.md` — authoritative build specification (single canonical version; v1_1/v1_2 stay archived in `spade0704/project-codex`)
-- `CODEX_LIBRARIAN.md` — Librarian agent specification
-- `INGEST_PROCEDURE.md` + `SEMANTIC_LINT_PROCEDURE.md` — verbatim procedures shipped into every bootstrapped wiki's `_context/` folder
-- `PROJECT_WIKI_BUILD_SPEC.md` + `Obsidian-Setup-Guide.md` — wiki build spec + consumer guidance
-- `_scripts/` — Codex automation (the 15+ scripts indexed P1–P54; `_lib/` foundation modules)
-- `_template/` + `_config/` — wiki templates + config YAMLs that bootstrap copies into new wikis
-- `tests/` — Codex test suite (Python stdlib `unittest`; ~821 tests)
-- `personas/CLAUDE.librarian.md` — the Librarian persona
-- `personas/CLAUDE.auditor.md` — Auditor persona (carried verbatim from EMCC.DFDU for Library's own dogfood / Lattice 3.0 sessions)
-- `wiki.codex/` — Library's self-hosted dogfood wiki (Codex documenting Codex)
+- `bootstrap.py` — scaffold a canonical-shape project (`python bootstrap.py <projectname> [--full|--minimal|--code|--website]`); spec section (c). v1.1 is scaffold-only — no script copy.
+- `Biz.Automation/wikisys.library/_scripts/` — Codex automation (27 .py: 20 root + 7 `_lib/` + 5 launcher .ps1). Source-of-truth for the protocol's runtime.
+- `Biz.Automation/wikisys.library/_template/` — wiki templates that `sync_from_kit.py` ships into consuming wikis' `_context/` (verbatim discipline preserved).
+- `Biz.Automation/wikisys.library/_config/` — config YAMLs (`forbidden_terms`, `cascade_map`, `concept_coverage`, etc.).
+- `Biz.Automation/wikisys.library/_canon/` — Library's own canonical entities (roster, taxonomy, timeline, topics — Codex documenting Codex).
+- `Biz.Automation/wikisys.library/_context/` — runtime context rules + canonical INGEST/SEMANTIC_LINT/CODEX_LIBRARIAN drop-ins.
+- `Biz.Automation/wikisys.library/_decisions/` — ingest log + decision history.
+- `wiki.codex/git/codex/` — Codex spec docs canonical location (CODEX_BUILD_SPEC_v1_3.md, CODEX_LIBRARIAN.md, INGEST_PROCEDURE.md, SEMANTIC_LINT_PROCEDURE.md, PROJECT_WIKI_BUILD_SPEC.md, Obsidian-Setup-Guide.md, codex-build-plan.html, Codex_Project_Documentation.pdf, Codex_Workflow_Cheatsheet_v1.txt, codex-build-progress.md).
+- `wiki.codex/git/` — Library's self-hosted dogfood wiki content (Codex documenting Codex). 
+- `wiki.codex/local/` — gitignored private zone (brain-dump / unfiled).
+- `tests/` — Codex test suite (Python stdlib `unittest`; ~589 tests post-S002; v1.0-shape tests retired as MI-16 deferred to S004).
+- `.claude/personas/CLAUDE.librarian.md` — the Librarian persona (extended in S002 with 3 new operations + 5 Mentor patterns + Telegram auto-summary contract).
+- `.claude/personas/CLAUDE.auditor.md` — Auditor persona (carried verbatim from EMCC.DFDU for Library's own Lattice 3.0 sessions).
+
+## Quick start (new consumer project)
+
+```
+cd <portfolio-root>
+python <path-to-EMCC.Library>/bootstrap.py <projectname>
+cd <projectname>
+git init && git add -A && git commit -m "bootstrap"
+```
+
+Produces the canonical tree per `tasks/plans/portfolio-folder-structure-spec.md` section (c). Use `--minimal` for thin braindump projects (aviation-career style), `--code` for product-code projects (mobile app / CLI / library), `--website` for public-website projects (Next.js / Squarespace).
 
 ## Source
 
-Extracted from `spade0704/project-codex` at SHA `ccf21b7c` (2026-05-27). See `SOURCE-HISTORY.md` for the per-file move inventory + verbatim-byte-equal verifications, and `MIGRATION-ISSUES.md` (MI-01..MI-08 + A1/A2/A3) for the extraction's known carry.
+Extracted from `spade0704/project-codex` at SHA `ccf21b7c` (Session 1, 2026-05-27). See `SOURCE-HISTORY.md` for the per-file move inventory, `MIGRATION-ISSUES.md` (MI-01..MI-16) for the per-session known carry, and `REORGANIZATION-INSTRUCTIONS.md` for the machine-readable migration manifest (every old-path → new-path move with commit SHA).
 
 ## How consumers use it
 
-A consuming project (scaffolded via `spade0704/EMCC` orchestrator's `scripts/emcc_bootstrap.py`) gets `library` automatically detected and wired into its `emcc.modules.json`. The consuming project then runs `bootstrap.py` from this repo to scaffold a `wiki/` directory in its own working tree. From there, the consuming-project's CLAUDE session uses Codex's `_scripts/` + the verbatim procedures to ingest sources, route into canon, validate against forbidden-terms / cascade / canon-integrity, and roll up dashboards.
+A consuming project (scaffolded via `spade0704/EMCC` orchestrator's `scripts/emcc_bootstrap.py`) gets `library` auto-detected and wired into its `emcc.modules.json`. The consuming project runs `python <library>/bootstrap.py <projectname>` to scaffold its canonical frame. Subsequent script + spec-doc delivery into the wiki goes through `sync_from_kit.py` (Sync operation).
 
-Codex itself ships zero external Python dependencies (`pathlib`, `unittest`, `dataclasses`, `fnmatch`, etc. — stdlib only per `CODEX_BUILD_SPEC_v1_3.md` R_ARCH "Pure Python stdlib only. No pip install."). Consuming projects can run Codex from a vanilla Python 3.11 environment.
+Codex itself ships zero external Python dependencies — stdlib only per `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` R_ARCH "Pure Python stdlib only. No pip install."
 
 ## Related repos
 
-- `spade0704/emcc` — umbrella orchestrator + consumer-project template + `emcc_bootstrap.py`
-- `spade0704/emcc.dfdu` — sibling module (Lattice 3.0 protocol; production-ready as of DFDU Session 8 / `f056f81`)
-- `spade0704/project-codex` — Codex's pre-extraction home; archived as of this Session 1 / master plan Step 3 (CLAUDE.md + README.md rewritten as archive banners pointing here)
+- `spade0704/EMCC` — umbrella orchestrator + consumer-project template + `emcc_bootstrap.py`
+- `spade0704/EMCC.DFDU` — sibling module (Lattice 3.0 protocol; production-ready DFDU Session 8 / `f056f81`)
+- `spade0704/project-codex` — Codex's pre-extraction home; archived 2026-05-27
 
 ## Tests + CI
 
@@ -44,6 +57,6 @@ CI runs on push to `main` and `claude/**`, plus PRs to `main`. See `.github/work
 
 ## Next sprints
 
-- **S002 (master plan Step 4)** — Codex v1.0 → v1.1 update. Folds in portfolio-room refined consumer-project folder spec, mentor wiki report findings, 5 deferred Librarian-spec items (TF-IDF cross-link curation, routing tag work queue, Maintenance loop tag-scan, three-tier tag namespace authority, plug-in failure handling), and any S048-T1 findings from project-codex.
-- **S004 (master plan Step 6)** — bootstrap the operator's first real consumer wikis (portfolio projects: Aviation / Mentor / Tat / etc.) on the refined v1.1 folder layout.
+- **S003 (master plan Step 5)** — Telegram channel boot (operator action; bot already exists at chat_id 1415844818 with `TELEGRAM_BOT_TOKEN` in env).
+- **S004 (master plan Step 6)** — bootstrap the operator's first real consumer wikis (Aviation / Tat / etc.) using the v1.1 canonical scaffold. Retires the MI-16-deferred v1.0-shape tests + decides sync_from_kit's post-v1.1 delivery target.
 - **S005 (master plan Step 7)** — bootstrap DFDU's own `wiki/` directory.

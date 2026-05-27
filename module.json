@@ -1,7 +1,7 @@
 {
   "name": "EMCC.Library",
-  "version": "1.0.0",
-  "description": "EMCC Library — wraps the Codex protocol (Librarian agent + wiki scaffolding-and-sync tooling for consuming projects).",
+  "version": "1.1.0",
+  "description": "EMCC Library — wraps the Codex protocol (Librarian agent + wiki scaffolding-and-sync tooling for consuming projects). v1.1 ships the canonical portfolio folder layout per tasks/plans/portfolio-folder-structure-spec.md.",
   "module_type": "protocol-wrapper",
   "supported_llms": ["claude"],
   "default_llm": "claude",
@@ -10,7 +10,7 @@
     "get_status": null,
     "shutdown": null
   },
-  "canon_docs": "CODEX_BUILD_SPEC_v1_3.md",
+  "canon_docs": "wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md",
   "personas": {
     "librarian": {
       "path": ".claude/personas/CLAUDE.librarian.md",
@@ -22,11 +22,13 @@
     }
   },
   "consumes": ["spade0704/EMCC.DFDU (when Library runs Lattice 3.0 sessions for its own development)"],
-  "produces_for": ["consuming projects via bootstrap.py — scaffolds wiki/<projectname>/ directory in those projects"],
+  "produces_for": ["consuming projects via bootstrap.py — scaffolds canonical portfolio frame (0-Inbox/ + Biz.Automation/wikisys.<name>/ + wiki.<name>/{git,local}/ + tasks/ + assets/ + root stubs) in those projects per spec (c)"],
   "consumed_by": [
-    "spade0704/EMCC (orchestrator metadata + consumer-project template; status flipped not-ready → ready in this session B7 cross-repo commit)"
+    "spade0704/EMCC (orchestrator metadata + consumer-project template; status was flipped not-ready → ready in Session 1 B7 cross-repo commit)"
   ],
   "source_history": "SOURCE-HISTORY.md",
   "migration_issues": "MIGRATION-ISSUES.md",
-  "codex_version_at_extraction": "v1.0 (project-codex c106155 2026-05-22) — v1.1 update arc deferred to Session 2 / master plan Step 4"
+  "reorganization_manifest": "REORGANIZATION-INSTRUCTIONS.md",
+  "codex_version_at_v1_1": "v1.1 (Session 2 / S002 close 2026-05-27; canonical layout per portfolio-folder-structure-spec section c)",
+  "codex_version_at_extraction": "v1.0 (project-codex c106155 2026-05-22) — Session 1 extraction baseline"
 }

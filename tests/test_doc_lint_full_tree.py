@@ -1,20 +1,23 @@
-"""Real-tree S1-doc smoke test for documents/lattice/*.md (S023-T2-α AC9).
+"""Real-tree S1-doc smoke test for Codex spec docs (S023-T2-α AC9).
 
-Iterates every .md file under documents/lattice/ in the live working tree
-and asserts s1_doc(path).ok == True. Per-file ok flag only — not a deep
-diff. Acts as the regression gate for any future doc_lint change AND as
-acceptance proof that S023-T2-α AC1+AC3+AC4 fixes leave the real lattice
-tree clean (no false-positives surfacing per the sequence-gate clause in
-the task body).
+Iterates every .md file under the Codex spec-docs canonical folder in
+the live working tree and asserts s1_doc(path).ok == True. Per-file ok
+flag only — not a deep diff. Acts as the regression gate for any
+future doc_lint change.
+
+S002 / MI-11 (2026-05-27): originally iterated `documents/lattice/`
+(Lattice 2.0 framework docs in project-codex). Library post-Codex-
+extraction has no documents/lattice/ — those stayed in project-codex's
+archive. v1.1 repoints to `wiki.codex/git/codex/` (Codex's own spec
+docs canonical location post-B3 move). See MIGRATION-ISSUES.md MI-11.
 
 Pattern #13 real-tree smoke discipline (lessons.md 2026-05-08): catches
 class-of-bug regressions that synthetic per-test fixtures don't exercise
-(e.g., escape-pipe in 07-OPERATIONS.md tables, multi-doc cross-ref webs,
-heading-depth conventions across 11+ framework docs).
+(e.g., escape-pipe in tables, multi-doc cross-ref webs, heading-depth
+conventions across the spec doc family).
 
 Test-method generation: one TestCase method per .md file, dynamically
-attached via setattr loop. This keeps each lattice doc as a distinct
-unittest data point so per-file failures are isolated in the runner output.
+attached via setattr loop. Per-file failures are isolated in the runner.
 """
 
 import unittest
@@ -24,7 +27,9 @@ from _lib import doc_lint
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-LATTICE_DOCS = REPO_ROOT / "documents" / "lattice"
+# S002 / MI-11: repointed from documents/lattice/ (project-codex only)
+# to wiki.codex/git/codex/ (Library's Codex spec docs post-B3).
+SPEC_DOCS = REPO_ROOT / "wiki.codex" / "git" / "codex"
 
 
 def _normalize_name(stem: str) -> str:
@@ -46,14 +51,14 @@ def _make_test(md_path: Path):
 
 
 class TestDocLintFullTree(unittest.TestCase):
-    """Full-tree S1-doc smoke; one test method per lattice .md file."""
+    """Full-tree S1-doc smoke; one test method per Codex spec-doc .md file."""
 
 
-# Generate a test method per lattice .md file at module import time.
-if LATTICE_DOCS.is_dir():
-    for _md in sorted(LATTICE_DOCS.glob("*.md")):
+# Generate a test method per spec-doc .md file at module import time.
+if SPEC_DOCS.is_dir():
+    for _md in sorted(SPEC_DOCS.glob("*.md")):
         _suffix = _normalize_name(_md.stem)
-        _name = f"test_lattice_{_suffix}"
+        _name = f"test_codex_spec_{_suffix}"
         setattr(TestDocLintFullTree, _name, _make_test(_md))
 
 

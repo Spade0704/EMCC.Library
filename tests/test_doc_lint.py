@@ -141,19 +141,24 @@ class TestCheckFrontmatter(unittest.TestCase):
                              "all 8 required keys missing")
 
     def test_check_frontmatter_persona_class_drop_ins_lint_clean(self):
-        # S023-T2-α AC6: all 4 persona drop-ins lint with 0 warnings under
-        # persona-class schema. Dual-trigger: fm `type: persona` covers
-        # Architect/Auditor/Craftsman; path `.claude/personas/CLAUDE.*.md`
-        # covers Scribe (lacks type field, has loaded_via instead).
-        # Schema fragmentation acknowledged per Architect plan_response —
-        # AC6 ships structural-not-schematic; canonical reconciliation in B3.
+        # S023-T2-α AC6: persona drop-ins lint with 0 warnings under
+        # persona-class schema. Dual-trigger: fm `type: persona` OR path
+        # `.claude/personas/CLAUDE.*.md`.
+        #
+        # S002 / MI-10 (2026-05-27): generalized. Original test
+        # hard-asserted >=4 drop-ins expecting the four Lattice 2.0
+        # personas (architect/auditor/craftsman/scribe). Library
+        # post-Codex-extraction has only 2 (auditor + librarian) per
+        # MIGRATION-ISSUES.md MI-10. Test now lints whatever drop-ins
+        # ARE present + requires at least one. Existence-of-Lattice-2-
+        # specific-personas assertion retired.
         personas_dir = REPO_ROOT / ".claude" / "personas"
         if not personas_dir.is_dir():
             self.skipTest("persona drop-in dir not at expected path")
         drop_ins = sorted(personas_dir.glob("CLAUDE.*.md"))
-        self.assertGreaterEqual(len(drop_ins), 4,
-                                "expected >=4 persona drop-ins (architect / "
-                                "auditor / craftsman / scribe)")
+        self.assertGreater(len(drop_ins), 0,
+                           "expected at least one persona drop-in at "
+                           ".claude/personas/CLAUDE.*.md")
         for p in drop_ins:
             r = doc_lint.check_frontmatter(p)
             self.assertTrue(r.ok, f"{p.name} fm structurally invalid: {r.errors}")

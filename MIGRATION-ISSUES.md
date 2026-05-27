@@ -116,6 +116,17 @@ All 5 files raise `unittest.SkipTest` at module import time with MI-16 reason. N
 
 **Resolution:** B4 kept the canonical wiki-internal version (`wiki.codex/_sources/raw/README.md` → `wiki.codex/git/raw/README.md`). The root `Sources/Raw/README.md` was deleted as superseded. Root `Sources/` shell removed (now empty).
 
+## S002 dispositions for MI-10, MI-11, MI-12, MI-13 (resolved / carried)
+
+Per S002 architect plan §B9 disposition table:
+
+| MI | Type | Disposition | Status |
+|---|---|---|---|
+| **MI-10** | Lattice-2 persona drop-in test (>=4 personas hard-asserted) | **Resolved B9**: `tests/test_doc_lint.py::TestCheckFrontmatter::test_check_frontmatter_persona_class_drop_ins_lint_clean` generalized to lint whatever drop-ins ARE present (Library has 2: auditor + librarian); existence-of-Lattice-2-personas assertion retired. Test now passes. | ✅ Done in S002 B9 (commit pending this session) |
+| **MI-11** | `test_doc_lint_full_tree.py` empty in Library (`documents/lattice/` doesn't exist) | **Resolved B9**: dynamic-test-generation root repointed from `documents/lattice/` to `wiki.codex/git/codex/` (post-B3 Codex spec docs location). 10 dynamic tests now generate against Library's spec doc set; test class no longer empty. | ✅ Done in S002 B9 (commit pending this session) |
+| **MI-12** | Historical `tasks/*` + `CHANGELOG.md` curation deferred | **Carried**: per S001 close decision + S002 architect plan, the editorial work of classifying every line of project-codex's tasks/* (5,223 lines) and CHANGELOG.md (78 dense bullets) as Codex-class vs Lattice-class doesn't affect any AC. Pre-extraction history accessible at project-codex SHA `ccf21b7`; Library's authoritative history starts at S001. Defer to S004 or dedicated curation sub-session. | ⏳ Carried to S004+ |
+| **MI-13** | `pyproject.toml` not landed despite architect-plan AC3 | **Resolved as drop**: Codex's stdlib-only discipline (`CODEX_BUILD_SPEC_v1_3.md` R_ARCH) means even a PEP 621 metadata-only `pyproject.toml` adds no value. Library never distributes as a wheel — consumers run `bootstrap.py` + `sync_from_kit.py` directly from a clone or vendored copy. Architect plan AC3 implicit amendment: drop `pyproject.toml` requirement for stdlib-only modules. Re-open only if Library ships wheels (unlikely). | ✅ Done in S002 B9 (decision logged here; no file changes needed) |
+
 ## Open items deferred to Step 4 (Codex v1.0 → v1.1 update)
 
 - **MI-09 (potential, deferred):** Folder restructure under `Biz.Automation/wikisys.<projectname>/` + `wiki.<projectname>/` split, per operator's first-draft consumer-project layout (2026-05-27). Resolution depends on portfolio-room refined spec (F1–F11). Mechanical extraction (this session) preserves current single-root layout to keep the relocation cleanly auditable; restructure happens in Step 4.

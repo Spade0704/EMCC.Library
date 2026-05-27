@@ -14,11 +14,21 @@ The bus root is relative; `SessionManager` resolves it against this repo root at
 
 ## Required reading (in this order, before any code)
 
-1. `CODEX_BUILD_SPEC_v1_3.md` — authoritative Codex build specification. **Spec wins** any contradiction with this file; flag conflicts rather than resolving silently.
-2. `INGEST_PROCEDURE.md` + `SEMANTIC_LINT_PROCEDURE.md` — ship **verbatim** into bootstrapped wikis' `_context/` folder. Never paraphrase, shorten, or "improve" them.
-3. `CODEX_LIBRARIAN.md` — Librarian agent specification (the persona this module ships).
-4. `PROJECT_WIKI_BUILD_SPEC.md` — wiki build spec (what `bootstrap.py` materializes for consuming projects).
+1. `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` — authoritative Codex build specification. **Spec wins** any contradiction with this file; flag conflicts rather than resolving silently. (S002: relocated from Library root per spec section (b) — see `REORGANIZATION-INSTRUCTIONS.md` pattern P2.)
+2. `wiki.codex/git/codex/INGEST_PROCEDURE.md` + `wiki.codex/git/codex/SEMANTIC_LINT_PROCEDURE.md` — ship **verbatim** into bootstrapped wikis' `_context/` folder. Never paraphrase, shorten, or "improve" them.
+3. `wiki.codex/git/codex/CODEX_LIBRARIAN.md` — Librarian agent specification (the persona this module ships; S002 v1.1 extension adds 3 new ops + 5 Mentor patterns + Telegram auto-summary contract).
+4. `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` — wiki build spec (what `bootstrap.py` materializes for consuming projects).
 5. `tasks/sessions.md` — most recent session entry for current operational context.
+
+## Path migrations
+
+This module reorganized into the canonical portfolio layout in S002 (Codex v1.0 → v1.1, 2026-05-27). Module source files moved from project-root `_scripts/_template/_config/` to `Biz.Automation/wikisys.library/_*`; Codex spec docs moved from project-root markdown files to `wiki.codex/git/codex/<filename>`; `wiki.codex/` restructured into `git/`+`local/` subzones.
+
+**If you encounter an old path reference** in a script, doc, import, or test fixture (e.g., `_scripts/` at project root, `wiki.codex/_brain_dump/`, `Sources/Raw/`, `documents/codex/`), **consult `REORGANIZATION-INSTRUCTIONS.md`** for the new location.
+
+**Do NOT guess** at the new path. Do NOT "fix" path references by inferring from context. Use the manifest. Patterns P1–P8 cover the eight generic transformation classes; the per-project moves table records the explicit S002 mappings.
+
+If a path you encounter isn't in either the patterns OR the per-project table, surface it as a finding (it may indicate an incomplete migration or a stale reference that needs explicit disposition; add as a new MI entry per `MIGRATION-ISSUES.md` convention).
 
 When the session is run under Lattice 3.0 protocol (Library dogfooding DFDU), also:
 
@@ -28,24 +38,32 @@ When the session is run under Lattice 3.0 protocol (Library dogfooding DFDU), al
 
 ## ROOT_INDEX
 
+Post-S002 / v1.1 layout. See `REORGANIZATION-INSTRUCTIONS.md` for the
+machine-readable old-path → new-path manifest.
+
 | Room | Contents | When to Load |
 |---|---|---|
-| `CODEX_BUILD_SPEC_v1_3.md` | Authoritative Codex spec. The single canonical version (v1_1/v1_2 stay archived in `spade0704/project-codex`). | Any spec change; clarifying scope |
-| `INGEST_PROCEDURE.md` + `SEMANTIC_LINT_PROCEDURE.md` | Verbatim procedures shipped into bootstrapped wikis | Never edit without an explicit spec amendment |
-| `CODEX_LIBRARIAN.md` | Librarian agent specification | Persona / agent work |
-| `PROJECT_WIKI_BUILD_SPEC.md` | Wiki build spec (what bootstrap.py creates) | Bootstrap behavior changes |
-| `_scripts/` | Codex automation (P1–P54-indexed; `_lib/` foundation; `launchers/` operator scripts) | Logic / script work |
-| `_template/`, `_config/` | Templates + config YAMLs bootstrap copies into new wikis | Template / config changes |
-| `tests/` | Python stdlib `unittest` suite (~821 tests post-extraction) | Test work; verify after any code change |
-| `wiki.codex/` | Library's self-hosted dogfood wiki (Codex documenting Codex). Folder layout still in pre-Step-4 form. | Reference / self-documentation |
-| `.claude/personas/CLAUDE.librarian.md` | Librarian persona (canonical) | Persona / agent work |
+| `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` | Authoritative Codex spec. The single canonical version. | Any spec change; clarifying scope |
+| `wiki.codex/git/codex/INGEST_PROCEDURE.md` + `…/SEMANTIC_LINT_PROCEDURE.md` | Verbatim procedures shipped into bootstrapped wikis | Never edit without an explicit spec amendment |
+| `wiki.codex/git/codex/CODEX_LIBRARIAN.md` | Librarian agent specification (S002 v1.1 extension: 3 new ops + 5 Mentor patterns + Telegram contract) | Persona / agent work |
+| `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` | Wiki build spec (what bootstrap.py creates) | Bootstrap behavior changes |
+| `Biz.Automation/wikisys.library/_scripts/` | Codex automation: 20 root `.py` (P1–P54-indexed) + 7 `_lib/` foundation modules + 5 new S002 audit scripts (audit_doc_pairing, audit_gitignore, route_inbox, audit_assets, audit_local_split) + 5 launcher `.ps1` | Logic / script work |
+| `Biz.Automation/wikisys.library/_template/` | 26 wiki templates with `__SEP__` path encoding | Template work (Sync ships templates into consumer wikis) |
+| `Biz.Automation/wikisys.library/_config/` | 5 YAML config files + README + cross_link.yaml | Config work |
+| `Biz.Automation/wikisys.library/_canon/` | Library's own canon entities (roster/taxonomy/timeline/topics — Codex documenting Codex) | Canon work |
+| `Biz.Automation/wikisys.library/_context/` + `_decisions/` | Runtime context rules + decision history | Reference |
+| `bootstrap.py` | v1.1 canonical-output scaffolder per spec (c); `<projectname>` positional CLI | Bootstrap-behavior changes |
+| `tests/` | Python stdlib `unittest` suite (~589 tests post-S002 / MI-16 retirements) | Test work; verify after any code change |
+| `wiki.codex/git/` | Library's self-hosted dogfood wiki content + `git/.claude/personas/CLAUDE.librarian.md` drop-in | Reference / self-documentation |
+| `wiki.codex/local/` | Library's private zone (gitignored; brain-dump / unfiled) | Operator's private |
+| `.claude/personas/CLAUDE.librarian.md` | Librarian persona (canonical at project root; v1.1 extension mirrors `wiki.codex/git/codex/CODEX_LIBRARIAN.md`) | Persona / agent work |
 | `.claude/personas/CLAUDE.auditor.md` | Auditor persona (carried verbatim from DFDU) | On-demand audit work; Lattice 3.0 Regime B |
 | `tasks/*.md` | Operational state for THIS repo's build | Every session start |
 | `0-Inbox/` | Triage area for in-flight planning docs | When planning a change to canon |
-| `module.json` | EMCC module registration | Module hookup |
+| `module.json` | EMCC module registration (v1.1.0) | Module hookup |
 | `SOURCE-HISTORY.md` | Pointer to project-codex archived SHA + per-file move inventory | "Where did this come from?" |
-| `MIGRATION-ISSUES.md` | Append-only registry (MI-01..MI-08 + A1/A2/A3) | Any new extraction or rename touches |
-| `Obsidian-Setup-Guide.md`, `codex-build-plan.html`, `documents/codex/` | Consumer guidance + build progress + Codex docs (PDF / cheatsheet) | Consumer-facing reference |
+| `MIGRATION-ISSUES.md` | Append-only registry (MI-01..MI-16) | Any new extraction or rename touches |
+| `REORGANIZATION-INSTRUCTIONS.md` | Machine-readable migration manifest (old-path → new-path per pattern + per-project) | "Where did this PATH go?" — see also CLAUDE.md §Path migrations |
 
 ## R_STATE
 
