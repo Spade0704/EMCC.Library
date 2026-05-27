@@ -53,12 +53,32 @@ class FrontmatterParserTests(unittest.TestCase):
         self.assertIsNone(frontmatter.parse_frontmatter(text))
 
     def test_wiki_root_resolves_correctly(self):
-        # WIKI_ROOT must point at the install root: D:\Claude Projects\Project Codex\
-        self.assertTrue(
-            (frontmatter.WIKI_ROOT / "CLAUDE.md").exists(),
-            "WIKI_ROOT/CLAUDE.md should exist; WIKI_ROOT path math is wrong",
+        """WIKI_ROOT must resolve to either Library's install root (CLAUDE.md +
+        module.json co-existing) or a bootstrapped wiki's root (Home.md present).
+
+        Pre-S002: hard-coded `parent.parent.parent` + `parent.name == "Project Codex"`
+        — the latter was env-hardcoded to the operator's Windows install path and
+        failed in any other environment (baseline failure since Session 1).
+
+        Post-S002 (Codex v1.1) restructure: `_lib/` moved to
+        `Biz.Automation/wikisys.library/_scripts/_lib/`. The 3-parent walk now
+        resolves to `wikisys.library/` instead of Library's repo root, so the
+        install case is broken. Marker-based resolution (in
+        `frontmatter._find_wiki_root`) handles both Library install + bootstrapped
+        wiki correctly; this test verifies the result.
+        """
+        root = frontmatter.WIKI_ROOT
+        has_install_markers = (
+            (root / "CLAUDE.md").exists()
+            and (root / "module.json").exists()
         )
-        self.assertEqual(frontmatter.WIKI_ROOT.parent.name, "Project Codex")
+        has_wiki_marker = (root / "Home.md").exists()
+        self.assertTrue(
+            has_install_markers or has_wiki_marker,
+            f"WIKI_ROOT={root} must contain either (CLAUDE.md + module.json) for "
+            f"Library install OR Home.md for bootstrapped wiki. Has neither — "
+            f"WIKI_ROOT path math is wrong."
+        )
 
     def test_load_page_returns_body_verbatim(self):
         with TemporaryDirectory() as tmp:

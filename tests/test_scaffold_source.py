@@ -8,7 +8,7 @@ from tempfile import TemporaryDirectory
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-SCAFFOLD_PY = REPO_ROOT / "_scripts" / "scaffold_source.py"
+SCAFFOLD_PY = REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_scripts" / "scaffold_source.py"
 
 
 def _load_module():

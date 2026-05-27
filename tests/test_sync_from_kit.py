@@ -16,16 +16,24 @@ def _write(path: Path, content: str) -> None:
 
 
 def _make_codex_install(root: Path) -> Path:
-    """Synthesize a minimal Codex install with all required sources."""
+    """Synthesize a minimal Codex install with all required sources.
+
+    S002 / Codex v1.1: source roots split — modules under
+    `<codex>/Biz.Automation/wikisys.library/_*`; spec docs under
+    `<codex>/wiki.codex/git/codex/*`. Mirrors sync_from_kit.WIKISYS_REL
+    + SPEC_DOCS_REL.
+    """
     root.mkdir(parents=True, exist_ok=True)
-    _write(root / "_scripts" / "marker.py", "# codex marker\n")
-    _write(root / "_scripts" / "_lib" / "shared.py", "# codex shared\n")
-    _write(root / "PROJECT_WIKI_BUILD_SPEC.md", "# Project Wiki Build Spec (codex)\n")
-    _write(root / "INGEST_PROCEDURE.md", "# Ingest Procedure (codex)\n")
-    _write(root / "SEMANTIC_LINT_PROCEDURE.md", "# Semantic Lint Procedure (codex)\n")
-    _write(root / "CODEX_LIBRARIAN.md", "# Codex Librarian (codex)\n")
-    _write(root / "_config" / "example.yaml", "rules: []  # codex default\n")
-    _write(root / "_template" / "example.md", "<!-- codex template -->\n")
+    wikisys = root / "Biz.Automation" / "wikisys.library"
+    specs = root / "wiki.codex" / "git" / "codex"
+    _write(wikisys / "_scripts" / "marker.py", "# codex marker\n")
+    _write(wikisys / "_scripts" / "_lib" / "shared.py", "# codex shared\n")
+    _write(specs / "PROJECT_WIKI_BUILD_SPEC.md", "# Project Wiki Build Spec (codex)\n")
+    _write(specs / "INGEST_PROCEDURE.md", "# Ingest Procedure (codex)\n")
+    _write(specs / "SEMANTIC_LINT_PROCEDURE.md", "# Semantic Lint Procedure (codex)\n")
+    _write(specs / "CODEX_LIBRARIAN.md", "# Codex Librarian (codex)\n")
+    _write(wikisys / "_config" / "example.yaml", "rules: []  # codex default\n")
+    _write(wikisys / "_template" / "example.md", "<!-- codex template -->\n")
     return root
 
 
@@ -219,10 +227,10 @@ class TestSourceMissing(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             codex = _make_codex_install(tmp_path / "codex")
-            (codex / "_scripts" / "marker.py").unlink()
-            (codex / "_scripts" / "_lib" / "shared.py").unlink()
-            (codex / "_scripts" / "_lib").rmdir()
-            (codex / "_scripts").rmdir()
+            (codex / "Biz.Automation" / "wikisys.library" / "_scripts" / "marker.py").unlink()
+            (codex / "Biz.Automation" / "wikisys.library" / "_scripts" / "_lib" / "shared.py").unlink()
+            (codex / "Biz.Automation" / "wikisys.library" / "_scripts" / "_lib").rmdir()
+            (codex / "Biz.Automation" / "wikisys.library" / "_scripts").rmdir()
             wiki = _make_wiki(tmp_path / "wiki")
             rc, _stdout, stderr = _run_sync(codex, wiki)
             self.assertEqual(rc, 3)
@@ -243,9 +251,9 @@ class TestCrossLinkArtifactSync(unittest.TestCase):
             tmp_path = Path(tmp)
             codex = _make_codex_install(tmp_path / "codex")
             # Synthesize 4 NEW cross-link scripts in codex install
-            _write(codex / "_scripts" / "build_topic_index.py", "# codex T-XL-3\n")
-            _write(codex / "_scripts" / "cross_link_topics.py", "# codex T-XL-4\n")
-            _write(codex / "_scripts" / "validate_topic_registry.py", "# codex T-XL-5\n")
+            _write(codex / "Biz.Automation" / "wikisys.library" / "_scripts" / "build_topic_index.py", "# codex T-XL-3\n")
+            _write(codex / "Biz.Automation" / "wikisys.library" / "_scripts" / "cross_link_topics.py", "# codex T-XL-4\n")
+            _write(codex / "Biz.Automation" / "wikisys.library" / "_scripts" / "validate_topic_registry.py", "# codex T-XL-5\n")
             wiki = _make_wiki(tmp_path / "wiki")
             # Wiki has stale customized versions
             _write(wiki / "_scripts" / "build_topic_index.py", "# wiki stale T-XL-3\n")
@@ -278,7 +286,7 @@ class TestCrossLinkArtifactSync(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             codex = _make_codex_install(tmp_path / "codex")
-            _write(codex / "_scripts" / "_lib" / "topics.py", "# codex T-XL-2 topics\n")
+            _write(codex / "Biz.Automation" / "wikisys.library" / "_scripts" / "_lib" / "topics.py", "# codex T-XL-2 topics\n")
             wiki = _make_wiki(tmp_path / "wiki")
             _write(wiki / "_scripts" / "_lib" / "topics.py", "# wiki stale topics\n")
             subprocess.run(["git", "add", "."], cwd=str(wiki), check=True)
@@ -300,11 +308,11 @@ class TestCrossLinkArtifactSync(unittest.TestCase):
             tmp_path = Path(tmp)
             codex = _make_codex_install(tmp_path / "codex")
             _write(
-                codex / "_template" / "_canon__SEP__topics.yaml",
+                codex / "Biz.Automation" / "wikisys.library" / "_template" / "_canon__SEP__topics.yaml",
                 "topics: []  # codex default\n",
             )
             _write(
-                codex / "_template" / "_config__SEP__cross_link.yaml",
+                codex / "Biz.Automation" / "wikisys.library" / "_template" / "_config__SEP__cross_link.yaml",
                 "tfidf:\n  min_similarity: 0.35  # codex default\n",
             )
             wiki = _make_wiki(tmp_path / "wiki")
@@ -335,7 +343,7 @@ class TestCrossLinkArtifactSync(unittest.TestCase):
             tmp_path = Path(tmp)
             codex = _make_codex_install(tmp_path / "codex")
             _write(
-                codex / "_template" / "_canon__SEP__topics.yaml",
+                codex / "Biz.Automation" / "wikisys.library" / "_template" / "_canon__SEP__topics.yaml",
                 "topics: []  # codex default\n",
             )
             wiki = _make_wiki(tmp_path / "wiki")

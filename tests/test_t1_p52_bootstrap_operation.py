@@ -26,18 +26,29 @@ TemporaryDirectory-managed paths MUST occur INSIDE `with` block scope per
 SOLIDIFIED evidence base.
 """
 
+import unittest
+
+raise unittest.SkipTest(
+    "MI-16 (S002 / Codex v1.1): test_t1_p52 asserts v1.0 bootstrap end-to-end "
+    "(18 top-level entries Lattice-2.0-flavored, 25-script copy, __SEP__ "
+    "substitution, _canon/topics.yaml + _config/cross_link.yaml placement). "
+    "v1.1 bootstrap.py is scaffold-only per spec section (c). New "
+    "canonical-shape tests in tests/test_bootstrap_canonical.py. Full "
+    "retirement deferred to S004. See MIGRATION-ISSUES.md MI-16."
+)
+
 import hashlib
 import subprocess
 import sys
-import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BOOTSTRAP_PY = REPO_ROOT / "bootstrap.py"
-TEMPLATE_DIR = REPO_ROOT / "_template"
-CODEX_SCRIPTS = REPO_ROOT / "_scripts"
+WIKISYS_ROOT = REPO_ROOT / "Biz.Automation" / "wikisys.library"
+TEMPLATE_DIR = WIKISYS_ROOT / "_template"
+CODEX_SCRIPTS = WIKISYS_ROOT / "_scripts"
 
 # HEAD-verified count per ARCHITECTURAL FINDING #1 anchor-verify directive.
 # T-XL cascade FULL CLOSURE @ 25c61e1: 7 _lib + 18 _scripts = 25 scripts.
@@ -247,7 +258,8 @@ class TestT1P52CrossLinkArtifactPlacement(unittest.TestCase):
             self.assertEqual(result.returncode, 0)
             for rel_path, _label in cross_link_scripts:
                 target_path = target / rel_path
-                source_path = REPO_ROOT / rel_path
+                # S002 / Codex v1.1: module source moved to wikisys.library/
+                source_path = WIKISYS_ROOT / rel_path
                 self.assertTrue(
                     target_path.is_file(),
                     "missing target " + rel_path,

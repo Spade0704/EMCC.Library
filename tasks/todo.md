@@ -2,7 +2,34 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
-## Current sprint — S001-codex-extraction (2026-05-27, CLOSED)
+## Past sprint — S002-codex-v1.1-update (2026-05-27, CLOSED)
+
+### Done
+- [x] Phase A — open Session 2 + bank architect plan + Mentor spec correction
+- [x] B1 .gitignore wiki.*/local/ extension + baseline assertions
+- [x] B2 module source → Biz.Automation/wikisys.library/_* (65 git mv)
+- [x] B3 Codex spec docs → wiki.codex/git/codex/ (10 git mv)
+- [x] B4 wiki.codex/ internal restructure (git+local split; MI-14 + MI-15)
+- [x] B5a path-lookup rebases (bootstrap.py + sync_from_kit + 10 test files)
+- [x] B5b bootstrap.py full canonical-output rewrite per spec (c) + 21 new tests + 88 v1.0-shape tests retired (MI-16)
+- [x] B6 5 new audit scripts (P0+P1) + FINDING #1 fix + 34 new tests
+- [x] B7 CODEX_LIBRARIAN.md +174 lines (3 ops + 5 Mentor patterns + Telegram contract) + persona mirror + CLAUDE.md updates
+- [x] B8 REORGANIZATION-INSTRUCTIONS.md flip (27 rows ⏳→✅) + S002-internal callers section
+- [x] B9 module.json v1.1.0 + README + CLAUDE.md Path-migrations pointer + MI-10/11/12/13 dispositions
+- [x] B10 Auditor dispatch — verdict `pass` with 4 info observations (OBS-2/OBS-3 fixed inline; OBS-1/OBS-4 deferred to architect-notes)
+
+→ See `tasks/sessions.md` Session 2 CLOSED entry for full close record.
+→ See `tasks/architect-notes.md` §S002 for the architect plan, Auditor observations, and deferred items.
+
+## Next sprints (planned)
+
+- **S003** (master plan Step 5) — Telegram channel boot (operator action; bot exists at chat_id 1415844818).
+- **S004** (master plan Step 6) — bootstrap real consumer wikis (Aviation / Tat / etc.) on v1.1 canonical scaffold. Retires MI-16 deferral. Decides sync_from_kit's post-v1.1 delivery target.
+- **S005** (master plan Step 7) — bootstrap DFDU's own `wiki/` directory.
+
+---
+
+## Past sprint — S001-codex-extraction (2026-05-27, CLOSED)
 
 ### Done
 - [x] Phase A — open Lattice 3.0 session + architect plan

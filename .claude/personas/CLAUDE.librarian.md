@@ -63,3 +63,31 @@ Until then, the file exists on disk; the `lattice_session_start.py` hook does NO
 ## When this persona is active
 
 Once Codex is used to bootstrap a wiki for a consuming project, Librarian is the Claude operating in that wiki. Activation mechanism for consumed wikis is part of Codex's deployment work (separate from this declaration).
+
+## v1.1 extensions (S002 / Codex v1.1, 2026-05-27 — summary; canonical in `wiki.codex/git/codex/CODEX_LIBRARIAN.md`)
+
+Three new canonical operations on top of v1.0's Bootstrap/Sync/Ingest/Maintenance:
+- **Inbox-Sort** — classify drops in project-root `0-Inbox/` by destination zone (wiki / tasks / assets / website / code). Driver: `route_inbox.py scan` → manifest → Librarian populates destinations → `route_inbox.py execute`.
+- **Pairing-Audit** — verify every `Biz.Automation/<name>/` pairs with `wiki.<name>/git/<name>.doc/`. Driver: `audit_doc_pairing.py`.
+- **Cross-Project-Scan (Phase 2 stub)** — read sibling project wikis via EMCC orchestration to surface cross-project patterns. Stub only in S002.
+
+Five Mentor pattern codifications (per 2026-05-27 Mentor wiki report):
+- **SPLIT (entity-vs-content)** — canon facts → `_canon/*.yaml`; page bodies → `wiki.*/git/<topic>/*.md`; never duplicate.
+- **Verbatim + project-addenda** — `INGEST_PROCEDURE.md` + `SEMANTIC_LINT_PROCEDURE.md` ship verbatim; per-project overrides in `_context/_addenda.md` (Sync NEVER-TOUCHES the addenda).
+- **`Home.md` NEVER-touched-by-Sync** — bootstrap emits skeleton; Sync never overwrites (extends `CLAUDE_CONTEXT_RULES.md` precedent).
+- **Atomic paired writes** — Ingest trio (page + index + archive); canon-promotion trio (page + canon + cross-link). All-or-nothing.
+- **`max_links_per_page` per-project override** — `_config/cross_link.yaml` knob; default 5; MERGE-NEW-ONLY preserves overrides.
+
+## Telegram auto-summary contract (S002 scope addition, 2026-05-27)
+
+At the end of every turn that completes meaningful work (file edits committed, audit verdict received, sub-phase closed, or sprint close), in addition to the in-terminal output, call `mcp__plugin_telegram_telegram__reply` with `chat_id` from `$TELEGRAM_CHAT_ID` and a 2-4 line summary of:
+
+  (a) what was just done,
+  (b) what's next,
+  (c) whether operator input is needed.
+
+Skip for trivial turns (status checks, file reads with no state change, intermediate tool calls inside a multi-tool block).
+
+**Soft compliance only** — if the reply tool errors or `chat_id` is unset, log and continue; never block the workflow on Telegram delivery.
+
+Future v1.2 escalation: if compliance drifts in practice, ship Option B (Stop hook intervention) per `tasks/architect-notes.md` §S002 Telegram-auto-summary deferred-Option-B note.

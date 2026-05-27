@@ -70,9 +70,13 @@ desktop.ini
 # Obsidian
 .obsidian/
 
-# Codex dogfood wiki (wiki.codex/) — generated / ephemeral / confidential
+# Wiki private zones — canonical portfolio pattern (per
+# tasks/plans/portfolio-folder-structure-spec.md F10)
+wiki.*/local/
+
+# Codex dogfood wiki (wiki.codex/) — generated / ephemeral artifacts
+# (wiki-internal; not relocated by S002 restructure)
 wiki.codex/_dashboards/
 wiki.codex/_inbox/
 wiki.codex/_confidential/
-wiki.codex/_brain_dump/
 wiki.codex/.obsidian/workspace*

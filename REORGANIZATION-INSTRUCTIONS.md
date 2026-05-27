@@ -101,62 +101,81 @@ root; they did NOT yet apply the canonical-layout restructure.
 | `tasks/v1.1-backlog.md` | `tasks/v1.1-backlog.md` (Library) | — | ✅ Session 1 |
 | (NEW) | `tasks/{todo,sessions,lessons,archive}.md` | — | ✅ Session 1 |
 
-**S002 / Codex v1.1 planned moves** — module source files extract to
-`Biz.Automation/wikisys.library/`; spec docs become wiki content under
+**S002 / Codex v1.1 moves** — module source files extracted to
+`Biz.Automation/wikisys.library/`; spec docs became wiki content under
 `wiki.codex/git/codex/`; `wiki.codex/` internal restructure into
-`git/` + `local/` subfolders.
+`git/` + `local/` subfolders. Closed 2026-05-27 with 8+ commits on
+`claude/codex-v1.1-S002-restructure`.
 
-| Old path (Library Session 1) | New path (post-S002) | Pattern |
+| Old path (Library Session 1) | New path (post-S002) | Pattern | Status |
+|---|---|---|---|
+| `_scripts/` | `Biz.Automation/wikisys.library/_scripts/` | P1 | ✅ Done in S002 B2 (commit `1e675fd`) |
+| `_template/` | `Biz.Automation/wikisys.library/_template/` | P1 | ✅ Done in S002 B2 (commit `1e675fd`) |
+| `_config/` | `Biz.Automation/wikisys.library/_config/` (merged with `wiki.codex/_config/`) | P1 | ✅ Done in S002 B2 + B4 (commits `1e675fd` + `d0dfdbb`) |
+| `Sources/Raw/` | `wiki.codex/git/raw/` (merged with `wiki.codex/_sources/raw/`; root README deleted as superseded — MI-15) | P3 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `CODEX_BUILD_SPEC_v1_3.md` | `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` | P2 | ✅ Done in S002 B3 (commit `fc99147`) |
+| `CODEX_LIBRARIAN.md` | `wiki.codex/git/codex/CODEX_LIBRARIAN.md` | P2 | ✅ Done in S002 B3 (commit `fc99147`) |
+| `INGEST_PROCEDURE.md` | `wiki.codex/git/codex/INGEST_PROCEDURE.md` | P2 | ✅ Done in S002 B3 (commit `fc99147`) |
+| `SEMANTIC_LINT_PROCEDURE.md` | `wiki.codex/git/codex/SEMANTIC_LINT_PROCEDURE.md` | P2 | ✅ Done in S002 B3 (commit `fc99147`) |
+| `PROJECT_WIKI_BUILD_SPEC.md` | `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` | P2 | ✅ Done in S002 B3 (commit `fc99147`) |
+| `Obsidian-Setup-Guide.md` | `wiki.codex/git/codex/Obsidian-Setup-Guide.md` | P2 | ✅ Done in S002 B3 (commit `fc99147`) |
+| `codex-build-plan.html` | `wiki.codex/git/codex/codex-build-plan.html` | P2 | ✅ Done in S002 B3 (commit `fc99147`) |
+| `documents/codex/Codex_Project_Documentation.pdf` | `wiki.codex/git/codex/Codex_Project_Documentation.pdf` | P2 | ✅ Done in S002 B3 (commit `fc99147`) |
+| `documents/codex/Codex_Workflow_Cheatsheet_v1.txt` | `wiki.codex/git/codex/Codex_Workflow_Cheatsheet_v1.txt` | P2 | ✅ Done in S002 B3 (commit `fc99147`) |
+| `documents/codex/codex-build-progress.md` | `wiki.codex/git/codex/codex-build-progress.md` | P2 | ✅ Done in S002 B3 (commit `fc99147`) |
+| `wiki.codex/Home.md` | `wiki.codex/git/Home.md` | P5 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/00-Start-Here/` | `wiki.codex/git/00-Start-Here/` | P5 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/01-Architecture/` | `wiki.codex/git/01-Architecture/` | P5 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/02-Operations/` | `wiki.codex/git/02-Operations/` | P5 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/04-Contributing/` | `wiki.codex/git/04-Contributing/` | P5 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/.claude/` | `wiki.codex/git/.claude/` (dogfood Librarian drop-in) | P5 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/_canon/` | `Biz.Automation/wikisys.library/_canon/` | P1 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/_config/` | `Biz.Automation/wikisys.library/_config/` (merged with root `_config/`) | P1 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/_context/` | `Biz.Automation/wikisys.library/_context/` | P1 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/_decisions/` | `Biz.Automation/wikisys.library/_decisions/` | P1 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/_sources/raw/` | `wiki.codex/git/raw/` (merged with root `Sources/Raw/`) | P3 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/_brain_dump/` | `wiki.codex/local/ideas/` (untracked content; gitignored under new `wiki.*/local/` rule) | P4 | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `wiki.codex/_scripts/` (27 stale bootstrap-output files) | DELETED (older than canonical; documented as MI-14) | — | ✅ Done in S002 B4 (commit `d0dfdbb`) |
+| `bootstrap.py` | `bootstrap.py` (STAYS at Library root — entry script) | — | ✅ Stays |
+| `tests/` | `tests/` (STAYS at root — `<product-code-root>` rule) | — | ✅ Stays |
+| `.claude/personas/CLAUDE.{auditor,librarian}.md` | `.claude/personas/CLAUDE.{auditor,librarian}.md` (STAYS — P7 already canonical) | — | ✅ Stays |
+| `module.json`, `CLAUDE.md`, `SOURCE-HISTORY.md`, `MIGRATION-ISSUES.md`, `README.md`, `.gitignore` | (STAY at root) | — | ✅ Stays |
+| `Index.md`, `Cheatsheet.md` | (NEW root files; ship in S004 first real consumer-project bootstrap; Library itself uses CLAUDE.md ROOT_INDEX as Index.md surrogate per spec a variance allowance) | — | ⏳ Deferred to S004 |
+
+### S002-internal callers updated
+
+The B5a path-rebase commit (`7707d5b`) and B5b bootstrap.py rewrite
+(`9bf1004`) updated the following internal callers to read from the
+new source-of-truth paths:
+
+| Caller | Changed via | Update |
 |---|---|---|
-| `_scripts/` | `Biz.Automation/wikisys.library/_scripts/` | P1 |
-| `_template/` | `Biz.Automation/wikisys.library/_template/` | P1 |
-| `_config/` | `Biz.Automation/wikisys.library/_config/` (merged with `wiki.codex/_config/`) | P1 |
-| `Sources/Raw/` | `wiki.codex/git/raw/` | P3 |
-| `CODEX_BUILD_SPEC_v1_3.md` | `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` | P2 |
-| `CODEX_LIBRARIAN.md` | `wiki.codex/git/codex/CODEX_LIBRARIAN.md` | P2 |
-| `INGEST_PROCEDURE.md` | `wiki.codex/git/codex/INGEST_PROCEDURE.md` | P2 |
-| `SEMANTIC_LINT_PROCEDURE.md` | `wiki.codex/git/codex/SEMANTIC_LINT_PROCEDURE.md` | P2 |
-| `PROJECT_WIKI_BUILD_SPEC.md` | `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` | P2 |
-| `Obsidian-Setup-Guide.md` | `wiki.codex/git/codex/Obsidian-Setup-Guide.md` | P2 |
-| `codex-build-plan.html` | `wiki.codex/git/codex/codex-build-plan.html` | P2 |
-| `documents/codex/Codex_Project_Documentation.pdf` | `wiki.codex/git/codex/Codex_Project_Documentation.pdf` | P2 |
-| `documents/codex/Codex_Workflow_Cheatsheet_v1.txt` | `wiki.codex/git/codex/Codex_Workflow_Cheatsheet_v1.txt` | P2 |
-| `documents/codex/codex-build-progress.md` | `wiki.codex/git/codex/codex-build-progress.md` | P2 |
-| `wiki.codex/Home.md` | `wiki.codex/git/Home.md` | P5 |
-| `wiki.codex/00-Start-Here/` | `wiki.codex/git/00-Start-Here/` | P5 |
-| `wiki.codex/01-Architecture/` | `wiki.codex/git/01-Architecture/` | P5 |
-| `wiki.codex/02-Operations/` | `wiki.codex/git/02-Operations/` | P5 |
-| `wiki.codex/04-Contributing/` | `wiki.codex/git/04-Contributing/` | P5 |
-| `wiki.codex/_canon/` | `Biz.Automation/wikisys.library/_canon/` | P1 |
-| `wiki.codex/_config/` | `Biz.Automation/wikisys.library/_config/` (merges with root `_config/`) | P1 |
-| `wiki.codex/_context/` | `Biz.Automation/wikisys.library/_context/` | P1 |
-| `wiki.codex/_decisions/` | `Biz.Automation/wikisys.library/_decisions/` | P1 |
-| `wiki.codex/_sources/raw/` | `wiki.codex/git/raw/` (merges with root `Sources/Raw/`) | P3 |
-| `wiki.codex/_brain_dump/` | `wiki.codex/local/ideas/` | P4 |
-| `bootstrap.py` | `bootstrap.py` (STAYS at Library root — entry script) | — |
-| `tests/` | `tests/` (STAYS at root — `<product-code-root>` rule) | — |
-| `.claude/personas/CLAUDE.{auditor,librarian}.md` | `.claude/personas/CLAUDE.{auditor,librarian}.md` (STAYS — P7 already canonical) | — |
-| `module.json`, `CLAUDE.md`, `SOURCE-HISTORY.md`, `MIGRATION-ISSUES.md`, `README.md`, `.gitignore`, `Index.md` (NEW), `Cheatsheet.md` (NEW) | (STAY at root) | — |
+| `bootstrap.py` `_resolve_source_scripts_dir()` (line 62) | B5a `7707d5b` | default → `Biz.Automation/wikisys.library/_scripts` |
+| `bootstrap.py` `_resolve_template_dir()` (line 114) | B5a `7707d5b` | default → `Biz.Automation/wikisys.library/_template` |
+| `bootstrap.py` (entire file) | B5b `9bf1004` | full canonical-output rewrite per spec (c); scaffold-only (no script copy); `<projectname>` positional CLI; 5 stub generators |
+| `Biz.Automation/wikisys.library/_scripts/sync_from_kit.py` | B5a `7707d5b` | new `WIKISYS_REL` + `SPEC_DOCS_REL` constants; `_required_sources()` + `_build_plan()` prefix source paths with `wikisys.library/` + `wiki.codex/git/codex/` |
+| `Biz.Automation/wikisys.library/_scripts/_lib/frontmatter.py` `parse_config_yaml` | B6 `0127c4e` | FINDING #1: block-list sub-list under continuation field — `pending_subkey` FSM state added |
+| `tests/__init__.py` sys.path | B5a `7707d5b` | rebase to `wikisys.library/_scripts` |
+| `tests/perf/bench_frontmatter.py` sys.path inserts (×2) | B5a `7707d5b` | rebase |
+| `tests/test_phase6_full_chain_e2e.py` (REPO_ROOT-relative paths) | B5a `7707d5b` then B5b `9bf1004` (module SkipTest) | rebased; later skipped as MI-16 |
+| `tests/test_scaffold_source.py`, `tests/test_scaffold_brain_dump.py` (SCAFFOLD_PY) | B5a `7707d5b` | rebase |
+| `tests/test_t1_p52_bootstrap_operation.py` (TEMPLATE_DIR, CODEX_SCRIPTS) | B5a then B5b skip | rebased then MI-16 retire |
+| `tests/test_t2_p53_sync_operation.py` (multiple REPO_ROOT paths) | B5a then B5b skip | rebased then MI-16 retire |
+| `tests/test_t3_p54_ingest_operation.py` (TEMPLATE_DIR) | B5a then B5b skip | rebased then MI-16 retire |
+| `tests/test_sync_from_kit.py` `_make_codex_install` fixture | B5a `7707d5b` | fixture rewrites source layout to mirror new split (wikisys + spec-docs roots) |
+| `tests/test_bootstrap.py` (entire file) | B5b `9bf1004` (module SkipTest) | MI-16 retire — file tests v1.0 contract |
 
-**Library-internal callers that will need updating during S002:**
+**Note on `_scripts/_lib/config_loader.py`:** the discovery layer
+turned out to accept a `config_path` argument (relative to the
+consuming wiki, not Library), so no Library-internal path rebase was
+needed. The B5a path-rebase plan over-allocated edit time here.
 
-The S002 implementation session must check the following for hardcoded old
-paths and update them per this manifest. These ARE Codex code changes (not
-forbidden by AC8 — v1.1 explicitly allows code changes for path
-adjustments).
-
-- `bootstrap.py` — currently reads templates from `_template/`, config from
-  `_config/`, etc. Must be updated to read from
-  `Biz.Automation/wikisys.library/_template/` (or use a single canonical
-  config-lookup helper that the operator can override).
-- `_scripts/_lib/config_loader.py` — discovery layer for `_config/` lookup.
-  May need update.
-- `_scripts/sync_from_kit.py` — overwrites wiki `_context/`,
-  `_scripts/`, etc. from Codex install. Must be updated to read from
-  `Biz.Automation/wikisys.library/_context/` etc.
-- All `tests/*.py` that compute paths relative to repo root.
-- `_template/_context__SEP__INGEST_PROCEDURE.md` — symlinks/byte-copy
-  source. Should be wired to read from `wiki.codex/git/codex/` after S002.
+**Note on `_template/_context__SEP__INGEST_PROCEDURE.md`:** the
+manifest pre-flight predicted this template file would need rewiring
+to read from `wiki.codex/git/codex/` after S002. It turned out the
+template file is byte-equal to the spec doc; the symlink/copy chain
+flows through `sync_from_kit.py`'s `SPEC_DOCS_REL`-prefixed source
+lookup (now in place per B5a). No template-file edit was required.
 
 ### tat_app, aviation, aviation-career, eddyandwolff, isommelier, EMCC, EMCC.DFDU
 
@@ -219,15 +238,18 @@ incomplete migration or a stale reference that needs explicit
 disposition).
 ```
 
-**For consumer projects** that vendor or pip-install Library, the
-pointer becomes:
+**For consumer projects** that vendor Library, the pointer becomes:
 
 ```markdown
 ## Path migrations
 
 If you encounter an old path reference in a script or doc, consult
-EMCC.Library's `REORGANIZATION-INSTRUCTIONS.md` (in your Library
-clone, e.g. via `python -c "import librarian, pathlib; print(pathlib.Path(librarian.__file__).resolve().parent.parent / 'REORGANIZATION-INSTRUCTIONS.md')"`).
+EMCC.Library's `REORGANIZATION-INSTRUCTIONS.md` in your Library
+clone (vendored copy, git submodule, or sibling-directory checkout).
+Library is not currently distributed as a Python wheel (per MI-13
+disposition — stdlib only, no PEP 621 manifest). Consumers run
+Codex's `bootstrap.py` + `sync_from_kit.py` directly from a clone or
+vendored copy; resolve the manifest path the same way.
 ```
 
 ---

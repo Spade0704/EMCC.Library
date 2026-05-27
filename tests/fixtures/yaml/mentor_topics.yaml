@@ -1,0 +1,21 @@
+# Fixture mirroring Mentor's topics.yaml block-style form (FINDING #1).
+# Crashes pre-S002 parse_config_yaml on the `keywords:\n      - "..."`
+# block-list-under-continuation pattern.
+
+topics:
+  - name: example_topic
+    keywords:
+      - "example"
+      - "examples"
+    aliases: [exemplar, illustration]
+    cross_manual: false
+    min_similarity: 0.35
+
+  - name: another_topic
+    keywords:
+      - "another"
+      - "another-form"
+    aliases: [alt1, alt2]
+
+  - name: scalar_only
+    keywords: ["inline", "flow-style"]

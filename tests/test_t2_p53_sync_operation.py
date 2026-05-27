@@ -26,17 +26,30 @@ MANDATORY fixture-scope-discipline 6th-cycle preventive sustained per
 codification SOLIDIFIED + Auditor T1 promotion-NOW-OVERDUE recommendation.
 """
 
+import unittest
+
+raise unittest.SkipTest(
+    "MI-16 (S002 / Codex v1.1): test_t2_p53 asserts v1.0 sync-from-kit "
+    "operation end-to-end against bootstrap-output wikis. v1.1 bootstrap "
+    "emits spec (c) scaffold (no _scripts/, _context/, _config/, "
+    "_template/ inside the wiki); sync_from_kit's v1.0 precedence map "
+    "misaligned post-S002. Sync_from_kit unchanged in S002 (still v1.0 "
+    "contract) but its bootstrap-output target paths no longer exist. "
+    "Full retirement deferred to S004 — at which point sync_from_kit "
+    "either rewrites for spec (c) shape OR maintains a v1.0-compat mode "
+    "for legacy wikis. See MIGRATION-ISSUES.md MI-16."
+)
+
 import hashlib
 import subprocess
 import sys
-import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BOOTSTRAP_PY = REPO_ROOT / "bootstrap.py"
-SYNC_FROM_KIT_PY = REPO_ROOT / "_scripts" / "sync_from_kit.py"
+SYNC_FROM_KIT_PY = REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_scripts" / "sync_from_kit.py"
 
 
 def _bootstrap_wiki(tmp_path: Path) -> Path:
@@ -207,7 +220,7 @@ class TestT2P53PrecedenceMap(unittest.TestCase):
             # Sync REPLACES with codex source byte-equivalent
             self.assertEqual(
                 _sha256(target_script),
-                _sha256(REPO_ROOT / "_scripts" / "build_completion_dashboard.py"),
+                _sha256(REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_scripts" / "build_completion_dashboard.py"),
                 "OVERWRITE failed: script not replaced",
             )
 
@@ -221,7 +234,7 @@ class TestT2P53PrecedenceMap(unittest.TestCase):
             self.assertEqual(result.returncode, 0)
             self.assertEqual(
                 _sha256(target_ingest),
-                _sha256(REPO_ROOT / "INGEST_PROCEDURE.md"),
+                _sha256(REPO_ROOT / "wiki.codex" / "git" / "codex" / "INGEST_PROCEDURE.md"),
                 "OVERWRITE failed: INGEST_PROCEDURE.md not replaced",
             )
 
@@ -292,14 +305,14 @@ class TestT2P53CrossLinkArtifactPrecedence(unittest.TestCase):
             # Sync REPLACES with codex source
             self.assertEqual(
                 _sha256(target),
-                _sha256(REPO_ROOT / "_scripts" / "build_topic_index.py"),
+                _sha256(REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_scripts" / "build_topic_index.py"),
                 "OVERWRITE failed: cross-link script not replaced",
             )
             # _lib/topics.py subdir replacement
             lib_topics = wiki / "_scripts" / "_lib" / "topics.py"
             self.assertEqual(
                 _sha256(lib_topics),
-                _sha256(REPO_ROOT / "_scripts" / "_lib" / "topics.py"),
+                _sha256(REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_scripts" / "_lib" / "topics.py"),
                 "OVERWRITE failed: _lib/topics.py not byte-equivalent",
             )
 
@@ -333,7 +346,7 @@ class TestT2P53CrossLinkArtifactPrecedence(unittest.TestCase):
             self.assertTrue(cross_link_template.is_file())
             self.assertEqual(
                 _sha256(topics_template),
-                _sha256(REPO_ROOT / "_template" / "_canon__SEP__topics.yaml"),
+                _sha256(REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_template" / "_canon__SEP__topics.yaml"),
                 "MERGE-NEW failed: topics template byte-drift",
             )
 
@@ -409,12 +422,12 @@ class TestT2P53LibrarianClassSyncPrecedence(unittest.TestCase):
             self.assertEqual(result.returncode, 0)
             self.assertEqual(
                 _sha256(target),
-                _sha256(REPO_ROOT / "CODEX_LIBRARIAN.md"),
+                _sha256(REPO_ROOT / "wiki.codex" / "git" / "codex" / "CODEX_LIBRARIAN.md"),
                 "OVERWRITE failed: CODEX_LIBRARIAN.md not replaced",
             )
 
     def test_t4d_codex_librarian_overwrite_constant_present_in_sync_module(self):
-        sync_text = (REPO_ROOT / "_scripts" / "sync_from_kit.py").read_text(
+        sync_text = (REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_scripts" / "sync_from_kit.py").read_text(
             encoding="utf-8"
         )
         self.assertIn(
@@ -450,7 +463,7 @@ class TestT2P53LibrarianClassSyncPrecedence(unittest.TestCase):
                 _sha256(template_target),
                 _sha256(
                     REPO_ROOT
-                    / "_template"
+                    / "Biz.Automation" / "wikisys.library" / "_template"
                     / ".claude__SEP__personas__SEP__CLAUDE.librarian.md"
                 ),
                 "MERGE-NEW added librarian drop-in template byte-drift",

@@ -1,23 +1,45 @@
-"""Tests for bootstrap.py — S045-T1-P50a + S045-T2-P50b bootstrap stages.
+"""Tests for bootstrap.py — DEPRECATED v1.0-shape tests (MI-16).
 
-S045-T1-P50a (12 tests; floor 573 → 585):
-  AC1 — CLI signature + arg parsing (4 tests)
-  AC2 — folder structure creation idempotent (3 tests)
-  AC3 — 15-script copy from _scripts/ to target _scripts/ (3 tests)
-  AC4 — summary print + error handling (2 tests)
+S002 / Codex v1.1 (2026-05-27): bootstrap.py rewritten per
+tasks/plans/portfolio-folder-structure-spec.md section (c). The
+v1.0-shape tests in this file assert:
+  - WIKI_FOLDERS Lattice-2.0-flavored output (_dashboards/_inbox/
+    _brain_dump/_confidential/01-Domain/etc.)
+  - 15-script copy from _scripts/ into the consumer wiki
+  - _template/ __SEP__ substitution into the consumer wiki
+  - Old <target> positional CLI
 
-S045-T2-P50b (12 tests; floor 585 → 597):
-  AC1 — template enumeration (3 tests)
-  AC2 — __SEP__ → / runtime substitution + Win32-safe gate (4 tests)
-  AC3 — template content byte-equivalence preservation (2 tests)
-  AC4 — full template placement + v1.1 additions (3 tests)
+v1.1 contract is SCAFFOLD-ONLY (no script copy, no template
+substitution): bootstrap emits the canonical portfolio frame
+(Biz.Automation/wikisys.<name>/_*/.gitkeep + wiki.<name>/{git,local}/
++ tasks/ + root stubs). Sync (`sync_from_kit.py`) is the separate
+operation that pulls Codex content into a consuming wiki.
+
+These tests RETIRE per MI-16 in MIGRATION-ISSUES.md. New spec (c)
+tests ship in tests/test_bootstrap_canonical.py.
+
+Per architect plan §S002 "B5b MVP scope" decision and operator
+sign-off 2026-05-27.
 """
+
+import unittest
+
+raise unittest.SkipTest(
+    "MI-16 (S002 / Codex v1.1): test_bootstrap.py asserts v1.0 bootstrap "
+    "output shape (WIKI_FOLDERS, 15-script copy, __SEP__ template "
+    "substitution, <target> CLI). v1.1 bootstrap.py is scaffold-only per "
+    "spec section (c). New canonical-shape tests in "
+    "tests/test_bootstrap_canonical.py. Full retirement deferred to S004 "
+    "(consumer wikis sprint). See MIGRATION-ISSUES.md MI-16."
+)
+
+# --- Deprecated v1.0 test bodies preserved below (unreachable due to ---
+# --- module-level SkipTest above; kept for S004 retirement reference) ---
 
 import hashlib
 import io
 import subprocess
 import sys
-import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import mock
@@ -308,8 +330,9 @@ class TestP50bAC1Enumeration(unittest.TestCase):
 
     def test_enumeration_count_matches_real_template_dir_inventory(self):
         # Hybrid integration test: real install-root _template/ + git ls-files.
+        # S002 / Codex v1.1: _template/ moved to Biz.Automation/wikisys.library/_template/
         result = subprocess.run(
-            ["git", "ls-files", "_template/"],
+            ["git", "ls-files", "Biz.Automation/wikisys.library/_template/"],
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT),
