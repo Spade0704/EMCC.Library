@@ -14,11 +14,13 @@ The bus root is relative; `SessionManager` resolves it against this repo root at
 
 ## Required reading (in this order, before any code)
 
-1. `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` — authoritative Codex build specification. **Spec wins** any contradiction with this file; flag conflicts rather than resolving silently. (S002: relocated from Library root per spec section (b) — see `REORGANIZATION-INSTRUCTIONS.md` pattern P2.)
-2. `wiki.codex/git/codex/INGEST_PROCEDURE.md` + `wiki.codex/git/codex/SEMANTIC_LINT_PROCEDURE.md` — ship **verbatim** into bootstrapped wikis' `_context/` folder. Never paraphrase, shorten, or "improve" them.
-3. `wiki.codex/git/codex/CODEX_LIBRARIAN.md` — Librarian agent specification (the persona this module ships; S002 v1.1 extension adds 3 new ops + 5 Mentor patterns + Telegram auto-summary contract).
-4. `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` — wiki build spec (what `bootstrap.py` materializes for consuming projects).
-5. `tasks/sessions.md` — most recent session entry for current operational context.
+1. **`Index.md` — read FIRST.** File-map / routing table. Tells you where every folder + key file lives + when to load each. Avoids unnecessary searching; gives the operator + agent a shared mental model. Per portfolio spec section (a) RECOMMENDED set; `bootstrap.py` auto-emits this for new consumer projects (this Library copy was backfilled post-S002 since Library was hand-bootstrapped before the canonical-output rewrite landed).
+2. `tasks/sessions.md` — most recent session entry for current operational context.
+3. `tasks/todo.md` — current sprint + active tasks.
+4. `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` — authoritative Codex build specification. **Spec wins** any contradiction with this file; flag conflicts rather than resolving silently. Load on demand for spec-related work (don't pre-load for unrelated tasks). (S002: relocated from Library root per spec section (b) — see `REORGANIZATION-INSTRUCTIONS.md` pattern P2.)
+5. `wiki.codex/git/codex/INGEST_PROCEDURE.md` + `wiki.codex/git/codex/SEMANTIC_LINT_PROCEDURE.md` — ship **verbatim** into bootstrapped wikis' `_context/` folder. Never paraphrase, shorten, or "improve" them. Load on demand for ingest / lint work.
+6. `wiki.codex/git/codex/CODEX_LIBRARIAN.md` — Librarian agent specification (the persona this module ships; S002 v1.1 extension adds 3 new ops + 5 Mentor patterns + Telegram auto-summary contract). Load on demand for Librarian-related work.
+7. `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` — wiki build spec (what `bootstrap.py` materializes for consuming projects). Load on demand for bootstrap behavior changes.
 
 ## Path migrations
 
@@ -32,9 +34,9 @@ If a path you encounter isn't in either the patterns OR the per-project table, s
 
 When the session is run under Lattice 3.0 protocol (Library dogfooding DFDU), also:
 
-6. `EMCC.DFDU/documents/lattice/00-README.md` — canonical Lattice 3.0 ToC
-7. `EMCC.DFDU/documents/lattice/01-LATTICE-AGENT.md` — Mandatory Workflow + system prompt
-8. `EMCC.DFDU/documents/lattice/05-AUDIT-REGIMES.md` — regime decision before any Level-2+ work
+8. `EMCC.DFDU/documents/lattice/00-README.md` — canonical Lattice 3.0 ToC
+9. `EMCC.DFDU/documents/lattice/01-LATTICE-AGENT.md` — Mandatory Workflow + system prompt
+10. `EMCC.DFDU/documents/lattice/05-AUDIT-REGIMES.md` — regime decision before any Level-2+ work
 
 ## ROOT_INDEX
 
@@ -43,6 +45,7 @@ machine-readable old-path → new-path manifest.
 
 | Room | Contents | When to Load |
 |---|---|---|
+| `Index.md` | **File-map / routing table. Read FIRST every session.** Comprehensive list of every folder + key file + when-to-load guidance. Source of truth for "where is X?" lookups. | Every session start; updated as files/folders land |
 | `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` | Authoritative Codex spec. The single canonical version. | Any spec change; clarifying scope |
 | `wiki.codex/git/codex/INGEST_PROCEDURE.md` + `…/SEMANTIC_LINT_PROCEDURE.md` | Verbatim procedures shipped into bootstrapped wikis | Never edit without an explicit spec amendment |
 | `wiki.codex/git/codex/CODEX_LIBRARIAN.md` | Librarian agent specification (S002 v1.1 extension: 3 new ops + 5 Mentor patterns + Telegram contract) | Persona / agent work |
