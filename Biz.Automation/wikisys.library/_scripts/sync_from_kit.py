@@ -56,6 +56,16 @@ CONTEXT_DIR = "_context"
 CONFIG_DIR = "_config"
 TEMPLATE_DIR = "_template"
 
+# S002 / Codex v1.1 — source-side path roots.
+# Library's source-of-truth for _scripts/_template/_config moved to
+# Biz.Automation/wikisys.library/_*; Codex spec docs moved to
+# wiki.codex/git/codex/*. Consumer wiki targets (_scripts/, _context/,
+# _config/, _template/ inside the wiki) unchanged for B5a; the wiki-side
+# canonical-shape rewrite is B5b. See REORGANIZATION-INSTRUCTIONS.md
+# patterns P1 + P2.
+WIKISYS_REL = "Biz.Automation/wikisys.library"
+SPEC_DOCS_REL = "wiki.codex/git/codex"
+
 PROJECT_WIKI_BUILD_SPEC_FILE = "PROJECT_WIKI_BUILD_SPEC.md"
 WIKI_BUILD_SPEC_TARGET = "04-Contributing/PROJECT_WIKI_BUILD_SPEC.md"
 INGEST_PROCEDURE_FILE = "INGEST_PROCEDURE.md"
@@ -73,15 +83,22 @@ class Action(NamedTuple):
 
 
 def _required_sources(codex: Path) -> List[Tuple[str, Path, bool]]:
-    """Enumerate (label, path, is_dir) tuples for the AC10 pre-flight check."""
+    """Enumerate (label, path, is_dir) tuples for the AC10 pre-flight check.
+
+    S002 / Codex v1.1: source roots split — modules under
+    `<codex>/Biz.Automation/wikisys.library/_*`; spec docs under
+    `<codex>/wiki.codex/git/codex/*`.
+    """
+    wikisys = codex / WIKISYS_REL
+    specs = codex / SPEC_DOCS_REL
     return [
-        (SCRIPTS_DIR, codex / SCRIPTS_DIR, True),
-        (PROJECT_WIKI_BUILD_SPEC_FILE, codex / PROJECT_WIKI_BUILD_SPEC_FILE, False),
-        (INGEST_PROCEDURE_FILE, codex / INGEST_PROCEDURE_FILE, False),
-        (SEMANTIC_LINT_PROCEDURE_FILE, codex / SEMANTIC_LINT_PROCEDURE_FILE, False),
-        (CODEX_LIBRARIAN_FILE, codex / CODEX_LIBRARIAN_FILE, False),
-        (CONFIG_DIR, codex / CONFIG_DIR, True),
-        (TEMPLATE_DIR, codex / TEMPLATE_DIR, True),
+        (SCRIPTS_DIR, wikisys / SCRIPTS_DIR, True),
+        (PROJECT_WIKI_BUILD_SPEC_FILE, specs / PROJECT_WIKI_BUILD_SPEC_FILE, False),
+        (INGEST_PROCEDURE_FILE, specs / INGEST_PROCEDURE_FILE, False),
+        (SEMANTIC_LINT_PROCEDURE_FILE, specs / SEMANTIC_LINT_PROCEDURE_FILE, False),
+        (CODEX_LIBRARIAN_FILE, specs / CODEX_LIBRARIAN_FILE, False),
+        (CONFIG_DIR, wikisys / CONFIG_DIR, True),
+        (TEMPLATE_DIR, wikisys / TEMPLATE_DIR, True),
     ]
 
 
@@ -122,52 +139,60 @@ def _check_guard(wiki: Path) -> Optional[str]:
 
 
 def _build_plan(codex: Path, wiki: Path) -> List[Action]:
-    """Enumerate per-file actions in execution order."""
+    """Enumerate per-file actions in execution order.
+
+    S002 / Codex v1.1: source paths read from
+    `<codex>/Biz.Automation/wikisys.library/` (modules) and
+    `<codex>/wiki.codex/git/codex/` (spec docs); consumer wiki targets
+    unchanged.
+    """
+    wikisys = codex / WIKISYS_REL
+    specs = codex / SPEC_DOCS_REL
     actions: List[Action] = []
 
     actions.append(Action(
         kind="OVERWRITE",
         target=SCRIPTS_DIR + "/",
-        source=SCRIPTS_DIR + "/",
+        source=WIKISYS_REL + "/" + SCRIPTS_DIR + "/",
         target_abs=wiki / SCRIPTS_DIR,
-        source_abs=codex / SCRIPTS_DIR,
+        source_abs=wikisys / SCRIPTS_DIR,
         is_dir=True,
     ))
     actions.append(Action(
         kind="OVERWRITE",
         target=WIKI_BUILD_SPEC_TARGET,
-        source=PROJECT_WIKI_BUILD_SPEC_FILE,
+        source=SPEC_DOCS_REL + "/" + PROJECT_WIKI_BUILD_SPEC_FILE,
         target_abs=wiki / WIKI_BUILD_SPEC_TARGET,
-        source_abs=codex / PROJECT_WIKI_BUILD_SPEC_FILE,
+        source_abs=specs / PROJECT_WIKI_BUILD_SPEC_FILE,
         is_dir=False,
     ))
     actions.append(Action(
         kind="OVERWRITE",
         target=CONTEXT_DIR + "/" + INGEST_PROCEDURE_FILE,
-        source=INGEST_PROCEDURE_FILE,
+        source=SPEC_DOCS_REL + "/" + INGEST_PROCEDURE_FILE,
         target_abs=wiki / CONTEXT_DIR / INGEST_PROCEDURE_FILE,
-        source_abs=codex / INGEST_PROCEDURE_FILE,
+        source_abs=specs / INGEST_PROCEDURE_FILE,
         is_dir=False,
     ))
     actions.append(Action(
         kind="OVERWRITE",
         target=CONTEXT_DIR + "/" + SEMANTIC_LINT_PROCEDURE_FILE,
-        source=SEMANTIC_LINT_PROCEDURE_FILE,
+        source=SPEC_DOCS_REL + "/" + SEMANTIC_LINT_PROCEDURE_FILE,
         target_abs=wiki / CONTEXT_DIR / SEMANTIC_LINT_PROCEDURE_FILE,
-        source_abs=codex / SEMANTIC_LINT_PROCEDURE_FILE,
+        source_abs=specs / SEMANTIC_LINT_PROCEDURE_FILE,
         is_dir=False,
     ))
     actions.append(Action(
         kind="OVERWRITE",
         target=CONTEXT_DIR + "/" + CODEX_LIBRARIAN_FILE,
-        source=CODEX_LIBRARIAN_FILE,
+        source=SPEC_DOCS_REL + "/" + CODEX_LIBRARIAN_FILE,
         target_abs=wiki / CONTEXT_DIR / CODEX_LIBRARIAN_FILE,
-        source_abs=codex / CODEX_LIBRARIAN_FILE,
+        source_abs=specs / CODEX_LIBRARIAN_FILE,
         is_dir=False,
     ))
 
     for class_dir in (CONFIG_DIR, TEMPLATE_DIR):
-        src_root = codex / class_dir
+        src_root = wikisys / class_dir
         for src in sorted(src_root.iterdir()):
             if not src.is_file():
                 continue

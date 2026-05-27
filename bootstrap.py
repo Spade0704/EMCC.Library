@@ -59,7 +59,10 @@ SEP_PLACEHOLDER = "__SEP__"
 def _resolve_source_scripts_dir(override=None):
     if override is not None:
         return Path(override)
-    return Path(__file__).resolve().parent / "_scripts"
+    return (
+        Path(__file__).resolve().parent
+        / "Biz.Automation" / "wikisys.library" / "_scripts"
+    )
 
 
 def _ignore_callable(src_dir, names):
@@ -111,7 +114,10 @@ def _create_folders(target, dry_run):
 def _resolve_template_dir(override=None):
     if override is not None:
         return Path(override)
-    return Path(__file__).resolve().parent / TEMPLATE_DIR_NAME
+    return (
+        Path(__file__).resolve().parent
+        / "Biz.Automation" / "wikisys.library" / TEMPLATE_DIR_NAME
+    )
 
 
 def _enumerate_templates(template_dir):

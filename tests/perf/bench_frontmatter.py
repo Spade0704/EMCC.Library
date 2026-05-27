@@ -68,7 +68,7 @@ REPRESENTATIVE_FM_LINES = (
 
 def bench_cprofile_load_page() -> str:
     """Profile 1000 load_page calls on synthetic 50-page fixture; return top-15 report."""
-    sys.path.insert(0, str(REPO_ROOT / "_scripts"))
+    sys.path.insert(0, str(REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_scripts"))
     from _lib import frontmatter
 
     contents = [p.read_text(encoding="utf-8") for p in SAMPLE_PAGES]
@@ -96,7 +96,7 @@ def bench_cprofile_load_page() -> str:
 
 def bench_timeit_strip_eol_comment() -> dict:
     """timeit _strip_eol_comment on representative fm lines; return best/median dict."""
-    sys.path.insert(0, str(REPO_ROOT / "_scripts"))
+    sys.path.insert(0, str(REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_scripts"))
     from _lib.frontmatter import _strip_eol_comment
 
     lines = list(REPRESENTATIVE_FM_LINES)

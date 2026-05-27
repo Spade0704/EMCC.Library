@@ -308,8 +308,9 @@ class TestP50bAC1Enumeration(unittest.TestCase):
 
     def test_enumeration_count_matches_real_template_dir_inventory(self):
         # Hybrid integration test: real install-root _template/ + git ls-files.
+        # S002 / Codex v1.1: _template/ moved to Biz.Automation/wikisys.library/_template/
         result = subprocess.run(
-            ["git", "ls-files", "_template/"],
+            ["git", "ls-files", "Biz.Automation/wikisys.library/_template/"],
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT),

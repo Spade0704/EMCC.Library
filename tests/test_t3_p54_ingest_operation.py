@@ -40,7 +40,7 @@ from tempfile import TemporaryDirectory
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BOOTSTRAP_PY = REPO_ROOT / "bootstrap.py"
-TEMPLATE_DIR = REPO_ROOT / "_template"
+TEMPLATE_DIR = REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_template"
 
 
 def _bootstrap_wiki(tmp_path: Path) -> Path:

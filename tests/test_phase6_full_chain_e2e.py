@@ -41,10 +41,11 @@ from tempfile import TemporaryDirectory
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BOOTSTRAP_PY = REPO_ROOT / "bootstrap.py"
-SYNC_FROM_KIT_PY = REPO_ROOT / "_scripts" / "sync_from_kit.py"
-SCAFFOLD_SOURCE_PY = REPO_ROOT / "_scripts" / "scaffold_source.py"
-SCAFFOLD_BRAIN_DUMP_PY = REPO_ROOT / "_scripts" / "scaffold_brain_dump.py"
-UPDATE_DASHBOARDS_PY = REPO_ROOT / "_scripts" / "update_dashboards.py"
+WIKISYS_SCRIPTS = REPO_ROOT / "Biz.Automation" / "wikisys.library" / "_scripts"
+SYNC_FROM_KIT_PY = WIKISYS_SCRIPTS / "sync_from_kit.py"
+SCAFFOLD_SOURCE_PY = WIKISYS_SCRIPTS / "scaffold_source.py"
+SCAFFOLD_BRAIN_DUMP_PY = WIKISYS_SCRIPTS / "scaffold_brain_dump.py"
+UPDATE_DASHBOARDS_PY = WIKISYS_SCRIPTS / "update_dashboards.py"
 
 
 QA_RULE_SUBSTRINGS = [
@@ -197,7 +198,8 @@ class TestPhase6SpecInvariants(unittest.TestCase):
                 "SEMANTIC_LINT_PROCEDURE.md",
             ):
                 target = wiki / "_context" / fname
-                source = REPO_ROOT / fname
+                # S002 / Codex v1.1: spec docs at wiki.codex/git/codex/
+                source = REPO_ROOT / "wiki.codex" / "git" / "codex" / fname
                 self.assertEqual(
                     _sha256(target),
                     _sha256(source),
@@ -236,7 +238,7 @@ class TestPhase6LibrarianAndScaffoldsIntegration(unittest.TestCase):
             self.assertEqual(_sha256(dropin), _sha256(dropin_src))
             # T4b: canonical declaration
             canon = wiki / "_context" / "CODEX_LIBRARIAN.md"
-            canon_src = REPO_ROOT / "CODEX_LIBRARIAN.md"
+            canon_src = REPO_ROOT / "wiki.codex" / "git" / "codex" / "CODEX_LIBRARIAN.md"
             self.assertTrue(canon.is_file())
             self.assertEqual(_sha256(canon), _sha256(canon_src))
 
@@ -264,7 +266,7 @@ class TestPhase6LibrarianAndScaffoldsIntegration(unittest.TestCase):
             self.assertEqual(result.returncode, 0)
             self.assertEqual(
                 _sha256(target),
-                _sha256(REPO_ROOT / "CODEX_LIBRARIAN.md"),
+                _sha256(REPO_ROOT / "wiki.codex" / "git" / "codex" / "CODEX_LIBRARIAN.md"),
                 "T4d Option A OVERWRITE failed for CODEX_LIBRARIAN.md",
             )
 
