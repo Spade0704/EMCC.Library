@@ -2,22 +2,21 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
-## Current sprint — S001-codex-extraction (2026-05-27, OPEN)
+## Current sprint — S001-codex-extraction (2026-05-27, CLOSED)
 
-### In Progress
-- [x] Phase A — open Lattice 3.0 session + architect plan (this file + `tasks/sessions.md` + `tasks/architect-notes.md`)
-- [ ] Phase B — execution (pending operator green-light on architect plan)
+### Done
+- [x] Phase A — open Lattice 3.0 session + architect plan
+- [x] B1 pre-extraction prep (A3 import verification + .gitignore extension; pyproject.toml deferred to MI-13)
+- [x] B2 bootstrap files (CLAUDE.md / module.json / SOURCE-HISTORY.md / MIGRATION-ISSUES.md / README.md / .github/workflows/test.yml / .claude/personas/CLAUDE.auditor.md)
+- [x] B3 relocate G1–G17 (148-file commit; A2 revoked in-flight; personas at .claude/personas/)
+- [x] B4 (reduced scope) — v1.1-backlog.md only; historical curation deferred to MI-12
+- [x] B5 test infrastructure verified — 615 tests / 611 pass / 3 fail (2 baseline + 1 MI-10) / 1 skip
+- [x] B6 synthetic wiki bootstrap validation — all 15 validators OK / 0 errors
+- [x] B7 EMCC consumer template flip (cross-repo `b10c766`)
+- [x] B8 project-codex archive disposition (cross-repo `53b4fa9`)
+- [x] B9 Auditor dispatch — verdict `pass` with 3 observations (F-1 fixed inline; F-2 → MI-13; F-3 implicit Step 4)
 
-### Backlog (this sprint)
-- [ ] B1 pre-extraction prep (A3 import verification, pyproject.toml, gitignore extension; inbox rename done in Phase A)
-- [ ] B2 bootstrap files (CLAUDE.md, module.json, SOURCE-HISTORY.md, MIGRATION-ISSUES.md, README.md, .github/workflows/test.yml, requirements{,-dev}.txt, personas/CLAUDE.{auditor,librarian}.md)
-- [ ] B3 relocate G1–G17 (file moves; source SHA in SOURCE-HISTORY.md)
-- [ ] B4 curated migration: tasks/* + CHANGELOG.md
-- [ ] B5 test infrastructure rewire + pytest green (~821 tests)
-- [ ] B6 synthetic wiki bootstrap validation
-- [ ] B7 EMCC consumer template flip (cross-repo)
-- [ ] B8 project-codex archive disposition (cross-repo)
-- [ ] B9 Auditor dispatch + verdict + session close
+→ See `tasks/sessions.md` Session 1 CLOSED entry for full close record.
 
 ## Next sprints (planned)
 

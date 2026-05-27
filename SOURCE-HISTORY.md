@@ -38,7 +38,9 @@ Per `tasks/architect-notes.md` §S001 goes/stays inventory G1–G20:
 
 ## What stayed in project-codex (now archive)
 
-Lattice 2.0 specs (7 `LATTICE_v0.*_SPEC.md` files), superseded Codex spec versions (`CODEX_BUILD_SPEC_v1_1.md`, `v1_2.md`), `documents/lattice/` (13 Lattice 2.0 docs), Lattice 2.0 personas (`.claude/personas/CLAUDE.{architect,auditor,craftsman,scribe}.md`), the 3 lattice-2.0 scripts + their 5 tests (A1), 2 lattice-tactical tests + their script (A2 — `test_phase6_full_chain_e2e.py`, `test_steel_thread_tracker.py`, `steel_thread_tracker.py`), `PROJECT_INDEX.md` (project-codex-specific), `tasks/lattice-extraction-tracker.md`. Project-codex's `CLAUDE.md` + `README.md` rewritten as archive banners (Phase B8).
+Lattice 2.0 specs (7 `LATTICE_v0.*_SPEC.md` files), superseded Codex spec versions (`CODEX_BUILD_SPEC_v1_1.md`, `v1_2.md`), `documents/lattice/` (13 Lattice 2.0 docs), Lattice 2.0 personas (`.claude/personas/CLAUDE.{architect,auditor,craftsman,scribe}.md`), the 3 lattice-2.0 scripts + their 5 tests (A1), `PROJECT_INDEX.md` (project-codex-specific), `tasks/lattice-extraction-tracker.md`. Project-codex's `CLAUDE.md` + `README.md` rewritten as archive banners (Phase B8).
+
+**A2 originally claimed `test_phase6_full_chain_e2e.py` + `test_steel_thread_tracker.py` + `steel_thread_tracker.py` would also stay — REVOKED in Phase B3** after re-reading each file's docstring + Codex spec cross-references (both tests + the script are explicitly Codex per spec §7 Phase 6 + P14). All three GO to Library, not stay. See MIGRATION-ISSUES.md §A2 for the full revocation trace. (F-1 Auditor observation 2026-05-27 audit, prose drift fixed here.)
 
 ## License carry
 
