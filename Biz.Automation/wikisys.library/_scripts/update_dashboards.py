@@ -284,7 +284,16 @@ def _section_unverified_claims(wiki_root: Path) -> List[str]:
 
 def _section_recent_ingest(wiki_root: Path) -> List[str]:
     lines = ["## Recent Ingest", ""]
-    log_path = wiki_root / INGEST_LOG_RELATIVE
+    # S004 MI-18: discovery via frontmatter.find_decisions_dir() handles
+    # v1.0 (wiki_root/_decisions/) AND v1.1 (install/Biz.Automation/
+    # wikisys.*/_decisions/). Pre-S004 health.md showed empty Recent
+    # Ingest for Library because the v1.0 lookup couldn't find _decisions/
+    # after S002 split.
+    try:
+        decisions_dir = frontmatter.find_decisions_dir(wiki_root)
+        log_path = decisions_dir / "ingest-log.md"
+    except FileNotFoundError:
+        log_path = wiki_root / INGEST_LOG_RELATIVE  # sentinel; will fail .exists()
     if not log_path.exists():
         lines.append("_No ingest entries yet._")
         return lines

@@ -189,8 +189,12 @@ def _load_roster(wiki_root: Path) -> List[Dict[str, Any]]:
 
     Missing file -> raises FileNotFoundError (caught by _main, exit 2).
     Malformed yaml or wrapper-not-list -> ConfigYamlError propagates.
+
+    S004 MI-18: discovery via frontmatter.find_canon_dir() handles v1.0
+    (wiki_root/_canon/) AND v1.1 (install/Biz.Automation/wikisys.*/_canon/).
     """
-    roster_path = wiki_root / ROSTER_RELATIVE
+    canon_dir = frontmatter.find_canon_dir(wiki_root)
+    roster_path = canon_dir / "roster.yaml"
     if not roster_path.exists():
         raise FileNotFoundError(
             "required canon file missing: {}".format(roster_path)

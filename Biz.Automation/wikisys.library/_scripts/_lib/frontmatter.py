@@ -17,53 +17,40 @@ from typing import Any, Dict, List, Optional, Union
 def find_wiki_root():
     """Walk up from this file looking for a marker that identifies the WIKI_ROOT.
 
-    Three resolution cases (checked in priority order):
+    Post-S002 (Codex v1.1) restructure: `_lib/frontmatter.py` lives at
+    `Biz.Automation/wikisys.<name>/_scripts/_lib/frontmatter.py` in any v1.1
+    install (Library OR consumer), but at `<wiki>/_scripts/_lib/frontmatter.py`
+    in a v1.0-shape bootstrapped consuming-project wiki.
 
-    1. **Ancestor IS a wiki** — `Home.md` present at an ancestor dir. This is
-       the v1.0-shape bootstrapped wiki layout: `<wiki>/_scripts/_lib/frontmatter.py`,
-       walk up, find `<wiki>/Home.md`. Used by Mentor + any v1.0-shape consumer.
+    Marker-based search handles three contexts:
+    - v1.0 bootstrapped wiki: `Home.md` at the wiki root (per spec §2.2).
+    - v1.1 Library install: `CLAUDE.md` + `module.json` co-existing.
+    - v1.1 consumer install: `CLAUDE.md` + `emcc.modules.json` co-existing
+      (consumer-side equivalent of `module.json`; added S004 MI-18 closure).
 
-    2. **Ancestor is a v1.1 install/consumer** — has `CLAUDE.md` AND a
-       `wiki.<name>/git/Home.md` subpath. This is Codex v1.1's canonical
-       layout where `_scripts/` lives at `Biz.Automation/wikisys.<name>/_scripts/`
-       and the wiki content is at `<root>/wiki.<name>/git/`. Used by Library's
-       dogfood wiki (`wiki.codex/git/`) and future v1.1 consumer projects
-       (`wiki.aviation/git/`, etc.).
-
-    3. **Ancestor is a Library install without dogfood wiki** — has `CLAUDE.md`
-       AND `module.json` co-existing but no `wiki.<name>/git/Home.md`. Fallback
-       to return the install root itself; this is rare (Library always has a
-       dogfood wiki) but kept for resilience.
-
-    Resolves MI-17: pre-fix, all 17 scripts in `_scripts/` used
-    `WIKI_ROOT = Path(__file__).resolve().parent.parent` which only worked for
-    case 1; post-S002 restructure put Library scripts at 4 levels deep instead
-    of 2, breaking dashboard generation against Library's own dogfood wiki.
-
-    Note on `__file__` semantics: this function's `Path(__file__)` always
-    resolves to `_lib/frontmatter.py`'s location regardless of which script
-    imports + calls it. That's fine — the marker-walk reaches the right
-    ancestor regardless of starting point, just takes one extra hop up from
-    scripts at `_scripts/<script>.py` vs `_scripts/_lib/<module>.py`.
+    See MIGRATION-ISSUES.md MI-17 (partial fix; this function) and MI-18
+    (canon-lookup; companion `find_canon_dir()` + `find_decisions_dir()`
+    below). Marker priority is loop-order: Home.md check fires first per
+    ancestor iteration, so a v1.0-shape wiki always wins over a v1.1 install
+    marker at a deeper ancestor. (For Library itself — a v1.1 install — the
+    `wiki.codex/git/Home.md` is NOT an ancestor of `_lib/frontmatter.py`, so
+    case 2 fires and returns the install root. Companion `find_*_dir()`
+    helpers handle the system/content split from the install root.)
     """
     here = Path(__file__).resolve()
     for ancestor in here.parents:
         # Case 1: ancestor IS a wiki (v1.0-shape consumer)
         if (ancestor / "Home.md").exists():
-            return ancestor
-        # Case 2: ancestor is a v1.1 install/consumer with a wiki.<name>/git/ content side
-        if (ancestor / "CLAUDE.md").exists():
-            for wiki_content in ancestor.glob("wiki.*/git"):
-                if (wiki_content / "Home.md").exists():
-                    return wiki_content
-            # Case 3: Library install fallback (CLAUDE.md + module.json, no dogfood wiki)
-            if (ancestor / "module.json").exists():
-                return ancestor
+            return ancestor  # v1.0 bootstrapped wiki (or Library's wiki.codex/git/)
+        if (ancestor / "CLAUDE.md").exists() and (ancestor / "module.json").exists():
+            return ancestor  # v1.1 Library install
+        if (ancestor / "CLAUDE.md").exists() and (ancestor / "emcc.modules.json").exists():
+            return ancestor  # v1.1 consumer install
     raise RuntimeError(
         "WIKI_ROOT cannot be resolved — no marker found in any ancestor of "
-        f"{here}. Expected one of: Home.md (v1.0-shape wiki), "
-        "CLAUDE.md + wiki.<name>/git/Home.md (v1.1 install/consumer), or "
-        "CLAUDE.md + module.json (Library install without dogfood wiki)."
+        f"{here}. Expected either Home.md (v1.0 bootstrapped wiki), "
+        "CLAUDE.md + module.json (v1.1 Library install), or "
+        "CLAUDE.md + emcc.modules.json (v1.1 consumer install)."
     )
 
 
@@ -74,6 +61,102 @@ _find_wiki_root = find_wiki_root
 
 
 WIKI_ROOT = find_wiki_root()
+
+
+def _find_install_root(start_path):
+    """Walk up from `start_path` to find a v1.1 install root.
+
+    Install root markers (v1.1):
+    - `CLAUDE.md` + `module.json` (Library install)
+    - `CLAUDE.md` + `emcc.modules.json` (consumer install)
+
+    Returns the install root Path, or None if no marker is reachable.
+    Companion to `_find_wiki_root()` for MI-18 canon/decisions lookup.
+    """
+    start = Path(start_path).resolve()
+    for ancestor in [start] + list(start.parents):
+        if (ancestor / "CLAUDE.md").exists():
+            if (ancestor / "module.json").exists() or (ancestor / "emcc.modules.json").exists():
+                return ancestor
+    return None
+
+
+def find_canon_dir(start_path=None):
+    """Find `_canon/` dir whether layout is v1.0 wiki or v1.1 install/consumer.
+
+    S004 MI-18 closure. After S002 restructure, `_canon/` is no longer
+    inside the wiki root for v1.1 consumers — it moves to the system-side
+    zone at `<install>/Biz.Automation/wikisys.<name>/_canon/`. Scripts
+    that hard-code `WIKI_ROOT/_canon/` (P13 check_concept_coverage,
+    P7 validate_canon_integrity, P15 build_canon_drift_report, P12
+    check_canon_consistency, validate_topic_registry, etc.) silently
+    find no canon in v1.1 consumers and emit false-empty validators.
+
+    Discovery (in order):
+    1. `<start>/_canon/` if it exists (v1.0 wiki layout — direct child).
+    2. Walk up from `start` to find an install root marker (per
+       `_find_install_root()`), then glob
+       `<install>/Biz.Automation/wikisys.*/_canon/` and return the first match.
+
+    `start_path` defaults to `WIKI_ROOT` (per `_find_wiki_root()`).
+
+    Raises `FileNotFoundError` if no canon dir is discoverable.
+    """
+    if start_path is None:
+        start_path = WIKI_ROOT
+    start = Path(start_path).resolve()
+
+    direct = start / "_canon"
+    if direct.is_dir():
+        return direct
+
+    install = _find_install_root(start)
+    if install is not None:
+        biz_root = install / "Biz.Automation"
+        if biz_root.is_dir():
+            for entry in sorted(biz_root.iterdir()):
+                if entry.is_dir() and entry.name.startswith("wikisys."):
+                    canon = entry / "_canon"
+                    if canon.is_dir():
+                        return canon
+
+    raise FileNotFoundError(
+        f"find_canon_dir: no _canon/ at v1.0 path {direct} or any v1.1 "
+        f"wikisys.*/_canon/ relative to start={start}."
+    )
+
+
+def find_decisions_dir(start_path=None):
+    """Find `_decisions/` dir whether layout is v1.0 wiki or v1.1 install/consumer.
+
+    Same discovery pattern as `find_canon_dir()`. Used by the dashboard
+    orchestrator's `health.md` "Recent Ingest" section which reads
+    `_decisions/ingest-log.md` — currently empty in Library's `health.md`
+    because the generator couldn't find `_decisions/` post-S002 split
+    (MI-18 surface).
+    """
+    if start_path is None:
+        start_path = WIKI_ROOT
+    start = Path(start_path).resolve()
+
+    direct = start / "_decisions"
+    if direct.is_dir():
+        return direct
+
+    install = _find_install_root(start)
+    if install is not None:
+        biz_root = install / "Biz.Automation"
+        if biz_root.is_dir():
+            for entry in sorted(biz_root.iterdir()):
+                if entry.is_dir() and entry.name.startswith("wikisys."):
+                    decisions = entry / "_decisions"
+                    if decisions.is_dir():
+                        return decisions
+
+    raise FileNotFoundError(
+        f"find_decisions_dir: no _decisions/ at v1.0 path {direct} or any v1.1 "
+        f"wikisys.*/_decisions/ relative to start={start}."
+    )
 
 
 SPEC_2_3_FM_FIELDS_DOC = """SSOT registry of fm field names defined by CODEX_BUILD_SPEC_v1_3.md §2.3.
