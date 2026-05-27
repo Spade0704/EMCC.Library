@@ -2,7 +2,98 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
-## Session 4 — 2026-05-27 — OPEN — Mentor v1.1 migration arc + MI-16 + MI-18 closure (S004)
+## Session 4 — 2026-05-28 — CLOSED — Mentor v1.1 migration arc + MI-16 + MI-18 closure (S004)
+
+**Status:** CLOSED — all 6 phases shipped (A + B + C + D + E + F). Auditor verdict `concerns` with 3 actionable findings + 2 info findings; all 3 actionable findings addressed inline (F10 + F11 + F12 fixed); no blocking findings. AC1-AC9 met objectively + verified; AC10 Auditor verdict = `concerns` (resolved inline per architect plan F4 "Concerns → address inline + close on pass").
+
+**Commits (Library, branch `claude/s004-mentor-v1.1-migration-na3hg`):**
+- `87b0451` — Phase A: open Session 4 + architect plan for Mentor v1.1 migration
+- `496eb0c` — Phase C: sync_from_kit v1.1 contract rewrite (MI-16 closure) + tests + spec doc §4.2
+- `5d4c754` — Phase D: MI-18 canon-lookup marker-walk (find_canon_dir + find_decisions_dir + 9 tests)
+- `002d78e` — Phase E: end-to-end validation + find_config_dir + walker raw/ exclusion + REORGANIZATION-INSTRUCTIONS manifest update
+- `7ea0441` — Phase F4: Auditor F10 MI-16 registry header RESOLVED disposition update
+
+**Commits (Mentor, branch `claude/s004-mentor-v1.1-migration-na3hg`):**
+- `caafc8a` — Phase A: open Session 4 on Mentor
+- `a966d27` — B1: gitignore v1.1 canonical patterns + untrack Obsidian state
+- `1719d94` — B2: wiki/_scripts/ → Biz.Automation/wikisys.mentor/_scripts/ (P1)
+- `e0af746` — B3: wiki/_{config,canon,context,decisions,dashboards}/ → Biz.Automation/wikisys.mentor/_* (P1)
+- `db9ecd6` — B4: wiki/_sources/raw/ → wiki.mentor/git/raw/ (P3)
+- `9ca6c97` — B5: wiki/_brain_dump/ → wiki.mentor/local/ideas/ (gitignored) (P4)
+- `21a35b9` — B6: topic folders + Home.md + legacy archive moves (P5)
+- `7f02cfe` — B7+B8: confidential → local zone + persona hoist (P7)
+- `7124469` — B9: v1.1 canonical root frame (CLAUDE.md/Index.md/emcc.modules.json/tasks/architect-notes.md + 0-Inbox/ + assets/)
+- `f8e919a` — B10: cleanup empty wiki/ shell + pre-existing empty stubs
+- `42dd4fc` — S004 close (Mentor side): Project Mentor → Biz.Automation/Mentor Protocol + post-S004 sync delivery + dashboard regen
+- `4e985bc` — Phase F4: Auditor concerns address (F11 stale wiki/_ refs + F12 _dashboards/ duplication)
+
+**Operator-locked decisions at Phase A (D1-D5):**
+- D1: Full scope (MI-16 + MI-18 fixes ship alongside structural migration; no interim broken-sync state)
+- D2: Mentor v1.1 canonical layout per spec §a + §b; wiki.mentor/ subject-name variance preserved
+- D3: wiki_legacy_2026-05-25/ → wiki.mentor/git/_archive/ with banner pointing at v1.1 layout
+- D4: SPLIT pattern audit folds into B5/B6 (touch each page when moving; surface unpaired Authorities as proposals)
+- D5: Lattice 3.0 Regime B Auditor dispatched at close per S002 pattern
+
+**Mid-session decisions:**
+- Phase E carried 4 additional Library fixes (not in D-plan but flowed from end-to-end validation): find_config_dir() + walker raw/ exclusion + update_dashboards CLI arg + 4 _config readers retrofitted. All surgical extensions of D's marker-walk pattern.
+- Operator mid-sprint instruction (2026-05-28 Phase E): rename + relocate Project Mentor/ → Biz.Automation/Mentor Protocol/ (executed in 42dd4fc).
+
+**Migration issues raised + resolved this session:**
+- **MI-16** (RESOLVED): sync_from_kit v1.1 contract rewrite. Targets v1.1 canonical paths (consumer's Biz.Automation/wikisys.<name>/_* + wiki.<name>/git/codex/). Consumer-name auto-discovery via Biz.Automation/wikisys.* glob. 17 tests pass (4 new TestConsumerDiscovery class + 4 existing rewritten for v1.1 targets).
+- **MI-18** (RESOLVED): canon-lookup divergence post-S002 split. Added find_canon_dir() + find_decisions_dir() + find_config_dir() marker-walk helpers in _lib/frontmatter.py. Extended _find_wiki_root() with v1.1 consumer marker (CLAUDE.md + emcc.modules.json). 12 scripts retrofitted. 12 new tests cover v1.0 + v1.1 fixtures.
+
+**Auditor dispatch (Phase F):**
+- audit_id: `audit-mentor-v1.1-migration-2026-05-28`
+- Mechanism: Claude Code Agent tool, subagent_type general-purpose, fresh context. DFDU CLAUDE.auditor.md 116-line canonical persona embedded inline.
+- Trigger basis: schedule (sprint close) + risk (Level-2+: cross-repo + sync rewrite + new canon-lookup module + ~30+ file moves on Mentor)
+- Verdict: **`concerns`** with 3 actionable findings + 2 info findings.
+- Findings:
+  - F10 (concerns, AC4 / Structural-over-Advisory): MI-16 registry header outdated — C-commit pledged "Registry update in Phase E5" but only MI-18 flipped. **Fixed inline** in Library `7ea0441`.
+  - F11 (concerns, AC2 / Surgical-Changes vs R3 mitigation): 3 stale wiki/_inbox/ + wiki_legacy_2026-05-25/ project-root refs in Home.md + File-Routing.md. R3 mitigation in architect plan didn't execute mid-B. **Fixed inline** in Mentor close commit.
+  - F12 (concerns, AC1 / Structural-over-Advisory): _dashboards/ tracked in BOTH wikisys.mentor/_dashboards/ and wiki.mentor/git/_dashboards/ with diverging content. Architect-notes acknowledged ambiguity but two tracked locations is duplication. **Fixed inline** — dropped wikisys.mentor/_dashboards/ (wiki.mentor/git/_dashboards/ is canonical Mentor location).
+  - F13 (info, B10 acknowledged carry): empty wiki/ shell + raw/x/bookmarks/. Operator-removable post-session.
+  - F14 (info, operator-content): JP CheatSheet has post-S004 operator edit referencing the empty wiki/ leftover. Operator carry per Cheatsheet.md canonicalization deferral.
+- Audit duration: ~11 minutes; full evidence-citation discipline; per-AC verification with specific file/SHA/commit citations + Karpathy principle citations (Simplicity-First, Surgical-Changes, Structural-over-Advisory).
+- Auditor NO-READ enforcement: persona embedded explicitly states NO READ on tasks/lessons.md and tasks/plans/<task-id>/. Auditor read tasks/architect-notes.md §S004 (allowed per persona §You MAY read) but flagged R3 mitigation as expected-not-executed.
+
+**Verified end-state at S004 close (post-F4):**
+- Library: `python -m unittest discover -s tests -t .` → 605 tests / 605 pass / 6 skipped (MI-16 retired modules). Net delta from S002 baseline (589): +16 (+4 sync v1.1, +12 canon/decisions/config lookup).
+- Library dashboards (`python Biz.Automation/wikisys.library/_scripts/update_dashboards.py`): 15/15 sub-scripts return OK; health.md "Recent Ingest" populates with ingest-log entries.
+- Mentor dashboards (`python Biz.Automation/wikisys.mentor/_scripts/update_dashboards.py wiki.mentor/git`): 15/15 sub-scripts return OK; metrics held vs M001 baseline:
+  - Completion: 53% (27 pages — vs M001 28; -1 from tasks/architect-notes.md addition)
+  - Canon contradictions: 0
+  - Cascade staleness: 0
+  - Concept coverage gaps: 0
+  - Cross-link coverage: 15/28 (54%) — exact M001 parity
+  - Unverified claims: 2 (same as M001)
+- Sync Library → Mentor: 5 OVERWRITES + 0 MERGE-NEW + 34 SKIPS via `--force` (operator-content carries).
+- REORGANIZATION-INSTRUCTIONS.md Mentor per-project moves table + cross-repo Library-side moves section landed.
+
+**Out of scope / carried forward (post-S004):**
+- MI-12 (historical curation) — still carried, no urgency
+- OBS-1 (S002 carry; AC12 sweep methodology) — still deferred
+- OBS-4 (S002 carry; persona-mirror drift) — still deferred
+- MI-17 (partial closure in S004 via update_dashboards CLI arg; per-sub-script CLIs still TBD — 16 scripts)
+- R-00008 cross-link surface expansion (M001 follow-up) — separate content sprint
+- SPLIT pairing for Karpathy + Cherny — backfill stub R-XXXXX pages on next publish event per Authority-Content-Policy
+- Cheatsheet.md canonicalization — operator's JP CheatSheet carries pending content edits; rename deferred per Mentor architect-notes
+- F13 + F14 from Auditor — pre-existing carries / operator-content
+- portfolio-folder-structure-spec.md line 881 "Mentor was greenfield, no migration needed" — outdated post-S004; carry to next spec touch
+- Bootstrap pre-S004 Aviation / Tat / iSommelier / eddyandwolff / aviation-career / EMCC / EMCC.DFDU consumer wikis (next S005+)
+
+**Subagents:** 1 spawned — the Auditor (general-purpose; fresh context); ~11 minute duration; returned full audit_result envelope with verdict `concerns` + AC1-AC10 status + 5 findings (3 actionable + 2 info). Third Auditor dispatch in Library (after Session 1 + Session 2); confirms DFDU persona portability across three consecutive Library sessions + cross-repo audit capability.
+
+**Context events:** Operator mid-sprint instruction (Phase E end) to relocate Project Mentor/ → Biz.Automation/Mentor Protocol/; executed without blocking S004 close. No other context events.
+
+**Next sprints (per tasks/todo.md):**
+- **S005** (master plan Step 7) — DFDU's own wiki/ bootstrap
+- **S006+** — remaining consumer wikis (Aviation / Tat / iSommelier / etc.) on v1.1 canonical scaffold (no migration needed; greenfield)
+- **MI-17 full closure** — remaining 16 scripts marker-walk WIKI_ROOT fix
+- Mentor M002-residual: SPLIT pairing decision (Karpathy + Cherny), R-00008 cross-link surface, JP CheatSheet canonicalization
+
+---
+
+## Session 4 — 2026-05-27 — OPEN — Mentor v1.1 migration arc + MI-16 + MI-18 closure (S004) [SUPERSEDED BY CLOSE ENTRY ABOVE]
 
 **Status:** OPEN — Phase A complete (this commit). Phases B–F in flight per architect plan banked at `tasks/architect-notes.md` §S004.
 
