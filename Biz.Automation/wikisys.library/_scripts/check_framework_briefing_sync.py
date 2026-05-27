@@ -70,7 +70,7 @@ from _lib import frontmatter
 from _lib import markdown
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 DASHBOARD_RELATIVE = "_dashboards/framework_briefing_sync.md"
 
 REASON_PAIR_MISSING = "public_pair declared but target file not on disk"

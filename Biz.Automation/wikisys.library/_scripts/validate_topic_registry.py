@@ -30,7 +30,7 @@ from _lib import markdown
 from _lib.topics import Topic, build_alias_index, load_topics, resolve_topic
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 DASHBOARD_RELATIVE = "_dashboards/topic_registry_validation.md"
 TOPICS_RELATIVE = "_canon/topics.yaml"
 

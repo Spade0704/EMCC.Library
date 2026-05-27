@@ -56,7 +56,7 @@ from _lib import frontmatter
 from _lib.config_loader import ConfigYamlError, load_config_yaml
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 DASHBOARD_RELATIVE = "_dashboards/cascade.md"
 CONFIG_RELATIVE = "_config/cascade_map.yaml"
 

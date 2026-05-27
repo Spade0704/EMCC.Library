@@ -73,7 +73,7 @@ from _lib import frontmatter
 from _lib import markdown
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 HEALTH_DASHBOARD_RELATIVE = "_dashboards/health.md"
 INGEST_LOG_RELATIVE = "_decisions/ingest-log.md"
 TOP_N_DEFAULT = 5

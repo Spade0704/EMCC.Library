@@ -124,9 +124,40 @@ All 5 files raise `unittest.SkipTest` at module import time with MI-16 reason. N
 
 For BOOTSTRAPPED CONSUMING WIKIS the old math still works correctly (the bootstrapped layout retains `<wiki>/_scripts/` at the wiki root), so production usage is unaffected. The break only manifests when Codex scripts are invoked from Library's install location without an explicit wiki-path argument — primarily caught by `tests/_lib/test_frontmatter.py::test_wiki_root_resolves_correctly` since the other 13 scripts' default `WIKI_ROOT` isn't covered by their tests.
 
-**Partial resolution (this commit — small follow-up after S002 close):** `_lib/frontmatter.py::WIKI_ROOT` rewritten to use marker-based ancestor walk (`Home.md` for bootstrapped wikis OR `CLAUDE.md` + `module.json` co-existing for Library install). Handles both contexts correctly. Test updated to assert against either marker set. Result: 589/589 tests pass (down from 588/589 with 1 baseline failure).
+**Partial resolution (PR #6 era, 2026-05-27 morning):** `_lib/frontmatter.py::WIKI_ROOT` rewritten to use marker-based ancestor walk (`Home.md` for bootstrapped wikis OR `CLAUDE.md` + `module.json` co-existing for Library install). Handles both contexts correctly. Test updated to assert against either marker set. Result: 589/589 tests pass.
 
-**Deferred to a follow-up sprint (S002b or S004):** Apply the same marker-walk pattern to the 13 other scripts (`steel_thread_tracker.py`, `validate_canon_integrity.py`, `validate_reveal_conceit.py`, `check_framework_briefing_sync.py`, `validate_terminology.py`, `update_dashboards.py`, `check_cross_refs.py`, `build_completion_dashboard.py`, `build_topic_index.py`, `cross_link_topics.py`, `check_canon_consistency.py`, `validate_topic_registry.py`, `delta_source_docs.py`). Cleanest implementation: factor `_find_wiki_root()` into `_lib/frontmatter.py` as a public helper, import + use across all scripts. Tests don't currently cover these scripts' default-WIKI_ROOT behavior, so adding tests is part of the follow-up scope.
+**Full resolution (this commit — S002f follow-up):** Three changes land:
+
+1. **`find_wiki_root()` enhanced** in `_lib/frontmatter.py` — adds Case 2 detection: when an ancestor has `CLAUDE.md` + at least one `wiki.<name>/git/Home.md` subpath, return that wiki content dir. Library install now resolves WIKI_ROOT to `wiki.codex/git/` (the content side) instead of Library repo root (install side); future v1.1-bootstrapped consumer projects resolve similarly to `<project>/wiki.<name>/git/`. Public function (renamed `_find_wiki_root` → `find_wiki_root`); back-compat alias preserved.
+
+2. **All 17 scripts updated** to use `WIKI_ROOT = frontmatter.find_wiki_root()` in place of the broken `parent.parent` walk: `check_framework_briefing_sync.py`, `steel_thread_tracker.py`, `build_topic_index.py`, `validate_terminology.py`, `validate_canon_integrity.py`, `delta_source_docs.py`, `validate_reveal_conceit.py`, `build_completion_dashboard.py`, `check_cascade.py`, `check_canon_consistency.py`, `update_dashboards.py`, `build_canon_drift_report.py`, `collect_open_questions.py`, `check_cross_refs.py`, `cross_link_topics.py`, `check_concept_coverage.py`, `validate_topic_registry.py`. `frontmatter` import added to the 2 scripts that didn't already have it (`steel_thread_tracker.py`, `build_canon_drift_report.py`).
+
+3. **`.gitignore` extended** with `wiki.codex/git/_dashboards/` (the new canonical output location post-fix). Previous `wiki.codex/_dashboards/` rule retained for backward-compat with any wiki.codex-internal _dashboards/ artifact still on disk.
+
+**Verified end-to-end:** Running `python Biz.Automation/wikisys.library/_scripts/update_dashboards.py` from Library root now produces real dashboards at `wiki.codex/git/_dashboards/` reflecting Library's actual dogfood wiki content (27 pages tracked, 37% avg completion, 20/34 cross-link coverage). 16 of 17 sub-scripts emit clean dashboards. The 17th (`check_concept_coverage.py`) fails on missing `_canon/roster.yaml` — surfaced as MI-18.
+
+### MI-18 — `_canon/` lookup divergence for system-vs-content split (surfaced post-MI-17)
+
+**Discovered:** 2026-05-27 immediately after MI-17 fix landed — first time `update_dashboards.py` correctly targeted `wiki.codex/git/` and `check_concept_coverage.py` ran with a real WIKI_ROOT.
+
+**Description:** Several validator/dashboard scripts read `_canon/*.yaml` files from `<WIKI_ROOT>/_canon/`. In v1.0-shape wikis (Mentor, future bootstrapped consumers), `_canon/` lives at the wiki root — works. In Library's v1.1 layout, `_canon/` was extracted to `Biz.Automation/wikisys.library/_canon/` (system side, per portfolio spec F6), and `wiki.codex/git/` (content side) has no `_canon/` subfolder. Scripts that hardcode `WIKI_ROOT / "_canon"` now fail when run against Library's dogfood wiki.
+
+Surfaced concretely by `check_concept_coverage.py`:
+```
+P13 check_concept_coverage -- FAILED:
+FileNotFoundError: required canon file missing:
+/home/user/EMCC.Library/wiki.codex/git/_canon/roster.yaml
+```
+
+Same structural concern likely applies to `_decisions/ingest-log.md` reads (the "Recent Ingest" section of `health.md` shows empty for Library — the dashboard generator can't find the ingest log on the content side because the log lives at `wikisys.library/_decisions/ingest-log.md` system-side).
+
+**Resolution options (deferred to S004 or dedicated sprint):**
+
+- (a) **Make canon lookup canonical-layout aware** — scripts try `<WIKI_ROOT>/_canon/` first, fall back to `<install_root>/Biz.Automation/wikisys.<name>/_canon/` for Library/v1.1-consumer layouts. Same for `_decisions/`. Adds layout-detection to each affected script.
+- (b) **Symlink/copy canon into wiki content side** — `<wiki_root>/_canon/` becomes a pointer to `<install_root>/wikisys.<name>/_canon/`. Simpler at the script level but requires bootstrap.py to create the link/copy.
+- (c) **Factor canon-discovery into `_lib/config_loader.py` or new `_lib/canon.py`** — analogous to `find_wiki_root()`; scripts call `find_canon_dir(wiki_root)`. Most architectural; matches the marker-walk pattern.
+
+**Recommendation:** Option (c) for consistency with how MI-17 was resolved. Defer to S004 or a focused S005x sprint; not blocking Library's v1.1 production status (the 16 other sub-scripts work; `check_concept_coverage` was previously also broken — just silently because WIKI_ROOT was wrong; now it fails loudly).
 
 ## S002 dispositions for MI-10, MI-11, MI-12, MI-13 (resolved / carried)
 

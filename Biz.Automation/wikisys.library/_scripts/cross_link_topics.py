@@ -42,7 +42,7 @@ from _lib import frontmatter
 from _lib import markdown
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 
 # Byte-exact marker constants per spec §2.7 marker contract.
 MARKER_START = "<!-- codex:see-also:start -->"
