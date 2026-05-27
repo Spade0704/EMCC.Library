@@ -149,7 +149,13 @@ def _load_threads(wiki_root: Path):
     ([], True). Malformed yaml or wrapper-not-list -> ConfigYamlError
     propagates.
     """
-    config_path = wiki_root / CONFIG_RELATIVE
+    # S004 MI-18: discovery via frontmatter.find_config_dir() handles v1.0 +
+    # v1.1 layouts.
+    try:
+        config_dir = frontmatter.find_config_dir(wiki_root)
+        config_path = config_dir / "steel_threads.yaml"
+    except FileNotFoundError:
+        config_path = wiki_root / CONFIG_RELATIVE  # sentinel; will fail .exists()
     if not config_path.exists():
         return [], True
     threads = load_config_yaml(

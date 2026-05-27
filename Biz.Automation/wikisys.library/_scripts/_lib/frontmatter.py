@@ -126,6 +126,43 @@ def find_canon_dir(start_path=None):
     )
 
 
+def find_config_dir(start_path=None):
+    """Find `_config/` dir whether layout is v1.0 wiki or v1.1 install/consumer.
+
+    S004 MI-18 closure (companion to find_canon_dir + find_decisions_dir).
+    `_config/` moves alongside `_canon/` and `_decisions/` to system-side
+    `<install>/Biz.Automation/wikisys.<name>/_config/` in v1.1. Scripts
+    reading `<wiki_root>/_config/<name>.yaml` (e.g.,
+    check_concept_coverage::_load_concept_coverage_config) silently miss
+    consumer customization post-migration.
+
+    Returns the config dir Path. Raises FileNotFoundError if no _config/
+    is discoverable.
+    """
+    if start_path is None:
+        start_path = WIKI_ROOT
+    start = Path(start_path).resolve()
+
+    direct = start / "_config"
+    if direct.is_dir():
+        return direct
+
+    install = _find_install_root(start)
+    if install is not None:
+        biz_root = install / "Biz.Automation"
+        if biz_root.is_dir():
+            for entry in sorted(biz_root.iterdir()):
+                if entry.is_dir() and entry.name.startswith("wikisys."):
+                    config = entry / "_config"
+                    if config.is_dir():
+                        return config
+
+    raise FileNotFoundError(
+        f"find_config_dir: no _config/ at v1.0 path {direct} or any v1.1 "
+        f"wikisys.*/_config/ relative to start={start}."
+    )
+
+
 def find_decisions_dir(start_path=None):
     """Find `_decisions/` dir whether layout is v1.0 wiki or v1.1 install/consumer.
 

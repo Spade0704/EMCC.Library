@@ -214,7 +214,13 @@ def _load_concept_coverage_config(wiki_root: Path) -> Dict[str, Any]:
     file -> defaults merged per-field. load_config_yaml does NOT fit
     the scalar-key shape; direct parse_config_yaml call used here.
     """
-    config_path = wiki_root / CONFIG_RELATIVE
+    # S004 MI-18: discovery via frontmatter.find_config_dir() handles v1.0 +
+    # v1.1 layouts. Missing config dir -> defaults verbatim.
+    try:
+        config_dir = frontmatter.find_config_dir(wiki_root)
+        config_path = config_dir / "concept_coverage.yaml"
+    except FileNotFoundError:
+        config_path = wiki_root / CONFIG_RELATIVE  # sentinel; will fail .exists()
     merged = dict(DEFAULTS)
     merged["exclude_folders"] = list(DEFAULTS["exclude_folders"])
     merged["exclude_entities"] = list(DEFAULTS["exclude_entities"])

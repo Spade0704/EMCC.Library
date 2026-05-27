@@ -409,4 +409,12 @@ def _main(wiki_root, stdout=None, stderr=None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(_main(WIKI_ROOT))
+    # S004 MI-17 partial closure: accept optional positional wiki_root CLI
+    # arg so operators can run dashboards against an explicit content root
+    # (e.g., wiki.mentor/git/) regardless of where the orchestrator script
+    # lives. Defaults to module-level WIKI_ROOT for backwards compatibility.
+    if len(sys.argv) > 1:
+        cli_wiki_root = Path(sys.argv[1]).resolve()
+    else:
+        cli_wiki_root = WIKI_ROOT
+    sys.exit(_main(cli_wiki_root))

@@ -66,9 +66,18 @@ def frontmatter_line_count(text: str) -> int:
 
 
 def iter_content_pages(wiki_root: Path) -> Iterator[Path]:
-    """Yield content-page Paths, skipping any path with a `_`-prefixed component."""
+    """Yield content-page Paths.
+
+    Skips any path containing a `_`-prefixed component (legacy convention:
+    `_canon/`, `_dashboards/`, `_archive/`, etc.), AND the canonical
+    v1.1 `raw/` source archive at wiki content root (S004 extension —
+    `raw/` is read-only source material per portfolio spec P3, never
+    content pages).
+    """
     for md in wiki_root.rglob("*.md"):
         rel_parts = md.relative_to(wiki_root).parts
         if any(part.startswith("_") for part in rel_parts):
+            continue
+        if rel_parts and rel_parts[0] == "raw":
             continue
         yield md

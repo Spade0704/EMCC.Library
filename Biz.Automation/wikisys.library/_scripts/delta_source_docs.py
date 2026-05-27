@@ -358,8 +358,15 @@ def _load_cascade_map(wiki_root: Path) -> List[Dict[str, str]]:
     top-level `pairs` not a list propagates `ConfigYamlError` to caller.
     Mirrors `_scripts/check_cascade.py:_load_cascade_map` semantics.
     """
+    # S004 MI-18: discovery via frontmatter.find_config_dir() handles v1.0 +
+    # v1.1 layouts.
+    try:
+        config_dir = frontmatter.find_config_dir(wiki_root)
+        config_path = config_dir / "cascade_map.yaml"
+    except FileNotFoundError:
+        config_path = wiki_root / CASCADE_CONFIG_RELATIVE  # sentinel; load -> []
     raw_pairs = load_config_yaml(
-        wiki_root / CASCADE_CONFIG_RELATIVE,
+        config_path,
         wrapper_key="pairs",
         required_keys=("source", "derived"),
         entity_noun="pair",

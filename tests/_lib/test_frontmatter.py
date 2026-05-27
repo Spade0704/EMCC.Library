@@ -414,6 +414,41 @@ class TestCanonAndDecisionsLookup(unittest.TestCase):
             with self.assertRaises(FileNotFoundError):
                 frontmatter.find_canon_dir(wiki)
 
+    def test_find_config_dir_v1_0_layout_returns_direct_child(self):
+        """v1.0 wiki: <wiki>/_config/ exists directly under start_path."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            wiki = tmp_path / "wiki"
+            cfg = wiki / "_config"
+            cfg.mkdir(parents=True)
+            (cfg / "concept_coverage.yaml").write_text("min_mentions: 2\n", encoding="utf-8")
+            result = frontmatter.find_config_dir(wiki)
+            self.assertEqual(result, cfg)
+
+    def test_find_config_dir_v1_1_consumer_layout(self):
+        """v1.1 consumer: <root>/Biz.Automation/wikisys.<name>/_config/."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            consumer = tmp_path / "consumer"
+            wiki_git = consumer / "wiki.mentor" / "git"
+            wiki_git.mkdir(parents=True)
+            (wiki_git / "Home.md").write_text("# Home\n", encoding="utf-8")
+            (consumer / "CLAUDE.md").write_text("# C\n", encoding="utf-8")
+            (consumer / "emcc.modules.json").write_text("{}\n", encoding="utf-8")
+            cfg = consumer / "Biz.Automation" / "wikisys.mentor" / "_config"
+            cfg.mkdir(parents=True)
+            (cfg / "concept_coverage.yaml").write_text("min_mentions: 2\n", encoding="utf-8")
+            result = frontmatter.find_config_dir(wiki_git)
+            self.assertEqual(result, cfg)
+
+    def test_find_config_dir_missing_raises_file_not_found(self):
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            wiki = tmp_path / "wiki"
+            wiki.mkdir(parents=True)
+            with self.assertRaises(FileNotFoundError):
+                frontmatter.find_config_dir(wiki)
+
     def test_find_decisions_dir_v1_0_layout_returns_direct_child(self):
         """v1.0 wiki: <wiki>/_decisions/ exists directly under start_path."""
         with TemporaryDirectory() as tmp:
