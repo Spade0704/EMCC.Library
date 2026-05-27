@@ -49,7 +49,7 @@ from _lib import markdown
 from _lib.config_loader import ConfigYamlError, load_config_yaml
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 DASHBOARD_RELATIVE = "_dashboards/reveal_conceit.md"
 CONFIG_RELATIVE = "_config/reveal_leak_patterns.yaml"
 # P8-local render-order subset. `info` rules are filtered upstream in

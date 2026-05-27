@@ -57,7 +57,7 @@ from _lib.topics import (
 )
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 DASHBOARD_RELATIVE = "_dashboards/topic_index.md"
 TOPICS_RELATIVE = "_canon/topics.yaml"
 

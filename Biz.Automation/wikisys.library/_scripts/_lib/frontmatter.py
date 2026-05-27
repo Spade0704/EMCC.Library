@@ -14,41 +14,66 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 
-def _find_wiki_root():
+def find_wiki_root():
     """Walk up from this file looking for a marker that identifies the WIKI_ROOT.
 
-    Post-S002 (Codex v1.1) restructure: `_lib/frontmatter.py` lives at
-    `Biz.Automation/wikisys.library/_scripts/_lib/frontmatter.py` in Library's install,
-    but at `<wiki>/_scripts/_lib/frontmatter.py` in a bootstrapped consuming-project wiki.
-    A hard-coded `parent.parent.parent` (3 levels) used to work for both because
-    `_scripts/` lived at the install/wiki root. Post-restructure it only works for
-    bootstrapped wikis; in Library's install it resolves to `wikisys.library/`, not
-    Library's repo root.
+    Three resolution cases (checked in priority order):
 
-    Marker-based search handles both contexts:
-    - Library install: marker is `CLAUDE.md` + `module.json` co-existing (Library
-      module-identity files).
-    - Bootstrapped wiki: marker is `Home.md` at the wiki root (per spec §2.2).
+    1. **Ancestor IS a wiki** — `Home.md` present at an ancestor dir. This is
+       the v1.0-shape bootstrapped wiki layout: `<wiki>/_scripts/_lib/frontmatter.py`,
+       walk up, find `<wiki>/Home.md`. Used by Mentor + any v1.0-shape consumer.
 
-    See MIGRATION-ISSUES.md MI-17 for the broader `WIKI_ROOT` issue across the rest of
-    the scripts in `_scripts/*.py` (also using `parent.parent` — same root cause, but no
-    tests cover them and they're typically invoked with explicit wiki-path arguments in
-    production, so deferred to a follow-up sprint).
+    2. **Ancestor is a v1.1 install/consumer** — has `CLAUDE.md` AND a
+       `wiki.<name>/git/Home.md` subpath. This is Codex v1.1's canonical
+       layout where `_scripts/` lives at `Biz.Automation/wikisys.<name>/_scripts/`
+       and the wiki content is at `<root>/wiki.<name>/git/`. Used by Library's
+       dogfood wiki (`wiki.codex/git/`) and future v1.1 consumer projects
+       (`wiki.aviation/git/`, etc.).
+
+    3. **Ancestor is a Library install without dogfood wiki** — has `CLAUDE.md`
+       AND `module.json` co-existing but no `wiki.<name>/git/Home.md`. Fallback
+       to return the install root itself; this is rare (Library always has a
+       dogfood wiki) but kept for resilience.
+
+    Resolves MI-17: pre-fix, all 17 scripts in `_scripts/` used
+    `WIKI_ROOT = Path(__file__).resolve().parent.parent` which only worked for
+    case 1; post-S002 restructure put Library scripts at 4 levels deep instead
+    of 2, breaking dashboard generation against Library's own dogfood wiki.
+
+    Note on `__file__` semantics: this function's `Path(__file__)` always
+    resolves to `_lib/frontmatter.py`'s location regardless of which script
+    imports + calls it. That's fine — the marker-walk reaches the right
+    ancestor regardless of starting point, just takes one extra hop up from
+    scripts at `_scripts/<script>.py` vs `_scripts/_lib/<module>.py`.
     """
     here = Path(__file__).resolve()
     for ancestor in here.parents:
+        # Case 1: ancestor IS a wiki (v1.0-shape consumer)
         if (ancestor / "Home.md").exists():
-            return ancestor  # bootstrapped wiki
-        if (ancestor / "CLAUDE.md").exists() and (ancestor / "module.json").exists():
-            return ancestor  # Library install
+            return ancestor
+        # Case 2: ancestor is a v1.1 install/consumer with a wiki.<name>/git/ content side
+        if (ancestor / "CLAUDE.md").exists():
+            for wiki_content in ancestor.glob("wiki.*/git"):
+                if (wiki_content / "Home.md").exists():
+                    return wiki_content
+            # Case 3: Library install fallback (CLAUDE.md + module.json, no dogfood wiki)
+            if (ancestor / "module.json").exists():
+                return ancestor
     raise RuntimeError(
         "WIKI_ROOT cannot be resolved — no marker found in any ancestor of "
-        f"{here}. Expected either Home.md (bootstrapped wiki) or "
-        "CLAUDE.md + module.json (Library install)."
+        f"{here}. Expected one of: Home.md (v1.0-shape wiki), "
+        "CLAUDE.md + wiki.<name>/git/Home.md (v1.1 install/consumer), or "
+        "CLAUDE.md + module.json (Library install without dogfood wiki)."
     )
 
 
-WIKI_ROOT = _find_wiki_root()
+# Back-compat alias — keep `_find_wiki_root` for any callers that imported the
+# private name from the PR #4 era. Public `find_wiki_root` is the canonical
+# name post-MI-17 fix (used by all 17 scripts).
+_find_wiki_root = find_wiki_root
+
+
+WIKI_ROOT = find_wiki_root()
 
 
 SPEC_2_3_FM_FIELDS_DOC = """SSOT registry of fm field names defined by CODEX_BUILD_SPEC_v1_3.md §2.3.

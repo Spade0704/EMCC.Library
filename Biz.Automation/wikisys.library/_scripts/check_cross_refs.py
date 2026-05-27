@@ -47,7 +47,7 @@ from _lib import frontmatter
 from _lib import markdown
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 DASHBOARD_RELATIVE = "_dashboards/cross_refs.md"
 CLASS_ORDER = ("broken_wikilinks", "orphan_pages")
 

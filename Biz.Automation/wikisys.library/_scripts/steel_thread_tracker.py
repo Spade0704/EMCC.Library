@@ -73,10 +73,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Set
 
 from _lib import dashboard
+from _lib import frontmatter
 from _lib.config_loader import ConfigYamlError, load_config_yaml
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 DASHBOARD_RELATIVE = "_dashboards/steel_threads.md"
 CONFIG_RELATIVE = "_config/steel_threads.yaml"
 

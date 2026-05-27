@@ -125,7 +125,7 @@ from _lib import frontmatter
 from _lib.config_loader import ConfigYamlError, load_config_yaml
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 INTRO_SECTION_TITLE = "<intro>"
 H2_BOUNDARY_RE = re.compile(r"^## ", re.MULTILINE)
 DASHBOARD_RELATIVE = "_dashboards/source_delta.md"

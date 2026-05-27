@@ -56,10 +56,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from _lib import dashboard
+from _lib import frontmatter
 from _lib.config_loader import ConfigYamlError, load_config_yaml
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 DASHBOARD_RELATIVE = "_dashboards/canon_drift.md"
 SNAPSHOT_BASE_RELATIVE = "_canon/.snapshots"
 

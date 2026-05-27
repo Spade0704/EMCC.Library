@@ -69,7 +69,7 @@ from _lib import markdown
 from _lib.config_loader import ConfigYamlError, load_config_yaml
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
+WIKI_ROOT = frontmatter.find_wiki_root()
 DASHBOARD_RELATIVE = "_dashboards/canon_consistency.md"
 
 CANON_FILES: Dict[str, Dict[str, Any]] = {
