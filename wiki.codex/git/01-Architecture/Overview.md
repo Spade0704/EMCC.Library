@@ -4,14 +4,14 @@ type: overview
 visibility: internal
 completion: 40
 status: outlined
-last_updated: 2026-05-24
+last_updated: 2026-05-27
 dependencies: ["01-Architecture/Folder-Architecture", "01-Architecture/Design-Principles", "02-Operations/Bootstrap", "02-Operations/Sync", "02-Operations/Ingest"]
 public_pair: null
 blocking_questions: []
 topics: [codex_architecture, codex_operations, cross_link_generation, iron_soul_reference]
 related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Configuration-Files.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md, Home.md]
 tags: [codex_architecture, codex_operations, cross_link_generation, iron_soul_reference]
-canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §1"]
+canon_sources: ["wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §1"]
 unverified_claims:
   - "Source CODEX_BUILD_SPEC_v1_3.md carries inconsistent version stamps: header says v1.3, footer says 'Codex Build Spec v1.2 — April 2026', and an embedded Phase-1-Q3 reads 'spec is v1.2'. The header (v1.3) is treated as authoritative for routing; the footer/Phase-1 mismatches are pending an upstream Scribe fix to the source. Do NOT edit the archived source."
 ---
@@ -67,6 +67,16 @@ Problems Codex solves:
 ## What changed in v1.3 (current)
 
 Cross-link generation. Stacks on the v1.2 baseline (health-summary orchestration; already shipped). Adds topical cross-linking: a per-project topic registry (`_canon/topics.yaml`), three new scripts (#16 `build_topic_index.py`, #17 `cross_link_topics.py`, #18 `validate_topic_registry.py`), two new optional frontmatter fields (`topics`, `related_files`) plus a human-owned `tags` field, a marker-bracketed "See also" body block, and an optional **project-local** linker plug-in (TF-IDF default is pure stdlib). No change to existing aggregator/validator contracts; the cross-link pipeline runs as an additive stage in `update_dashboards.py`. See [[Cross-Link-Generation]].
+
+## Codex v1.1 update arc (2026-05-27)
+
+Codex v1.0 → v1.1 shipped via Library S002 (closed 2026-05-27). Three structural shifts landed:
+
+- **Portfolio folder layout.** Module source files (`_scripts/`, `_template/`, `_config/`, `_canon/`, `_context/`, `_decisions/`) extracted from the wiki into a sibling `Biz.Automation/wikisys.<projectname>/` container per the operator's portfolio folder-structure spec (F5 + F6 resolution). Wiki content split into a public `wiki.<name>/git/` zone and a private `wiki.<name>/local/` zone (F10). See `REORGANIZATION-INSTRUCTIONS.md` for the pattern P1–P8 manifest.
+- **Canonical-output `bootstrap.py`.** `bootstrap.py <projectname> [--minimal | --code | --website | --full]` produces the canonical tree per spec §(c). Scaffold-only — no script copy; consumers run scripts from a vendored / submodule / sibling-checkout of Library. `sync_from_kit.py` still ships at the v1.0 contract (MI-16 carry; v1.0-shape script copy + procedure-doc delivery); reconciliation deferred to S004 along with the v1.0 → v1.1 wiki migration path.
+- **5 new audit scripts + Librarian extension.** `audit_doc_pairing.py`, `audit_gitignore.py`, `route_inbox.py`, `audit_assets.py`, `audit_local_split.py` ship in `wikisys.library/_scripts/`. `CODEX_LIBRARIAN.md` extended with 3 new operations (Inbox-Sort, Pairing-Audit, Cross-Project-Scan), 5 Mentor pattern codifications, and a Telegram auto-summary contract.
+
+See `tasks/sessions.md` Session 2 CLOSED entry for the full close record and `tasks/plans/portfolio-folder-structure-spec.md` for the canonical layout spec.
 
 <!-- codex:see-also:start -->
 ## See also

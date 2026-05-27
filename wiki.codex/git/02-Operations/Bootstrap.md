@@ -4,53 +4,85 @@ type: guide
 visibility: internal
 completion: 40
 status: outlined
-last_updated: 2026-05-24
+last_updated: 2026-05-27
 dependencies: ["01-Architecture/Wiki-Structure", "01-Architecture/File-Manifest", "02-Operations/Sync"]
 public_pair: null
 blocking_questions: []
 topics: [codex_operations, cross_link_generation]
 related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Configuration-Files.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Overview.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md, Home.md]
 tags: [codex_operations, cross_link_generation]
-canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §4.1"]
+canon_sources: ["wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §4.1", "tasks/plans/portfolio-folder-structure-spec.md §(c)"]
 unverified_claims: []
 ---
 
-# Bootstrap — one-time wiki creation
+# Bootstrap — one-time project creation (v1.1 canonical-output)
 
 ```bash
-cd <wherever Codex is installed>
-python bootstrap.py <target-wiki-path>
+cd <Library checkout>
+python bootstrap.py <projectname> [--minimal | --code | --website | --full]
 ```
 
-Creates the full wiki folder structure at `<target-wiki-path>`, copies all 15 scripts, drops in commented config templates, populates starter meta-pages.
+- `<projectname>` — required positional. Used as folder name AND as suffix for `wikisys.<projectname>/` + `wiki.<projectname>/`. Filesystem-safe characters only.
+- `--minimal` — thin braindump (aviation-career style). Root files + `tasks/` + `0-Inbox/` + `wiki.<name>/git/` only.
+- `--code` — product-code project (Flutter, Python pkg, CLI). Adds `<product-code-root>/.gitkeep` + code-aware `.gitignore`.
+- `--website` — public-website project (Next.js, Squarespace). Adds `website/.gitkeep` + web-aware `.gitignore`.
+- `--full` — default. Full canonical tree per `tasks/plans/portfolio-folder-structure-spec.md` §(c).
 
-## What Bootstrap creates
+## Scaffold-only contract (v1.1)
 
-Starter meta-pages dropped in:
+Bootstrap is **scaffold-only** post-S002. It emits `.gitkeep` placeholders + 4 root stubs (`CLAUDE.md`, `Index.md`, `Cheatsheet.md`, `.gitignore`) + 4 task stubs (`tasks/todo.md`, `sessions.md`, `lessons.md`, `archive.md`) per spec §(c) lines 864–895. **No script copy.** Consumers run scripts directly from a vendored / submodule / sibling-checkout of Library (MI-13 disposition: stdlib-only, no Python wheel distribution).
 
-- `Home.md` — landing page.
-- `00-Start-Here/Project-Overview`, `How-to-Use-This-Wiki`, `Glossary`, `Terminology-Rules`.
-- `04-Contributing/Update-Cascade`, `File-Routing`, `Style-Guide`.
-- `_confidential/Confidential_Profile.md` skeleton.
-- `_context/CLAUDE_CONTEXT_RULES.md` (customizable per project).
-- `_context/INGEST_PROCEDURE.md` and `_context/SEMANTIC_LINT_PROCEDURE.md` (shipped verbatim — see Principle #2 / [[Sync]] hard-rules).
-- `_canon/`, `_brain_dump/`, `_decisions/`, `_sources/`, `_sources/raw/`, `_inbox/` READMEs.
-- `_decisions/ingest-log.md` (starter append-only log, v1.1).
-- `_sources/raw/README.md` (explains read-only archive, v1.1).
+## What Bootstrap creates (`--full`)
 
-Full file list: see [[File-Manifest]].
+The canonical tree (~40 ops on a clean target — 16 folders + 4 root stubs + 4 task stubs + assorted `.gitkeep`):
+
+```
+<projectname>/
+├── 0-Inbox/.gitkeep
+├── Biz.Automation/
+│   ├── wikisys.<projectname>/
+│   │   ├── _scripts/.gitkeep
+│   │   ├── _template/.gitkeep
+│   │   ├── _config/.gitkeep
+│   │   └── _canon/.gitkeep
+│   └── .gitkeep
+├── wiki.<projectname>/
+│   ├── local/.gitkeep
+│   └── git/
+│       ├── raw/.gitkeep
+│       └── ideas/.gitkeep
+├── tasks/{todo,sessions,lessons,archive}.md
+├── assets/{logos,brand,photos,videos,designs,generated}/.gitkeep
+├── Index.md
+├── CLAUDE.md
+├── Cheatsheet.md
+└── .gitignore
+```
+
+`_context/` + `_decisions/` are Codex-pattern optionals; consumers add them as needed (only Library uses them today).
 
 ## After Bootstrap
 
-The consuming project does Phases 3–7 of the [[Build-Workflow]] to populate content. Quick-reference: see [[Quickstart]] Appendix B.
+The consuming project populates `wiki.<name>/git/` topic folders + `wikisys.<name>/_config/` + `_canon/` content. Quick-reference: [[Quickstart]].
 
 ## When Bootstrap runs
 
-Exactly once per consuming project. Re-running Bootstrap against an existing wiki is not supported — for infrastructure refresh, use [[Sync]].
+Exactly once per consuming project. Re-running Bootstrap against an existing project is not supported — for ongoing infrastructure refresh, use [[Sync]].
 
-## Phase 1 questions Bootstrap implicitly answers
+## MI-16 carry — sync still on v1.0 contract
 
-Bootstrap presumes the user has already answered the Phase-1 intake questions from [[Build-Workflow]] §7 — install path, Iron Soul reference availability, starting Codex version, whether to `git init` the new wiki, project-specific constraints.
+`sync_from_kit.py` ships at the v1.0 contract: copies scripts into a `_scripts/` directory inside the consuming wiki and ships procedure docs to `_context/`. v1.1 bootstrap is scaffold-only and does NOT produce that `_scripts/` directory, so a freshly-bootstrapped v1.1 project is misaligned with what sync expects to find. Resolution: two coupled S004 decisions — (a) where post-v1.1 sync delivers procedure docs, (b) how legacy v1.0 wikis migrate forward. See `MIGRATION-ISSUES.md` MI-16 and `tasks/sessions.md` Session 2 close entry.
+
+## Verification recipe
+
+After bootstrap, verify:
+
+```bash
+python bootstrap.py <projectname> --full --yes
+# Expect: 40 ops on a clean target (Library's own S002 close verification).
+```
+
+The canonical tree must match `tasks/plans/portfolio-folder-structure-spec.md` §(c) lines 864–895 exactly. See AC2 in Library S002 acceptance criteria for the historical baseline.
 
 <!-- codex:see-also:start -->
 ## See also

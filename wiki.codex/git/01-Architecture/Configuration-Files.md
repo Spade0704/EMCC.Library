@@ -4,20 +4,29 @@ type: reference
 visibility: internal
 completion: 40
 status: outlined
-last_updated: 2026-05-24
+last_updated: 2026-05-27
 dependencies: ["01-Architecture/Automation-Scripts", "01-Architecture/Cross-Link-Generation"]
 public_pair: null
 blocking_questions: []
 topics: [canon_discipline, codex_architecture, cross_link_generation]
 related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Overview.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md, Home.md]
 tags: [canon_discipline, codex_architecture, cross_link_generation]
-canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §2.5"]
+canon_sources: ["wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §2.5"]
 unverified_claims: []
 ---
 
 # Configuration Files
 
 Codex separates **behavior tuning** (`_config/`) from **ground-truth facts** (`_canon/`).
+
+## v1.1 location (post-S002)
+
+Both folders live on the **system side** of the canonical portfolio layout (per `tasks/plans/portfolio-folder-structure-spec.md` F6 — wikisys mirrors Codex underscore folders):
+
+- **In Library (canonical home):** `Biz.Automation/wikisys.library/_config/` + `Biz.Automation/wikisys.library/_canon/`. These are the source-of-truth versions of the templates + Library's own canon entities (Codex documenting Codex).
+- **In a v1.0-shape consuming wiki post-Sync:** `<wiki>/_config/` + `<wiki>/_canon/` — sync_from_kit (MI-16 carry: still on v1.0 contract) copies the templates here. v1.1-bootstrapped consumers will receive `_config/` + `_canon/` under `Biz.Automation/wikisys.<projectname>/` directly from scaffold; the post-v1.1 sync delivery target is the open S004 decision (see [[Sync]] §"v1.1 known limitation").
+
+The schemas below are identical across both sides — only the on-disk location differs.
 
 ## `_config/` — behavior tuning, per-project
 
