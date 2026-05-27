@@ -128,6 +128,180 @@ When the Codex→Lattice repo split runs ("Path C" per `tasks/lattice-extraction
 
 Once Codex (post-split, in its own repo) is used to bootstrap a wiki for a consuming project, Librarian becomes the Claude operating in that wiki. The persona drop-in mechanism for consumed wikis is part of Codex's deployment work — separate from this declaration.
 
+## v1.1 extensions (S002 / Codex v1.1, 2026-05-27)
+
+The canonical portfolio folder layout (per
+`tasks/plans/portfolio-folder-structure-spec.md`) introduces three new
+operations beyond the v1.0 Bootstrap / Sync / Ingest / Maintenance set,
+plus five Mentor-pattern codifications surfaced by the Mentor wiki
+report (2026-05-27).
+
+### Three new canonical operations
+
+#### Inbox-Sort
+
+Classify drops in the project-root `0-Inbox/` by destination zone.
+Operates alongside the existing wiki-internal `_inbox/` ingest:
+where the wiki-internal inbox is sources-for-wiki only, the
+project-root `0-Inbox/` may hold anything (wiki source, task draft,
+asset, website draft, code artifact).
+
+Driver: `Biz.Automation/wikisys.<projectname>/_scripts/route_inbox.py`.
+
+- **Phase 1 (scan):** Script walks `0-Inbox/` and emits a per-file
+  manifest at `<root>/route_candidates.json` carrying deterministic
+  metadata (filename, extension, size, mtime, sha256 first-4KB).
+  Manifest entries' `destination` / `destination_zone` / `rationale`
+  fields are null — for the Librarian to populate.
+- **Phase 2 (route — agent's work):** Librarian reads the manifest,
+  classifies each entry into one of: `wiki` (route to
+  `wiki.<name>/git/<topic>/` or `local/<topic>/`), `tasks` (append to
+  `tasks/todo.md`), `assets` (place under `assets/<subfolder>/`),
+  `website` (move to `website/<stack>/drafts/`), or `code` (move to
+  `<product-code-root>/`). Populates `destination` (full target path),
+  `destination_zone` (the zone label), `rationale` (one-line "why"
+  per spec d Change 5).
+- **Phase 3 (execute):** Script applies moves mechanically.
+
+Classification heuristics (Librarian-side, NOT script):
+- File extension hints at zone (.md → wiki/tasks, .png/.jpg → assets,
+  .html → website, .py/.dart/.ts → code).
+- Filename keywords hint at topic.
+- Content first paragraph hints at topic + zone.
+- On ambiguity (zone unclear, multiple plausible classifications),
+  HALT-LOUD per the core hard rule — surface candidate routes, ask
+  user.
+
+#### Pairing-Audit
+
+Every `Biz.Automation/<automationname>/` pairs with
+`wiki.<projectname>/git/<automationname>.doc/`. The `.doc` suffix is
+the discovery contract; the Librarian audits the pairing on demand.
+
+Driver: `Biz.Automation/wikisys.<projectname>/_scripts/audit_doc_pairing.py`.
+
+Two finding kinds:
+- **`unpaired-automation`** — `Biz.Automation/foo/` exists with no
+  `wiki.<name>/git/foo.doc/` partner. Librarian proposes a `.doc/`
+  scaffold (paste in the operator's confirmation).
+- **`orphan-doc-folder`** — `wiki.<name>/git/bar.doc/` exists with no
+  `Biz.Automation/bar/` partner. Librarian asks whether to (a) rename
+  the doc folder, (b) create the missing automation skeleton, or
+  (c) accept as intentionally orphan (e.g. doc for a deprecated /
+  external automation).
+
+#### Cross-Project-Scan (Phase 2 stub)
+
+Cross-project pattern mining, mediated by EMCC's orchestration layer.
+Librarian reads sibling project wikis to surface cross-project
+patterns (Codex topics that appear in 3+ project wikis; reusable
+canon entries; cross-cutting Style-Guide additions).
+
+**S002 ships only a stub.** Full implementation depends on EMCC
+Director + Migrator agents reaching ship-ready status. See spec
+section (d) §"Change 4: Cross-project scope (Phase 2)".
+
+### Five Mentor pattern codifications
+
+Surfaced by the 2026-05-27 Mentor wiki report (Mentor bootstrapped
+2026-05-25 as wiki #2 in `spade0704/Project-Mentor`). All five are
+now part of the Librarian's standard discipline.
+
+#### Pattern 1: SPLIT — entity-vs-content separation
+
+Canon facts (entities) live in `_canon/roster.yaml`,
+`_canon/taxonomy.yaml`, `_canon/timeline.yaml`. Page bodies (content)
+live in `wiki.<name>/git/<topic>/*.md`. Never mix: a wiki page MAY
+reference canon entities via frontmatter (`canon_sources: [...]`,
+`topics: [...]`) but the page body never duplicates canon facts
+verbatim — it interprets, narrates, or contextualizes them.
+
+Discipline: when a fact promotes from page-worthy to canon-worthy,
+the Librarian extracts the fact to `_canon/<file>.yaml`, then leaves
+a *reference* in the page (not a duplicate). The page's `canon_sources:`
+fm cites the new canon entry.
+
+#### Pattern 2: Verbatim + project-addenda
+
+`INGEST_PROCEDURE.md` and `SEMANTIC_LINT_PROCEDURE.md` ship verbatim
+from Codex into every consuming wiki's `_context/`. Consuming projects
+that need project-specific override may add an `_addenda.md` file in
+`_context/` that documents their additions — but the base procedure
+file itself is NEVER modified by the project. Sync overwrites the
+base file; the addenda file is project-customized and Sync
+NEVER-TOUCHES it (Style-Guide addenda follow the same pattern).
+
+This preserves the v1.0 verbatim-discipline invariant while letting
+projects add real per-project rules without forking the base
+procedure.
+
+#### Pattern 3: `Home.md` NEVER-touched-by-Sync
+
+Mentor wiki report observation: bootstrap emits a skeleton
+`wiki.<name>/git/Home.md` with project-specific routing structure
+that operators customize heavily. Sync MUST NOT overwrite this.
+Extends the existing `_context/CLAUDE_CONTEXT_RULES.md`
+NEVER-TOUCHED precedent to `Home.md`.
+
+Sync-precedence row added in spec v1.2:
+| File | Class | Why |
+|---|---|---|
+| `wiki.<name>/git/Home.md` | NEVER-TOUCHED | Project-customized routing structure (per Mentor wiki observation). |
+
+#### Pattern 4: Atomic paired writes
+
+Already a v1.0 hard rule ("Paired writes atomic"); Mentor observation
+makes it explicit which file trios bind:
+
+- **Ingest:** page write + index update + archive rename must all
+  succeed or all roll back. If any one fails, the whole ingest cycle
+  aborts and surfaces the failure (don't half-commit).
+- **Canon promotion:** new canon entry write + page body
+  `canon_sources:` cite + cross-link block update must all bind. If
+  the cross-link generator fails post canon-write, roll back canon
+  too (don't leave dangling references).
+
+Discipline: build the full edit set in memory; validate end-to-end;
+only then commit to disk. On partial failure, restore from the
+pre-edit state captured at the start of the cycle.
+
+#### Pattern 5: `max_links_per_page` per-project override
+
+`Biz.Automation/wikisys.<name>/_config/cross_link.yaml` defines a
+`max_links_per_page` knob (default from canonical Codex template).
+Projects may override per-wiki by editing this file; Sync's
+MERGE-NEW-ONLY contract preserves the override (sync doesn't touch
+existing `_config/` files).
+
+Default value: `max_links_per_page: 5` (matches v1.0). Mentor
+observed that knowledge-dense wikis benefit from a higher limit
+(8-12); thin wikis benefit from a lower limit (3) to prevent
+cross-link noise.
+
+### Telegram auto-summary contract (S002 scope addition, 2026-05-27)
+
+At the end of every turn that completes meaningful work (file edits
+committed, audit verdict received, sub-phase closed, or sprint
+close), in addition to the in-terminal output, call
+`mcp__plugin_telegram_telegram__reply` with `chat_id` from
+`$TELEGRAM_CHAT_ID` and a 2-4 line summary of:
+
+  (a) what was just done,
+  (b) what's next,
+  (c) whether operator input is needed.
+
+Skip for trivial turns (status checks, file reads with no state
+change, intermediate tool calls inside a multi-tool block).
+
+**Soft compliance only** — if the reply tool errors or `chat_id` is
+unset, log and continue; never block the workflow on Telegram
+delivery. If compliance drifts in practice, escalate to Option B
+(Stop hook intervention) in a future sprint (v1.2 candidate); see
+`tasks/architect-notes.md` §S002 Telegram-auto-summary deferred
+Option B note.
+
 ## Provenance
 
 Introduced 2026-05-20 to declare Codex's persona separately from Nexus personas, ahead of the Codex→Lattice repo split. Pre-split declaration; activates post-split + first wiki bootstrap.
+
+S002 v1.1 extensions (2026-05-27): three new operations (Inbox-Sort, Pairing-Audit, Cross-Project-Scan stub) + five Mentor pattern codifications + Telegram auto-summary contract. Per portfolio-folder-structure-spec section (d) "Librarian Agent + Codex Scripts — Design" and the 2026-05-27 Mentor wiki report.

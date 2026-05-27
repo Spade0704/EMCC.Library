@@ -82,3 +82,17 @@ Per master plan `/root/.claude/plans/check-the-dfdu-project-bubbly-knuth.md` §"
 3. **Tasks files are canonical for R_STATE.** Don't cache snapshots here; the cache drifted in project-codex and that lesson STAYs.
 4. **Auditor NO READ** on `tasks/lessons.md` + `tasks/plans/`. Persona file (`personas/CLAUDE.auditor.md`) enforces this structurally; don't paraphrase the rule in dispatch prompts either.
 5. **Stdlib only.** No external Python dependencies in `_scripts/` or `bootstrap.py`. Test runner is stdlib `unittest`.
+
+## Telegram auto-summary contract (S002, 2026-05-27)
+
+At the end of every turn that completes meaningful work (file edits committed, audit verdict received, sub-phase closed, or sprint close), in addition to the in-terminal output, call `mcp__plugin_telegram_telegram__reply` with `chat_id` from `$TELEGRAM_CHAT_ID` and a 2-4 line summary of:
+
+  (a) what was just done,
+  (b) what's next,
+  (c) whether operator input is needed.
+
+Skip for trivial turns (status checks, file reads with no state change, intermediate tool calls inside a multi-tool block).
+
+**Soft compliance only** — if the reply tool errors or `chat_id` is unset, log and continue; never block the workflow on Telegram delivery. Operator monitors progress from phone via this channel; decision-needed escalations route to the same chat-id but with explicit `decision_needed` framing per `EMCC.DFDU/documents/lattice/13-TELEGRAM-INTEGRATION.md`. This auto-summary is the "here's where I am" complement.
+
+Future v1.2 escalation: if compliance drifts in practice, ship Option B (Stop hook intervention) per `tasks/architect-notes.md` §S002 Telegram-auto-summary deferred-Option-B note.

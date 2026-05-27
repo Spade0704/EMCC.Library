@@ -163,6 +163,33 @@ Persona file (`.claude/personas/CLAUDE.librarian.md`) mirrors with summary + poi
 | Validator config drift after `wikisys.library/_config/` merge | Medium | B4 explicit merge step; B5 includes validator re-run against new tree |
 | `bootstrap.py` CLI breaking change (`<target>` → `<projectname>`) is downstream-breaking | Low | Library currently has zero downstream consumers depending on `<target>` form; document in commit body + README |
 
+### Telegram auto-summary — Option B (Stop hook) deferred to v1.2
+
+S002 ships Option A (persona-instruction discipline) — see Phase B7
+commit + `wiki.codex/git/codex/CODEX_LIBRARIAN.md` §"Telegram
+auto-summary contract" + `.claude/personas/CLAUDE.librarian.md` +
+project-root `CLAUDE.md`.
+
+**Option B trigger:** if compliance audits show >20% of meaningful
+turns missing the summary call, escalate to Option B.
+
+**Option B mechanism:** install a Claude Code Stop hook (in
+`.claude/settings.json` or equivalent) that fires at every Stop
+event and runs a 1-line summary directly (bypasses persona
+discipline; mechanical). Hook reads the last assistant message,
+extracts a 2-4 line synopsis, calls
+`mcp__plugin_telegram_telegram__reply`. Tradeoffs: more reliable
+delivery but more architectural surface (hook config + summary
+extraction logic + per-project portability).
+
+**Decision criteria for v1.2:**
+- Compliance rate from S002-S003 sessions logged via
+  Telegram delivery receipts.
+- Operator feedback on auto-summary signal quality.
+- Whether Stop hook integration would be reusable across projects
+  (not just Library) — i.e. whether the hook config belongs in
+  `EMCC.DFDU/documents/lattice/` as a portfolio-wide pattern.
+
 ### Deferred to S004+ (NOT in S002 scope)
 
 - Phase-2 Librarian Cross-Project-Scan full implementation (only stub lands in B7)
