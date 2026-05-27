@@ -1,12 +1,78 @@
-# Codex wiki: generated / ephemeral / confidential
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+.installed.cfg
+
+# Virtualenv
+.venv/
+venv/
+env/
+ENV/
+
+# Test / coverage
+.pytest_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.hypothesis/
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+secrets.*
+*credentials*
+
+# Claude Code state (machine-local; never commit)
+.claude/state/
+.claude/sessions/
+.claude/todos/
+.claude/projects/
+.claude/settings.local.json
+
+# Lattice 3.0 runtime (machine-local; never commit)
+.lattice/
+
+# Persona scratch / dispatch staging (operational artifacts)
+.tmp/
+tasks/_outbox/
+
+# OS junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Backups
+*.bak
+*.orig
+
+# Obsidian
+.obsidian/
+
+# Codex dogfood wiki (wiki.codex/) — generated / ephemeral / confidential
 wiki.codex/_dashboards/
 wiki.codex/_inbox/
 wiki.codex/_confidential/
 wiki.codex/_brain_dump/
 wiki.codex/.obsidian/workspace*
-.DS_Store
-
-# Python bytecode + repo-root Obsidian workspace
-__pycache__/
-*.pyc
-.obsidian/
