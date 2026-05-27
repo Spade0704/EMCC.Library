@@ -644,6 +644,18 @@ module-specific files preserved at root.
 
 ## EMCC.Library — Yes-with-significant-adaptation (Session 1 already shipped half; S002/v1.1 handles the rest)
 
+> **Machine-readable manifest:** every (Old path) → (New path) move from
+> this punchlist is enumerated as a table in
+> `EMCC.Library/REORGANIZATION-INSTRUCTIONS.md`. That file is the
+> defensive lookup for any script, doc, import, or test fixture that
+> references an old path post-migration — it captures the move so
+> Library tooling (Librarian agent, audit scripts) can fix references
+> mechanically rather than requiring a full-codebase read at migration
+> time. It also embeds the "update CLAUDE.md to reference this file"
+> step as a mandatory last step of every project's migration. The same
+> approach extends to the other 7 projects' punchlists; their tables
+> get materialized when their migrations execute.
+
 EMCC.Library hosts both the **Codex MODULE source files** (extracted from
 project-codex in master-plan Step 3 / Session 1, commits `094e8a3 →
 ab94fc7` on branch `claude/lattice-3-production-check-Rdkfu`, pushed
