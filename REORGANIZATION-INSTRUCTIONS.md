@@ -238,15 +238,18 @@ incomplete migration or a stale reference that needs explicit
 disposition).
 ```
 
-**For consumer projects** that vendor or pip-install Library, the
-pointer becomes:
+**For consumer projects** that vendor Library, the pointer becomes:
 
 ```markdown
 ## Path migrations
 
 If you encounter an old path reference in a script or doc, consult
-EMCC.Library's `REORGANIZATION-INSTRUCTIONS.md` (in your Library
-clone, e.g. via `python -c "import librarian, pathlib; print(pathlib.Path(librarian.__file__).resolve().parent.parent / 'REORGANIZATION-INSTRUCTIONS.md')"`).
+EMCC.Library's `REORGANIZATION-INSTRUCTIONS.md` in your Library
+clone (vendored copy, git submodule, or sibling-directory checkout).
+Library is not currently distributed as a Python wheel (per MI-13
+disposition — stdlib only, no PEP 621 manifest). Consumers run
+Codex's `bootstrap.py` + `sync_from_kit.py` directly from a clone or
+vendored copy; resolve the manifest path the same way.
 ```
 
 ---

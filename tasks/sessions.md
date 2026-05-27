@@ -2,7 +2,86 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
-## Session 2 — 2026-05-27 — OPEN — Codex v1.0 → v1.1 update arc (master plan Step 4 / S002)
+## Session 2 — 2026-05-27 — CLOSED — Codex v1.0 → v1.1 update arc (master plan Step 4 / S002)
+
+**Status:** CLOSED — all 11 phases shipped (A + B1 + B2 + B3 + B4 + B5a + B5b + B6 + B7 + B8 + B9 + B10); Auditor verdict `pass` with 4 info observations (OBS-2 + OBS-3 actioned inline this B10 commit; OBS-1 + OBS-4 deferred per architect-notes).
+
+**Commits (Library, branch `claude/codex-v1.1-S002-restructure`):**
+- `52bb379` — Phase A: open Session 2; bank S002 plan to architect-notes §S002; correct Mentor spec section
+- `c2c8357` — B1: extend .gitignore with canonical wiki.*/local/ pattern
+- `1e675fd` — B2: git mv 65 files: _scripts/_template/_config → Biz.Automation/wikisys.library/
+- `fc99147` — B3: git mv 10 spec doc files → wiki.codex/git/codex/; remove documents/codex/
+- `d0dfdbb` — B4: wiki.codex/ internal restructure (git+local split; system→wikisys); MI-14 + MI-15 documented
+- `7707d5b` — B5a: path-lookup rebases in bootstrap.py + sync_from_kit.py + 10 test files
+- `9bf1004` — B5b: bootstrap.py full canonical-output rewrite per spec (c); 21 new tests; ~88 v1.0-shape tests retired as MI-16
+- `0127c4e` — B6: 5 new audit scripts (P0+P1) + FINDING #1 parser fix + 34 new tests
+- `0b03c04` — B7: CODEX_LIBRARIAN.md extension (3 ops + 5 Mentor patterns) + Librarian persona mirror + Telegram contract
+- `3cf14b0` — B8: REORGANIZATION-INSTRUCTIONS.md manifest flip (27 rows ⏳→✅) + S002-internal callers section
+- `2e71209` — B9: module.json v1.1.0 + README + CLAUDE.md path-migration pointer + MI-10/11/12/13 dispositions
+- `<this commit>` — B10: Auditor pass + OBS-2/OBS-3 inline fixes (REORGANIZATION packaging note + README v1.1 limitations) + S002 CLOSED
+
+**Operator-locked decisions at Phase A (D1/D2/D3):**
+- D1: bootstrap.py scope WIDE — full canonical-output rewrite per spec section (c) (not narrow path-lookups only)
+- D2: per-phase commit granularity — 11 commits total (mid-session B5 split into B5a + B5b added one)
+- D3: Auditor dispatch = Session-1-style Agent inline envelope; .lattice/bus/ root stays deferred
+
+**Mid-session decisions:**
+- B5 split into B5a (path-lookups; suite green at S001 baseline) + B5b (full canonical-output rewrite + MI-16 retirement of ~88 v1.0-shape tests) — operator-approved 2026-05-27.
+- B5b MVP scope: bootstrap.py rewrite only; sync_from_kit.py STAYS at v1.0 contract (architect-plan-sanctioned MVP boundary; full v1.0→v1.1 sync migration deferred to S004).
+- Telegram auto-summary contract folded into B7 (Option A: persona instruction discipline; Option B Stop hook deferred to v1.2 with explicit escalation criteria in architect-notes §S002).
+
+**Migration issues raised this session:**
+- **MI-14:** Stale `wiki.codex/_scripts/` bootstrap output discovered during B4 (27 tracked files older than canonical post-B2 wikisys.library/_scripts/; 4 drifted backward to pre-S048-T0). Resolution: `git rm -r` in B4; post-B5 bootstrap regenerates the drop-in.
+- **MI-15:** Root `Sources/Raw/README.md` legacy 4-line stub superseded by canonical wiki-internal 60+ line version. Resolution: deleted in B4; kept canonical at wiki.codex/git/raw/README.md.
+- **MI-16:** 88+ v1.0-shape tests retired as module-level `unittest.SkipTest` across 5 files (test_bootstrap, test_t1_p52, test_t2_p53, test_t3_p54, test_phase6_full_chain_e2e). v1.1 bootstrap is scaffold-only; sync_from_kit unchanged but its v1.0 target paths misalign with v1.1 bootstrap output. Two coupled S004 decisions: (a) where post-v1.1 sync delivers procedure docs, (b) how legacy v1.0 wikis migrate forward.
+
+**MI dispositions (Session 1 carries):**
+- MI-10 (Lattice-2 persona drop-in test) — **RESOLVED** in B9: test_doc_lint.py TestCheckFrontmatter::test_check_frontmatter_persona_class_drop_ins_lint_clean generalized.
+- MI-11 (test_doc_lint_full_tree.py empty) — **RESOLVED** in B9: repointed from documents/lattice/ to wiki.codex/git/codex/.
+- MI-12 (historical tasks/* + CHANGELOG curation) — **CARRIED** to S004+.
+- MI-13 (pyproject.toml not landed) — **RESOLVED AS DROP** in B9: stdlib only + no wheel distribution. OBS-2 (Auditor) caught the latent REORGANIZATION-INSTRUCTIONS.md §245 `import librarian` example; rewrote in B10 to vendor/submodule/sibling-checkout resolution.
+
+**Auditor dispatch (Phase B10):**
+- audit_id: `audit-codex-v1.1-2026-05-27-001`
+- Mechanism: Claude Code Agent tool (subagent_type general-purpose, fresh context). Persona content (CLAUDE.auditor.md 116-line canonical) embedded in dispatch prompt. Bus root deferred; envelope returned inline as Agent result (Session 1 pattern).
+- Trigger basis: schedule (sprint close at v1.1 implementation completion) + risk (Level-2+: ~150 file moves + bootstrap.py rewrite + 5 new scripts + spec / persona doc changes).
+- Verdict: **`pass`** with 4 info-level observations (no concerns, no blocking).
+- Observations:
+  - OBS-1 (info, AC12 + Structural-over-Advisory): sweep methodology under-counts; explicit runtime allow-list for legitimate verbatim/template encoding. **Deferred** to S004+ audit-method sprint.
+  - OBS-2 (info, principle / MI-13 carry): `import librarian` example in REORGANIZATION-INSTRUCTIONS.md §245 was inert. **Fixed inline (this commit)** — rewrote consumer-project pointer to reference vendored / submodule / sibling-checkout resolution + MI-13 cross-link.
+  - OBS-3 (info, scope / MI-16): README didn't surface the broken-sync-against-v1.1-bootstrap chain. **Fixed inline (this commit)** — added §"v1.1 known limitations" section noting MI-16 sync chain + MI-13 no-packaging caveat.
+  - OBS-4 (info, principle / Structural-over-Advisory): persona-mirror drift risk between .claude/personas/CLAUDE.librarian.md (28 lines) vs wiki.codex/git/codex/CODEX_LIBRARIAN.md (+174 lines). **Deferred** to Step 4 / future persona-discipline sprint.
+- Audit duration: ~5 minutes (per dispatch prompt time-box; Auditor's evidence-citation discipline strong; per-AC verification with specific file/SHA citations; principle citations include Karpathy Simplicity-First, Surgical-Changes, Structural-over-Advisory).
+- Auditor NO-READ enforcement: persona file enforces structurally; dispatch prompt did NOT re-paraphrase the rule. tasks/lessons.md and tasks/plans/<task-id>/ honored (Auditor read tasks/architect-notes.md §S002 only per persona-allowed-list).
+
+**Files changed this session:** ~200+ files across 12 commits including ~150 git mv renames + ~50 source / test / doc edits.
+
+**Verified end-state at S002 close (post-B10):**
+- `python -m unittest discover -s tests -t .` from Library root: 589 tests / 588 pass / 1 fail (pre-existing baseline) / 6 skipped-modules (~88 tests retired under MI-16) / ~9s.
+- `python bootstrap.py _v1.1-test-mentor --full --yes` produces canonical tree per spec (c): 16 folders + 4 root stubs + 4 task stubs = 40 ops; matches spec §c lines 864–895 expected tree.
+- All 5 new audit scripts (audit_doc_pairing.py, audit_gitignore.py, route_inbox.py, audit_assets.py, audit_local_split.py) emit valid dashboard markdown when run against Library's own tree; 0 findings each (Library is a well-formed canonical-shape project).
+- FINDING #1 reproducer (`tests/test_frontmatter_three_level_nesting.py`): 12/12 pass.
+- MI-10 + MI-11 fail-→-pass transitions verified.
+- Module version: `module.json` 1.1.0.
+- Manifest: 27 ⏳-Pending-S002 rows flipped to ✅-Done-in-S002 with per-row commit SHAs.
+- Stale-path sweep: clean (all hits intentional migration-trail docs).
+
+**Subagents:** 1 spawned — the Auditor (general-purpose; fresh context); ~5 minute duration; returned full audit_result envelope with verdict `pass` + AC1-AC12 status table + 4 info findings. Second Auditor dispatch in Library (Session 1 was the first); confirms DFDU's `build_auditor_prompt`-style pattern + persona portability across two consecutive Library sessions.
+
+**Operator inputs still pending (do not block close):**
+- S003 Telegram channel boot — bot exists with chat_id 1415844818; operator action required to run the channel daemon.
+- Step 1 GitHub UI branch deletions per EMCC/tasks/todo.md housekeeping — operator action when convenient.
+
+**Next sprints (per tasks/todo.md):**
+- **S003 (master plan Step 5)** — Telegram channel boot
+- **S004 (master plan Step 6)** — bootstrap operator's first real consumer wikis (Aviation / Tat / etc.) using v1.1 canonical scaffold; retires MI-16; decides sync_from_kit's post-v1.1 delivery target (MI-16 sub-decisions); OBS-1 + OBS-4 follow-ups
+- **S005 (master plan Step 7)** — bootstrap DFDU's own `wiki/` directory
+
+**Context events:** None substantive — clean 11-commit pass. Plan-mode plan approved at session start (cuddly-leaping-pearl.md). AskUserQuestion used 4× during execution (Phase A decisions D1/D2/D3 + mid-B5 split scope refinement). Auto Mode active throughout — Telegram auto-summary contract substituted PushNotification for terminal notifications (mobile push unavailable: Remote Control inactive).
+
+---
+
+## Session 2 — 2026-05-27 — OPEN — Codex v1.0 → v1.1 update arc (master plan Step 4 / S002) [SUPERSEDED BY CLOSE ENTRY ABOVE]
 
 **Status:** OPEN — Phase A complete (this commit). Phases B1–B10 in flight per the operator-approved architect plan.
 

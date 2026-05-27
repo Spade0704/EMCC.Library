@@ -55,6 +55,11 @@ python -m unittest discover -s tests -t .
 
 CI runs on push to `main` and `claude/**`, plus PRs to `main`. See `.github/workflows/test.yml`.
 
+## v1.1 known limitations
+
+- **`sync_from_kit.py` v1.0 contract.** v1.1's new `bootstrap.py` is scaffold-only (canonical portfolio frame per spec section c); the consumer wiki it produces has no `_scripts/_template/_config/_context/` subfolders at the wiki root. `sync_from_kit.py` was NOT rewritten in S002 and still writes to those v1.0 target paths — so running Sync against a v1.1-bootstrapped wiki will create paths that don't fit the new shape. MI-16 in `MIGRATION-ISSUES.md` documents this; S004 (consumer-wikis sprint) decides whether to (a) rewrite `sync_from_kit` for the new shape, (b) keep it as v1.0-compat for legacy wikis, or (c) force-migrate legacy wikis forward. Bootstrap a new project with v1.1, but DON'T run Sync against it yet.
+- **No packaging artifact.** Library is not distributed as a Python wheel (MI-13 — stdlib-only discipline). Consumers vendor via clone / submodule / sibling-directory checkout. If a packaging story is needed, re-open MI-13.
+
 ## Next sprints
 
 - **S003 (master plan Step 5)** — Telegram channel boot (operator action; bot already exists at chat_id 1415844818 with `TELEGRAM_BOT_TOKEN` in env).

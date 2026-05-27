@@ -2,31 +2,30 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
-## Current sprint — S002-codex-v1.1-update (2026-05-27, IN PROGRESS)
+## Past sprint — S002-codex-v1.1-update (2026-05-27, CLOSED)
 
-### In Progress
+### Done
 - [x] Phase A — open Session 2 + bank architect plan + Mentor spec correction
-- [ ] B1 pre-extraction prep (.gitignore extensions + baseline assertions)
-- [ ] B2 module source → `Biz.Automation/wikisys.library/_*` (git mv 3 dirs)
-- [ ] B3 Codex spec docs → `wiki.codex/git/codex/` (git mv 10 files)
-- [ ] B4 wiki.codex/ internal restructure (git/+local/ split; system→wikisys)
-- [ ] B5 bootstrap.py full canonical-output rewrite per spec (c); path-lookup updates; sync_from_kit + config_loader rebase
-- [ ] B6 5 new audit scripts (P0+P1) + FINDING #1 — 3-level YAML nesting in parse_config_yaml
-- [ ] B7 CODEX_LIBRARIAN.md extension (3 new ops) + persona mirror + Mentor pattern codifications (5)
-- [ ] B8 REORGANIZATION-INSTRUCTIONS.md manifest flip B2/B3/B4 ⏳ → ✅ + S002-internal callers section
-- [ ] B9 module.json v1.0.0 → v1.1.0; README + CLAUDE.md path-migration pointer; MI-10/11/12/13 dispositions
-- [ ] B10 Auditor dispatch + verdict + Session 2 CLOSED
+- [x] B1 .gitignore wiki.*/local/ extension + baseline assertions
+- [x] B2 module source → Biz.Automation/wikisys.library/_* (65 git mv)
+- [x] B3 Codex spec docs → wiki.codex/git/codex/ (10 git mv)
+- [x] B4 wiki.codex/ internal restructure (git+local split; MI-14 + MI-15)
+- [x] B5a path-lookup rebases (bootstrap.py + sync_from_kit + 10 test files)
+- [x] B5b bootstrap.py full canonical-output rewrite per spec (c) + 21 new tests + 88 v1.0-shape tests retired (MI-16)
+- [x] B6 5 new audit scripts (P0+P1) + FINDING #1 fix + 34 new tests
+- [x] B7 CODEX_LIBRARIAN.md +174 lines (3 ops + 5 Mentor patterns + Telegram contract) + persona mirror + CLAUDE.md updates
+- [x] B8 REORGANIZATION-INSTRUCTIONS.md flip (27 rows ⏳→✅) + S002-internal callers section
+- [x] B9 module.json v1.1.0 + README + CLAUDE.md Path-migrations pointer + MI-10/11/12/13 dispositions
+- [x] B10 Auditor dispatch — verdict `pass` with 4 info observations (OBS-2/OBS-3 fixed inline; OBS-1/OBS-4 deferred to architect-notes)
 
-### Acceptance criteria
-AC1–AC12 per `tasks/architect-notes.md` §S002.
+→ See `tasks/sessions.md` Session 2 CLOSED entry for full close record.
+→ See `tasks/architect-notes.md` §S002 for the architect plan, Auditor observations, and deferred items.
 
-### Operator-locked decisions (Phase A)
-- D1: bootstrap.py = WIDE scope (full spec-c rewrite)
-- D2: 10 per-phase commits
-- D3: Auditor = Session-1-style Agent inline envelope; bus root deferred
+## Next sprints (planned)
 
-→ See `tasks/architect-notes.md` §S002 for the full architect plan.
-→ See `tasks/sessions.md` Session 2 OPEN entry for current operational state.
+- **S003** (master plan Step 5) — Telegram channel boot (operator action; bot exists at chat_id 1415844818).
+- **S004** (master plan Step 6) — bootstrap real consumer wikis (Aviation / Tat / etc.) on v1.1 canonical scaffold. Retires MI-16 deferral. Decides sync_from_kit's post-v1.1 delivery target.
+- **S005** (master plan Step 7) — bootstrap DFDU's own `wiki/` directory.
 
 ---
 

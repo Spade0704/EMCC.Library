@@ -190,6 +190,19 @@ extraction logic + per-project portability).
   (not just Library) — i.e. whether the hook config belongs in
   `EMCC.DFDU/documents/lattice/` as a portfolio-wide pattern.
 
+### S002 Auditor observations (audit-codex-v1.1-2026-05-27-001, verdict `pass`)
+
+The Auditor (general-purpose Agent dispatch, fresh context; 116-line CLAUDE.auditor.md persona embedded) returned verdict `pass` with 4 info-level observations. Dispatch SHA: this session's B10 commit. No `concerns` or `blocking` findings; no Karpathy principle violations identified; no Level-2 surface mismatch.
+
+| # | Severity | Disposition |
+|---|---|---|
+| **OBS-1** | info | **Deferred (S004+)**: AC12 sweep methodology under-counts; suggest structural enforcement via audit_doc_pairing.py / audit_local_split.py at runtime with explicit allow-list. Tracked here for future audit-method sprint. |
+| **OBS-2** | info | **Fixed inline (this B10 commit)**: REORGANIZATION-INSTRUCTIONS.md §245 `import librarian, pathlib` example was inert (Library not on PyPI / not packaged). Rewrote the consumer-project pointer to reference vendored / submodule / sibling-checkout resolution. MI-13 cross-link added. |
+| **OBS-3** | info | **Fixed inline (this B10 commit)**: README.md added §"v1.1 known limitations" surfacing the sync_from_kit-broken-against-v1.1-bootstrap chain (MI-16) + the no-packaging-artifact caveat (MI-13). Consumer-facing surface now accurately reflects v1.1 carry. |
+| **OBS-4** | info | **Deferred (Step 4 / future persona-discipline sprint)**: `.claude/personas/CLAUDE.librarian.md` is a 28-line manual mirror of the +174-line canonical at `wiki.codex/git/codex/CODEX_LIBRARIAN.md`. Mirror could drift. Karpathy Structural-over-Advisory suggests either a one-line redirect persona OR build-time generation. Tracked here. |
+
+Auditor envelope content preserved in B10 commit body (Session 1 precedent — Library bus root deferred; envelope captured in-commit-message-trail rather than written to `.lattice/bus/outbox/`).
+
 ### Deferred to S004+ (NOT in S002 scope)
 
 - Phase-2 Librarian Cross-Project-Scan full implementation (only stub lands in B7)
