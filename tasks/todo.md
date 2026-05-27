@@ -2,31 +2,56 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
-## Current sprint — S004 Mentor v1.1 migration FULL scope (2026-05-27, planned / boot-pending)
+## Past sprint — S004-mentor-v1.1-migration (2026-05-28, CLOSED)
 
-Cross-repo arc: EMCC.Library (script changes) + Project-Mentor (structural relocation). Lattice 3.0 Regime B; Auditor dispatch on close. Closes MI-16 + MI-18. Boot prompt drafted and held; awaiting operator green-light.
+Cross-repo sprint with `spade0704/Project-Mentor`. Mentor migrated v1.0 → v1.1 canonical layout; Library shipped MI-16 + MI-18 closures + walker fix + manifest update.
 
-### Planned phases
+### Done (Library side)
+- [x] Phase A — open Session 4 + bank architect plan §S004 + Mentor pre-migration anchor SHA
+- [x] Phase C — `sync_from_kit.py` v1.1 contract rewrite (MI-16 closure); consumer-name auto-discovery; 17 tests pass + 4 new TestConsumerDiscovery cases; spec doc §4.2 updated
+- [x] Phase D — MI-18 canon-lookup marker-walk: `_lib/frontmatter.py::find_canon_dir` + `find_decisions_dir` + extended `_find_wiki_root` with v1.1 consumer marker; 12 scripts retrofitted; 9 new tests; MI-18 registered + RESOLVED
+- [x] Phase E — end-to-end validation + carry fixes: `find_config_dir` extension (7 more scripts retrofitted), `markdown.py::iter_content_pages` raw/ exclusion, `update_dashboards.py` CLI arg (MI-17 partial), REORGANIZATION-INSTRUCTIONS Mentor per-project moves + cross-repo Library moves section
+- [x] Phase F — Auditor dispatch verdict `concerns` (5 findings); F10 MI-16 registry header RESOLVED-disposition fixed inline; F11 + F12 fixed cross-repo on Mentor side
+- [x] S004 CLOSE record on `tasks/sessions.md`
 
-- [ ] Phase A — open Session, bank S004 architect plan, reality-check Mentor path + CONSUMER/MODULE identity
-- [ ] Phase B — Mentor structural migration (current root → canonical v1.1: `Biz.Automation/wikisys.mentor/_*` + `wiki.mentor/{git,local}/`)
-- [ ] Phase C — MI-16 fix: `sync_from_kit.py` v1.0 → v1.1 contract (decides post-v1.1 sync delivery target; see MIGRATION-ISSUES.md MI-16 sub-decisions a/b/c)
-- [ ] Phase D — MI-18 fix: `find_canon_dir()` (and `find_decisions_dir()` if same pattern applies) marker-walk in `_lib/canon.py` analogous to `find_wiki_root()`; update all scripts that hardcode `WIKI_ROOT / "_canon"`
-- [ ] Phase E — end-to-end validation: 589+ tests still pass; Mentor `update_dashboards.py` produces correct dashboards under new layout; bootstrap of a fresh consumer wiki from updated kit works
-- [ ] Phase F — Auditor dispatch + close (cross-repo close entries in both Library and Mentor session logs)
+### Cross-repo commits (Mentor side, branch `claude/s004-mentor-v1.1-migration-na3hg`)
+- 12 commits: Phase A (`caafc8a`) + B1-B10 (`a966d27` → `f8e919a`) + close (`42dd4fc`) + F4 (`4e985bc`) + CLOSE record (`867c03b`)
+- Mentor at v1.1 canonical layout post-S004; baseline parity vs M001 verified (27 pages / 0 contradictions / 54% cross-link)
 
-### Pre-flight reality checks (resolve before Phase B)
+### Migration issues resolved
+- **MI-16** RESOLVED — sync_from_kit v1.1 contract rewrite
+- **MI-18** RESOLVED — canon/decisions/config-lookup marker-walk
 
-- [ ] Confirm Mentor local path on operator's machine (`D:\Projects\Mentor\wiki` per M001 context — verify)
-- [ ] Confirm CONSUMER vs MODULE identity: Mentor uses `emcc.modules.json` (consumer), not `module.json` (module). Migration must not flip this.
-- [ ] Confirm remote auto-delete-on-merge toggle on `spade0704/Project-Mentor` per portfolio housekeeping convention
-- [ ] Confirm Mentor follow-ups carried into S004 scope vs deferred: MI-12 (historical curation), R-00008 cross-link surface expansion, Architect ticket for tier-aware Codex validator filtering, OBS-1 (AC12 sweep methodology)
+→ See `tasks/sessions.md` Session 4 CLOSED entry for full close record + Auditor findings table.
+→ See `tasks/architect-notes.md` §S004 for the architect plan, risk register, AC1-AC10.
+→ See `REORGANIZATION-INSTRUCTIONS.md` §Mentor for per-project moves manifest.
+
+## Carried + Open (post-S004)
+
+### Library-side
+- [ ] **MI-17 full closure** — 16 scripts still use hardcoded `WIKI_ROOT = Path(__file__).resolve().parent.parent`. S004 closed `_lib/frontmatter.py::WIKI_ROOT` + `update_dashboards.py` CLI arg only. Per-script CLI argparse support pending. Tests don't currently cover these scripts' default-WIKI_ROOT behavior; add coverage as part of follow-up.
+- [ ] **MI-12** (historical curation, S001 carry) — Codex-class entries from project-codex's tasks/* (5,223 lines) + CHANGELOG.md (337KB) classifying for migration. Low priority.
+- [ ] **OBS-1** (S002 carry, Auditor info) — AC12 sweep methodology under-counts; explicit runtime allow-list for legitimate verbatim/template encoding. Audit-method sprint TBD.
+- [ ] **OBS-4** (S002 carry, Auditor info) — persona-mirror drift risk between `.claude/personas/CLAUDE.librarian.md` and `wiki.codex/git/codex/CODEX_LIBRARIAN.md`. Persona-discipline sprint TBD.
+- [ ] **Library `_dashboards/` location** — consider migrating from `wikisys.library/_dashboards/` to `wiki.codex/git/_dashboards/` (content-side; matches Mentor convention from S004 F12). Operator decision; default path math change is invasive.
+- [ ] **portfolio-folder-structure-spec.md line 881 outdated** — reads "Mentor was greenfield, no migration needed" — false post-S004. Carry to next spec touch.
+
+### Cross-repo (Mentor-side; tracked here for visibility)
+- [ ] Mentor SPLIT pairing for Karpathy + Cherny — backfill stub R-XXXXX on next publish event
+- [ ] Mentor R-00008 cross-link surface (M001 follow-up)
+- [ ] Mentor JP CheatSheet canonicalization (operator decision)
+
+## Next sprints (planned)
+
+- **S003** (master plan Step 5) — Telegram channel boot. **Partially done**: Option A (local-only Windows env vars) configured by operator post-S002. Cloud-CC remainder: no action required (network policy blocks `api.telegram.org`; soft-compliance contract honored).
+- **S005** (master plan Step 7) — bootstrap DFDU's own `wiki/` directory.
+- **S006+** — remaining consumer wikis (Aviation / Tat / iSommelier / eddyandwolff / aviation-career / EMCC / EMCC.DFDU) on v1.1 canonical scaffold. No migration needed — greenfield via `bootstrap.py <projectname> --full`.
 
 ---
 
 ## Past sprint — Post-S002 stabilization (2026-05-27, CLOSED) — PR #5 → #10
 
-Six-PR cleanup arc following S002 close. All merged to `main`; HEAD = `6b14cb6`. See `tasks/sessions.md` "Post-S002 stabilization" entry for full close record + per-PR table.
+Six-PR cleanup arc between S002 close and S004 open. All merged to `main`. See `tasks/sessions.md` "Post-S002 stabilization" entry for full close record + per-PR table.
 
 ### Done
 
@@ -36,15 +61,12 @@ Six-PR cleanup arc following S002 close. All merged to `main`; HEAD = `6b14cb6`.
 - [x] PR #8 — S003a Library staleness cleanup phase 1 (path refresh + v1.1 alignment) (`f8feca1`)
 - [x] PR #9 — S003b Library staleness cleanup phase 2 (archive banners + relocations) (`8c2193c`)
 - [x] PR #10 — MI-17 full resolution: `find_wiki_root()` across all 17 scripts (`6b14cb6`)
+- [x] PR #11 — Post-MI-17 housekeeping: tasks/{sessions,todo,lessons}.md updated (`bf36e9d`)
 
 ### MIs touched this arc
 
-- **MI-17** — ✅ Resolved (PR #10). Marker-walk pattern lifted into `_lib/frontmatter.py::find_wiki_root()` public API; 17 scripts converted.
-- **MI-18** — 🆕 Surfaced (post-PR-#10). `_canon/` lookup divergence under v1.0 vs v1.1 system/content split. Deferred to S004 Phase D.
-
-### Operator-side environment (informational)
-
-- **Telegram bridge** — Option A configured local-only (Windows User env vars). Cloud sessions stay soft-compliant on the auto-summary contract; local CC sessions deliver pushes. Closes part of S003 (Telegram boot).
+- **MI-17** — Resolved (PR #10). Marker-walk pattern lifted into `_lib/frontmatter.py::find_wiki_root()` public API; 17 scripts converted. (S004 D superseded the content-side resolution with install-root + companion `find_*_dir()` helpers; this arc was the intermediate step.)
+- **MI-18** — Surfaced (post-PR-#10), Resolved in S004 D.
 
 ---
 
@@ -67,13 +89,6 @@ Six-PR cleanup arc following S002 close. All merged to `main`; HEAD = `6b14cb6`.
 → See `tasks/sessions.md` Session 2 CLOSED entry for full close record.
 → See `tasks/architect-notes.md` §S002 for the architect plan, Auditor observations, and deferred items.
 
-## Next sprints (planned — post-stabilization re-numbering)
-
-- **S003** (master plan Step 5) — Telegram channel boot. **Partially done**: Option A (local-only Windows env vars) configured by operator post-S002. Cloud-CC remainder: no action required (network policy blocks `api.telegram.org`; soft-compliance contract honored).
-- **S004** (re-scoped from "Step 6 bootstrap consumer wikis" → **Mentor v1.1 migration FULL scope**) — see Current sprint block at top.
-- **S005** (formerly S004; master plan Step 6) — bootstrap remaining consumer wikis (Aviation / Tat / etc.) on v1.1 canonical scaffold. Pre-req: S004 lands MI-16 + MI-18 fixes so new bootstraps don't inherit broken sync / canon-lookup.
-- **S006** (formerly S005; master plan Step 7) — bootstrap DFDU's own `wiki/` directory.
-
 ---
 
 ## Past sprint — S001-codex-extraction (2026-05-27, CLOSED)
@@ -91,13 +106,6 @@ Six-PR cleanup arc following S002 close. All merged to `main`; HEAD = `6b14cb6`.
 - [x] B9 Auditor dispatch — verdict `pass` with 3 observations (F-1 fixed inline; F-2 → MI-13; F-3 implicit Step 4)
 
 → See `tasks/sessions.md` Session 1 CLOSED entry for full close record.
-
-## Next sprints (planned)
-
-- **S002** (master plan Step 4) — Codex v1.0 → v1.1 update. Fold portfolio-room folder spec, mentor wiki report, 5 deferred Librarian-spec items, S048-T1 findings.
-- **S003** (master plan Step 5) — Telegram channel setup (operator action; `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`).
-- **S004** (master plan Step 6) — Bootstrap first real consumer wikis (Aviation / Mentor / Tat per portfolio room output).
-- **S005** (master plan Step 7) — Bootstrap DFDU's own `wiki/` directory.
 
 ## Cross-repo task synchronization (handled during S001 B7/B8)
 
