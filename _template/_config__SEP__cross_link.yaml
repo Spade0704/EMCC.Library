@@ -1,0 +1,79 @@
+# _template/_config__SEP__cross_link.yaml — cross-link generation behavior tuning.
+# Consumed by:
+#   _scripts/build_topic_index.py    (P18.2 — TF-IDF + plug-in + tag mirroring)
+#   _scripts/cross_link_topics.py    (P18.3 — see-also block writer; via topic index)
+#   _scripts/update_dashboards.py    (P19  — cross_link_coverage health signal)
+#
+# Schema (per spec v1.3 §2.5; all keys optional with documented defaults):
+#   tfidf:
+#     min_similarity     (float; default 0.35) — cosine threshold below which
+#                                                  pages are not linked.
+#     max_links_per_page (int;   default 8)    — cap on "See also" entries per page.
+#     scan_fields        (list;  default       — which page regions feed the
+#                                  [h1, h2,      TF-IDF vector during topic match.
+#                                  intro_para_1])
+#   plugin:
+#     module_path (str|null; default null)   — PROJECT-LOCAL Python file path,
+#                                                e.g. "scripts/st_linker.py".
+#                                                Unset disables plug-in (TF-IDF-only).
+#     callable    (str|null; default null)   — callable name in the module above.
+#                                                Signature:
+#                                                  link(pages: list[ParsedPage])
+#                                                    -> dict[str, list[str]]
+#     weight      (float;    default 0.5)    — blend factor when augmenting TF-IDF:
+#                                                0.0 = TF-IDF only,
+#                                                1.0 = plug-in only.
+#   tags:
+#     mirror_from   (list;   default [topics]) — frontmatter fields to mirror as
+#                                                tags; [] disables mirroring.
+#     prefix_scheme (str;    default "flat")   — flat | nested; "nested" emits
+#                                                "topic/<name>" instead of "<name>".
+#     prefix_map    (mapping; used only when    — used only when prefix_scheme: nested
+#                                  scheme=nested)
+#       topics: topic                           — topics: [smoke] → tags: [topic/smoke]
+#
+# Plug-in failures (import error / callable exception / malformed return)
+# log warning + degrade to TF-IDF-only per spec §2.7. Tag mirroring is
+# additive: existing tags never removed; topic-derived tags appended only.
+# Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+#
+# Active defaults below are project-overridable. Edit values to tune
+# linking behavior; leave commented examples as starting points for less-
+# common configurations.
+
+tfidf:
+  min_similarity: 0.35
+  max_links_per_page: 8
+  scan_fields: [h1, h2, intro_para_1]
+
+plugin:
+  module_path: ~
+  callable: ~
+  weight: 0.5
+
+tags:
+  mirror_from: [topics]
+  prefix_scheme: flat
+  prefix_map:
+    topics: topic
+
+# Customization examples (commented; replace active values above as needed):
+#
+# Lower the similarity threshold for denser linking:
+# tfidf:
+#   min_similarity: 0.20
+#   max_links_per_page: 12
+#   scan_fields: [h1, h2, intro_para_1]
+#
+# Enable a project-local plug-in (e.g. steel-thread linker):
+# plugin:
+#   module_path: scripts/st_linker
+#   callable: rank_pages
+#   weight: 0.3
+#
+# Switch to nested tag prefixes (topics: [smoke] → tags: [topic/smoke]):
+# tags:
+#   mirror_from: [topics]
+#   prefix_scheme: nested
+#   prefix_map:
+#     topics: topic

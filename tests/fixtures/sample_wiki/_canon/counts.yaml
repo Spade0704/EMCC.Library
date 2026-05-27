@@ -1,0 +1,13 @@
+# Canon counts for the test fixture wiki.
+# Consumed by P12 check_canon_consistency.py tests.
+#
+# Schema: top-level `counts:` block-style list-of-mappings; each item has
+# `name:` (canonical-number key) and `value:` (integer canonical count).
+# Page fm `canon_claim_counts_<name>: <int>` keys cross-checked against
+# entries here in Mode 1 page-vs-canon validation.
+
+counts:
+  - name: mechs
+    value: 5
+  - name: phases
+    value: 3

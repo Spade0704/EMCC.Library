@@ -1,0 +1,33 @@
+# _config/steel_threads.yaml — multi-layer feature manifest.
+# Consumed by _scripts/steel_thread_tracker.py.
+#
+# Schema (per spec v1.2 §2.5 + consumer-script implementation):
+#   - wrapper key: `threads` (list)
+#   - per-thread required keys: name (str), layers (list of wiki-root-relative paths)
+#   - per-thread optional key: status (one of complete | partial | incomplete)
+#
+# Status-derivation rule:
+#   auto-derived from layers_present / layers_total count
+#     (all layers present → complete; some present → partial; none → incomplete)
+#   explicit `status` override always wins when present and in VALID_STATUS.
+#
+# Edit the commented examples below when project features are known.
+# Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+
+threads: []
+
+# Example threads (uncomment + customize per project):
+#
+# - name: "<small feature>"
+#   layers:
+#     - "01-Framework/<feature>-spec.md"
+#     - "tests/<feature>-tests.md"
+#
+# - name: "<larger feature with full stack>"
+#   layers:
+#     - "01-Framework/<feature>-spec.md"
+#     - "tests/<feature>-tests.md"
+#     - "02-Implementation/<feature>-code.md"
+#     - "03-Docs/<feature>-guide.md"
+#     - "_dashboards/<feature>-dashboard.md"
+#   status: partial

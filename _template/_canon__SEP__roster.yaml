@@ -1,0 +1,23 @@
+# _template/_canon__SEP__roster.yaml — named entities (characters, factions, locations, technologies).
+# Consumed by:
+#   _scripts/check_canon_consistency.py (lookup_key = canonical_name)
+#   _scripts/check_concept_coverage.py (entity-coverage scanning: entities mentioned in N+ pages but lacking a dedicated page)
+#   _scripts/build_canon_drift_report.py (snapshot + diff over time)
+#
+# Schema (per spec v1.2 §2.5 + consumer-script implementation):
+#   - wrapper key: `entities` (list)
+#   - per-entry required keys: canonical_name (str)
+#   - per-entry optional keys: aliases (list of str) — flow-list form recommended
+#
+# Aliases let pages refer to the same entity by multiple names without tripping
+# consistency checks. Edit commented examples when project entities are known.
+# Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+
+entities: []
+
+# Example entries (uncomment + customize per project):
+#
+# - canonical_name: "<faction-name>"
+#
+# - canonical_name: "<character-name>"
+#   aliases: ["<nickname>", "<formal-title>"]

@@ -1,0 +1,14 @@
+# Cascade-map config for the test fixture wiki.
+# Consumed by P10 check_cascade.py tests.
+#
+# Schema: top-level `pairs:` block-style list-of-mappings; each item has
+# `source:` and `derived:` keys (wiki-root-relative forward-slash paths).
+# Tests deterministically construct mtimes via os.utime on TempDir clones
+# of this fixture; this file documents the schema shape rather than
+# driving test classification directly.
+
+pairs:
+  - source: 01-Domain/Foo.md
+    derived: 01-Domain/Bar.md
+  - source: 02-Other/Baz.md
+    derived: Home.md

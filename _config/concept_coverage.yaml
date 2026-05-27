@@ -1,0 +1,25 @@
+# _config/concept_coverage.yaml — tunes coverage thresholds + scan-scope for check_concept_coverage.py.
+# Consumed by _scripts/check_concept_coverage.py.
+#
+# Schema (per spec v1.2 §2.5 + consumer-script implementation):
+#   - scalar-key dict pattern (NOT wrapper+list pattern like the other _config/ YAMLs)
+#   - top-level keys (all optional; partial files merge per-field with defaults):
+#       min_mentions      — int; threshold for "entity mentioned in N+ pages but no dedicated page"
+#       exclude_folders   — list of folder-name strings; skipped during scanning
+#       exclude_entities  — list of canonical-name strings; escape-hatch for entities deliberately lacking a dedicated page
+#
+# Entire file is OPTIONAL. Missing-file → defaults applied verbatim. Defaults
+# committed explicitly below for operator-affordance: visible without reading
+# the consumer-script source.
+#
+# Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+
+min_mentions: 2
+exclude_folders: []
+exclude_entities: []
+
+# Example customizations (uncomment + adjust per project):
+#
+# min_mentions: 3
+# exclude_folders: ["_brain_dump", "_inbox", "_sources"]
+# exclude_entities: ["<deprecated-entity-name>"]

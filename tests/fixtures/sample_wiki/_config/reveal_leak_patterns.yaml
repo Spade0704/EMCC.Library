@@ -1,0 +1,25 @@
+# Reveal-leak patterns config for the test fixture wiki.
+# Consumed by P8 validate_reveal_conceit.py tests.
+#
+# Schema (per spec §2.5):
+#   - pattern:  regex applied to the stripped page body
+#     severity: error | warning | info  (info documents approved terms; emits no findings)
+#     message:  human-readable finding text
+#     rule:     optional rule name (string)
+#
+# Examples (commented out — fixture ships empty so positive-scan tests
+# can extend in-test via TempDir+copytree without mutating the fixture):
+#
+#   - pattern: "secret-codename"
+#     severity: error
+#     message: "Internal codename leaked to a public page"
+#     rule: codename
+#   - pattern: "internal-only-feature"
+#     severity: warning
+#     message: "Feature flagged as internal-only"
+#   - pattern: "approved-public-term"
+#     severity: info
+#     message: "Approved-public term, no flag emitted"
+#     rule: approved
+
+rules: []

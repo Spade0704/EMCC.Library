@@ -1,0 +1,41 @@
+# _template/_canon__SEP__topics.yaml — topic registry for cross-link generation.
+# Consumed by:
+#   _scripts/build_topic_index.py     (P18.2 — word-boundary keyword + alias match)
+#   _scripts/cross_link_topics.py     (P18.3 — see-also block writer)
+#   _scripts/validate_topic_registry.py (P18.4 — page-topic-resolve + orphan check)
+#
+# Schema (per spec v1.3 §2.5):
+#   - wrapper key: `topics` (list)
+#   - per-entry required keys:
+#       name      (str)   — canonical topic name; lowercase snake_case convention.
+#       keywords  (list)  — word-boundary case-insensitive patterns scanned in H1/H2/intro_para_1.
+#   - per-entry optional keys:
+#       aliases        (list)        — alternate names accepted in frontmatter `topics:` lists.
+#                                       Counted alongside canonical name in match scanning.
+#       cross_manual   (bool)        — if true, allow cross-links across top-level folder
+#                                       boundaries; default false (folder-scoped linking).
+#       min_similarity (float|None)  — per-topic TF-IDF cosine threshold override;
+#                                       defaults from _config/cross_link.yaml when null.
+#
+# Topics control which words/phrases trigger cross-page linking. Humans curate
+# topics: in page frontmatter to influence what gets linked; #18 validator
+# flags page topics that don't resolve in this registry (error) and registry
+# topics with no member pages (warning). Schema authority:
+# <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+
+topics: []
+
+# Example entries (uncomment + customize per project):
+#
+# - name: example_topic
+#   keywords:
+#     - "example"
+#     - "examples"
+#   aliases: [exemplar, illustration]
+#   cross_manual: false
+#   min_similarity: 0.35
+#
+# - name: another_topic
+#   keywords:
+#     - "another"
+#   # aliases / cross_manual / min_similarity omitted → defaults applied.
