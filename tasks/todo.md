@@ -2,7 +2,35 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
-## Current sprint — S001-codex-extraction (2026-05-27, CLOSED)
+## Current sprint — S002-codex-v1.1-update (2026-05-27, IN PROGRESS)
+
+### In Progress
+- [x] Phase A — open Session 2 + bank architect plan + Mentor spec correction
+- [ ] B1 pre-extraction prep (.gitignore extensions + baseline assertions)
+- [ ] B2 module source → `Biz.Automation/wikisys.library/_*` (git mv 3 dirs)
+- [ ] B3 Codex spec docs → `wiki.codex/git/codex/` (git mv 10 files)
+- [ ] B4 wiki.codex/ internal restructure (git/+local/ split; system→wikisys)
+- [ ] B5 bootstrap.py full canonical-output rewrite per spec (c); path-lookup updates; sync_from_kit + config_loader rebase
+- [ ] B6 5 new audit scripts (P0+P1) + FINDING #1 — 3-level YAML nesting in parse_config_yaml
+- [ ] B7 CODEX_LIBRARIAN.md extension (3 new ops) + persona mirror + Mentor pattern codifications (5)
+- [ ] B8 REORGANIZATION-INSTRUCTIONS.md manifest flip B2/B3/B4 ⏳ → ✅ + S002-internal callers section
+- [ ] B9 module.json v1.0.0 → v1.1.0; README + CLAUDE.md path-migration pointer; MI-10/11/12/13 dispositions
+- [ ] B10 Auditor dispatch + verdict + Session 2 CLOSED
+
+### Acceptance criteria
+AC1–AC12 per `tasks/architect-notes.md` §S002.
+
+### Operator-locked decisions (Phase A)
+- D1: bootstrap.py = WIDE scope (full spec-c rewrite)
+- D2: 10 per-phase commits
+- D3: Auditor = Session-1-style Agent inline envelope; bus root deferred
+
+→ See `tasks/architect-notes.md` §S002 for the full architect plan.
+→ See `tasks/sessions.md` Session 2 OPEN entry for current operational state.
+
+---
+
+## Past sprint — S001-codex-extraction (2026-05-27, CLOSED)
 
 ### Done
 - [x] Phase A — open Lattice 3.0 session + architect plan

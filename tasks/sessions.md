@@ -2,6 +2,50 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 2 — 2026-05-27 — OPEN — Codex v1.0 → v1.1 update arc (master plan Step 4 / S002)
+
+**Status:** OPEN — Phase A complete (this commit). Phases B1–B10 in flight per the operator-approved architect plan.
+
+**Intake summary (operator brief, 2026-05-27):**
+S002 ships the Codex v1.0 → v1.1 update arc. Three converging inputs:
+
+1. Session 1 deferrals (MI-10/11/12/13 in `MIGRATION-ISSUES.md`) and the F-1 / F-2 / F-3 Auditor observations from Session 1 close.
+2. Portfolio folder-structure spec (`tasks/plans/portfolio-folder-structure-spec.md` — operator-signed-off; 4 amendments applied via PR #3) — Library restructures into `Biz.Automation/wikisys.library/_*` (system) + `wiki.codex/{git,local}/` (content) per F1–F12.
+3. Mentor wiki report (2026-05-27 from search room; Mentor was bootstrapped 2026-05-25 as wiki #2 in `spade0704/Project-Mentor`) — one parser bug (FINDING #1, `parse_config_yaml` crash on 3-level nesting) + five Librarian patterns to codify: SPLIT (entity-vs-content), Style-Guide/INGEST/LINT verbatim + project-addenda, `Home.md` NEVER-touched-by-Sync, atomic paired writes, `max_links_per_page` per-project override.
+
+**Profile + regime:**
+- `LATTICE_PROFILE: l2-plus` — Level-2+ change: ~150-file restructure + `bootstrap.py` rewrite + 5 new scripts + spec / persona doc changes
+- `AUDITOR_MODE: persona` — Regime B; Auditor dispatched on-demand via Claude Code Agent tool (same as Session 1)
+- Auditor trigger: **schedule** (sprint close at v1.1 implementation completion) AND **risk** (Level-2+ surface)
+- Bus root: deferred — using Agent-tool result envelope inline (matches Session 1 pattern; Library bus infra still deferred)
+
+**Architect plan:** Banked at `tasks/architect-notes.md` §S002. AC1–AC12 acceptance criteria; 10 per-phase commits (A + B1–B10); WIDE-scope `bootstrap.py` rewrite chosen (full canonical-output per spec section (c), not just path lookups). Risk register and verification recipe enumerated.
+
+**Master plan reference:** `/root/.claude/plans/check-the-dfdu-project-bubbly-knuth.md` Step 4 (Codex v1.1).
+
+**S001 deferrals carried into S002 scope:**
+- MI-10 (Lattice-2 persona drop-in test) — disposition: **resolve** in B9; generalize the test.
+- MI-11 (`test_doc_lint_full_tree.py` empty in Library) — disposition: **resolve** in B9; repoint to `wiki.codex/git/codex/*.md` after B3 move.
+- MI-12 (historical tasks/* + CHANGELOG curation) — disposition: **carry** to S004+ curation sub-session.
+- MI-13 (pyproject.toml decision) — disposition: **resolve as drop** in B9; stdlib-only discipline + Library never distributes as wheel.
+
+**Operator decisions locked at Phase A:**
+- B5 scope: **WIDE** (full `bootstrap.py` rewrite per spec section (c), not narrow path-lookups only).
+- Commit granularity: **per-phase** (10 commits A + B1–B10, not Session-1-style grouped).
+- Auditor dispatch (B10): **Session-1-style** (Agent inline envelope; bus root stays deferred).
+
+**Phase A completed (this commit):**
+- Session 2 entry opened (this entry).
+- Architect plan banked to `tasks/architect-notes.md` §S002.
+- Stale "Mentor (planned)" section in `tasks/plans/portfolio-folder-structure-spec.md` corrected — Mentor flipped to "shipped 2026-05-25"; FINDING #1 + 5 pattern codifications cross-linked into S002 scope.
+- `tasks/todo.md` updated with S002 current-sprint block.
+
+**Phase B (pending):** Execution per B1–B10 per the architect plan.
+
+**In-flight:** Awaiting Phase B1 entry.
+
+---
+
 ## Session 1 — 2026-05-27 — CLOSED — Codex extraction from project-codex (master plan Step 3)
 
 **Status:** CLOSED — all 9 sub-phases complete; Auditor verdict `pass` with 3 observations (2 actioned inline, 1 deferred to Step 4); cross-repo commits on EMCC + project-codex referenced.

@@ -834,10 +834,53 @@ Acceptance criteria for S002:
 - MI-10/11/12/13 (S001 deferrals in Library `MIGRATION-ISSUES.md`)
   resolved or explicitly carried to v1.2
 
-## Mentor (planned) — Greenfield bootstrap target
+## Mentor — Greenfield bootstrap (shipped 2026-05-25; first canonical-layout consumer)
 
-No on-disk migration. `bootstrap.py mentor` generates the canonical
-tree directly (see section c).
+**Status:** Bootstrapped 2026-05-25 as wiki #2 in
+`spade0704/Project-Mentor`. First real consumer of the canonical
+layout described in section (a). Shipped before Codex v1.1 lands, so
+the on-disk Mentor layout is the *intended* canonical tree but the
+bootstrap path that produced it was a manual / pre-v1.1 hybrid; the
+v1.1 `bootstrap.py mentor --full` rewrite (S002 Phase B5) reproduces
+this tree mechanically.
+
+**Canonical artifacts in the Mentor repo** (cited by the
+2026-05-27 Mentor wiki report; see Library S002 architect notes for
+the full report integration):
+
+- `tasks/Sessions.md` / `wiki/_decisions/sessions.md` — the dogfood
+  session report (7 ingest cycles, ~20KB).
+- `wiki/_decisions/ingest-log.md` — 7-cycle ingest detail.
+- `tasks/Lessons.md` / `wiki/_decisions/lessons.md` — extracted
+  lessons.
+- `tasks/Todo.md` / `wiki/_decisions/todo.md` — sprint queue.
+
+**Findings folded into Codex v1.1 (S002):**
+
+- **FINDING #1 (bug):** `_scripts/_lib/frontmatter.py::parse_config_yaml`
+  crashes on 3-level YAML nesting. Reproduces with Mentor's
+  `topics.yaml` template form. Fixed in S002 Phase B6 with regression
+  fixture `tests/fixtures/yaml/mentor_topics.yaml`.
+- **Pattern: SPLIT (entity-vs-content)** — separate canon facts
+  (entities) from page bodies (content). Codified in Codex v1.1
+  `CODEX_LIBRARIAN.md` extension (S002 Phase B7).
+- **Pattern: Style-Guide / INGEST / LINT verbatim + project-addenda**
+  — base procedure ships verbatim; consuming project may add an
+  `_addenda.md` in `_context/` for project-specific overrides without
+  modifying the base file. Codified in Phase B7.
+- **Pattern: `Home.md` NEVER-touched-by-Sync** — bootstrap emits the
+  skeleton, Sync never overwrites. Codified in Phase B7.
+- **Pattern: atomic paired writes** — page + index + archive trio in
+  Ingest; page + canon + cross-link trio in canon promotion. Already
+  a hard rule; codified explicitly in Phase B7.
+- **Pattern: `max_links_per_page` per-project override** — knob in
+  `_config/cross_link.yaml`; default from canonical template;
+  per-project override via wiki-internal config precedence. Codified
+  in Phase B7.
+
+**No on-disk migration needed.** Mentor was greenfield. Library's
+S002 work brings `bootstrap.py` up to spec (c) so future consumer
+wikis can be produced mechanically.
 
 ---
 
