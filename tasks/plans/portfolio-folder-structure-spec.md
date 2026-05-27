@@ -125,8 +125,17 @@ EMCC.Library uses them today. Other projects add as needed.
 After F10's public/private split, both `raw/` and `ideas/` live under
 the public side: `wiki.<projectname>/git/raw/` and
 `wiki.<projectname>/git/ideas/`. Operator's simpler names (vs Codex's
-`_sources/raw/`, `_brain_dump/`) are kept — the Codex underscore names
-stay inside `wikisys.<name>/` (system layer).
+`_sources/raw/`, `_brain_dump/`) are kept — these are **content**
+folders, so they live on the content side (`wiki.<name>/git/`), not on
+the system side (`wikisys.<name>/`).
+
+Disambiguation: the system side (`wikisys.<name>/`) hosts the Codex
+**underscore-prefixed conventions** for build/config/canon/context/
+decisions — i.e. `_scripts/`, `_template/`, `_config/`, `_canon/`,
+`_context/`, `_decisions/`. It does NOT include `_sources/` or
+`_brain_dump/`; the operator-friendly content equivalents (`raw/`,
+`ideas/`) live under `wiki.<name>/git/` per the canonical tree
+(lines 261–319 above).
 
 ### F9. `<automationname>.doc/` → **naming-only contract; auto-discovery via wikisys script later.**
 
