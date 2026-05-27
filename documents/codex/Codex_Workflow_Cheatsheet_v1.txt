@@ -1,0 +1,272 @@
+CLAUDE CODE WORKFLOW CHEAT SHEET
+Project Codex — v1 (Building Codex v1.0 from spec v1.1)
+==================================================
+
+STARTING A SESSION
+--------------------------------------------------
+New Session (Full Context)
+
+  Read CLAUDE.md ROOT_INDEX (including BUILD_PRINCIPLES),
+  CODEX_BUILD_SPEC_v1_1.md (skim §3, §4, §7, §8),
+  codex-build-plan.html (note current priority cursor P#),
+  tasks/sessions.md (latest entry), tasks/lessons.md,
+  and tasks/todo.md (In Progress + Immediate).
+  Use ROOT_INDEX to navigate.
+
+  Tell me in 3 lines:
+  1. What we completed last session (which P# items shipped)
+  2. What's next (next P# from the build plan)
+  3. Any blockers or unresolved design questions
+
+Quick Resume
+
+  Read CLAUDE.md R_STATE > D_LAST_SESSION.
+  Resume from there.
+
+
+ASSIGNING WORK (Karpathy-enforced)
+--------------------------------------------------
+Step 1 — Define Task
+
+  Working on: [TASK]. Priority: P[#]. Tag: [FEAT|FIX|AUDIT|DOCS|INFRA|REFACTOR|PROCEDURE]
+
+  Apply BUILD_PRINCIPLES from CLAUDE.md:
+  - Think Before Coding: if ambiguous, ask NOW. State assumptions.
+  - Simplicity First: pure stdlib. No external deps. Minimum code.
+  - Surgical Changes: "Out of scope" list mandatory.
+  - Goal-Driven: success criteria must be /codex-plugin:verify-mechanical.
+  - Spec Wins: when in doubt, the spec is authoritative — flag and ask.
+
+  Identify Rooms/Drawers needed. Plan in tasks/todo.md under
+  "In Progress" using Goal-Driven format (Task / Spec ref §X.Y /
+  Success criteria / Plan with verify-per-step / Assumptions / Out of scope).
+  Wait for GO.
+
+Step 2 — Review the plan, then approve
+
+  GO
+
+Step 3 — Claude Code executes, verifies, ships via /go.
+Optional STOP gates in the plan can pause at checkpoints
+for review before continuing.
+
+
+THE FIVE BUILD PRINCIPLES (every task)
+--------------------------------------------------
+1. Think Before Coding   — state assumptions; ask if unclear
+2. Simplicity First      — pure stdlib only; no speculative abstractions
+3. Surgical Changes      — "Out of scope" list mandatory; don't drift
+4. Goal-Driven Execution — success criteria must be verify-mechanical
+5. Spec Wins             — spec contradicts plan? Stop. Ask. Don't decide.
+
+Tradeoff: trivial edits (typo, comment fix) skip the full format.
+Non-trivial work — always full rigor.
+
+
+SESSION TAGS
+--------------------------------------------------
+Tag           | Use for
+--------------|------------------------------------------
+[FEAT]        | New script, template, or capability
+[FIX]         | Bug fix in existing component
+[AUDIT]       | Spec-fidelity / stdlib-purity / idempotency audit
+[DOCS]        | README, CHANGELOG, inline comments only
+[INFRA]       | Project structure, build order, file manifest
+[REFACTOR]    | Code structure, no behavior change
+[PROCEDURE]   | Touches shipped _context/*.md procedures (rare)
+
+
+DURING DEVELOPMENT
+--------------------------------------------------
+Two-Step Retrieval
+
+  Step 1: Identify the Room and Drawer for [component].
+          Confirm BUILD_PRINCIPLES loaded. Confirm priority P# from build plan.
+  Step 2: Access R_[ROOM] > D_[DRAWER] and implement [function].
+          Apply Surgical Changes (list out of scope).
+
+Examples
+
+  Access R_LIB > D_FRONTMATTER and implement parse_frontmatter (P1)
+  Access R_SCRIPTS > D_VALIDATORS and write check_canon_consistency.py (P12)
+  Access R_TEMPLATES > D_PAGES and add Home.md template (P35)
+  Access R_CONFIG and create concept_coverage.yaml (P26)
+  Access R_BOOTSTRAP and write bootstrap.py (P50)
+
+Full Scan
+
+  Scan the entire ROOT_INDEX and identify which Rooms need updating
+  for this change.
+
+Spec-First Lookup (do this before writing code, not after)
+
+  Before any script:    re-read the matching row in spec §2.4
+  Before any template:  re-read spec §2.3 (frontmatter schema)
+  Before any config:    re-read spec §2.5
+  Before bootstrap/sync/ingest changes: re-read spec §4
+  Before declaring done: re-read spec §7 Phase 6 self-test list
+
+
+ROOM INDEX (suggested — adapt to your CLAUDE.md)
+--------------------------------------------------
+Room              | Contains
+------------------|------------------------------------------
+BUILD_PRINCIPLES  | Five principles + spec §8 hard rules (load first)
+R_SPEC            | CODEX_BUILD_SPEC_v1_1.md (the authority)
+R_PLAN            | codex-build-plan.html (priority sequence P1→P54)
+R_LIB             | _lib/frontmatter.py (foundation, imports everywhere)
+R_SCRIPTS         | The 15 automation scripts + 2 scaffolds
+R_CONFIG          | _config/ templates (forbidden_terms, cascade, etc.)
+R_CANON           | _canon/ templates (counts, roster, taxonomy, timeline)
+R_CONTEXT         | _context/ files (INGEST + SEMANTIC ship verbatim, RULES per-project)
+R_TEMPLATES       | Page templates (Home, 00-Start-Here, 04-Contributing, _confidential)
+R_BOOTSTRAP       | bootstrap.py + sync_from_kit.py (entry points)
+R_STATE           | Last session, current P#, blockers, design questions
+R_REFERENCE       | INGEST_PROCEDURE.md, SEMANTIC_LINT_PROCEDURE.md (verbatim ship)
+
+
+VERIFYING (without shipping)
+--------------------------------------------------
+  /codex-plugin:verify
+
+Runs 5-stage check on Codex:
+  1. Stdlib-purity: scan _scripts/ for non-stdlib imports
+  2. Self-test bootstrap: python bootstrap.py to a temp path
+  3. Dashboards: python _scripts/update_dashboards.py on the test wiki
+  4. Validator pass: confirm 0 errors, 0 warnings
+  5. Idempotency: re-run bootstrap; confirm identical output
+
+Scope-aware: skips stages 2–5 for docs-only / template-only diffs.
+No commit. Use when you want to know "would this ship?" before deciding.
+
+Manual fallback (if no plugin yet):
+  - Stdlib check: grep -rn "^import\|^from" _codex/_scripts/ and eyeball
+  - Self-test: python bootstrap.py %TEMP%/codex-selftest && \
+               cd %TEMP%/codex-selftest && python _scripts/update_dashboards.py
+
+
+MISTAKES & LESSONS
+--------------------------------------------------
+Mid-session
+
+  Add to tasks/lessons.md: [lesson in Context/Rule/Escape-hatch format]
+
+Auto-capture
+
+  /codex-plugin:go step 4 appends lessons automatically if
+  a pattern emerged during the sprint.
+
+Codex-specific lesson hot spots:
+  - YAML-subset parser edge cases (lists, quoted strings, escapes)
+  - Code-block stripping order — strip BEFORE pattern matching
+  - Path math: WIKI_ROOT = parent.parent.parent from inside _lib
+  - Cross-platform paths — use pathlib, never string concat
+  - Frontmatter list fields (dependencies, canon_sources, blocking_questions, unverified_claims, migrated_to)
+  - "|" → "/" replacement in template filenames during bootstrap
+  - canon_sources cite _sources/raw/, never _inbox/
+
+
+ENDING A SESSION
+--------------------------------------------------
+Just one command:
+
+  /codex-plugin:go
+
+Runs 8 steps automatically:
+  1. Verify (re-runs /codex-plugin:verify)
+  2. Simplify + Surgical Changes check (diff traces to plan?)
+  3. Session log entry → tasks/sessions.md (which P# items shipped)
+  4. Lessons check (append if pattern emerged)
+  5. R_STATE sync → CLAUDE.md (advance current P# cursor)
+  6. Commit (Conventional Commits format)
+  7. Push to main
+  8. Report SHA + next P# + manifest progress
+
+STOP-and-ask triggers:
+  - Verify fails (any of the 5 stages)
+  - Stdlib purity violated (external import detected)
+  - Spec contradicts the change
+  - Idempotency broken (bootstrap not reproducible)
+  - Scope exceeded / diff > 2x expected size
+  - Lesson violated
+  - Score-vs-priority mismatch in build plan still unresolved
+
+
+AUDITS
+--------------------------------------------------
+  Run [SPEC|STDLIB|IDEMPOTENCY|CROSS-PLATFORM|DX] audit on [scope].
+  Fix issues automatically. Score out of 10.
+  Append to tasks/sessions.md with [AUDIT] tag.
+  Then /codex-plugin:go.
+
+Audit types
+
+  SPEC           — does the build match spec §X? Frontmatter complete?
+                   Hard rules from §8 honored?
+  STDLIB         — any non-stdlib imports? PyYAML sneak in anywhere?
+  IDEMPOTENCY    — bootstrap twice = byte-identical output?
+                   Sync twice = no spurious changes?
+  CROSS-PLATFORM — pathlib used everywhere? "|"/"/" handled correctly?
+                   Windows + POSIX paths both work?
+  DX             — --dry-run + --help on every entry point?
+                   Error messages clear? Dashboards readable?
+                   Operational caveats commented inline?
+
+
+PHASE GATES (spec §7)
+--------------------------------------------------
+Phase 1 — Intake. Ask the 5 questions BEFORE any code. Confirm answers.
+Phase 2 — Scaffold the directory structure (spec §5).
+Phase 3 — Build the scripts (P1 → P20). _lib/frontmatter.py first.
+Phase 4 — Build configs/canon (P21 → P31), then templates (P32 → P49).
+          INGEST + SEMANTIC procedures ship VERBATIM. Don't paraphrase.
+Phase 5 — Build entry points: bootstrap.py (P50), sync_from_kit.py (P20 already).
+Phase 6 — Self-test bootstrap (P52 → P54). All 5 verify stages pass.
+Phase 7 — Write README + CHANGELOG (last, after self-test).
+Phase 8 — Show user the manifest, the tree, and the self-test output.
+
+
+QUICK COMMANDS
+--------------------------------------------------
+Action              | Command
+--------------------|------------------------------------------
+Start session       | Read CLAUDE.md ROOT_INDEX, spec §3/§7/§8, build plan, sessions.md, lessons.md, todo.md
+Quick resume        | Read R_STATE > D_LAST_SESSION (note current P#)
+Assign work         | Working on X. P#. Tag: [FEAT]. Apply BUILD_PRINCIPLES. Plan in todo.md. GO wait.
+Approve             | GO
+Access context      | Access R_[ROOM] > D_[DRAWER]
+Look up spec        | Re-read CODEX_BUILD_SPEC_v1_1.md §[N]
+Verify only         | /codex-plugin:verify
+Log mistake         | Add to lessons: [text]
+Ship                | /codex-plugin:go
+Audit               | Run [SPEC|STDLIB|IDEMPOTENCY|CROSS-PLATFORM|DX] audit. Then /codex-plugin:go.
+New machine         | git clone + setup script (re-register plugin if any)
+
+
+CODEX HARD RULES (spec §8 — never break)
+--------------------------------------------------
+1. Pure Python stdlib only. No pip install. No PyYAML.
+2. Never edit files outside D:\Claude Projects\Project Codex\
+   (exception: self-test bootstraps to a temp path).
+3. Always run a self-test bootstrap before declaring complete.
+4. Always show the file manifest at the end of the build.
+5. INGEST_PROCEDURE.md and SEMANTIC_LINT_PROCEDURE.md ship VERBATIM —
+   never paraphrase, shorten, or "improve" them.
+6. The spec wins every contradiction. Flag and ask, don't decide.
+7. No Iron Soul reference is provided in this project — build from
+   spec alone. Iron Soul is the first consumer, not a derivation source.
+
+
+RED FLAGS (stop and ask)
+--------------------------------------------------
+- A request not in the spec — confirm scope before adding
+- A script seemingly needing a non-stdlib import — find a stdlib path or escalate
+- The spec is genuinely ambiguous on a buildable detail — surface it,
+  propose a resolution, wait for confirmation before writing
+- Score-vs-priority mismatch in build plan — pause, resolve design first
+- Required input missing (currently none — both procedure files are present)
+- A v1.1-novel artifact has no Iron Soul precedent (check_concept_coverage.py,
+  scaffold_source.py, the two _context/ procedures) — implement from spec alone
+
+
+==================================================

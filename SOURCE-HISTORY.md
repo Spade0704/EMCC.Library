@@ -25,12 +25,12 @@ Per `tasks/architect-notes.md` §S001 goes/stays inventory G1–G20:
 | G8 | `_scripts/` (minus 3 lattice-2.0 scripts) | `_scripts/` | Automation; lattice-bridge.py + lattice_session_start.py + lattice_valid_roles_audit.py STAY in project-codex per A1 ambiguity resolution |
 | G9 | `_template/` | `_template/` | 26 wiki template files |
 | G10 | `_config/` | `_config/` | 5 YAML + README |
-| G11 | `tests/` (minus 5 lattice-bridge tests + 2 lattice-tactical tests) | `tests/` | Per A1+A2 ambiguity resolution; expected count ~821 |
+| G11 | `tests/` (minus 5 lattice-bridge tests; A2 was REVOKED in Phase B3 — see MIGRATION-ISSUES.md) | `tests/` | Per A1 ambiguity resolution; expected count ~821 |
 | G12 | `documents/Codex_Project_Documentation.pdf` | `documents/codex/Codex_Project_Documentation.pdf` | New `documents/codex/` sub-dir for Codex docs |
 | G13 | `documents/Codex_Workflow_Cheatsheet_v1.txt` | `documents/codex/Codex_Workflow_Cheatsheet_v1.txt` | Same |
 | G14 | `documents/codex-build-progress.md` | `documents/codex/codex-build-progress.md` | Same |
 | G15 | `codex-build-plan.html` | `codex-build-plan.html` | Codex build plan (priorities P1–P54) |
-| G16 | `.claude/personas/CLAUDE.librarian.md` | `personas/CLAUDE.librarian.md` | Flat personas/ dir (matches DFDU pattern); not under `.claude/` |
+| G16 | `.claude/personas/CLAUDE.librarian.md` | `.claude/personas/CLAUDE.librarian.md` | Preserves project-codex layout per AC8 (Codex `bootstrap.py` + `test_phase6_full_chain_e2e.py::test_phase6_librarian_persona_files_byte_equivalent` reference `REPO_ROOT/.claude/personas/CLAUDE.librarian.md`; DFDU-style flat `personas/` is a Step 4 v1.1 follow-up). DFDU's auditor persona (`CLAUDE.auditor.md`) co-located here for Library's own Lattice 3.0 sessions. |
 | G17 | `Sources/Raw/` | `Sources/Raw/` | Source-archive convention root (README only at extraction) |
 | G18 | Curated Codex-class entries from `tasks/{lessons,architect-notes,sessions,auditor-notes}.md` | Library `tasks/` corresponding files | Curated; Lattice-class entries stay in project-codex |
 | G19 | `tasks/v1.1-backlog.md` | `tasks/v1.1-backlog.md` | Codex v1.1 backlog (full move) |

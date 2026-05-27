@@ -1,0 +1,33 @@
+# _config/forbidden_terms.yaml — regex rules for trademark / naming / convention violations.
+# Consumed by _scripts/validate_terminology.py.
+#
+# Schema (per spec v1.2 §2.5 + consumer-script implementation):
+#   - wrapper key: `rules` (list)
+#   - per-rule required keys: pattern (regex), severity (error|warning|info), message, context
+#   - severity ∈ {error, warning, info} per _lib.dashboard.SEVERITY_ORDER
+#   - context ∈ {all, audience, internal}:
+#       all      — flag in every scanned page regardless of `visibility`
+#       audience — flag only when page `visibility` matches rule scope
+#       internal — flag only on pages with `visibility: internal`
+#
+# Edit the commented examples below when project values are known.
+# Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+
+rules: []
+
+# Example rules (uncomment + customize per project):
+#
+# - pattern: "(?i)\\bcompetitor-trademark\\b"
+#   severity: error
+#   message: "Trademark violation — use the approved alternative noun."
+#   context: all
+#
+# - pattern: "(?i)\\binternal-codename\\b"
+#   severity: warning
+#   message: "Internal codename leaked onto a public surface — replace with public-facing term."
+#   context: audience
+#
+# - pattern: "(?i)\\b(TODO|DRAFT)\\b"
+#   severity: info
+#   message: "Draft marker present — confirm before promoting to status: ready."
+#   context: internal

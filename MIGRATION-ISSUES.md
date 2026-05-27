@@ -27,13 +27,19 @@ Mirrors the convention established by `EMCC.DFDU/MIGRATION-ISSUES.md` which exte
 
 **Resolution:** STAY in project-codex archive. Library extraction excludes these 8 files. A3 cross-module import verification (this session, Phase B1) confirmed Codex GOES scripts have NO functional imports of these files — the two grep hits (`bootstrap.py:50` defensive `SCRIPT_IGNORE_PATTERNS` entry; `build_canon_drift_report.py:350` historical docstring comment) are both inert. Library's test count post-extraction: ~821, not 826 (acceptance criterion AC1 updated accordingly).
 
-### A2 — Lattice 2.0 tactical tests in Codex test suite
+### A2 — Initial misclassification of two Codex tests as Lattice tactical (REVOKED in Phase B3)
 
 **Discovered:** Pre-flight inventory (Phase A architect plan, 2026-05-27).
 
-**Description:** `test_phase6_full_chain_e2e.py` and `test_steel_thread_tracker.py` (plus the script `steel_thread_tracker.py`) cover Lattice 2.0 tactical work (Phase 6 = bridge dogfood E2E; steel threads = Lattice 2.0 feature-tracking convention). Not Codex.
+**Initial (incorrect) classification:** `test_phase6_full_chain_e2e.py` and `test_steel_thread_tracker.py` (plus the script `steel_thread_tracker.py`) called as Lattice 2.0 tactical work (Phase 6 = bridge dogfood E2E; steel threads = Lattice 2.0 feature-tracking convention).
 
-**Resolution:** STAY in project-codex archive. Library exclusion noted in A1's count refinement.
+**Revocation (Phase B3, 2026-05-27):** Re-reading the actual files showed both are explicitly Codex:
+- `steel_thread_tracker.py` docstring: "P14 validator (v1.0). Spec contract: CODEX_BUILD_SPEC_v1_2.md §2.4 row 11" — it's Codex's P14 script, listed in project-codex CLAUDE.md R_LOGIC D_SERVICES table alongside the other 14 Codex automation scripts.
+- `test_phase6_full_chain_e2e.py` docstring: "Per CODEX_BUILD_SPEC_v1_3.md §7 Phase 6 self-test invariants + CLAUDE.md D_VERIFICATION Stage 5" — it's Codex's spec §7 Phase 6 self-test (bootstrap + sync + scaffolds + Librarian wiring), the SHIP-readiness final gate.
+
+**Final resolution:** BOTH GO to Library. The initial misclassification was a naming-overlap error: "Phase 6" appears in both Codex's spec §7 build phases AND Lattice 2.0's bridge dogfood phase numbering; "steel threads" is generic-enough phrasing that I mistook it for Lattice 2.0's concept. Lesson for capture after session close: verify any "this stays in archive" classification by reading the file's docstring + spec cross-reference before locking it.
+
+**Net effect on Library test count:** Same as A1 alone — 5 lattice-bridge tests stay; expected post-extraction count = total − 5 (~821 by initial spec, refined in B5).
 
 ### A3 — Cross-module import verification (preventive)
 

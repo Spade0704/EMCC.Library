@@ -29,7 +29,7 @@ Extract Codex (Librarian protocol) from `spade0704/project-codex` to this repo. 
 | G8 | `_scripts/` minus 3 lattice-2.0 scripts (see A1) | Automation |
 | G9 | `_template/` (26 wiki template files) | Templates |
 | G10 | `_config/` (5 YAML + README) | Config |
-| G11 | `tests/` minus 5 lattice-2.0 tests + 2 lattice-tactical tests (see A1, A2) | Test suite (~821 tests) |
+| G11 | `tests/` minus 5 lattice-2.0 tests (A1 only; A2 revoked — see ambiguities section) | Test suite (~821 tests; refined count established in B5) |
 | G12 | `documents/Codex_Project_Documentation.pdf` | Doc |
 | G13 | `documents/Codex_Workflow_Cheatsheet_v1.txt` | Cheatsheet |
 | G14 | `documents/codex-build-progress.md` | Build progress log |
@@ -48,7 +48,7 @@ Extract Codex (Librarian protocol) from `spade0704/project-codex` to this repo. 
 
 **A1.** `_scripts/lattice-bridge.py`, `_scripts/lattice_session_start.py`, `_scripts/lattice_valid_roles_audit.py` + their 5 tests (`test_lattice_bridge*.py`, `test_lattice_session_start.py`, `test_lattice_valid_roles_audit.py`) are Lattice 2.0, not Codex. **Decision: STAY** in project-codex archive.
 
-**A2.** `test_phase6_full_chain_e2e.py` and `test_steel_thread_tracker.py` — Phase 6 / steel threads were Lattice 2.0 tactical work, not Codex. **Decision: STAY** in project-codex archive. (Note: `steel_thread_tracker.py` script also STAYS.)
+**A2.** ~~`test_phase6_full_chain_e2e.py` and `test_steel_thread_tracker.py` — Phase 6 / steel threads were Lattice 2.0 tactical work, not Codex.~~ **REVOKED in Phase B3 verification.** Re-reading the actual files: `steel_thread_tracker.py` is Codex's P14 script per `CODEX_BUILD_SPEC_v1_2.md §2.4 row 11` (also v1.3); `test_phase6_full_chain_e2e.py` is Codex's spec §7 Phase 6 self-test invariant verifier (bootstrap + sync + scaffolds + Librarian wiring assertions). Both are CODEX, not Lattice tactical. **Revised decision: BOTH GO to Library.** Naming overlap ("phase 6" appears in both Codex's roadmap and Lattice 2.0's bridge dogfood; "steel threads" is a generic-enough term that I mistook it for Lattice 2.0's concept) caused the initial misclassification. Lesson logged after session close.
 
 **A3.** **VERIFY (in Phase B1)** that `bootstrap.py` and the remaining Codex `_scripts/` have no Python imports from A1's three lattice-2.0 scripts before removing them from the GOES set. If imports exist, either fold the import target into Codex (rename to remove "lattice" prefix) or leave the dependency edge as a documented carry.
 

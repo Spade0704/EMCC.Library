@@ -1,0 +1,13 @@
+# Canon roster for the test fixture wiki.
+# Consumed by P12 check_canon_consistency.py tests.
+#
+# Schema: top-level `entities:` block-style list-of-mappings; each item has
+# `canonical_name:` (required string) and optional `aliases:` flow-style
+# list of alias strings. Page fm `canon_claim_roster_<canonical_name>:
+# <string>` keys cross-checked against entries here in Mode 1
+# page-vs-canon validation.
+
+entities:
+  - canonical_name: Protagonist
+    aliases: ["Hero", "MC"]
+  - canonical_name: Antagonist

@@ -1,0 +1,32 @@
+# Steel-thread manifest for the test fixture wiki.
+# Consumed by P14 steel_thread_tracker.py tests.
+#
+# Schema (wrapper-key flat-mapping with flow-list value):
+#
+#   threads:
+#     - name:    str        # required; thread identifier
+#       layers:  [list]     # required; flow-style list of wiki-root-
+#                           # relative paths; each path tested for
+#                           # disk existence by P14
+#       status:  str        # optional; one of complete | partial |
+#                           # incomplete; operator-override that
+#                           # takes precedence over the auto-derived
+#                           # status. Invalid values (or absence)
+#                           # fall to auto-derivation from
+#                           # layer-presence ratio.
+#
+# parse_config_yaml supports flow-style lists as VALUES inside list
+# items per `_parse_value` line 101-105; nested block-list-of-mappings
+# under `layers:` is NOT supported (docstring line 161) -- the
+# flat-flow-list shape is the only viable schema given the parser.
+#
+# This fixture file ships with example entries commented out so tests
+# can rely on absent-file/empty-manifest semantics. Override-case tests
+# overwrite this file in TempDir per test.
+
+# threads:
+#   - name: "Bootstrap Wiki"
+#     layers: ["_scripts/bootstrap.py", "tests/test_bootstrap.py"]
+#   - name: "Cascade Validator"
+#     status: complete
+#     layers: ["_scripts/check_cascade.py", "_config/cascade_map.yaml"]

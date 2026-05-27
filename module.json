@@ -13,11 +13,11 @@
   "canon_docs": "CODEX_BUILD_SPEC_v1_3.md",
   "personas": {
     "librarian": {
-      "path": "personas/CLAUDE.librarian.md",
+      "path": ".claude/personas/CLAUDE.librarian.md",
       "instantiation": "always-on (the agent that ingests, routes, validates inside a consuming-project's wiki)"
     },
     "auditor": {
-      "path": "personas/CLAUDE.auditor.md",
+      "path": ".claude/personas/CLAUDE.auditor.md",
       "instantiation": "on-demand (Regime B; Library inherits DFDU's Auditor verbatim — same 116-line persona)"
     }
   },

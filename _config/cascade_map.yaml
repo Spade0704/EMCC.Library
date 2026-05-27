@@ -1,0 +1,22 @@
+# _config/cascade_map.yaml — source → derived doc propagation pairs.
+# Consumed by _scripts/check_cascade.py (mtime-based staleness detection)
+# and _scripts/delta_source_docs.py (cascade-impact analysis at diff time).
+#
+# Schema (per spec v1.2 §2.5 + consumer-script implementation):
+#   - wrapper key: `pairs` (list)
+#   - per-pair required keys: source, derived
+#   - paths are wiki-root-relative POSIX strings
+#
+# When a source page changes, listed derived pages need re-review.
+# Edit the commented examples below when project values are known.
+# Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+
+pairs: []
+
+# Example pairs (uncomment + customize per project):
+#
+# - source: "01-Framework/Spec.md"
+#   derived: "public/Spec-Briefing.md"
+#
+# - source: "02-Domain/Glossary.md"
+#   derived: "public/Glossary-Public.md"

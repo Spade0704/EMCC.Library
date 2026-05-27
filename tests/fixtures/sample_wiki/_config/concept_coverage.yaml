@@ -1,0 +1,29 @@
+# Concept-coverage config for the test fixture wiki.
+# Consumed by P13 check_concept_coverage.py tests.
+#
+# Schema (scalar-key top-level shape per CODEX_BUILD_SPEC_v1_2.md §2.5
+# line 223; read via _lib.frontmatter.parse_config_yaml direct call,
+# NOT _lib.config_loader.load_config_yaml — the latter is wrapper-key
+# list-of-mappings only and does not fit this shape).
+#
+#   min_mentions:      int (default 2)   — threshold of distinct pages
+#                                          mentioning an entity that
+#                                          triggers a coverage-gap
+#                                          finding when no dedicated
+#                                          page exists.
+#   exclude_folders:   [list of str]     — component-aware folder
+#                                          exclusion (skip pages whose
+#                                          path includes any listed
+#                                          folder as a component).
+#   exclude_entities:  [list of str]     — canonical-name exact-match
+#                                          (case-sensitive) escape
+#                                          hatch; aliases NOT
+#                                          independently checked.
+#
+# This fixture file ships with defaults commented out so tests can rely
+# on absent-file/default-state semantics. Override-case tests overwrite
+# this file in TempDir per test.
+
+# min_mentions: 2
+# exclude_folders: []
+# exclude_entities: []

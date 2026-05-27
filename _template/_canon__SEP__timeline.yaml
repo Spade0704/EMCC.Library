@@ -1,0 +1,23 @@
+# _template/_canon__SEP__timeline.yaml — milestones / version numbers / in-universe dates / progression.
+# Consumed by:
+#   _scripts/check_canon_consistency.py (lookup_key = name; required = name + date)
+#   _scripts/build_canon_drift_report.py (snapshot + diff over time; drift relaxes to required = name only)
+#
+# Schema (per spec v1.2 §2.5 + consumer-script implementation):
+#   - wrapper key: `events` (list)
+#   - per-entry required keys: name (str), date (str)
+#   - date format is project-defined; ISO-8601 `YYYY-MM-DD` recommended for portability
+#
+# Anything ordered along a time axis appearing in more than one page lives here.
+# Edit commented examples when project milestones are known.
+# Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+
+events: []
+
+# Example entries (uncomment + customize per project):
+#
+# - name: "<project-launch>"
+#   date: "2020-01-01"
+#
+# - name: "<v2-release>"
+#   date: "2024-06-15"

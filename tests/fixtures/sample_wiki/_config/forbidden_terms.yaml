@@ -1,0 +1,18 @@
+# Forbidden-terms config for the test fixture wiki.
+# Consumed by P6 validate_terminology.py tests.
+
+rules:
+  - pattern: "BadTerm"
+    severity: error
+    message: "BadTerm is forbidden in all contexts"
+    context: all
+    rule: trademark
+  - pattern: "InternalOnly"
+    severity: warning
+    message: "InternalOnly should not appear in public-facing content"
+    context: audience
+    rule: leak
+  - pattern: "PublicOnly"
+    severity: info
+    message: "PublicOnly is an internal-only marker"
+    context: internal

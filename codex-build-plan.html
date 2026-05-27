@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Codex v1.1 — Build Readiness Plan</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1c2230;
+    --border: #2a3142;
+    --text: #e6e9ef;
+    --muted: #8b94a7;
+    --muted-2: #5f6678;
+    --accent: #5b8def;
+    --red: #e0444a;
+    --orange: #e89534;
+    --yellow: #d8c64a;
+    --green: #4caf50;
+    --green-deep: #3d8b40;
+    --shadow: 0 1px 3px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.25);
+    --mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+
+    /* Tier accent colors */
+    --t1: #6db3ff;
+    --t2: #b08bff;
+    --t3: #5fd1c4;
+    --t4: #d9b87a;
+    --t5: #e89534;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  header.top {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+  }
+  .crumb {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 720px;
+  }
+
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin: 24px 0 8px;
+  }
+  .stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .stat .num {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: var(--mono);
+  }
+  .stat .lbl {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .stat.gap     .num { color: var(--red); }
+  .stat.out     .num { color: var(--orange); }
+  .stat.solid   .num { color: var(--yellow); }
+  .stat.ready   .num { color: var(--green); }
+  .stat.avg     .num { color: var(--accent); }
+  .stat.shipped .num { color: var(--green); }
+
+  .status-banner {
+    margin-top: 16px;
+    background: linear-gradient(180deg, rgba(91,141,239,.08), rgba(91,141,239,.02));
+    border: 1px solid rgba(91,141,239,.4);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 14px;
+  }
+  .status-banner .ico {
+    flex: 0 0 auto;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+  .status-banner b { color: #b9caea; }
+  .status-banner code {
+    font-family: var(--mono);
+    background: rgba(91,141,239,.12);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 12.5px;
+    color: #b9caea;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin: 28px 0 16px;
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+  }
+  .ctl-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .pill {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+    transition: all .15s ease;
+  }
+  .pill:hover { color: var(--text); border-color: #3a4357; }
+  .pill.on { color: var(--text); }
+  .pill.gap.on     { background: rgba(224,68,74,.15);  border-color: var(--red);    color: #ffb3b6; }
+  .pill.out.on     { background: rgba(232,149,52,.15); border-color: var(--orange); color: #ffd29c; }
+  .pill.solid.on   { background: rgba(216,198,74,.15); border-color: var(--yellow); color: #f3e58a; }
+  .pill.ready.on   { background: rgba(76,175,80,.15);  border-color: var(--green);  color: #b2ecb5; }
+  .pill.shipped.on { background: rgba(76,175,80,.22);  border-color: var(--green-deep); color: #c9efcd; }
+
+  .sort-btn {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    min-width: 230px;
+    text-align: left;
+  }
+  .sort-btn:hover { border-color: #3a4357; }
+
+  section.cat {
+    margin-top: 28px;
+  }
+  section.cat h2 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  section.cat h2 .count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted-2);
+    font-weight: 400;
+  }
+
+  .items {
+    display: grid;
+    gap: 8px;
+  }
+  .item {
+    display: grid;
+    grid-template-columns: 48px 28px minmax(220px, 1.4fr) minmax(180px, 1.8fr) 50px 90px;
+    gap: 14px;
+    align-items: center;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    transition: border-color .15s ease, background .15s ease, opacity .15s ease;
+  }
+  .item:hover { border-color: #3a4357; background: var(--panel-2); }
+  .item.hidden { display: none; }
+  .item.shipped { opacity: 0.55; }
+  .item.shipped:hover { opacity: 0.95; }
+
+  .item .prio {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: center;
+    border-radius: 4px;
+    padding: 4px 0;
+    font-weight: 600;
+    letter-spacing: .02em;
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    line-height: 1;
+  }
+  .item .prio .n { display: block; font-size: 13px; }
+  .item .prio .t {
+    display: block;
+    font-size: 9px;
+    margin-top: 3px;
+    color: var(--muted-2);
+    letter-spacing: .04em;
+    font-weight: 500;
+  }
+  .item.tier-1 .prio { border-color: rgba(109,179,255,.4); }
+  .item.tier-1 .prio .n { color: var(--t1); }
+  .item.tier-2 .prio { border-color: rgba(176,139,255,.35); }
+  .item.tier-2 .prio .n { color: var(--t2); }
+  .item.tier-3 .prio { border-color: rgba(95,209,196,.35); }
+  .item.tier-3 .prio .n { color: var(--t3); }
+  .item.tier-4 .prio { border-color: rgba(217,184,122,.30); }
+  .item.tier-4 .prio .n { color: var(--t4); }
+  .item.tier-5 .prio { border-color: rgba(232,149,52,.40); }
+  .item.tier-5 .prio .n { color: var(--t5); }
+
+  .item .typ {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--muted-2);
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 0;
+    letter-spacing: .04em;
+  }
+  .item .name {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .item .name .v11 {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 9.5px;
+    padding: 1px 5px;
+    background: rgba(91,141,239,.15);
+    color: #9bb6f3;
+    border-radius: 3px;
+    letter-spacing: .04em;
+    vertical-align: 1px;
+  }
+  .item .name .new {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 9.5px;
+    padding: 1px 5px;
+    background: rgba(232,149,52,.15);
+    color: #ffd29c;
+    border-radius: 3px;
+    letter-spacing: .04em;
+    vertical-align: 1px;
+  }
+  .item .note {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .item .score {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .item .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-align: center;
+    padding: 3px 0;
+    border-radius: 3px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .item .badge.gap     { background: rgba(224,68,74,.15);  color: #ffb3b6; }
+  .item .badge.out     { background: rgba(232,149,52,.15); color: #ffd29c; }
+  .item .badge.solid   { background: rgba(216,198,74,.15); color: #f3e58a; }
+  .item .badge.ready   { background: rgba(76,175,80,.15);  color: #b2ecb5; }
+  .item .badge.shipped { background: rgba(76,175,80,.28);  color: #c9efcd; }
+
+  .bar-wrap { position: relative; height: 6px; }
+  .item .bar {
+    position: absolute;
+    inset: 0;
+    background: var(--panel-2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .item .bar .fill {
+    height: 100%;
+    border-radius: 999px;
+  }
+  .name-block { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+  .legend {
+    margin-top: 32px;
+    padding: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .legend strong { color: var(--text); font-weight: 600; }
+  .legend .row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 10px; }
+  .legend .swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+  }
+  .legend .swatch .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+  .legend p { margin: 12px 0 0; }
+  .legend .tier-key {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+  .legend .tier-key span { display: inline-block; margin-right: 14px; font-family: var(--mono); }
+  .legend .tier-key b { font-weight: 600; }
+
+  @media (max-width: 800px) {
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    .item {
+      grid-template-columns: 48px 1fr 60px;
+      grid-template-areas:
+        "prio name score"
+        "typ  note  badge";
+      gap: 6px 12px;
+    }
+    .item .prio  { grid-area: prio; }
+    .item .typ   { grid-area: typ; }
+    .item .name-block { grid-area: name; }
+    .item .score { grid-area: score; }
+    .item .badge { grid-area: badge; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="crumb">Codex / Development Plan</div>
+    <h1>Codex v1.1 — Build Readiness</h1>
+    <div class="sub">
+      Component-by-component readiness scoring against the v1.1 build spec, with a build-order priority for each item. Bands match the spec's own status system: <b>gap</b> &lt; 30, <b>outlined</b> 30–54, <b>solid</b> 55–79, <b>ready</b> ≥ 80. Priority numbers (P1 → P54) reflect dependency order — lower P# means build it earlier. Shipped items are dimmed and frozen at their original readiness score (historical record).
+    </div>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="status-banner">
+      <div class="ico">🛠</div>
+      <div>
+        Active build — <b>P1–P8 shipped (8/54).</b> P9 next via three-persona Lattice loop after P8.5 <code>_lib/</code> promotion refactor. <b>P19 gated on spec v1.2 amend</b> (health-summary contract Δ pending).
+      </div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <span class="ctl-label">Filter</span>
+    <span class="pill gap on"     data-band="gap">gap</span>
+    <span class="pill out on"     data-band="out">outlined</span>
+    <span class="pill solid on"   data-band="solid">solid</span>
+    <span class="pill ready on"   data-band="ready">ready</span>
+    <span class="pill shipped on" data-band="shipped">shipped</span>
+    <button class="sort-btn" id="sortBtn">sort: spec order ▾</button>
+  </div>
+
+  <main id="grid"></main>
+
+  <div class="legend">
+    <strong>How to read this</strong> — each row is one buildable artifact from §5 of the spec. The <b>score</b> reflects design clarity (clarity of contract, v1.1 novelty, external dependencies). The <b>priority</b> reflects build order — P1 is foundation, P54 is final assembly. They're independent: a high score with a low P# is a "do this next" item; a low score with a low P# is where to slow down and resolve design questions before writing code. <b>Shipped</b> items are frozen at the score they had at build time and dimmed so the dashboard stays focused on remaining work.
+    <p><strong>Suggested workflow:</strong> sort by priority → build in order → if a high-priority item has a low score, pause and resolve the design question before writing code.</p>
+    <div class="row">
+      <span class="swatch"><span class="dot" style="background:var(--red)"></span>gap (&lt;30)</span>
+      <span class="swatch"><span class="dot" style="background:var(--orange)"></span>outlined (30–54)</span>
+      <span class="swatch"><span class="dot" style="background:var(--yellow)"></span>solid (55–79)</span>
+      <span class="swatch"><span class="dot" style="background:var(--green)"></span>ready (≥80)</span>
+      <span class="swatch"><span class="dot" style="background:var(--green-deep)"></span>shipped</span>
+    </div>
+    <div class="tier-key">
+      <strong style="color:var(--text)">Priority tiers:</strong><br>
+      <span><b style="color:var(--t1)">T1</b> P1–3 · Foundation (lib, spec copy, changelog)</span>
+      <span><b style="color:var(--t2)">T2</b> P4–20 · Scripts &amp; scaffolds</span>
+      <span><b style="color:var(--t3)">T3</b> P21–31 · Configs &amp; canon</span>
+      <span><b style="color:var(--t4)">T4</b> P32–49 · Templates &amp; procedures</span>
+      <span><b style="color:var(--t5)">T5</b> P50–54 · Entry points &amp; ops tests</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // -----------------------------------------------------------
+  // Data: every buildable artifact from the v1.1 spec
+  // priority = build order (1 = first); tier derived automatically
+  // shipped = true means landed; score frozen at build-time value
+  // -----------------------------------------------------------
+  const DATA = [
+    { cat: "Three Operations", typ: "OP",
+      items: [
+        { name: "Bootstrap (one-time wiki creation)", score: 75, priority: 52,
+          note: "Tested after bootstrap.py + all templates exist. v1.1 must add _sources/raw/ + _context/ procedures." },
+        { name: "Sync (cascade infra updates)", score: 80, priority: 53,
+          note: "Tested after Bootstrap works. v1.1 added _context/ overwrite handling." },
+        { name: "Ingest (source integration)", score: 75, v11: true, priority: 54,
+          note: "NEW in v1.1. Procedure file present; tested last because it depends on dashboards + canon." },
+      ]},
+
+    { cat: "Core Tooling", typ: "PY",
+      items: [
+        { name: "bootstrap.py", score: 70, priority: 50,
+          note: "Scaffolder. Built after scripts + templates exist. Replaces '|' with '/'. Idempotent." },
+        { name: "_lib/frontmatter.py (YAML-subset parser)", score: 80, priority: 1, shipped: true,
+          note: "FOUNDATION. Every script imports it. Pure-stdlib YAML-subset parser per spec §8. WIKI_ROOT = parent.parent.parent." },
+        { name: "CHANGELOG.md", score: 95, priority: 2, shipped: true,
+          note: "First line drives version detection. Start: '# v1.0 — <date>'." },
+        { name: "README.md (Codex docs)", score: 85, priority: 51,
+          note: "Quickstart + pointer to PROJECT_WIKI_BUILD_SPEC.md. Written after build is complete." },
+        { name: "PROJECT_WIKI_BUILD_SPEC.md (copied)", score: 100, priority: 3, shipped: true,
+          note: "This document is the spec — copy it verbatim into _codex/." },
+      ]},
+
+    { cat: "Automation Scripts (15)", typ: "PY",
+      items: [
+        { name: "collect_open_questions.py", score: 90, priority: 4, shipped: true,
+          note: "Simplest aggregator. Build first to validate the script template + frontmatter import." },
+        { name: "build_completion_dashboard.py", score: 85, priority: 5, shipped: true,
+          note: "Reads frontmatter completion field; red/yellow/green roll-up." },
+        { name: "validate_terminology.py", score: 85, priority: 6, shipped: true,
+          note: "Per spec §2.4. Context-aware (all/audience/internal) per `forbidden_terms.yaml`. Strip code blocks first." },
+        { name: "validate_canon_integrity.py", score: 85, priority: 7, shipped: true,
+          note: "Clear contract: status:ready → canon_sources non-empty, unverified_claims empty." },
+        { name: "validate_reveal_conceit.py", score: 80, priority: 8, shipped: true,
+          note: "Per spec §2.4 #4. Severities error/warning/info per `reveal_leak_patterns.yaml`. Public pages only." },
+        { name: "check_cross_refs.py", score: 85, priority: 9,
+          note: "Wikilink graph + orphan detection per spec §2.4." },
+        { name: "check_cascade.py", score: 75, priority: 10,
+          note: "mtime comparison source → derived. Reads cascade_map.yaml." },
+        { name: "check_framework_briefing_sync.py", score: 75, priority: 11,
+          note: "Pair-based mtime check (framework ↔ public_pair)." },
+        { name: "check_canon_consistency.py", score: 70, priority: 12,
+          note: "Two modes: page-vs-canon (enforced) and page-vs-page (flagged separately)." },
+        { name: "check_concept_coverage.py", score: 75, v11: true, isNew: true, priority: 13,
+          note: "NEW. Reads roster.yaml. Word-boundary case-sensitive matching with aliases; threshold = pages-with-mentions, not total mentions. 'Dedicated page' signal deferred to first real use." },
+        { name: "steel_thread_tracker.py", score: 65, priority: 14,
+          note: "Multi-layer feature manifest. Schema for steel_threads.yaml needs care." },
+        { name: "build_canon_drift_report.py", score: 65, priority: 15,
+          note: "Snapshot + diff over time. Storage location for snapshots = open question." },
+        { name: "delta_source_docs.py", score: 60, priority: 16,
+          note: "Diff two source-doc versions + cascade impact. Most complex script." },
+        { name: "update_dashboards.py (orchestrator)", score: 70, priority: 19,
+          note: "Orchestrator per spec §2.4 #1: runs all aggregators + validators. Build AFTER dependencies. ⚠ v1.2 amend pending: also synthesizes `_dashboards/health.md` (completion % | canon contradictions | cascade staleness | concept-coverage gaps | unverified-claim count | recent ingest)." },
+        { name: "sync_from_kit.py", score: 70, priority: 20,
+          note: "v1.1 added _context/ procedure overwrite (CLAUDE_CONTEXT_RULES.md preserved)." },
+      ]},
+
+    { cat: "Scaffold Helpers", typ: "PY",
+      items: [
+        { name: "scaffold_brain_dump.py", score: 80, priority: 17,
+          note: "Creates `_brain_dump/` entry with `dump_status: exploring`. Quarantine per spec Principle #9." },
+        { name: "scaffold_source.py", score: 70, v11: true, isNew: true, priority: 18,
+          note: "NEW. Local file → copy into _inbox/. URL → placeholder + paste prompt (no fetch)." },
+        { name: "_lib/topics.py", score: 70, v13: true, isNew: true, priority: 18.1,
+          note: "NEW v1.3. Topic registry parser + alias-resolution lookup. Extends parse_config_yaml precedent. Foundation lib for cross-link generation (P18.2-P18.4)." },
+        { name: "build_topic_index.py", score: 70, v13: true, isNew: true, priority: 18.2,
+          note: "NEW v1.3 (spec #16). TF-IDF pure stdlib topic-page index + frontmatter topics:+tags: additive update + _dashboards/topic_index.md. Optional project-local plug-in." },
+        { name: "cross_link_topics.py", score: 70, v13: true, isNew: true, priority: 18.3,
+          note: "NEW v1.3 (spec #17). Marker-bracketed See-also block writer + frontmatter related_files: atomic update. Idempotent (zero-diff re-run)." },
+        { name: "validate_topic_registry.py", score: 70, v13: true, isNew: true, priority: 18.4,
+          note: "NEW v1.3 (spec #18). (a) every page topics: value resolves in _canon/topics.yaml (error); (b) every registry topic has ≥1 member page (warning; orphan detection)." },
+      ]},
+
+    { cat: "Config Templates", typ: "YML",
+      items: [
+        { name: "_config/README.md", score: 85, priority: 21,
+          note: "One paragraph per config file. Trivial." },
+        { name: "_config/forbidden_terms.yaml", score: 85, priority: 22,
+          note: "Ship empty (`rules: []`) with commented examples. Schema per spec §2.5." },
+        { name: "_config/reveal_leak_patterns.yaml", score: 85, priority: 23,
+          note: "Three severity tiers (error/warning/info) including info-level approved terms. Schema per spec §2.5." },
+        { name: "_config/cascade_map.yaml", score: 80, priority: 24,
+          note: "Source → derived doc mapping. Simpler structure." },
+        { name: "_config/steel_threads.yaml", score: 75, priority: 25,
+          note: "Multi-layer feature manifest. Schema doc lives in spec §2.5." },
+        { name: "_config/concept_coverage.yaml", score: 85, v11: true, isNew: true, priority: 26,
+          note: "NEW, optional. Schema locked: min_mentions (default 2), exclude_folders (infra folders), exclude_entities (escape hatch)." },
+      ]},
+
+    { cat: "Canon Templates", typ: "YML",
+      items: [
+        { name: "_canon/README.md", score: 85, priority: 27,
+          note: "Explains _canon/ purpose; ground-truth-not-ceiling." },
+        { name: "_canon/counts.yaml", score: 80, priority: 28,
+          note: "Empty + commented examples per spec `_canon/` schema." },
+        { name: "_canon/roster.yaml", score: 80, priority: 29,
+          note: "Named entities + aliases per spec `_canon/` schema. Read by `check_concept_coverage.py`." },
+        { name: "_canon/taxonomy.yaml", score: 75, priority: 30,
+          note: "Structured classifications. Format varies per project — keep skeleton flexible." },
+        { name: "_canon/timeline.yaml", score: 75, priority: 31,
+          note: "Milestones + versions. Schema decisions left to per-project customization." },
+      ]},
+
+    { cat: "_context/ Files (Claude rules)", typ: "MD",
+      items: [
+        { name: "_context/INGEST_PROCEDURE.md", score: 100, v11: true, isNew: true, priority: 32,
+          note: "✅ Provided in project files. Ship verbatim — do not paraphrase." },
+        { name: "_context/SEMANTIC_LINT_PROCEDURE.md", score: 100, v11: true, isNew: true, priority: 33,
+          note: "✅ Provided in project files. Ship verbatim — do not paraphrase." },
+        { name: "_context/CLAUDE_CONTEXT_RULES.md", score: 80, priority: 34,
+          note: "Customized per project. MUST include 'Question-Answering Behavior' section with 4 named rules (§7 Phase 4)." },
+      ]},
+
+    { cat: "Page Templates", typ: "MD",
+      items: [
+        { name: "Home.md", score: 85, priority: 35,
+          note: "Landing page; table of contents. Has placeholder <Project Name> markers." },
+        { name: "00-Start-Here/Project-Overview.md", score: 80, priority: 36,
+          note: "Standard frontmatter + placeholder body." },
+        { name: "00-Start-Here/How-to-Use-This-Wiki.md", score: 80, priority: 37,
+          note: "Generic across projects; minimal customization." },
+        { name: "00-Start-Here/Glossary.md", score: 80, priority: 38,
+          note: "Empty stub with frontmatter; populated in Phase 5." },
+        { name: "00-Start-Here/Terminology-Rules.md", score: 80, priority: 39,
+          note: "Generic instructions about forbidden_terms.yaml." },
+        { name: "04-Contributing/Update-Cascade.md", score: 80, priority: 40,
+          note: "Generic; explains cascade_map.yaml + workflow." },
+        { name: "04-Contributing/File-Routing.md", score: 80, priority: 41,
+          note: "Decision tree: which folder for which content." },
+        { name: "04-Contributing/Style-Guide.md", score: 80, priority: 42,
+          note: "Generic markdown + frontmatter conventions." },
+      ]},
+
+    { cat: "Workflow Folders & Logs", typ: "MD",
+      items: [
+        { name: "_brain_dump/README.md", score: 90, priority: 43,
+          note: "Quarantine notice + dump_status lifecycle. Trivial template." },
+        { name: "_decisions/README.md", score: 90, priority: 44,
+          note: "Append-only convention; one line of guidance." },
+        { name: "_decisions/ingest-log.md", score: 75, v11: true, isNew: true, priority: 45,
+          note: "NEW. Append-only template; first heading + format example from INGEST_PROCEDURE §6." },
+        { name: "_inbox/README.md", score: 90, priority: 46,
+          note: "Ephemeral triage area; explains relationship to _sources/raw/." },
+        { name: "_sources/README.md", score: 85, v11: true, priority: 47,
+          note: "Top-level pointer; usually just defers to raw/." },
+        { name: "_sources/raw/README.md", score: 85, v11: true, isNew: true, priority: 48,
+          note: "NEW. Read-only archive; canon_sources cite paths here." },
+      ]},
+
+    { cat: "Confidential Tier", typ: "MD",
+      items: [
+        { name: "_confidential/Confidential_Profile.md", score: 70, priority: 49,
+          note: "Sensitive Tier 2 template per spec §1. Eleven sections including Claude behavior rules." },
+      ]},
+  ];
+
+  // -----------------------------------------------------------
+  // Helpers
+  // -----------------------------------------------------------
+  function band(score) {
+    if (score >= 80) return "ready";
+    if (score >= 55) return "solid";
+    if (score >= 30) return "out";
+    return "gap";
+  }
+  function bandLabel(b) {
+    return { ready: "ready", solid: "solid", out: "outlined", gap: "gap", shipped: "shipped" }[b];
+  }
+  function effectiveBand(it) {
+    return it.shipped ? "shipped" : band(it.score);
+  }
+  function tierFromPriority(p) {
+    if (p <= 3)  return 1;
+    if (p <= 20) return 2;
+    if (p <= 31) return 3;
+    if (p <= 49) return 4;
+    return 5;
+  }
+  function scoreColor(s) {
+    const hue = (s / 100) * 120;
+    return `hsl(${hue}, 72%, 48%)`;
+  }
+  function scoreColorSoft(s) {
+    const hue = (s / 100) * 120;
+    return `hsl(${hue}, 60%, 55%)`;
+  }
+
+  // Summary
+  const allItems = DATA.flatMap(c => c.items.map(i => ({ ...i, cat: c.cat, typ: c.typ })));
+  const counts = { gap: 0, out: 0, solid: 0, ready: 0, shipped: 0 };
+  let total = 0;
+  allItems.forEach(i => {
+    counts[effectiveBand(i)]++;
+    total += i.score;  // shipped scores frozen at original; included in avg
+  });
+  const avg = Math.round(total / allItems.length);
+
+  document.getElementById("summary").innerHTML = `
+    <div class="stat avg"><div class="num">${avg}</div><div class="lbl">Avg readiness</div></div>
+    <div class="stat shipped"><div class="num">${counts.shipped}</div><div class="lbl">Shipped</div></div>
+    <div class="stat ready"><div class="num">${counts.ready}</div><div class="lbl">Ready (≥80)</div></div>
+    <div class="stat solid"><div class="num">${counts.solid}</div><div class="lbl">Solid (55–79)</div></div>
+    <div class="stat out"><div class="num">${counts.out}</div><div class="lbl">Outlined (30–54)</div></div>
+    <div class="stat gap"><div class="num">${counts.gap}</div><div class="lbl">Gap (&lt;30)</div></div>
+  `;
+
+  // Render grid
+  const grid = document.getElementById("grid");
+  let originalOrder = [];
+
+  function renderItem(it) {
+    const b = effectiveBand(it);
+    const tier = tierFromPriority(it.priority);
+    const tags = [];
+    if (it.isNew) tags.push('<span class="new">NEW</span>');
+    else if (it.v11) tags.push('<span class="v11">v1.1</span>');
+    const shippedClass = it.shipped ? " shipped" : "";
+
+    return `
+      <div class="item tier-${tier}${shippedClass}" data-band="${b}" data-score="${it.score}" data-priority="${it.priority}">
+        <div class="prio"><span class="n">P${it.priority}</span><span class="t">T${tier}</span></div>
+        <div class="typ">${it.typ}</div>
+        <div class="name-block">
+          <div class="name">${escapeHtml(it.name)}${tags.join("")}</div>
+          <div class="bar-wrap">
+            <div class="bar"><div class="fill" style="width:${it.score}%; background:${scoreColor(it.score)}"></div></div>
+          </div>
+        </div>
+        <div class="note">${escapeHtml(it.note)}</div>
+        <div class="score" style="color:${scoreColorSoft(it.score)}">${it.score}</div>
+        <div class="badge ${b}">${bandLabel(b)}</div>
+      </div>
+    `;
+  }
+
+  function renderAll() {
+    grid.innerHTML = DATA.map(c => `
+      <section class="cat" data-cat="${c.cat}">
+        <h2>${c.cat} <span class="count">${c.items.length} item${c.items.length === 1 ? "" : "s"}</span></h2>
+        <div class="items">
+          ${c.items.map(it => renderItem({ ...it, typ: c.typ })).join("")}
+        </div>
+      </section>
+    `).join("");
+    originalOrder = Array.from(grid.querySelectorAll("section.cat"));
+  }
+  renderAll();
+
+  // Filters
+  const pills = document.querySelectorAll(".pill");
+  pills.forEach(p => p.addEventListener("click", () => {
+    p.classList.toggle("on");
+    applyFilters();
+  }));
+
+  function applyFilters() {
+    const enabled = new Set(
+      Array.from(document.querySelectorAll(".pill.on")).map(p => p.dataset.band)
+    );
+    document.querySelectorAll(".item").forEach(el => {
+      const b = el.dataset.band;
+      el.classList.toggle("hidden", !enabled.has(b));
+    });
+    document.querySelectorAll("section.cat").forEach(sec => {
+      const visible = sec.querySelectorAll(".item:not(.hidden)").length;
+      sec.style.display = visible === 0 ? "none" : "";
+    });
+  }
+
+  // Sort toggle
+  const sortBtn = document.getElementById("sortBtn");
+  let sortMode = 0;
+  // 0 = spec order, 1 = priority asc, 2 = score asc, 3 = score desc
+  const sortLabels = [
+    "spec order",
+    "priority ↑ (build order)",
+    "score ↑ (least ready first)",
+    "score ↓ (most ready first)",
+  ];
+
+  sortBtn.addEventListener("click", () => {
+    sortMode = (sortMode + 1) % 4;
+    sortBtn.textContent = `sort: ${sortLabels[sortMode]} ▾`;
+
+    if (sortMode === 0) {
+      grid.innerHTML = "";
+      originalOrder.forEach(s => grid.appendChild(s));
+      applyFilters();
+      return;
+    }
+
+    let flat = [...allItems];
+    let title = "All items";
+    if (sortMode === 1) {
+      flat.sort((a, b) => a.priority - b.priority);
+      title = "All items, sorted by priority (build order)";
+    } else if (sortMode === 2) {
+      flat.sort((a, b) => a.score - b.score);
+      title = "All items, lowest score first";
+    } else {
+      flat.sort((a, b) => b.score - a.score);
+      title = "All items, highest score first";
+    }
+
+    grid.innerHTML = `
+      <section class="cat" data-cat="sorted">
+        <h2>${title} <span class="count">${flat.length} items</span></h2>
+        <div class="items">
+          ${flat.map(it => renderItem(it)).join("")}
+        </div>
+      </section>
+    `;
+    applyFilters();
+  });
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, m => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[m]));
+  }
+</script>
+</body>
+</html>
