@@ -366,7 +366,14 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     # with graceful fallback to hardcoded defaults on missing/malformed.
     cfg = load_cross_link_config(wiki_root)
 
-    topics_path = wiki_root / TOPICS_RELATIVE
+    # S004 MI-18: discovery via frontmatter.find_canon_dir() handles v1.0 +
+    # v1.1 layouts. Missing canon dir -> graceful early-exit (same as
+    # missing topics.yaml prior to MI-18).
+    try:
+        canon_dir = frontmatter.find_canon_dir(wiki_root)
+        topics_path = canon_dir / "topics.yaml"
+    except FileNotFoundError:
+        topics_path = wiki_root / TOPICS_RELATIVE  # sentinel; will fail is_file() below
     if not topics_path.is_file():
         # Graceful early-exit: empty dashboard, no fm updates.
         content = render_topic_index({}, wiki_root)

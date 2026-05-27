@@ -165,9 +165,17 @@ def _load_canon(wiki_root: Path) -> Dict[str, Dict[str, Dict[str, Any]]]:
     distinguishes "file present, entity missing" from "file absent" via
     Path.exists() probe in _classify_mode1).
     """
+    # S004 MI-18: discovery via frontmatter.find_canon_dir() handles v1.0 +
+    # v1.1 layouts. If no canon dir exists anywhere, FileNotFoundError
+    # propagates — caller treats absence as zero-canon (consistent with
+    # prior behavior when wiki_root/_canon/ didn't exist).
+    try:
+        canon_dir = frontmatter.find_canon_dir(wiki_root)
+    except FileNotFoundError:
+        return {file_stem: {} for file_stem in CANON_FILES}
     canon: Dict[str, Dict[str, Dict[str, Any]]] = {}
     for file_stem, spec in CANON_FILES.items():
-        canon_path = wiki_root / "_canon" / "{}.yaml".format(file_stem)
+        canon_path = canon_dir / "{}.yaml".format(file_stem)
         entries = load_config_yaml(
             canon_path,
             wrapper_key=spec["wrapper_key"],

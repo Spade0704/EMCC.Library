@@ -38,7 +38,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from _lib.frontmatter import parse_config_yaml
+from _lib.frontmatter import find_config_dir, parse_config_yaml
 
 
 SCHEMA_REQUIRED_KEYS = ("name", "keywords")
@@ -139,7 +139,13 @@ def load_cross_link_config(wiki_root: Union[str, Path]) -> Dict[str, Any]:
     `_DEFAULT_CROSS_LINK_CONFIG` (tfidf / plugin / tags); per-section
     keys absent in user config fall back to defaults.
     """
-    config_path = Path(wiki_root) / "_config" / "cross_link.yaml"
+    # S004 MI-18: discovery via frontmatter.find_config_dir() handles v1.0 +
+    # v1.1 layouts.
+    try:
+        config_dir = find_config_dir(Path(wiki_root))
+        config_path = config_dir / "cross_link.yaml"
+    except FileNotFoundError:
+        config_path = Path(wiki_root) / "_config" / "cross_link.yaml"  # sentinel
     merged = {section: dict(values) for section, values in _DEFAULT_CROSS_LINK_CONFIG.items()}
     if not config_path.is_file():
         return merged

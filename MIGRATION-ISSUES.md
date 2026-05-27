@@ -61,7 +61,7 @@ Mirrors the convention established by `EMCC.DFDU/MIGRATION-ISSUES.md` which exte
 
 **Net effect:** Library tree no longer carries two divergent copies of Codex automation scripts. Post-B5, `bootstrap.py` regenerates `wiki.codex/git/_scripts/` (or equivalent — depends on canonical-output tree decision) as drop-in for the dogfood wiki, sourced from wikisys.library.
 
-### MI-16 — bootstrap.py v1.0 shape tests retired; full canonical-shape rewrite deferred to S004
+### MI-16 — sync_from_kit v1.1 contract rewrite (RESOLVED in S004; was: v1.0 shape tests retired + rewrite deferred to S004)
 
 **Discovered:** Phase B5b (2026-05-27) during bootstrap.py canonical-output rewrite per spec section (c).
 
@@ -158,6 +158,32 @@ Same structural concern likely applies to `_decisions/ingest-log.md` reads (the 
 - (c) **Factor canon-discovery into `_lib/config_loader.py` or new `_lib/canon.py`** — analogous to `find_wiki_root()`; scripts call `find_canon_dir(wiki_root)`. Most architectural; matches the marker-walk pattern.
 
 **Recommendation:** Option (c) for consistency with how MI-17 was resolved. Defer to S004 or a focused S005x sprint; not blocking Library's v1.1 production status (the 16 other sub-scripts work; `check_concept_coverage` was previously also broken — just silently because WIKI_ROOT was wrong; now it fails loudly).
+
+### MI-18 — Canon + decisions lookup divergence post-S002 split (RESOLVED in S004)
+
+**Discovered:** 2026-05-27 during S004 planning. Surfaced explicitly by operator as a coupled fix alongside MI-16 (sync_from_kit v1.1 rewrite). Latent since S002 close.
+
+**Description:** S002 moved `_canon/` and `_decisions/` from the wiki content side to the system side at `Biz.Automation/wikisys.library/_canon/` and `_decisions/`. The 5 Codex scripts that read canon yaml files (`check_concept_coverage.py`, `check_canon_consistency.py`, `build_canon_drift_report.py`, `build_topic_index.py`, `validate_topic_registry.py`) all use `wiki_root / "_canon"` path math. Same with `update_dashboards.py` for `_decisions/ingest-log.md` in the Recent Ingest health.md section.
+
+Symptoms in Library's `health.md` post-S002: Recent Ingest section reads `_No ingest entries yet._` despite `Biz.Automation/wikisys.library/_decisions/ingest-log.md` having content. Same false-empty would manifest in any v1.1 consumer.
+
+**Resolution:** Extend the MI-17 marker-walk pattern in `_lib/frontmatter.py` with two new helpers and an additional consumer-side marker:
+
+- `_find_install_root(start_path)` — walks up looking for `CLAUDE.md` co-existing with either `module.json` (Library install) or `emcc.modules.json` (consumer install).
+- `find_canon_dir(start_path=None)` — returns `<start>/_canon/` if exists (v1.0 wiki); else walks up to install root, globs `<install>/Biz.Automation/wikisys.*/_canon/`, returns first match. Raises `FileNotFoundError` on no match.
+- `find_decisions_dir(start_path=None)` — same pattern for `_decisions/`.
+- Extended `_find_wiki_root()` marker set: added `CLAUDE.md + emcc.modules.json` as v1.1 consumer marker (alongside existing `Home.md` v1.0 marker + `CLAUDE.md + module.json` Library marker).
+
+Updated 5 scripts to use `find_canon_dir()`: `check_concept_coverage.py`, `check_canon_consistency.py`, `build_canon_drift_report.py` (2 sites), `build_topic_index.py`, `validate_topic_registry.py`. Updated `update_dashboards.py::_section_recent_ingest` to use `find_decisions_dir()`. Each script preserves prior graceful-fallback behavior on FileNotFoundError (early-exit with empty dashboard, or empty canon state).
+
+9 new tests in `tests/_lib/test_frontmatter.py::TestCanonAndDecisionsLookup` cover both v1.0 and v1.1 layout fixtures + the new install-root markers.
+
+**Net test suite delta (S002 → S004):**
+- S002 close: 589 / 589 / 6 skipped (~88 retired under MI-16)
+- S004 C close: 593 / 593 / 6 skipped (+4 from sync_from_kit v1.1 tests)
+- S004 D close: 602 / 602 / 6 skipped (+9 from canon+decisions lookup tests)
+
+**Status:** RESOLVED in S004 Phase D.
 
 ## S002 dispositions for MI-10, MI-11, MI-12, MI-13 (resolved / carried)
 

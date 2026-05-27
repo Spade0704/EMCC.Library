@@ -401,22 +401,40 @@ Creates the full wiki folder structure at `<target-wiki-path>`, copies all 15 sc
 
 After bootstrap, the consuming project does Phases 3–7 of Section 7 to populate content.
 
-### 4.2 Sync (ongoing, when Codex itself improves)
+### 4.2 Sync (ongoing, when Codex itself improves) — v1.1
+
+S004 / MI-16 closure rewrote `sync_from_kit.py` for the v1.1 consumer
+layout. The script is invoked from the **consumer project ROOT** (not
+from inside a `wiki.<name>/` subfolder); it auto-discovers the consumer
+name by globbing `Biz.Automation/wikisys.<name>/` and pairs it with the
+matching `wiki.<name>/git/` directory.
 
 ```bash
-cd <wiki path>
-python _scripts/sync_from_kit.py <path-to-Codex-installation>
+cd <consumer project root>
+python <library>/Biz.Automation/wikisys.library/_scripts/sync_from_kit.py <library>
 ```
 
-Pulls updated infrastructure from Codex into the consuming wiki:
+Pulls updated infrastructure from EMCC.Library into the consuming
+project's v1.1 canonical-layout zones:
 
-- **Overwritten:** `_scripts/` (the 15 automation scripts)
-- **Overwritten:** `04-Contributing/PROJECT_WIKI_BUILD_SPEC.md`
-- **Overwritten:** `_context/INGEST_PROCEDURE.md` and `_context/SEMANTIC_LINT_PROCEDURE.md` (shipped procedures — not customized per project)
-- **Merge-new-only:** `_config/` and `_template/` files (existing customized files are preserved; new template files are added)
-- **NEVER touched:** content folders (`00-Start-Here/`, `01-*/`, `_canon/`, `_sources/raw/`, `_confidential/`, `_decisions/`, `_brain_dump/`, `_dashboards/`, `_inbox/`, `public/`, `Home.md`, `README.md`), `_context/CLAUDE_CONTEXT_RULES.md` (customized per project)
+- **Overwritten:** `Biz.Automation/wikisys.<consumer>/_scripts/` (the full Codex automation tree from Library's `Biz.Automation/wikisys.library/_scripts/`)
+- **Overwritten:** `wiki.<consumer>/git/codex/PROJECT_WIKI_BUILD_SPEC.md` (spec doc lands inside the consumer's wiki content zone, mirroring Library's own `wiki.codex/git/codex/` pattern)
+- **Overwritten:** `Biz.Automation/wikisys.<consumer>/_context/INGEST_PROCEDURE.md`, `SEMANTIC_LINT_PROCEDURE.md`, `CODEX_LIBRARIAN.md` (verbatim-shipped procedures — never customize)
+- **Merge-new-only:** `Biz.Automation/wikisys.<consumer>/_config/<filename>` and `Biz.Automation/wikisys.<consumer>/_template/<filename>` (existing customized files preserved; new files added)
+- **NEVER touched:** all content folders under `wiki.<consumer>/git/` (`Home.md`, `00-Start-Here/`, `01-*/`, `_archive/`, `raw/`, `README.md`), all content under `wiki.<consumer>/local/` (gitignored zone), `Biz.Automation/wikisys.<consumer>/_canon/` (consumer's canon YAML), `Biz.Automation/wikisys.<consumer>/_decisions/` (consumer's ingest log), `Biz.Automation/wikisys.<consumer>/_dashboards/` (generated), `Biz.Automation/wikisys.<consumer>/_context/CLAUDE_CONTEXT_RULES.md` (consumer-customized), root files (`CLAUDE.md`, `Index.md`, `Cheatsheet.md`, `emcc.modules.json`, `.gitignore`), `tasks/*.md`, `assets/*`, `0-Inbox/*`, `.claude/*`
 
-Sync refuses to run if the wiki has uncommitted git changes (override with `--force`). Sync supports `--dry-run` to preview changes.
+Sync refuses to run if:
+- The consumer tree has uncommitted git changes (override with `--force`; exit code 2).
+- Required sources are missing at the Library install path (exit code 3).
+- Consumer-name discovery is ambiguous: zero or multiple `Biz.Automation/wikisys.*/` matches at consumer root (use `--consumer-name <name>` to disambiguate; exit code 4).
+
+Sync supports `--dry-run` to preview changes.
+
+**v1.0-shape consumer support retired in S004.** Pre-S004 wikis (with
+`_scripts/` etc. at wiki root) must either (a) migrate to v1.1 first
+following the Mentor S004 playbook, or (b) freeze at v1.0 and use a
+pre-S004 build of `sync_from_kit.py` (preserved at git SHA `8c2193c` on
+`main`).
 
 ### 4.3 Ingest (ongoing, once per new source) — v1.1
 

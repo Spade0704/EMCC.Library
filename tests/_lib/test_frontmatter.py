@@ -358,5 +358,154 @@ class TestT_XL_3a_ParserExtensions(unittest.TestCase):
         self.assertIsNone(fm["module_path"])
 
 
+class TestCanonAndDecisionsLookup(unittest.TestCase):
+    """S004 MI-18: canon-lookup marker-walk handles v1.0 + v1.1 layouts."""
+
+    def test_find_canon_dir_v1_0_layout_returns_direct_child(self):
+        """v1.0 wiki: <wiki>/_canon/ exists directly under start_path."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            wiki = tmp_path / "wiki"
+            canon = wiki / "_canon"
+            canon.mkdir(parents=True)
+            (canon / "roster.yaml").write_text("entities: []\n", encoding="utf-8")
+            result = frontmatter.find_canon_dir(wiki)
+            self.assertEqual(result, canon)
+
+    def test_find_canon_dir_v1_1_consumer_layout(self):
+        """v1.1 consumer: <root>/Biz.Automation/wikisys.<name>/_canon/."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            consumer = tmp_path / "consumer"
+            wiki_git = consumer / "wiki.mentor" / "git"
+            wiki_git.mkdir(parents=True)
+            (wiki_git / "Home.md").write_text("# Home\n", encoding="utf-8")
+            (consumer / "CLAUDE.md").write_text("# C\n", encoding="utf-8")
+            (consumer / "emcc.modules.json").write_text("{}\n", encoding="utf-8")
+            canon = consumer / "Biz.Automation" / "wikisys.mentor" / "_canon"
+            canon.mkdir(parents=True)
+            (canon / "roster.yaml").write_text("entities: []\n", encoding="utf-8")
+            # Start from wiki_git (the v1.1 WIKI_ROOT for a consumer)
+            result = frontmatter.find_canon_dir(wiki_git)
+            self.assertEqual(result, canon)
+
+    def test_find_canon_dir_v1_1_library_install_layout(self):
+        """v1.1 Library install: <root>/Biz.Automation/wikisys.library/_canon/."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            install = tmp_path / "library"
+            wiki_git = install / "wiki.codex" / "git"
+            wiki_git.mkdir(parents=True)
+            (wiki_git / "Home.md").write_text("# Home\n", encoding="utf-8")
+            (install / "CLAUDE.md").write_text("# C\n", encoding="utf-8")
+            (install / "module.json").write_text("{}\n", encoding="utf-8")
+            canon = install / "Biz.Automation" / "wikisys.library" / "_canon"
+            canon.mkdir(parents=True)
+            (canon / "roster.yaml").write_text("entities: []\n", encoding="utf-8")
+            result = frontmatter.find_canon_dir(wiki_git)
+            self.assertEqual(result, canon)
+
+    def test_find_canon_dir_missing_raises_file_not_found(self):
+        """No canon anywhere -> FileNotFoundError."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            wiki = tmp_path / "wiki"
+            wiki.mkdir(parents=True)
+            with self.assertRaises(FileNotFoundError):
+                frontmatter.find_canon_dir(wiki)
+
+    def test_find_config_dir_v1_0_layout_returns_direct_child(self):
+        """v1.0 wiki: <wiki>/_config/ exists directly under start_path."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            wiki = tmp_path / "wiki"
+            cfg = wiki / "_config"
+            cfg.mkdir(parents=True)
+            (cfg / "concept_coverage.yaml").write_text("min_mentions: 2\n", encoding="utf-8")
+            result = frontmatter.find_config_dir(wiki)
+            self.assertEqual(result, cfg)
+
+    def test_find_config_dir_v1_1_consumer_layout(self):
+        """v1.1 consumer: <root>/Biz.Automation/wikisys.<name>/_config/."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            consumer = tmp_path / "consumer"
+            wiki_git = consumer / "wiki.mentor" / "git"
+            wiki_git.mkdir(parents=True)
+            (wiki_git / "Home.md").write_text("# Home\n", encoding="utf-8")
+            (consumer / "CLAUDE.md").write_text("# C\n", encoding="utf-8")
+            (consumer / "emcc.modules.json").write_text("{}\n", encoding="utf-8")
+            cfg = consumer / "Biz.Automation" / "wikisys.mentor" / "_config"
+            cfg.mkdir(parents=True)
+            (cfg / "concept_coverage.yaml").write_text("min_mentions: 2\n", encoding="utf-8")
+            result = frontmatter.find_config_dir(wiki_git)
+            self.assertEqual(result, cfg)
+
+    def test_find_config_dir_missing_raises_file_not_found(self):
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            wiki = tmp_path / "wiki"
+            wiki.mkdir(parents=True)
+            with self.assertRaises(FileNotFoundError):
+                frontmatter.find_config_dir(wiki)
+
+    def test_find_decisions_dir_v1_0_layout_returns_direct_child(self):
+        """v1.0 wiki: <wiki>/_decisions/ exists directly under start_path."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            wiki = tmp_path / "wiki"
+            decisions = wiki / "_decisions"
+            decisions.mkdir(parents=True)
+            (decisions / "ingest-log.md").write_text("# log\n", encoding="utf-8")
+            result = frontmatter.find_decisions_dir(wiki)
+            self.assertEqual(result, decisions)
+
+    def test_find_decisions_dir_v1_1_consumer_layout(self):
+        """v1.1 consumer: <root>/Biz.Automation/wikisys.<name>/_decisions/."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            consumer = tmp_path / "consumer"
+            wiki_git = consumer / "wiki.mentor" / "git"
+            wiki_git.mkdir(parents=True)
+            (wiki_git / "Home.md").write_text("# Home\n", encoding="utf-8")
+            (consumer / "CLAUDE.md").write_text("# C\n", encoding="utf-8")
+            (consumer / "emcc.modules.json").write_text("{}\n", encoding="utf-8")
+            decisions = consumer / "Biz.Automation" / "wikisys.mentor" / "_decisions"
+            decisions.mkdir(parents=True)
+            (decisions / "ingest-log.md").write_text("# log\n", encoding="utf-8")
+            result = frontmatter.find_decisions_dir(wiki_git)
+            self.assertEqual(result, decisions)
+
+    def test_find_install_root_recognizes_consumer_emcc_modules_json(self):
+        """v1.1 consumer marker: CLAUDE.md + emcc.modules.json co-exist."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            consumer = tmp_path / "consumer"
+            consumer.mkdir(parents=True)
+            (consumer / "CLAUDE.md").write_text("# C\n", encoding="utf-8")
+            (consumer / "emcc.modules.json").write_text("{}\n", encoding="utf-8")
+            result = frontmatter._find_install_root(consumer)
+            self.assertEqual(result, consumer)
+
+    def test_find_install_root_recognizes_library_module_json(self):
+        """v1.1 Library marker: CLAUDE.md + module.json co-exist."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            install = tmp_path / "library"
+            install.mkdir(parents=True)
+            (install / "CLAUDE.md").write_text("# C\n", encoding="utf-8")
+            (install / "module.json").write_text("{}\n", encoding="utf-8")
+            result = frontmatter._find_install_root(install)
+            self.assertEqual(result, install)
+
+    def test_find_install_root_returns_none_when_no_marker(self):
+        """No CLAUDE.md or no module-json companion -> None."""
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            empty = tmp_path / "empty"
+            empty.mkdir(parents=True)
+            self.assertIsNone(frontmatter._find_install_root(empty))
+
+
 if __name__ == "__main__":
     unittest.main()

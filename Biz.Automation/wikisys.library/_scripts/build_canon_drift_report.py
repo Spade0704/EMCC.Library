@@ -146,8 +146,15 @@ def _load_canon_state(wiki_root: Path) -> Dict[str, Dict[str, Dict[str, Any]]]:
 
     Missing canon file omitted from result (key absent). load_config_yaml
     handles per-entry required_keys WARN-skip semantics.
+
+    S004 MI-18: discovery via frontmatter.find_canon_dir() handles v1.0 +
+    v1.1 layouts. Missing canon dir -> empty state.
     """
-    return _load_state_from_dir(wiki_root / "_canon", entries_only=True)
+    try:
+        canon_dir = frontmatter.find_canon_dir(wiki_root)
+    except FileNotFoundError:
+        return {}
+    return _load_state_from_dir(canon_dir, entries_only=True)
 
 
 def _read_latest_snapshot(
@@ -351,8 +358,11 @@ def _write_snapshot(wiki_root: Path) -> Optional[str]:
     illegal-filename swap applied per 2026-05-07 lesson + lattice-bridge
     filename convention.
     """
-    canon_dir = wiki_root / "_canon"
-    if not canon_dir.is_dir():
+    # S004 MI-18: discovery via frontmatter.find_canon_dir() handles v1.0 +
+    # v1.1 layouts.
+    try:
+        canon_dir = frontmatter.find_canon_dir(wiki_root)
+    except FileNotFoundError:
         return None
     snapshot_id = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
     target = wiki_root / SNAPSHOT_BASE_RELATIVE / snapshot_id

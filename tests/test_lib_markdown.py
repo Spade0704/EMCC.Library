@@ -101,6 +101,12 @@ class IterContentPagesTests(unittest.TestCase):
                 "---\ntitle: skip\n---\nshould not appear\n",
                 encoding="utf-8",
             )
+            # S004: canonical v1.1 raw/ source-archive zone also excluded
+            (wiki / "raw").mkdir(parents=True, exist_ok=True)
+            (wiki / "raw" / "should_be_skipped.md").write_text(
+                "---\ntitle: skip\n---\nshould not appear\n",
+                encoding="utf-8",
+            )
             pages = list(markdown.iter_content_pages(wiki))
             rels = [p.relative_to(wiki).as_posix() for p in pages]
             for under in [
@@ -110,6 +116,7 @@ class IterContentPagesTests(unittest.TestCase):
                 "_context",
                 "_canon",
                 "_config",
+                "raw",
             ]:
                 self.assertFalse(
                     any(r.startswith(under + "/") for r in rels),

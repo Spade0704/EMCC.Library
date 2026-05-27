@@ -284,7 +284,16 @@ def _section_unverified_claims(wiki_root: Path) -> List[str]:
 
 def _section_recent_ingest(wiki_root: Path) -> List[str]:
     lines = ["## Recent Ingest", ""]
-    log_path = wiki_root / INGEST_LOG_RELATIVE
+    # S004 MI-18: discovery via frontmatter.find_decisions_dir() handles
+    # v1.0 (wiki_root/_decisions/) AND v1.1 (install/Biz.Automation/
+    # wikisys.*/_decisions/). Pre-S004 health.md showed empty Recent
+    # Ingest for Library because the v1.0 lookup couldn't find _decisions/
+    # after S002 split.
+    try:
+        decisions_dir = frontmatter.find_decisions_dir(wiki_root)
+        log_path = decisions_dir / "ingest-log.md"
+    except FileNotFoundError:
+        log_path = wiki_root / INGEST_LOG_RELATIVE  # sentinel; will fail .exists()
     if not log_path.exists():
         lines.append("_No ingest entries yet._")
         return lines
@@ -400,4 +409,12 @@ def _main(wiki_root, stdout=None, stderr=None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(_main(WIKI_ROOT))
+    # S004 MI-17 partial closure: accept optional positional wiki_root CLI
+    # arg so operators can run dashboards against an explicit content root
+    # (e.g., wiki.mentor/git/) regardless of where the orchestrator script
+    # lives. Defaults to module-level WIKI_ROOT for backwards compatibility.
+    if len(sys.argv) > 1:
+        cli_wiki_root = Path(sys.argv[1]).resolve()
+    else:
+        cli_wiki_root = WIKI_ROOT
+    sys.exit(_main(cli_wiki_root))

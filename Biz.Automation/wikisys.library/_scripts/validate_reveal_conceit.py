@@ -104,8 +104,15 @@ def _load_rules(wiki_root):
     valid rules still applied. Structural YAML failure or top-level rules not
     a list propagates ConfigYamlError to the caller.
     """
+    # S004 MI-18: discovery via frontmatter.find_config_dir() handles v1.0 +
+    # v1.1 layouts.
+    try:
+        config_dir = frontmatter.find_config_dir(wiki_root)
+        config_path = config_dir / "reveal_leak_patterns.yaml"
+    except FileNotFoundError:
+        config_path = wiki_root / CONFIG_RELATIVE  # sentinel; load -> []
     raw_rules = load_config_yaml(
-        wiki_root / CONFIG_RELATIVE,
+        config_path,
         wrapper_key="rules",
         required_keys=("pattern", "severity", "message"),
         entity_noun="rule",

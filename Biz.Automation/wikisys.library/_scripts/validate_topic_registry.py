@@ -168,7 +168,13 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     """Orchestrator entry-point — run both checks + emit dashboard."""
     wiki_root = Path(wiki_root)
 
-    topics_path = wiki_root / TOPICS_RELATIVE
+    # S004 MI-18: discovery via frontmatter.find_canon_dir() handles v1.0 +
+    # v1.1 layouts. Missing canon dir -> graceful early-exit.
+    try:
+        canon_dir = frontmatter.find_canon_dir(wiki_root)
+        topics_path = canon_dir / "topics.yaml"
+    except FileNotFoundError:
+        topics_path = wiki_root / TOPICS_RELATIVE  # sentinel; will fail is_file()
     if not topics_path.is_file():
         # Graceful early-exit: emit empty dashboard, return zero-summary.
         content = render_validation_report([], wiki_root)

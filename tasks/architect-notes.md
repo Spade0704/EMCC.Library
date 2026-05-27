@@ -2,6 +2,163 @@
 
 > Active scope notes, open threads, deferred decisions. Auditor MAY READ this for scope context (per `EMCC.DFDU/personas/CLAUDE.auditor.md` allow-list — `tasks/lessons.md` and `tasks/plans/` are off-limits; this file is not).
 
+## S004-mentor-v1.1-migration (2026-05-27) — Architect plan
+
+### Goal
+
+Ship Mentor's v1.0 → v1.1 canonical-layout migration on `spade0704/Project-Mentor` and concurrently close MI-16 (sync_from_kit at v1.0 contract) + MI-18 (canon-lookup divergence post-S002 split) on `spade0704/EMCC.Library`. Two repos, one arc. After close, Library + Mentor are both at full v1.1 production state.
+
+Operator pulled this forward 2026-05-27. Original plan: M002 (Mentor folder cleanup within v1.0-shape) as small sprint; v1.1 canonical migration deferred to later S004. Pull-forward rationale: Mentor at 0 concept gaps / 0 contradictions post-M001 is the cleanest baseline available; deferring accumulates state. Full v1.1 + MI-16 + MI-18 closure in one arc lower-risk than incremental.
+
+### Spec correction note (carried in this sprint)
+
+`tasks/plans/portfolio-folder-structure-spec.md` §"Mentor — Greenfield bootstrap" line 881 reads "No on-disk migration needed. Mentor was greenfield." That claim is outdated. Mentor was bootstrapped 2026-05-25 via Codex's S048-T1, BEFORE S002 v1.1 spec landed on 2026-05-27. Mentor's on-disk shape is v1.0 (`<wiki>/_scripts/`, `<wiki>/_canon/`, etc. at wiki root) not v1.1 canonical. This sprint performs the on-disk migration the spec claimed was unnecessary. Spec edit deferred to Phase E5 (REORGANIZATION-INSTRUCTIONS.md manifest update) or as inline doc-correction during E2.
+
+### Source-of-truth references
+
+- Master plan: `/root/.claude/plans/check-the-dfdu-project-bubbly-knuth.md` Step 6 (consumer-project wikis)
+- Portfolio spec: `tasks/plans/portfolio-folder-structure-spec.md` §(a) canonical layout + §(b) Mentor punchlist (treat as v1.0-shape consumer; spec line 881 outdated)
+- Migration manifest: `REORGANIZATION-INSTRUCTIONS.md` (Mentor per-project moves table to be added in Phase E5)
+- Mentor pre-migration SHA on `main`: `932e3ee4d37a9185551159b899ca7eda73445e1c` (rollback anchor)
+- Library pre-S004 SHA on `main`: `8c2193ca4b230446aefb555695ee190540022346`
+- Branch (both repos): `claude/s004-mentor-v1.1-migration-na3hg`
+- Branch suffix: `na3hg`
+
+### Operator decisions locked at Phase A
+
+| # | Decision | Locked answer |
+|---|---|---|
+| D1 | Scope (lean structural-only vs full incl. MI-16+MI-18) | **FULL** — MI-16 + MI-18 fixes ship in this sprint; no interim broken-sync state |
+| D2 | Canonical layout (v1.1 per spec §a + §b Mentor punchlist) | **YES** — Subject-named variance preserved: `wiki.mentor/` (Mentor IS project name) |
+| D3 | `wiki_legacy_2026-05-25/` disposition | **Relocate** → `wiki.mentor/git/_archive/wiki_legacy_2026-05-25/` with banner pointing at v1.1 layout |
+| D4 | SPLIT pattern audit handling | **Fold into B5/B6** — touch each page when moving; audit pairing as we go; surface unpaired Authorities (Karpathy + Cherny) as operator-confirm proposals |
+| D5 | Auditor dispatch | **Lattice 3.0 Regime B** — Agent tool fresh-context dispatch at session close per S002 pattern; DFDU `CLAUDE.auditor.md` 116-line persona embedded in dispatch prompt |
+
+### Sub-phase decomposition (A-F)
+
+**Phase A — Session open + plan + snapshot** — commit 1 (both repos)
+- Boris S004 OPEN session entry on Library `tasks/sessions.md` + Mentor `wiki/_decisions/sessions.md`
+- Architect plan banked here (Library `tasks/architect-notes.md` §S004)
+- Pre-migration SHAs recorded (rollback anchor)
+- Verify Mentor post-M001 clean baseline: 28 pages, 0 contradictions, 0 cascade staleness, 54% cross-link, 15/15 validators OK
+- Branch `claude/s004-mentor-v1.1-migration-na3hg` created on BOTH repos
+
+**Phase B — Mentor structural migration (B1-B10)** — commits 2-11 on Mentor
+
+- **B1. Pre-flight.** `.gitignore` add `wiki.mentor/local/` + `Biz.Automation/`; verify post-M001 clean (modulo persistent operator-local UI dirts: `.obsidian/workspace.json`, `.obsidian/graph.json`, `JP CheatSheet` — accepted carry-state, non-blocking).
+- **B2. `wiki/_scripts/` → `Biz.Automation/wikisys.mentor/_scripts/`.** Pattern P1. Includes `_lib/` + `__pycache__/` (skip pycache); use `git mv` for rename detection.
+- **B3. `wiki/_template/` (none — Mentor has no template dir), `_config/`, `_canon/`, `_context/`, `_decisions/` → `Biz.Automation/wikisys.mentor/_*`.** Pattern P1.
+- **B4. `wiki/_sources/raw/` → `wiki.mentor/git/raw/`.** Pattern P3. Includes legacy-inbox / legacy-pages / legacy-tasks / playbook / web / x / youtube / 0-inbox-items / README.md.
+- **B5. `wiki/_brain_dump/` → `wiki.mentor/local/ideas/`.** Pattern P4. Empty other than README; gitignored under new pattern.
+- **B6. Topic folders + Home + SPLIT audit + legacy archive.** Pattern P5.
+  - `wiki/00-Start-Here/` → `wiki.mentor/git/00-Start-Here/`
+  - `wiki/01-Authorities/` → `wiki.mentor/git/01-Authorities/`
+  - `wiki/02-References/` → `wiki.mentor/git/02-References/`
+  - `wiki/03-Topics/` (empty) → `wiki.mentor/git/03-Topics/`
+  - `wiki/04-Contributing/` → `wiki.mentor/git/04-Contributing/`
+  - `wiki/Home.md` → `wiki.mentor/git/Home.md`
+  - `wiki_legacy_2026-05-25/` → `wiki.mentor/git/_archive/wiki_legacy_2026-05-25/` + `_archive/README.md` banner
+  - SPLIT pairing audit per file: surface unpaired Authorities (Karpathy + Cherny) as proposals in commit message; resolve in B6 followup or carry to backlog.
+  - Empty wiki/ dirs `Attachments/`, `public/`, `scripts/` — delete in B10 cleanup.
+- **B7. `wiki/_confidential/` → `wiki.mentor/local/_confidential/`.** Per P4 zone reshuffle; gitignored.
+- **B8. Persona hoist.** `wiki/.claude/personas/CLAUDE.librarian.md` exists? — verify. If yes, move to `<mentor-root>/.claude/personas/CLAUDE.librarian.md` per P7. Mentor `.claude/` already exists at root (per CLAUDE.md folder listing).
+- **B9. Root v1.1 frame author.** Per spec §a:
+  - `CLAUDE.md` (Mentor-specific operating rules; light template-based; rewrite existing project-root CLAUDE.md to v1.1 shape — currently points at `wiki/` paths, needs path-migration update + Index.md pointer + ROOT_INDEX table)
+  - `Index.md` (file-map — NEW; Mentor-specific structure, not Library's)
+  - `Cheatsheet.md` (operator preference)
+  - `tasks/{todo,sessions,lessons,archive}.md` (move from `wiki/_decisions/` via `git mv`)
+  - `tasks/architect-notes.md` (NEW or move existing M001 notes if any)
+  - `0-Inbox/.gitkeep` (rename existing `0. Inbox/` — operator-facing legacy mirror — per P6)
+  - **`module.json` vs `emcc.modules.json` decision:** Mentor is a CONSUMER (not a Library/DFDU module). Per spec §c, consumer projects get `emcc.modules.json` referencing Library + DFDU, NOT `module.json` (which is for module identity). Decision: ship `emcc.modules.json` referencing Library@1.1.0 + DFDU.
+  - `assets/{logos,brand,photos,videos,designs,generated}/.gitkeep` per spec §c canonical tree.
+  - `.gitignore` extend (already extended in B1).
+- **B10. Cleanup empty wiki/ shell.** Verify `git ls-files | grep "^wiki/"` returns empty; `rm -rf wiki/` (directory only — content all moved). Also remove pre-existing empty stubs `Attachments/`, `public/`, `scripts/` per M002 carry-forward.
+
+**Phase C — MI-16 sync_from_kit v1.1 rewrite (Library)** — commits 12-15 on Library
+
+- **C1.** Rewrite `Biz.Automation/wikisys.library/_scripts/sync_from_kit.py` for v1.1 contract:
+  - Old: copies `<library>/_scripts/`, `_template/`, `_config/`, `_context/` to `<wiki>/_scripts/` etc.
+  - New: copies `<library>/Biz.Automation/wikisys.library/_scripts/`, `_template/`, `_config/`, `_context/` to `<consumer>/Biz.Automation/wikisys.<consumer>/_*`; spec docs (INGEST_PROCEDURE.md + SEMANTIC_LINT_PROCEDURE.md) to `<consumer>/wiki.<consumer>/git/codex/`.
+  - Preserve precedence rules (overwrite vs merge-new vs never-touch — `Home.md` NEVER-touched-by-Sync per Mentor pattern).
+- **C2.** Add `tests/test_sync_from_kit.py` v1.1 contract tests against synthetic consumer wiki in `tmp/`; un-skip the MI-16-marked test cases that asserted v1.0 contract.
+- **C3.** Update `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` §4.2 Sync to document v1.1 paths.
+- **C4.** End-to-end verify: `cd <mentor>; python <library>/Biz.Automation/wikisys.library/_scripts/sync_from_kit.py <library>` produces clean sync — `wikisys.mentor/_scripts/` refreshed, `wiki.mentor/git/*` untouched, `_context/*` updated verbatim.
+
+**Phase D — MI-18 canon-lookup marker-walk (Library)** — commits 16-18 on Library
+
+- **D1.** Add `find_canon_dir()` to `Biz.Automation/wikisys.library/_scripts/_lib/`. Architect decision: extend `frontmatter.py` (already houses `_find_wiki_root()` from MI-17 partial fix) rather than new `canon.py` module — keeps marker-walk discovery family together.
+  - Marker-walk from WIKI_ROOT:
+    - Case 1 (v1.0-shape): `<WIKI_ROOT>/_canon/` exists → return that
+    - Case 2 (v1.1-shape): walk up to install root (CLAUDE.md + module.json co-existing) → check `<install>/Biz.Automation/wikisys.<name>/_canon/`
+    - Case 3 (no canon): raise `FileNotFoundError` with clear message; don't crash silently
+- **D2.** Update `check_concept_coverage.py` (P13) to use `find_canon_dir()`. Sweep other affected scripts via grep — likely affected per MI-17 carry: `validate_canon_integrity.py`, `build_canon_drift_report.py`, `validate_topic_registry.py`, any script reading `_canon/*.yaml`.
+- **D3.** Same marker-walk pattern for `_decisions/` lookups — Recent Ingest section of Library's `health.md` is currently empty because dashboard generator can't find `_decisions/ingest-log.md` post-S002. Add `find_decisions_dir()` companion to `_lib/`. Affected: `update_dashboards.py` orchestrator.
+- **D4.** Tests for `find_canon_dir()` + `find_decisions_dir()` against both v1.0-shape (pre-migration Mentor fixture, synthetic) and v1.1-shape (Library + post-migration Mentor fixture, synthetic). Register MI-18 in `MIGRATION-ISSUES.md` with disposition `RESOLVED in S004`.
+
+**Phase E — End-to-end validation** — verification, no new commits unless edits needed
+
+- **E1.** Library: `python -m unittest discover -s tests -t .` from Library root. Expected: 589+ tests pass (Phase D adds new tests for canon-lookup).
+- **E2.** Library: `python Biz.Automation/wikisys.library/_scripts/update_dashboards.py` against Library's own `wiki.codex/git/`. Expected: ALL 17 sub-scripts return OK; MI-18 fix closes remaining MI-17-deferred failures; `health.md` shows real "Recent Ingest" entries from `_decisions/ingest-log.md`.
+- **E3.** Mentor: `python <mentor>/Biz.Automation/wikisys.mentor/_scripts/update_dashboards.py` against `wiki.mentor/git/`. Expected: same as E2; post-migration content state matches post-M001 (28 pages, 0 contradictions, 54% cross-link, 53% completion) — no regression from restructure.
+- **E4.** Sync Library → Mentor end-to-end (per C4).
+- **E5.** `REORGANIZATION-INSTRUCTIONS.md` manifest update on Library: add Mentor per-project moves table with all B1–B10 mapping rows. Spec-correction note re Mentor "no migration needed" outdatedness.
+
+**Phase F — Auditor dispatch + session close** — commit 19+20 on both repos
+
+- **F1.** Construct `audit_request` envelope:
+  - `audit_id`: `audit-mentor-v1.1-migration-2026-05-27`
+  - `task_id`: `s004-mentor-v1.1-migration`
+  - `trigger`: schedule (sprint close) + risk (cross-repo + L2+ + sync rewrite + canon-lookup new module)
+  - `profile`: l2-plus
+  - Acceptance criteria AC1-AC10 enumerated below
+- **F2.** Build dispatch prompt via DFDU `build_auditor_prompt` if importable; else inline equivalent. Embed `EMCC.DFDU/personas/CLAUDE.auditor.md` (canonical 116-line persona).
+- **F3.** Dispatch via Claude Code Agent tool, `subagent_type general-purpose`, fresh context. Auditor judges both repos' final state.
+- **F4.** Read verdict. Pass → close session with Boris CLOSED entries on Library + Mentor + open PRs. Concerns → address inline + close on pass. Block → surface to operator via Telegram `decision_needed`.
+
+### Acceptance criteria (AC1–AC10)
+
+| AC | Criterion |
+|---|---|
+| AC1 | Mentor at v1.1 canonical layout per spec §a — `wiki.mentor/git/`, `Biz.Automation/wikisys.mentor/`, `tasks/`, `0-Inbox/`, `.claude/personas/` at root, etc. |
+| AC2 | `wiki_legacy_2026-05-25/` archived with banner at `wiki.mentor/git/_archive/`; no broken cross-refs |
+| AC3 | SPLIT pattern audited per page; unpaired Authorities (Karpathy + Cherny) flagged (or paired) per operator decision |
+| AC4 | `sync_from_kit.py` rewritten for v1.1 contract; tests pass; Library → Mentor sync verified end-to-end |
+| AC5 | `find_canon_dir()` + `find_decisions_dir()` implemented; affected scripts use them; tests pass against both v1.0 + v1.1 layouts |
+| AC6 | Library tests green (no regression from MI-16 + MI-18 changes) |
+| AC7 | Library dashboards run cleanly against `wiki.codex/git/` — all 17 sub-scripts OK; Recent Ingest populated |
+| AC8 | Mentor dashboards run cleanly against `wiki.mentor/git/` — no regression vs post-M001 (28 pages, 0 contradictions, 54% cross-link, 53% completion) |
+| AC9 | `REORGANIZATION-INSTRUCTIONS.md` Mentor per-project moves table added |
+| AC10 | Auditor verdict = `pass` (or concerns with resolution) |
+
+### Risk register
+
+- **R1 — git mv preserves history?** Per-file `git log --follow` must work post-merge. Mitigation: use `git mv` for every move; never rewrite-as-new-file.
+- **R2 — Path-hardcoded scripts break post-move.** Mentor's `_scripts/` includes `_lib/frontmatter.py::WIKI_ROOT = parent.parent.parent` (3 levels up). Post-move from `wiki/_scripts/_lib/` to `Biz.Automation/wikisys.mentor/_scripts/_lib/`, the path math now resolves to `Biz.Automation/wikisys.mentor/` — incorrect. Mitigation: Mentor's `_scripts/` carries Codex's pre-MI-17 `WIKI_ROOT` math; needs MI-17 marker-walk pattern applied. Either (a) re-sync from Library post-migration so Mentor inherits the marker-walk fix (Phase E4 covers this; sync_from_kit will deliver post-MI-17 frontmatter.py), or (b) apply marker-walk fix to Mentor's local copy in B2.
+- **R3 — Mentor's R-00006 references `Project Mentor/` skill folder at root** — that path stays. Cross-link validator may flag if any wiki page references `wiki/...` paths post-migration. Mitigation: grep for `wiki/_` prefix in moved page bodies; rewrite to `wiki.mentor/git/...` patterns; commit as B-cleanup.
+- **R4 — `.obsidian/` Obsidian vault state** — workspace.json + graph.json persist across migration; should NOT be in repo. Mitigation: Phase B1 .gitignore extension adds `.obsidian/workspace.json` + `.obsidian/graph.json` (operator-local UI state).
+- **R5 — Telegram auto-summary tool not loaded at session start** — soft compliance only per CLAUDE.md. Skip if `mcp__plugin_telegram_telegram__reply` not available.
+
+### Verification recipe (smoke-test after each phase)
+
+1. After each Phase B sub-phase: `git status` clean; `python <relevant>/update_dashboards.py` no regressions.
+2. After Phase C: Library tests green; cross-repo sync command works.
+3. After Phase D: Library + Mentor dashboards both clean; `_decisions/ingest-log.md` surfaces in Library's `health.md` Recent Ingest section.
+4. After Phase E: all 10 ACs verifiable via direct file/dashboard inspection.
+
+### Out of scope (deferred to post-S004)
+
+- Other consumer wikis (Aviation / Tat / iSommelier / etc.) — bootstrap on v1.1 from start, no migration needed (greenfield)
+- MI-12 (historical curation) — still carried
+- OBS-1 (AC12 sweep methodology) — audit-method sprint TBD
+- R-00008 cross-link surface expansion (M001 follow-up) — separate content sprint
+- Spec line 881 outdated-claim correction — patch as part of E5 spec edit or carry to next maintenance pass
+
+### Telegram auto-summary contract
+
+Active per Library CLAUDE.md §"Telegram auto-summary contract" + Mentor's persona discipline. Soft compliance: if tool not loaded, log and continue.
+
+---
+
 ## S002-codex-v1.1-update (2026-05-27) — Architect plan
 
 ### Goal
