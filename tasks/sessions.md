@@ -143,7 +143,7 @@ Operator pulled this sprint forward 2026-05-27. Previous plan: M002 (Mentor fold
 
 ## Post-S002 stabilization — 2026-05-27 — CLOSED — 6-PR cleanup arc (PR #5 → #10)
 
-**Status:** CLOSED — six-PR stabilization arc following S002 close. All merged to `main`; `main` HEAD = `6b14cb6`. Net: one new MI surfaced (MI-18, deferred to S004); MI-17 fully resolved; Library install-context path resolution now uniform across all 17 scripts.
+**Status:** CLOSED — six-PR stabilization arc between S002 close and S004 open. All merged to `main`; `main` HEAD = `6b14cb6` at arc close. Net: one new MI surfaced (MI-18, deferred to S004 Phase D); MI-17 fully resolved; Library install-context path resolution unified across all 17 scripts.
 
 **PRs (chronological, all merged):**
 
@@ -162,6 +162,8 @@ Operator pulled this sprint forward 2026-05-27. Previous plan: M002 (Mentor fold
 - `python Biz.Automation/wikisys.library/_scripts/update_dashboards.py` produces real dashboards at `wiki.codex/git/_dashboards/` (27 pages tracked, 37% avg completion, 20/34 cross-link coverage).
 - 16/17 sub-scripts emit clean dashboards; `check_concept_coverage.py` fails loudly on missing `_canon/roster.yaml` → recorded as MI-18.
 
+**Note on PR #10 semantics vs S004 D:** PR #10 used a content-side resolution (`find_wiki_root()` globbed `wiki.*/git`); S004 Phase D inverted to install-root resolution and added companion `find_canon_dir()` / `find_decisions_dir()` / `find_config_dir()` helpers. S004's design supersedes PR #10's content-side trick; both narratives preserved here because PR #10's MI-17 work was a real intermediate step.
+
 **MIs touched this arc:**
 - **MI-17** — PR #10: full resolution. PR #6 era partial fix (`_lib/frontmatter.py` alone) generalized to all 17 scripts; marker-walk pattern lifted into `find_wiki_root()` public API.
 - **MI-18** (NEW) — surfaced immediately after MI-17 fix landed. `_canon/` lookup divergence between v1.0-shape wikis (canon at `<WIKI_ROOT>/_canon/`) and Library's v1.1 layout (canon at `wikisys.library/_canon/`). Same structural concern for `_decisions/`. Recommended resolution: option (c) — factor canon-discovery into `_lib/canon.py` analogous to `find_wiki_root()`. **Deferred to S004.**
@@ -171,6 +173,8 @@ Operator pulled this sprint forward 2026-05-27. Previous plan: M002 (Mentor fold
 
 **Operator-side environment changes this period (informational):**
 - **Telegram bridge** — operator set up Lattice bridge local-only (Option A: Windows User env vars `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` = `1415844818`); web-CC environment can't reach `api.telegram.org` (network policy) so Telegram auto-summary contract stays soft-compliant in cloud sessions and active only in local-CC sessions. Closes part of S003 (master plan Step 5).
+
+**Tasks-files housekeeping (PR #11):** A single-purpose housekeeping commit (PR #11, `5b93cd7` → `bf36e9d`) landed on `main` after this arc closed but before S004 was rebased; it logged this arc into `tasks/{sessions,todo,lessons}.md` so operator state was current pre-S004. PR #11's content has been preserved through the S004 rebase by manual splice during conflict resolution.
 
 **Next sprint:** **S004 — Mentor v1.1 migration FULL scope.** Cross-repo work on EMCC.Library (MI-16 sync_from_kit rewrite + MI-18 canon-lookup marker-walk fix) + Project-Mentor (structural migration to canonical v1.1 layout). Lattice 3.0 Regime B with Auditor dispatch. Boot prompt drafted; awaiting operator green-light.
 

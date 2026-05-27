@@ -43,7 +43,7 @@ Cross-repo sprint with `spade0704/Project-Mentor`. Mentor migrated v1.0 → v1.1
 
 ## Next sprints (planned)
 
-- **S003** (master plan Step 5) — Telegram channel boot. **Partially done**: Option A (local-only Windows env vars) configured by operator post-S002. Cloud-CC remainder: no action required (network policy blocks `api.telegram.org`; soft-compliance contract honored).
+- **S003** (master plan Step 5) — Telegram channel boot. **Partially done**: Option A (local-only Windows env vars; bot at chat_id 1415844818) configured by operator post-S002. Cloud-CC remainder: no action required (network policy blocks `api.telegram.org`; soft-compliance contract honored).
 - **S005** (master plan Step 7) — bootstrap DFDU's own `wiki/` directory.
 - **S006+** — remaining consumer wikis (Aviation / Tat / iSommelier / eddyandwolff / aviation-career / EMCC / EMCC.DFDU) on v1.1 canonical scaffold. No migration needed — greenfield via `bootstrap.py <projectname> --full`.
 
