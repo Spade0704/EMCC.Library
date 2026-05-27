@@ -2,6 +2,41 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Post-S002 stabilization — 2026-05-27 — CLOSED — 6-PR cleanup arc (PR #5 → #10)
+
+**Status:** CLOSED — six-PR stabilization arc following S002 close. All merged to `main`; `main` HEAD = `6b14cb6`. Net: one new MI surfaced (MI-18, deferred to S004); MI-17 fully resolved; Library install-context path resolution now uniform across all 17 scripts.
+
+**PRs (chronological, all merged):**
+
+| PR | Branch | Merge commit | What |
+|---|---|---|---|
+| #5 | `claude/library-add-index-md` | `8735f76` (squash `3441c46`) | Backfill `Index.md` (file-map) + `CLAUDE.md` updated to "read Index FIRST". Library was hand-bootstrapped pre-S002 and never received the canonical-output auto-emitted Index. |
+| #6 | `claude/fix-obs4-persona-template-sync` | `ceb4f1d` (squash `84137e5`) | Fix OBS-4 (Auditor S002 observation): Librarian persona template drifted vs canonical. Urgent before any new Codex bootstrap touched the template. |
+| #7 | `claude/library-staleness-audit-q3x9k` | `403e860` (squash `88b67f9`) | **S002c** — Library staleness audit (READ-ONLY). 157-line report at `tasks/plans/library-staleness-audit-2026-05-27.md` over 29 files: 7 KEEP / 13 UPDATE / 9 ARCHIVE / 0 DELETE / 0 MOVE. Drives the S003a + S003b cleanup splits. |
+| #8 | `claude/library-staleness-S003a-k7m4p` | `f8feca1` (squash `c3d34ca`) | **S003a** — Library staleness cleanup phase 1: path refresh + v1.1 alignment across 13 UPDATE-class files. Banner-at-current-path archive disposition (preserves cross-link validator; minimal churn). |
+| #9 | `claude/library-staleness-S003b-n8r3w` | `8c2193c` (squash 9 commits incl. `c1de3eb` … `96e29d6`) | **S003b** — Library staleness cleanup phase 2: ARCHIVE-class dispositions for 9 files (archive banners + Lattice 2.0 launchers → `_archive/launchers/`; `0-Inbox/codex-wiki-folder-org-principle.md` → `_archive/_inbox/`); `REORGANIZATION-INSTRUCTIONS.md` per-project moves table updated. |
+| #10 | `claude/mi17-wiki-root-fix-across-scripts` | `6b14cb6` (squash `165dfcb`) | **MI-17 full resolution** — `find_wiki_root()` enhanced (3-case marker-walk: v1.0 Home.md / v1.1 `CLAUDE.md+wiki.*/git/Home.md` / Library install `CLAUDE.md+module.json`); 17 scripts updated to `WIKI_ROOT = frontmatter.find_wiki_root()`; `.gitignore` extended (`wiki.codex/git/_dashboards/`). MIGRATION-ISSUES.md MI-17 entry expanded; **MI-18 surfaced** (canon-lookup divergence under system/content split — deferred to S004). |
+
+**Test suite at arc close (post-PR-#10):** 589 tests / 589 pass / 6 skipped-modules (MI-16 retirements) / ~9s.
+
+**End-to-end verification (Library dogfood wiki, post-MI-17):**
+- `python Biz.Automation/wikisys.library/_scripts/update_dashboards.py` produces real dashboards at `wiki.codex/git/_dashboards/` (27 pages tracked, 37% avg completion, 20/34 cross-link coverage).
+- 16/17 sub-scripts emit clean dashboards; `check_concept_coverage.py` fails loudly on missing `_canon/roster.yaml` → recorded as MI-18.
+
+**MIs touched this arc:**
+- **MI-17** — PR #10: full resolution. PR #6 era partial fix (`_lib/frontmatter.py` alone) generalized to all 17 scripts; marker-walk pattern lifted into `find_wiki_root()` public API.
+- **MI-18** (NEW) — surfaced immediately after MI-17 fix landed. `_canon/` lookup divergence between v1.0-shape wikis (canon at `<WIKI_ROOT>/_canon/`) and Library's v1.1 layout (canon at `wikisys.library/_canon/`). Same structural concern for `_decisions/`. Recommended resolution: option (c) — factor canon-discovery into `_lib/canon.py` analogous to `find_wiki_root()`. **Deferred to S004.**
+
+**Cross-repo activity this period (not part of Library main):**
+- **Project-Mentor** — M001 Maintenance loop run (operator's machine, `D:\Projects\Mentor\wiki`, commit `932e3ee`). Codex's Maintenance loop exercised against a real (non-dogfood) wiki for the first time. health.md = 52% completion / 25 pages / 6 concept gaps / 3 unverified / 50% cross-link. Outputs: `_decisions/sessions.md` M001 close entry; `_decisions/lessons.md` "Codex validator tier-awareness (M001, 2026-05-27)" entry; `_config/concept_coverage.yaml` created with operator exclude_entities. **NOT a Library session** — recorded here as context for the upcoming S004 Mentor v1.1 migration.
+
+**Operator-side environment changes this period (informational):**
+- **Telegram bridge** — operator set up Lattice bridge local-only (Option A: Windows User env vars `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` = `1415844818`); web-CC environment can't reach `api.telegram.org` (network policy) so Telegram auto-summary contract stays soft-compliant in cloud sessions and active only in local-CC sessions. Closes part of S003 (master plan Step 5).
+
+**Next sprint:** **S004 — Mentor v1.1 migration FULL scope.** Cross-repo work on EMCC.Library (MI-16 sync_from_kit rewrite + MI-18 canon-lookup marker-walk fix) + Project-Mentor (structural migration to canonical v1.1 layout). Lattice 3.0 Regime B with Auditor dispatch. Boot prompt drafted; awaiting operator green-light.
+
+---
+
 ## Session 2 — 2026-05-27 — CLOSED — Codex v1.0 → v1.1 update arc (master plan Step 4 / S002)
 
 **Status:** CLOSED — all 11 phases shipped (A + B1 + B2 + B3 + B4 + B5a + B5b + B6 + B7 + B8 + B9 + B10); Auditor verdict `pass` with 4 info observations (OBS-2 + OBS-3 actioned inline this B10 commit; OBS-1 + OBS-4 deferred per architect-notes).
