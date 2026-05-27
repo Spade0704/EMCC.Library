@@ -15,6 +15,13 @@ canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §5"]
 unverified_claims: []
 ---
 
+> **ARCHIVED 2026-05-27 (S003b):** Historical reference. Superseded by `Index.md` ROOT_INDEX + `REORGANIZATION-INSTRUCTIONS.md` (machine-readable old-path → new-path manifest). The `_codex/` layout described below no longer exists — module source files moved to `Biz.Automation/wikisys.library/` per S002.
+> Preserved for reference; do not update. Cross-link from current docs at your own risk.
+> See `tasks/sessions.md` S003b close entry for the archival decision context.
+> Original content below this line.
+
+---
+
 # Codex File Manifest
 
 The files to build inside `_codex/` (the tool itself, not a consuming wiki).
