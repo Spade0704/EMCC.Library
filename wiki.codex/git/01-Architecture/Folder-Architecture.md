@@ -15,6 +15,13 @@ canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §2.1"]
 unverified_claims: []
 ---
 
+> **ARCHIVED 2026-05-27 (S003b):** Historical reference. Superseded by `tasks/plans/portfolio-folder-structure-spec.md` §(a) Canonical Structure Spec + §(b) per-project punchlists. The "three folder roles" model was the Codex-internal precursor; F1–F12 portfolio resolution is the authoritative v1.1 model.
+> Preserved for reference; do not update. Cross-link from current docs at your own risk.
+> See `tasks/sessions.md` S003b close entry for the archival decision context.
+> Original content below this line.
+
+---
+
 # Folder Architecture — Three Folder Roles
 
 Codex's filesystem model divides everything into exactly three categories of folder.
