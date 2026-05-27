@@ -4,7 +4,7 @@ type: reference
 visibility: internal
 completion: 35
 status: outlined
-last_updated: 2026-05-24
+last_updated: 2026-05-27
 dependencies: ["02-Operations/Ingest"]
 public_pair: null
 blocking_questions: []
@@ -12,8 +12,8 @@ topics: [codex_operations, cross_link_generation, ingest_procedure, iron_soul_re
 related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Configuration-Files.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Overview.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md, Home.md]
 tags: [codex_operations, cross_link_generation, ingest_procedure, iron_soul_reference]
 canon_sources:
-  - "_sources/raw/CODEX_BUILD_SPEC_v1_3.md §6"
-  - "_sources/raw/CODEX_BUILD_SPEC_v1_3.md App A"
+  - "wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §6"
+  - "wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md App A"
 unverified_claims: []
 ---
 

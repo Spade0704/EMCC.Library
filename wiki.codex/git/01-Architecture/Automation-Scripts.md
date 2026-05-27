@@ -1,23 +1,27 @@
 ---
-title: "Automation Scripts (15 + 3)"
+title: "Automation Scripts (17 + 5 audit scripts)"
 type: reference
 visibility: internal
 completion: 40
 status: outlined
-last_updated: 2026-05-24
+last_updated: 2026-05-27
 dependencies: ["01-Architecture/Configuration-Files", "01-Architecture/Cross-Link-Generation"]
 public_pair: null
 blocking_questions: []
 topics: [codex_architecture, cross_link_generation]
 related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Configuration-Files.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Overview.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md, Home.md]
 tags: [codex_architecture, cross_link_generation]
-canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §2.4"]
+canon_sources: ["wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §2.4"]
 unverified_claims: []
 ---
 
-# Automation Scripts (15 + 3)
+# Automation Scripts (17 + 5 audit scripts)
 
-All pure Python stdlib. No `pip install`. Live in `_scripts/` of every wiki; master copies in `_codex/_scripts/`.
+All pure Python stdlib. No `pip install`. Canonical home post-S002:
+`Biz.Automation/wikisys.library/_scripts/` (Library's source-of-truth
+location per portfolio spec F6). v1.0-shape consumer wikis receive a
+copy at `<wiki>/_scripts/` via `sync_from_kit.py` (MI-16 carry — sync
+still on v1.0 contract; see [[Sync]] §"v1.1 known limitation").
 
 ## Base scripts (v1.0 + v1.1)
 
@@ -55,7 +59,21 @@ Plus scaffolds:
 | 17 | `cross_link_topics.py` | For each multi-page topic, writes `related_files: []` in frontmatter AND a marker-bracketed "See also" block in body. Idempotent. Reads index from #16. |
 | 18 | `validate_topic_registry.py` | Every page `topics:` value resolves in `_canon/topics.yaml` (error). Every registry topic has ≥1 member page (warning; orphan-topic detection). |
 
-Canonical counts (from `_canon/counts.yaml`): 15 base + 3 cross-link = **18 automation scripts (v1.3 total)**.
+Canonical counts (from `_canon/counts.yaml`): 15 base + 3 cross-link = **17 automation scripts (v1.3 total).** Plus the 5 S002 audit scripts below.
+
+## v1.1 audit scripts (S002, 2026-05-27)
+
+Five new P0/P1 audit scripts shipped in Library S002 Phase B6 alongside the canonical-output `bootstrap.py` rewrite. All live in `Biz.Automation/wikisys.library/_scripts/` and emit dashboard markdown when run against a project tree.
+
+| Script | Purpose |
+|---|---|
+| `audit_doc_pairing.py` | Audit `Biz.Automation/<automationname>/` paired with `wiki.<name>/git/<automationname>.doc/` per F9 pairing contract. Warns on unpaired automations. |
+| `audit_gitignore.py` | Verify `.gitignore` excludes `wiki.*/local/` + heavy-asset patterns. Surfaces missing rules. |
+| `route_inbox.py` | Two-phase Librarian helper: scan `0-Inbox/` → emit manifest → Librarian fills destinations → execute moves. |
+| `audit_assets.py` | Heavy-file scan + duplicate detection inside `assets/` (or wherever assets live). |
+| `audit_local_split.py` | Misclassification suspects in `wiki.*/local/` vs `wiki.*/git/` — flags content in wrong zone. |
+
+All 5 emit 0 findings against Library's own tree (Library is a well-formed canonical-shape project per S002 close verification).
 
 ## Orchestrator pipeline (`update_dashboards.py`)
 

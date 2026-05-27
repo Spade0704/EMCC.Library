@@ -4,14 +4,14 @@ type: overview
 visibility: internal
 completion: 30
 status: outlined
-last_updated: 2026-05-24
+last_updated: 2026-05-27
 dependencies: ["01-Architecture/Overview", "02-Operations/Bootstrap"]
 public_pair: null
 blocking_questions: []
 topics: [codex_architecture, codex_operations, cross_link_generation]
 related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Configuration-Files.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Overview.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md]
 tags: [codex_architecture, codex_operations, cross_link_generation]
-canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §1"]
+canon_sources: ["wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §1"]
 unverified_claims: []
 ---
 

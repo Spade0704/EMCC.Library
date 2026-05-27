@@ -4,31 +4,48 @@ type: guide
 visibility: internal
 completion: 45
 status: outlined
-last_updated: 2026-05-24
+last_updated: 2026-05-27
 dependencies: ["02-Operations/Bootstrap", "01-Architecture/Automation-Scripts"]
 public_pair: null
 blocking_questions: []
 topics: [codex_operations, cross_link_generation]
 related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Configuration-Files.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Overview.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Quickstart.md, 04-Contributing/Style-Guide.md, Home.md]
 tags: [codex_operations, cross_link_generation]
-canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §4.2"]
+canon_sources: ["wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §4.2"]
 unverified_claims: []
 ---
 
 # Sync — ongoing infrastructure refresh
 
 ```bash
-cd <wiki path>
-python _scripts/sync_from_kit.py <path-to-Codex-installation>
+# v1.0-shape consumer wikis (MI-16 carry — sync still on v1.0 contract):
+cd <v1.0-shape wiki path>
+python _scripts/sync_from_kit.py <path-to-Library-checkout>
+
+# Note: post-S002 the canonical Library script home is
+# Biz.Automation/wikisys.library/_scripts/sync_from_kit.py. Consumer
+# wikis at the v1.0 shape (bootstrap-produced before S002) still ship
+# their own _scripts/sync_from_kit.py copy via prior sync; v1.1-bootstrapped
+# projects do NOT carry that script copy (scaffold-only bootstrap).
 ```
 
-Pulls updated infrastructure from Codex into the consuming wiki. Sync flows **tool → wiki, never reverse** (Principle #4).
+Sync pulls updated infrastructure from Library into a consuming wiki. Sync flows **tool → wiki, never reverse** (Principle #4).
 
-## Sync matrix — overwrite / merge / never-touched
+## v1.1 known limitation (MI-16)
+
+Sync still ships at the **v1.0 contract**: copies the script set into a `<wiki>/_scripts/` directory and delivers `INGEST_PROCEDURE.md` / `SEMANTIC_LINT_PROCEDURE.md` to `<wiki>/_context/`. Library's v1.1 bootstrap is **scaffold-only** — it does not create `_scripts/` or `_context/` in the bootstrapped tree. So a freshly v1.1-bootstrapped project is misaligned with sync's expected layout.
+
+Resolution: two coupled S004 decisions —
+- (a) where post-v1.1 sync should deliver procedure docs (`Biz.Automation/wikisys.<name>/_context/`? a new `_context/` at project root? continue to per-wiki `_context/`?),
+- (b) how legacy v1.0 wikis migrate forward to the canonical layout.
+
+Until S004 resolves, treat sync as the v1.0-wiki path only. v1.1 consumers run scripts directly from a vendored / submodule / sibling-checkout of Library (per MI-13 disposition: stdlib-only, no wheel). See `MIGRATION-ISSUES.md` MI-16 + Library `README.md` §"v1.1 known limitations".
+
+## Sync matrix — overwrite / merge / never-touched (v1.0 contract)
 
 | Behavior | Targets |
 |---|---|
-| **Overwritten** | `_scripts/` (the 15 automation scripts) |
+| **Overwritten** | `_scripts/` (the automation script set) |
 | **Overwritten** | `04-Contributing/PROJECT_WIKI_BUILD_SPEC.md` |
 | **Overwritten** | `_context/INGEST_PROCEDURE.md` and `_context/SEMANTIC_LINT_PROCEDURE.md` (shipped procedures — not customized per project) |
 | **Merge-new-only** | `_config/` and `_template/` files (existing customized files are preserved; new template files are added) |

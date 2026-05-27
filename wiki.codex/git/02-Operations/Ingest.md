@@ -4,21 +4,23 @@ type: guide
 visibility: internal
 completion: 45
 status: outlined
-last_updated: 2026-05-24
+last_updated: 2026-05-27
 dependencies: ["01-Architecture/Wiki-Structure", "01-Architecture/Frontmatter-Schema", "02-Operations/Bootstrap"]
 public_pair: null
 blocking_questions: []
 topics: [codex_operations, cross_link_generation, ingest_procedure]
 related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Configuration-Files.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Overview.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md, Home.md]
 tags: [codex_operations, cross_link_generation, ingest_procedure]
-canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §4.3"]
+canon_sources: ["wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §4.3"]
 unverified_claims: []
 ---
 
 # Ingest — source integration (v1.1)
 
 ```bash
-# In the consuming wiki:
+# In Library (post-S002 canonical path):
+python Biz.Automation/wikisys.library/_scripts/scaffold_source.py <path-or-url>
+# In a v1.0-shape consuming wiki (post-Sync delivery; MI-16 carry):
 python _scripts/scaffold_source.py <path-or-url>
 # Then, in Claude Code:
 # "Ingest _inbox/<source>.md"
@@ -42,7 +44,7 @@ The full procedure Claude follows is documented in `_context/INGEST_PROCEDURE.md
 4. **Link** — add `[[wikilinks]]` between related pages. Update `Home.md` only if a new top-level section was created.
 5. **Archive** — move the source from `_inbox/` to `_sources/raw/` (permanent, read-only archive). Update source frontmatter: `status: ingested`, `ingested_date: YYYY-MM-DD`.
 6. **Log** — append an entry to `_decisions/ingest-log.md` naming: date, source filename, pages created, pages updated, canon entries added, contradictions flagged.
-7. **Validate** — run `python _scripts/update_dashboards.py` and confirm no new validator errors.
+7. **Validate** — run `python _scripts/update_dashboards.py` (or `python Biz.Automation/wikisys.library/_scripts/update_dashboards.py` when running against Library's own wiki post-S002) and confirm no new validator errors.
 
 ## Writes / moves / never-touched
 
