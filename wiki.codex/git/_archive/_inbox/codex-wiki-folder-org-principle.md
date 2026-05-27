@@ -1,3 +1,10 @@
+> **ARCHIVED 2026-05-27 (S003b):** Relocated from `0-Inbox/` to `wiki.codex/git/_archive/_inbox/` per S003b archive sweep. Content fully absorbed into `tasks/plans/portfolio-folder-structure-spec.md` (F1–F12 portfolio resolution extends the audience / git / confidentiality axes this inbox doc named). Phase 2 (physical regroup) shipped as S002 (2026-05-27).
+> Preserved for reference; do not update. Cross-link from current docs at your own risk.
+> See `tasks/sessions.md` S003b close entry for the archival decision context.
+> Original content below this line.
+
+---
+
 # Codex Wiki — Folder-Organization Principle (Design Record)
 
 **Status:** Design locked 2026-05-22 (first dogfood: codex-self / `EMCC.Library/wiki`).

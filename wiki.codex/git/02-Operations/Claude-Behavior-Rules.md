@@ -15,6 +15,13 @@ canon_sources: ["_sources/raw/CODEX_BUILD_SPEC_v1_3.md §8"]
 unverified_claims: []
 ---
 
+> **ARCHIVED 2026-05-27 (S003b):** Historical reference. Rules-when-building-Codex superseded — Codex is built. Runtime rules now live in the Librarian persona at `wiki.codex/git/codex/CODEX_LIBRARIAN.md` (authoritative spec, S002 v1.1 extension) + `.claude/personas/CLAUDE.librarian.md` (Claude Code drop-in).
+> Preserved for reference; do not update. Cross-link from current docs at your own risk.
+> See `tasks/sessions.md` S003b close entry for the archival decision context.
+> Original content below this line.
+
+---
+
 # Claude Code Behavior Rules (when building Codex)
 
 When the spec is loaded as project knowledge and **Codex is being built**, follow these rules. These are distinct from the runtime Librarian persona (declared in `_context/CODEX_LIBRARIAN.md` and `.claude/personas/CLAUDE.librarian.md`) that operates inside *consumed* wikis.

@@ -142,6 +142,17 @@ root; they did NOT yet apply the canonical-layout restructure.
 | `module.json`, `CLAUDE.md`, `SOURCE-HISTORY.md`, `MIGRATION-ISSUES.md`, `README.md`, `.gitignore` | (STAY at root) | — | ✅ Stays |
 | `Index.md`, `Cheatsheet.md` | (NEW root files; ship in S004 first real consumer-project bootstrap; Library itself uses CLAUDE.md ROOT_INDEX as Index.md surrogate per spec a variance allowance) | — | ⏳ Deferred to S004 |
 
+**S003b / Library staleness archive sweep** — closed 2026-05-27 on
+`claude/library-staleness-S003b-n8r3w`. Two full relocations (rest of
+the audit's 9 ARCHIVE candidates use banner-at-current-path so the
+cross-link validator stays green — those banner-only files do NOT
+appear in this manifest because path is unchanged).
+
+| Old path (post-S002) | New path (post-S003b) | Pattern | Status |
+|---|---|---|---|
+| `0-Inbox/codex-wiki-folder-org-principle.md` | `wiki.codex/git/_archive/_inbox/codex-wiki-folder-org-principle.md` | — (full relocation; 0 inbound wikilinks; move = Librarian-discipline empty-inbox signal) | ✅ Done in S003b |
+| `Biz.Automation/wikisys.library/_scripts/launchers/` (5 files: 4 .ps1 + README.md) | `Biz.Automation/wikisys.library/_scripts/_archive/launchers/` (+ new `_archive/README.md` documenting Lattice 2.0 → 3.0 transition) | — (full relocation; Lattice 2.0 Nexus 4-persona model retired; no active dependents — `test_bootstrap.py` reference is MI-16-retired) | ✅ Done in S003b |
+
 ### S002-internal callers updated
 
 The B5a path-rebase commit (`7707d5b`) and B5b bootstrap.py rewrite
