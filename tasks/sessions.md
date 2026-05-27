@@ -2,6 +2,54 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 4 — 2026-05-27 — OPEN — Mentor v1.1 migration arc + MI-16 + MI-18 closure (S004)
+
+**Status:** OPEN — Phase A complete (this commit). Phases B–F in flight per architect plan banked at `tasks/architect-notes.md` §S004.
+
+**Intake summary (operator brief, 2026-05-27):**
+S004 ships full v1.1 migration for `spade0704/Project-Mentor` + closes two carried Library issues:
+- MI-16 (sync_from_kit at v1.0 contract; deferred at S002 close)
+- MI-18 (canon-lookup divergence post-S002 split; new — surfaced as Library `_scripts/` moved to `Biz.Automation/wikisys.library/_scripts/`, breaking `_canon/` path math; partial fix MI-17 covered `_lib/frontmatter.py::WIKI_ROOT` marker-walk, but the 13 other scripts deferred there now need treatment per their own `_canon/` reads)
+
+Operator pulled this sprint forward 2026-05-27. Previous plan: M002 (Mentor folder cleanup within v1.0-shape) as small sprint; v1.1 canonical migration deferred to later S004. Rationale for pull-forward: Mentor at 0 concept gaps / 0 contradictions post-M001 is the cleanest baseline available; deferring accumulates state. Full v1.1 + MI-16 + MI-18 in one arc lower-risk than incremental.
+
+**Profile + regime:**
+- `LATTICE_PROFILE: l2-plus` — Level-2+ change: cross-repo (Library + Mentor) + sync_from_kit rewrite + new canon-lookup module + ~30+ file moves on Mentor
+- `AUDITOR_MODE: persona` — Regime B; Auditor dispatched on-demand via Claude Code Agent tool (same as S001 + S002)
+- Auditor trigger: schedule (sprint close) + risk (Level-2+ surface)
+- Bus root: deferred — using Agent-tool result envelope inline (matches S001 + S002 pattern)
+
+**Architect plan:** Banked at `tasks/architect-notes.md` §S004. AC1–AC10 acceptance criteria; per-phase commits (A + B1–B10 + C1–C4 + D1–D4 + E1–E5 + F1–F4).
+
+**Operator decisions locked at Phase A (D1–D5):**
+- D1: Scope = **FULL** (not lean). MI-16 + MI-18 fixes ship alongside structural migration; no interim broken-sync state.
+- D2: Mentor migrates to v1.1 canonical layout per spec §(a) + §(b). Subject-named variance preserved: `wiki.mentor/` (Mentor IS project name).
+- D3: `wiki_legacy_2026-05-25/` → `wiki.mentor/git/_archive/wiki_legacy_2026-05-25/` with banner pointing at v1.1 layout.
+- D4: SPLIT pattern audit folds into B5/B6 (touch each page when moving; surface unpaired Authorities — Karpathy + Cherny — as operator-confirm proposals).
+- D5: Lattice 3.0 Regime B — Auditor dispatched at session close per S002 pattern. DFDU `CLAUDE.auditor.md` 116-line persona embedded in dispatch prompt.
+
+**Pre-migration anchors (rollback safety):**
+- Mentor `main` SHA: `932e3ee4d37a9185551159b899ca7eda73445e1c`
+- Library `main` SHA: `8c2193ca4b230446aefb555695ee190540022346`
+- Branch (both repos): `claude/s004-mentor-v1.1-migration-na3hg`
+- Branch suffix: `na3hg`
+
+**Spec correction note:**
+`tasks/plans/portfolio-folder-structure-spec.md` line 881 reads "No on-disk migration needed. Mentor was greenfield." That claim is outdated — Mentor was bootstrapped 2026-05-25 via Codex's S048-T1 BEFORE S002 v1.1 spec landed 2026-05-27, so Mentor's on-disk shape is v1.0 (not v1.1 canonical). This sprint performs the migration the spec claimed was unnecessary. Spec correction lands in Phase E5 manifest update.
+
+**Phase A completed (this commit):**
+- Session 4 entry opened (this entry).
+- Architect plan banked to `tasks/architect-notes.md` §S004.
+- Pre-migration SHAs recorded.
+- Branch `claude/s004-mentor-v1.1-migration-na3hg` created on both repos (Library + Mentor).
+- Mentor baseline verified clean: 28 pages, 0 contradictions, 0 cascade staleness, 54% cross-link, 15/15 validators OK.
+
+**Phase B (pending):** Execution per B1–B10 per the architect plan.
+
+**In-flight:** Awaiting Phase B1 entry.
+
+---
+
 ## Post-S002 stabilization — 2026-05-27 — CLOSED — 6-PR cleanup arc (PR #5 → #10)
 
 **Status:** CLOSED — six-PR stabilization arc following S002 close. All merged to `main`; `main` HEAD = `6b14cb6`. Net: one new MI surfaced (MI-18, deferred to S004); MI-17 fully resolved; Library install-context path resolution now uniform across all 17 scripts.
