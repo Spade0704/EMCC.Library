@@ -633,60 +633,186 @@ module-specific files preserved at root.
 13. No `.claude/` (not a workspace project).
 14. `.lattice/` (runtime, gitignored) stays — module-specific runtime.
 
-## EMCC.Library — Yes-with-significant-adaptation
+## EMCC.Library — Yes-with-significant-adaptation (Session 1 already shipped half; S002/v1.1 handles the rest)
 
-EMCC.Library hosts the Codex wiki — `wiki.codex/` is the
-**subject-named variance** form already in use. This is the model from
-which the operator's draft was generalized.
+EMCC.Library hosts both the **Codex MODULE source files** (extracted from
+project-codex in master-plan Step 3 / Session 1, commits `094e8a3 →
+ab94fc7` on branch `claude/lattice-3-production-check-Rdkfu`, pushed
+2026-05-27) AND the **`wiki.codex/` dogfood** (Codex documenting Codex —
+the prior-art reference from which this whole spec was generalized).
 
-1. Rename `0. Inbox/` → `0-Inbox/` (drop space, replace period with
-   hyphen).
-2. Create `tasks/{todo,sessions,lessons,archive}.md` (currently
-   absent at this module).
-3. `wiki.codex/` — keep the name (subject-named variance:
-   project=Library, wiki=codex). Restructure internally:
-   - `wiki.codex/00-Start-Here/`, `01-Architecture/`, `02-Operations/`,
-     `04-Contributing/` → `wiki.codex/git/00-Start-Here/`, etc. (move
-     all content folders under new `git/` subfolder).
-   - `wiki.codex/Home.md` → `wiki.codex/git/Home.md`.
-   - `wiki.codex/_canon/`, `_config/`, `_context/`, `_decisions/`,
-     `_scripts/`, `_sources/raw/` → **extract** to
-     `Biz.Automation/wikisys.library/_canon/`, `_config/`, etc. (move
-     out of wiki.codex into the new wikisys container).
-   - `wiki.codex/_brain_dump/` (gitignored) → `wiki.codex/local/ideas/`
-     (the brain-dump pattern matches the new `local/` private zone).
-   - `wiki.codex/.claude/personas/CLAUDE.librarian.md` → root
-     `.claude/personas/CLAUDE.librarian.md` (move .claude to project
-     root since Library is becoming a workspace project per EMCC Step 2).
-4. After restructure, `wiki.codex/` has:
-   ```
-   wiki.codex/
-       local/
-           ideas/        (formerly _brain_dump/)
-       git/
-           Home.md
-           00-Start-Here/
-           01-Architecture/
-           02-Operations/
-           04-Contributing/
-   ```
-5. `Biz.Automation/wikisys.library/` has:
-   ```
-   wikisys.library/
-       _scripts/         (from wiki.codex/_scripts/)
-       _config/          (from wiki.codex/_config/)
-       _canon/           (from wiki.codex/_canon/)
-       _context/         (from wiki.codex/_context/)
-       _decisions/       (from wiki.codex/_decisions/)
-       _sources/raw/     (from wiki.codex/_sources/raw/)
-   ```
-6. Create root `CLAUDE.md` (currently absent — module is `not-ready`).
-   Include read-order + module purpose.
-7. Create root `Index.md`, root `Cheatsheet.md`.
-8. Update `.gitignore` to exclude `wiki.*/local/`. Existing
-   `_brain_dump/` rule removed (subsumed by new `local/` rule).
-9. Add root `module.json` once the module reaches `ready` status
-   (mirroring DFDU pattern).
+Two parallel underscore-folder hierarchies exist post-Session-1:
+Library-root-level Codex source (e.g. `_scripts/`, `_template/`,
+`_config/`, `Sources/`) AND wiki.codex/-internal dogfood (e.g.
+`wiki.codex/_canon/`, `_config/`, `_context/`, `_decisions/`,
+`_brain_dump/`). This punchlist resolves both into the canonical layout.
+
+`wiki.codex/` keeps the subject-named variance (project=Library,
+wiki=codex). All other re-layout follows the canonical spec.
+
+### Done in Session 1 (DO NOT REDO)
+
+- ✅ Rename `0. Inbox/` → `0-Inbox/` (commit `094e8a3`).
+- ✅ Create `tasks/{todo,sessions,lessons,archive}.md` (commit `094e8a3`).
+- ✅ Create root `CLAUDE.md`, `module.json`, `SOURCE-HISTORY.md`,
+     `MIGRATION-ISSUES.md`, `.github/workflows/test.yml`,
+     `.claude/personas/CLAUDE.{auditor,librarian}.md` (commit `814d765`).
+- ✅ Move Codex MODULE source files from project-codex into Library root
+     (commit `dc1e7a9`, 148 files): `_scripts/`, `_template/`, `_config/`,
+     `Sources/`, `tests/`, `documents/codex/`, root-level Codex spec docs
+     (`CODEX_BUILD_SPEC_v1_3.md`, `CODEX_LIBRARIAN.md`,
+     `INGEST_PROCEDURE.md`, `SEMANTIC_LINT_PROCEDURE.md`,
+     `PROJECT_WIKI_BUILD_SPEC.md`, `Obsidian-Setup-Guide.md`,
+     `codex-build-plan.html`, `bootstrap.py`).
+- ✅ `.claude/personas/CLAUDE.librarian.md` at root (no `.claude/` nested
+     under `wiki.codex/` anymore). Path preserved at `.claude/personas/`
+     to keep `bootstrap.py` + `test_phase6_full_chain_e2e.py` green per
+     AC8.
+- ✅ Module status flipped: EMCC `templates/consumer-project/emcc.modules.json`
+     `library.status` `not-ready` → `ready` (EMCC commit `b10c766`).
+
+### S002 / Codex v1.1 — remaining work
+
+#### Module source files at Library root → `Biz.Automation/wikisys.library/`
+
+1. Move `_scripts/` → `Biz.Automation/wikisys.library/_scripts/`
+   (27 .py: 20 root scripts + `_lib/` 7 modules + `launchers/`).
+2. Move `_template/` → `Biz.Automation/wikisys.library/_template/`
+   (26 templates). **Canonical singular `_template/`** to match Codex's
+   existing folder name; canonical tree at lines 261–319 currently shows
+   `_templates/` plural — to be amended in same edit.
+3. Move `_config/` → `Biz.Automation/wikisys.library/_config/`
+   (5 YAML + README).
+4. Move `Sources/Raw/` → `wiki.codex/git/raw/` per F7/F8
+   (operator-friendly name on content side; NOT extracted to wikisys
+   side — F7/F8 resolution: `_sources/` is not in the canonical
+   wikisys tree).
+5. `tests/` STAYS at root as `<product-code-root>`-equivalent (matches
+   DFDU's `tests/` disposition + Codex's stdlib-only pytest convention).
+
+#### Codex spec docs at root → `wiki.codex/git/codex/`
+
+Per the DFDU analogy (`documents/lattice/` → `wiki.dfdu/git/lattice/`),
+Codex's authoritative spec docs become a topic folder under the wiki
+content side.
+
+6. Move to `wiki.codex/git/codex/`:
+   - `CODEX_BUILD_SPEC_v1_3.md`
+   - `CODEX_LIBRARIAN.md`
+   - `INGEST_PROCEDURE.md` (note: bootstrap.py ships a copy into each
+     bootstrapped wiki's `_context/INGEST_PROCEDURE.md`; the
+     `wiki.codex/git/codex/` location is the canonical source that
+     `wikisys.library/_context/` mirrors)
+   - `SEMANTIC_LINT_PROCEDURE.md` (same dual-location as INGEST)
+   - `PROJECT_WIKI_BUILD_SPEC.md`
+   - `Obsidian-Setup-Guide.md`
+   - `codex-build-plan.html`
+7. Move `documents/codex/` contents (Codex PDF + cheatsheet +
+   build-progress md) → `wiki.codex/git/codex/`.
+8. `bootstrap.py` STAYS at root (entry script; matches the
+   `bootstrap.py <projectname>` invocation per section c).
+
+#### wiki.codex/ internal restructure (dogfood wiki)
+
+9. `wiki.codex/00-Start-Here/`, `01-Architecture/`, `02-Operations/`,
+   `04-Contributing/` → `wiki.codex/git/00-Start-Here/`, etc.
+10. `wiki.codex/Home.md` → `wiki.codex/git/Home.md`.
+11. `wiki.codex/_canon/`, `_config/`, `_context/`, `_decisions/`,
+    `_scripts/` (if any), `_sources/raw/` → **system files extract to**
+    `Biz.Automation/wikisys.library/_canon/`, `_config/`, `_context/`,
+    `_decisions/`. Note: `wiki.codex/_config/` merges with the root-level
+    `_config/` (both extract to the same destination). `_sources/raw/`
+    content moves to `wiki.codex/git/raw/` per F7/F8 (NOT to
+    `wikisys.library/_sources/raw/`).
+12. `wiki.codex/_brain_dump/` (gitignored) → `wiki.codex/local/ideas/`.
+
+#### Final wiki.codex/ structure
+
+```
+wiki.codex/
+    local/
+        ideas/                 (formerly _brain_dump/)
+    git/
+        Home.md
+        00-Start-Here/
+        01-Architecture/
+        02-Operations/
+        04-Contributing/
+        raw/                   (formerly _sources/raw/ + Sources/Raw/)
+        codex/                 (formerly root-level spec docs + documents/codex/)
+            CODEX_BUILD_SPEC_v1_3.md
+            CODEX_LIBRARIAN.md
+            INGEST_PROCEDURE.md
+            SEMANTIC_LINT_PROCEDURE.md
+            PROJECT_WIKI_BUILD_SPEC.md
+            Obsidian-Setup-Guide.md
+            codex-build-plan.html
+            Codex_Project_Documentation.pdf
+            Codex_Workflow_Cheatsheet_v1.txt
+            codex-build-progress.md
+```
+
+#### Final Biz.Automation/wikisys.library/ structure
+
+```
+Biz.Automation/wikisys.library/
+    _scripts/              (from /_scripts/)
+    _template/             (from /_template/; singular form canonical)
+    _config/               (merged from /_config/ + wiki.codex/_config/)
+    _canon/                (from wiki.codex/_canon/)
+    _context/              (from wiki.codex/_context/; runtime-loaded by bootstrap.py + Librarian)
+    _decisions/            (from wiki.codex/_decisions/)
+```
+
+#### Misc cleanup
+
+13. Create root `Index.md` (extract ROOT_INDEX from CLAUDE.md or fresh
+    authoring).
+14. Create root `Cheatsheet.md`.
+15. Update `.gitignore`: add `wiki.*/local/` pattern; remove existing
+    `wiki.codex/_brain_dump/` rule (subsumed by `local/`). Keep existing
+    `wiki.codex/_dashboards/`, `wiki.codex/_inbox/`,
+    `wiki.codex/_confidential/` rules (wiki-internal artifacts unchanged
+    by this restructure).
+16. After restructure: `bootstrap.py /tmp/v1.1-validation-wiki` must
+    continue to succeed end-to-end (Session 1's AC2 verification
+    recipe). bootstrap.py's path lookups for `_template/`, `_config/`,
+    `_context/`, `Sources/Raw/` may need updates to point at
+    `Biz.Automation/wikisys.library/_template/` etc. — this IS a
+    `bootstrap.py` code change; falls outside Session 1's AC8 (which
+    forbade Codex code changes during pure extraction) but is in scope
+    for v1.1 update.
+
+### S002 dispatch consideration
+
+The implementation session should run under Lattice 3.0 Regime B (L2+,
+Auditor on-demand) — same as Session 1 — because:
+
+- Cross-module restructure touches ~50 file moves
+- Codex spec-doc placement is a Level-2+ semantic decision
+- `bootstrap.py` path lookups require code changes (departs from
+  Session 1's AC8 verbatim discipline)
+- The 5 P0/P1 new scripts (`audit_doc_pairing.py`, `audit_gitignore.py`,
+  `route_inbox.py`, `audit_assets.py`, `audit_local_split.py`) ship in
+  the same session
+- `CODEX_LIBRARIAN.md` + `.claude/personas/CLAUDE.librarian.md` extend
+  with the 3 new operations (Inbox-Sort, Pairing-Audit,
+  Cross-Project-Scan)
+
+Acceptance criteria for S002:
+
+- All file moves applied per items 1–12
+- `bootstrap.py /tmp/v1.1-validation-wiki --full` produces the canonical
+  tree exactly per section (c); all stubs land
+- `bootstrap.py /tmp/v1.1-validation-wiki --minimal | --code | --website`
+  also produce expected outputs
+- All Session-1-relocated tests still pass post-restructure (~615 tests;
+  `bootstrap.py` test fixtures may need path updates)
+- 5 P0/P1 new scripts shipped in `wikisys.library/_scripts/` with tests
+- `CODEX_LIBRARIAN.md` extended with 3 new operations
+- Library `module.json` version bump to v1.1
+- MI-10/11/12/13 (S001 deferrals in Library `MIGRATION-ISSUES.md`)
+  resolved or explicitly carried to v1.2
 
 ## Mentor (planned) — Greenfield bootstrap target
 
