@@ -235,10 +235,15 @@ def parse_config_yaml(text: str) -> Dict[str, Any]:
             key:
               - field_a: value
                 field_b: value
+                field_with_sublist:
+                  - sub_a
+                  - sub_b
               - field_a: value
         Each list item is a flat mapping. The first field's indentation
         sets the continuation indent for the rest of the item; mismatched
-        continuation indents raise ConfigYamlError.
+        continuation indents raise ConfigYamlError. Continuation fields
+        with empty value followed by `- ` lines at greater indent collect
+        a sub-list of scalars (S002 FINDING #1 — Mentor topics.yaml form).
       - Nested mapping (2-level; S047-T-XL-3a):
             key:
               child_a: value
@@ -247,9 +252,9 @@ def parse_config_yaml(text: str) -> Dict[str, Any]:
         empty-value key form a nested mapping. Container type (list vs
         mapping) determined by the first indented line's prefix.
 
-    Out of scope: 3+ level nesting, flow-style mappings inside list
-    items, multi-line strings, anchors, references, multi-document
-    streams.
+    Out of scope: nested mappings inside list items (only sub-list
+    scalars), flow-style mappings inside list items, multi-line strings,
+    anchors, references, multi-document streams.
 
     Returns a dict (empty when input is empty or whitespace-only).
     Raises ConfigYamlError on structural malformation.
@@ -260,6 +265,10 @@ def parse_config_yaml(text: str) -> Dict[str, Any]:
     current_mapping = None
     current_item = None
     current_item_indent = None
+    pending_subkey = None        # S002 FINDING #1: empty-value continuation
+                                 # field name whose sub-list (block-style
+                                 # scalars at greater indent) we're collecting
+    pending_subkey_indent = None  # indent expected for sub-list `- ` lines
 
     for idx, raw_line in enumerate(text.split("\n")):
         line_no = idx + 1
@@ -269,6 +278,31 @@ def parse_config_yaml(text: str) -> Dict[str, Any]:
 
         indent = len(no_comment) - len(no_comment.lstrip())
         content = no_comment[indent:]
+
+        # S002 FINDING #1: sub-list collection under a continuation field
+        # with empty value (e.g. Mentor topics.yaml block-style keywords:
+        # \n  - foo\n  - bar). When pending_subkey is set, lines at greater
+        # indent than current_item_indent starting with `- ` get appended
+        # as scalars to current_item[pending_subkey].
+        if pending_subkey is not None:
+            if indent > (current_item_indent or 0) and content.startswith("- "):
+                if pending_subkey_indent is None:
+                    pending_subkey_indent = indent
+                elif indent != pending_subkey_indent:
+                    raise ConfigYamlError(
+                        "line {}: inconsistent indent in sub-list under '{}' "
+                        "(expected {}, got {})".format(
+                            line_no, pending_subkey, pending_subkey_indent, indent
+                        )
+                    )
+                current_item[pending_subkey].append(
+                    _parse_value(content[2:])
+                )
+                continue
+            # Indent dropped back to current_item_indent (or less) or line
+            # doesn't start with `- ` — sub-list collection ends; fall through.
+            pending_subkey = None
+            pending_subkey_indent = None
 
         if indent == 0:
             # Finalize prior pending_key (no indented content followed) as
@@ -369,7 +403,15 @@ def parse_config_yaml(text: str) -> Dict[str, Any]:
                 )
             key = content[:colon].strip()
             value_str = content[colon + 1:].strip()
-            current_item[key] = _parse_value(value_str)
+            if value_str == "":
+                # S002 FINDING #1: empty-value continuation field opens
+                # a sub-list collection. Subsequent `- ` lines at greater
+                # indent are appended as scalars to current_item[key].
+                pending_subkey = key
+                pending_subkey_indent = None
+                current_item[key] = []
+            else:
+                current_item[key] = _parse_value(value_str)
 
     # Finalize trailing pending_key (no indented content followed) as
     # empty list per backward-compat default.
