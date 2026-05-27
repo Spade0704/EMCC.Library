@@ -30,6 +30,18 @@ MANDATORY fixture-scope-discipline 7th-cycle preventive sustained per
 codification SOLIDIFIED + Auditor T2 promotion-OVERDUE recommendation.
 """
 
+import unittest
+
+raise unittest.SkipTest(
+    "MI-16 (S002 / Codex v1.1): test_t3_p54 asserts v1.0 sync-shape "
+    "ingest-readiness (_context/INGEST_PROCEDURE.md + _context/"
+    "SEMANTIC_LINT_PROCEDURE.md shipped into the consumer wiki via "
+    "bootstrap; _sources/ + _inbox/ + _decisions/ingest-log.md "
+    "infrastructure). v1.1 bootstrap.py is scaffold-only; sync/ingest "
+    "shape misaligned post-S002. Full retirement deferred to S004. "
+    "See MIGRATION-ISSUES.md MI-16."
+)
+
 import hashlib
 import subprocess
 import sys

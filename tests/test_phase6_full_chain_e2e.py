@@ -31,10 +31,22 @@ per CLAUDE.md R_LOGIC D_INTEGRATIONS; out of scope per unittest framework
 limit; T6 verifies STATIC infrastructure post-scaffold).
 """
 
+import unittest
+
+raise unittest.SkipTest(
+    "MI-16 (S002 / Codex v1.1): test_phase6 asserts v1.0 SHIP-readiness "
+    "Phase-6 invariants (full bootstrap+sync+scaffold chain with v1.0-"
+    "shaped output: _sources/raw/, _context/{INGEST,SEMANTIC_LINT,"
+    "CODEX_LIBRARIAN}.md, .claude/personas/, _brain_dump/_inbox/ "
+    "scaffolds). v1.1 bootstrap.py is scaffold-only per spec section (c). "
+    "Phase-6 invariants will rewrite for spec (c) shape in S004 once "
+    "sync_from_kit's target contract is decided. See MIGRATION-ISSUES.md "
+    "MI-16."
+)
+
 import hashlib
 import subprocess
 import sys
-import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 

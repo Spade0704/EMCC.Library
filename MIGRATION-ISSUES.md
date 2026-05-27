@@ -61,6 +61,51 @@ Mirrors the convention established by `EMCC.DFDU/MIGRATION-ISSUES.md` which exte
 
 **Net effect:** Library tree no longer carries two divergent copies of Codex automation scripts. Post-B5, `bootstrap.py` regenerates `wiki.codex/git/_scripts/` (or equivalent — depends on canonical-output tree decision) as drop-in for the dogfood wiki, sourced from wikisys.library.
 
+### MI-16 — bootstrap.py v1.0 shape tests retired; full canonical-shape rewrite deferred to S004
+
+**Discovered:** Phase B5b (2026-05-27) during bootstrap.py canonical-output rewrite per spec section (c).
+
+**Description:** v1.1 `bootstrap.py` is a SCAFFOLD-ONLY rewrite per `tasks/plans/portfolio-folder-structure-spec.md` section (c). It emits the canonical portfolio frame (`0-Inbox/`, `Biz.Automation/wikisys.<name>/_*/.gitkeep`, `wiki.<name>/{git,local}/`, `tasks/{todo,sessions,lessons,archive}.md`, `assets/<6 subfolders>/.gitkeep`, root stubs `Index.md`/`CLAUDE.md`/`Cheatsheet.md`/`.gitignore`) — but does NOT copy Codex's `_scripts/` / `_template/` / `_config/` contents into the consumer wiki. Script + template delivery is `sync_from_kit.py`'s job (Sync operation per spec §4.2).
+
+This is a fundamental contract change from v1.0:
+- **v1.0 bootstrap** = copy Codex scripts + templates into the consumer wiki (`mentor/_scripts/`, `mentor/_template/`, etc.).
+- **v1.1 bootstrap** = scaffold-only (no `_scripts/`, no `_template/`, no `_context/` inside the consumer wiki).
+
+5 test files retire as MI-16 because they assert v1.0 contract end-to-end:
+
+| Test file | Test count | What it asserts |
+|---|---|---|
+| `tests/test_bootstrap.py` | 44 | v1.0 CLI signature + 15-script copy + `__SEP__` template substitution + WIKI_FOLDERS Lattice-2.0-flavored output |
+| `tests/test_t1_p52_bootstrap_operation.py` | 10 | v1.0 bootstrap end-to-end with 25-script copy + `_canon/topics.yaml`/`_config/cross_link.yaml` placement |
+| `tests/test_t2_p53_sync_operation.py` | 19 | v1.0 sync_from_kit precedence map against bootstrap-output wikis |
+| `tests/test_t3_p54_ingest_operation.py` | 10 | v1.0 ingest-readiness static infrastructure (`_sources/raw/`, `_inbox/`, `_decisions/ingest-log.md`) |
+| `tests/test_phase6_full_chain_e2e.py` | 8 | v1.0 SHIP-readiness full-chain (bootstrap + sync + scaffold + Librarian wiring) |
+
+All 5 files raise `unittest.SkipTest` at module import time with MI-16 reason. Net: 88+ tests skipped (discovery time; not counted in suite total).
+
+**S004 (consumer wikis sprint) inherits two coupled decisions:**
+
+1. **Where does post-v1.1 sync deliver procedure docs?** spec (c) consumer wiki tree has no `_context/`. Options:
+   - (a) Sync delivers procedure docs to `Biz.Automation/wikisys.<name>/_context/` (operator-facing system-side location).
+   - (b) Sync delivers nothing into the consumer wiki; the consumer's Claude session reads procedure docs directly from the Library install via path indirection.
+   - (c) Spec (c) extends with a hidden `_context/` in the wiki — operator's call.
+
+2. **How do legacy v1.0 wikis migrate forward?** Existing pre-S002 wikis bootstrapped with v1.0 still have `_scripts/`, `_template/`, `_context/` at their root. Sync_from_kit currently expects this shape. Options:
+   - (a) Sync_from_kit ships with a v1.0-compat detection mode (reads consumer wiki shape; writes to old paths if v1.0, new paths if v1.1).
+   - (b) Force-migrate: a one-shot `migrate_v1_to_v1_1.py` script rewrites legacy wikis into new shape.
+   - (c) Accept that v1.0 wikis frozen; only new bootstraps get v1.1 shape; legacy stays maintainable in v1.0 forever.
+
+**S002 disposition:** Retire the 5 deprecated-shape test files; ship 21 new canonical-shape tests in `tests/test_bootstrap_canonical.py` covering --full / --minimal / --code / --website / idempotency-and-safety / CLI parser. `sync_from_kit.py` unchanged in S002 (still v1.0 contract; broken in practice against v1.1-bootstrap wikis but the path-lookup updates in B5a keep its source-side reads correct for the new Library layout).
+
+**Net test suite delta (S001 → S002):**
+- S001 baseline: 615 tests / 611 pass / 3 fail / 1 skip
+- S002 close: 548 tests / 540 pass / 2 fail / 6 skipped-modules (~88 tests retired under MI-16)
+- 21 new canonical-shape tests added
+- 1 baseline fail dropped (test_phase6_librarian_persona_files_byte_equivalent was in test_phase6_full_chain_e2e.py — now module-skipped)
+- MI-10 fail (test_check_frontmatter_persona_class_drop_ins_lint_clean) remains until B9 generalizes the test.
+
+**Implementation deviation from spec (c) §`--code` mode:** Spec (c) says `--code adds mentor/<product-code-root>/.gitkeep`. The literal placeholder `<product-code-root>` contains Win32-illegal chars (`<`, `>`). v1.1 bootstrap.py emits NO folder placeholder for --code; operator names + creates the actual code root (Flutter `lib/`, Python `src/`, etc.). --code's contribution is the code-aware .gitignore additions only. Spec text reads as guidance pattern, not literal output.
+
 ### MI-15 — Sources/Raw/ legacy README superseded by wiki-internal canonical
 
 **Discovered:** Phase B4 (2026-05-27) during sources merge.

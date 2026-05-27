@@ -26,10 +26,20 @@ TemporaryDirectory-managed paths MUST occur INSIDE `with` block scope per
 SOLIDIFIED evidence base.
 """
 
+import unittest
+
+raise unittest.SkipTest(
+    "MI-16 (S002 / Codex v1.1): test_t1_p52 asserts v1.0 bootstrap end-to-end "
+    "(18 top-level entries Lattice-2.0-flavored, 25-script copy, __SEP__ "
+    "substitution, _canon/topics.yaml + _config/cross_link.yaml placement). "
+    "v1.1 bootstrap.py is scaffold-only per spec section (c). New "
+    "canonical-shape tests in tests/test_bootstrap_canonical.py. Full "
+    "retirement deferred to S004. See MIGRATION-ISSUES.md MI-16."
+)
+
 import hashlib
 import subprocess
 import sys
-import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
