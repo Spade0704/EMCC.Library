@@ -31,10 +31,12 @@ question, and outputs the refined spec in three sections:
 
 ### EMCC modules (orchestration infrastructure)
 
+> **Wiki policy update (2026-05-28, operator decision — S006):** ALL projects get a wiki, including the EMCC infra modules. The prior "no `wiki.*/`" rulings for EMCC and EMCC.DFDU are **superseded** — both were scaffolded with the v1.1 canonical `wiki.<name>/` + `Biz.Automation/wikisys.<name>/` structure. `wiki.<projectname>/` is no longer optional (see canonical-tree note below).
+
 | Module | Role | Frame today |
 |---|---|---|
-| **EMCC** | Orchestration root — Director + Migrator agents; portfolio scanner; consumer-project bootstrap | `0-Inbox/` (hyphen ✓), `tasks/` (todo/sessions), `scripts/` (Python automations), `Documentation/`, `templates/`, `_blueprints/`; `CLAUDE.md`, `PROJECT_INDEX.md`, `README.md`, `EMCC.md`, `FRAMEWORK.md`, `ROADMAP.md`, `module.json`-adjacent files; no `.claude/`, no `wiki.*/` |
-| **EMCC.DFDU** | Lattice 3.0 protocol module | `0-Inbox/` (hyphen ✓), `tasks/` (todo/sessions/lessons/archive + architect-notes, spec-readiness-tracker), `documents/lattice/` (12 numbered canonical docs), `documents/lattice-2.0-legacy/`, `documents/argot/`, `scripts/`, `schemas/`, `personas/`, `tests/`; `CLAUDE.md`, `TIERS.md`, `MIGRATION-ISSUES.md`, `SOURCE-HISTORY.md`, `module.json`. `.lattice/` gitignored runtime. **No `wiki/`** |
+| **EMCC** | Orchestration root — Director + Migrator agents; portfolio scanner; consumer-project bootstrap | `0-Inbox/` (hyphen ✓), `tasks/` (todo/sessions), `scripts/` (Python automations), `Documentation/`, `templates/`, `_blueprints/`; `CLAUDE.md`, `PROJECT_INDEX.md`, `README.md`, `EMCC.md`, `FRAMEWORK.md`, `ROADMAP.md`, `module.json`-adjacent files; no `.claude/`. **`wiki.EMCC/` + `Biz.Automation/wikisys.EMCC/`** scaffolded S006 (2026-05-28). |
+| **EMCC.DFDU** | Lattice 3.0 protocol module | `0-Inbox/` (hyphen ✓), `tasks/` (todo/sessions/lessons/archive + architect-notes, spec-readiness-tracker), `documents/lattice/` (12 numbered canonical docs), `documents/lattice-2.0-legacy/`, `documents/argot/`, `scripts/`, `schemas/`, `personas/`, `tests/`; `CLAUDE.md`, `TIERS.md`, `MIGRATION-ISSUES.md`, `SOURCE-HISTORY.md`, `module.json`. `.lattice/` gitignored runtime. **`wiki.EMCC.DFDU/` + `Biz.Automation/wikisys.EMCC.DFDU/`** scaffolded S006 (2026-05-28). |
 | **EMCC.Library** | Codex protocol module — hosts the Codex wiki itself | `0. Inbox/` (period+space — older convention), **`wiki.codex/`** with: `Home.md`, `00-Start-Here/`, `01-Architecture/`, `02-Operations/`, `04-Contributing/`, and underscore system folders `_canon/`, `_config/`, `_context/`, `_decisions/`, `_scripts/`, `_sources/raw/`, `_brain_dump/` (last is gitignored), plus `.claude/personas/` *inside* the wiki. Status: `not-ready` (awaits EMCC Step 2 SHIP) | **The operator's draft IS a generalization of `wiki.codex/`'s pattern.** Splitting `wiki.codex/`'s underscore folders into a separate `wikisys.<name>/` (system) and `wiki.<name>/` (content) is the refactor proposed. |
 
 ### Cross-cutting observations
@@ -281,7 +283,7 @@ portfolio frame wraps around them, never relocates them).
 │   │   └── _decisions/               # OPTIONAL — decision log (Codex pattern)
 │   └── <automationname>/             # one folder per automation
 │
-├── wiki.<projectname>/                # OPTIONAL — present when project has wiki content
+├── wiki.<projectname>/                # ALL projects (2026-05-28 policy; was OPTIONAL)
 │   ├── local/                        # private; gitignored
 │   │   ├── <topicname>/              # confidential topics
 │   │   └── <automationname>.doc/     # OPTIONAL — confidential automation docs
@@ -878,9 +880,13 @@ the full report integration):
   per-project override via wiki-internal config precedence. Codified
   in Phase B7.
 
-**No on-disk migration needed.** Mentor was greenfield. Library's
-S002 work brings `bootstrap.py` up to spec (c) so future consumer
-wikis can be produced mechanically.
+**Migration status (updated post-S004).** This was originally written as
+"no on-disk migration needed — Mentor was greenfield." That is no longer
+accurate: in S004 (2026-05-28) Mentor was migrated from the v1.0 wiki layout
+to the v1.1 canonical layout (`wiki/_*` → `Biz.Automation/wikisys.mentor/_*`
++ `wiki.mentor/git/`). Library's S002 work brought `bootstrap.py` up to spec
+(c) so future consumer wikis can be produced mechanically; greenfield
+consumers (e.g. Aviation, eddyandwolff) need no migration, but Mentor did.
 
 ---
 

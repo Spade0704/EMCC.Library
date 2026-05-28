@@ -2,6 +2,24 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 6 — 2026-05-28 — CLOSED — S006 module-wiki rollout + functional wiring (cross-repo)
+
+**Status:** CLOSED. Rolled out + wired consumer wikis for the two EMCC infra modules, per operator override ("all projects get a wiki"). Cross-repo: scaffolds + wiring live in the EMCC and EMCC.DFDU repos; Library's role was the tooling (`bootstrap.py`, `sync_from_kit.py`), the spec override, and this record.
+
+**What shipped (cross-repo):**
+- **EMCC** — `bootstrap.py EMCC --full` scaffold (PR EMCC#6, merged) → wiring: added `module.json` (Codex install marker) + `sync_from_kit` kit + `Home.md` skeleton (PR EMCC#7).
+- **EMCC.DFDU** — `bootstrap.py EMCC.DFDU --full` scaffold (PR EMCC.DFDU#5, merged) → wiring: `sync_from_kit` + `Home.md` (existing `module.json` already a marker) (PR EMCC.DFDU#6). Lattice canon stays in `documents/lattice/` (not migrated).
+- **Library (this repo)** — spec override recording "all projects get a wiki" + EMCC/DFDU rows (PR #14, with the §883 greenfield-claim correction).
+
+**Decisions:**
+- Bootstrapped into the *existing* infra repos (not greenfield): trimmed bootstrap byproducts that conflict with their conventions (competing `Index.md`, `Cheatsheet.md`, stray `.gitkeep`); added `wiki.<name>/local/` ignore rules manually (bootstrap skips an existing `.gitignore`).
+- **EMCC marker = `module.json`** (it's a module), NOT `emcc.modules.json` (that's the external-consumer-app manifest — semantically wrong for a module/orchestrator).
+- **MI-12 DROPPED** — `project-codex` is being deprecated (operator), so its historical curation is moot. Won't-do.
+
+**Validation:** `find_wiki_root`/`find_wiki_content_root` resolve correctly from each repo's synced `_scripts` (EMCC → `wiki.EMCC/git`; DFDU → `wiki.EMCC.DFDU/git`). Library suite 630 green; stale-path sweep clean.
+
+**Remaining:** first ingest for both new wikis (operator/Librarian-driven); Tat / iSommelier scaffolds.
+
 ## Session 5 — 2026-05-28 — CLOSED — Post-S004 carry closure (MI-17 / OBS-1 / OBS-4 / dashboard relocation)
 
 **Status:** CLOSED — four post-S004 carried items closed in one maintenance sprint. Tests 605 → 630 (+25), all green. Operator confirmed S006 progress (Aviation / eddyandwolff / Mentor done; aviation-career dropped; EMCC + EMCC.DFDU next).
