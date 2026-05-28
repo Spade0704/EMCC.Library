@@ -25,12 +25,13 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from _lib import dashboard
+from _lib import cli
 from _lib import frontmatter
 from _lib import markdown
 from _lib.topics import Topic, build_alias_index, load_topics, resolve_topic
 
 
-WIKI_ROOT = frontmatter.find_wiki_root()
+WIKI_ROOT = frontmatter.find_wiki_content_root()
 DASHBOARD_RELATIVE = "_dashboards/topic_registry_validation.md"
 TOPICS_RELATIVE = "_canon/topics.yaml"
 
@@ -232,6 +233,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
+    WIKI_ROOT = cli.resolve_cli_wiki_root(WIKI_ROOT)
     summary = run(WIKI_ROOT)
     print(
         "topic_registry_validation: pages={} topics={} errors={} warnings={}".format(

@@ -4,6 +4,16 @@
 
 ---
 
+## Install-root vs content-root, and orchestrator side-effects (Post-S004 carry closure)
+
+**Install-root ≠ content-root.** `find_wiki_root()` returns the *install* root for a v1.1 layout (so the `find_*_dir()` helpers can reach system-side `wikisys.*/_canon/`). But content pages and generated dashboards live on the *content* side (`wiki.<name>/git/`). Scripts that conflate the two write dashboards to `<install>/_dashboards/` (a non-gitignored repo-root leak) and page-walk the entire repo. Lesson: a script's "root" has (at least) two distinct meanings post-split — be explicit about which. Added `find_wiki_content_root()` as the companion to `find_wiki_root()`; the MI-18 `find_*_dir()` helpers already walk up to install root so they work from either start.
+
+**Orchestrator side-effects during exploration are dangerous.** Running `update_dashboards.py` to "see what it does" silently rewrote `<!-- codex:see-also -->` blocks into 25+ tracked content pages (the `cross_link_topics` pipeline step mutates pages based on `wiki_root`). On a fresh clone this looked like spurious modifications. Lesson: treat the dashboard orchestrator as a *write* operation, not a read; never run it to probe. Use read-only single scripts (e.g. `build_completion_dashboard.py`) or `--json` modes for probing.
+
+**Deterministic generation is a prerequisite for drift guards.** A generated artifact whose content depends on wall-clock time (e.g. `last_updated: <today>`) cannot be drift-checked by regenerate-and-compare — the guard would fail the next day with no real drift. `generate_persona_dropin.py` sources `last_updated` from the canonical's own frontmatter, making generation a pure function of the canonical. Same principle applies to any "regenerate to verify" CI guard.
+
+**Allow-list audits must exempt their own definition files.** The stale-path sweep (`audit_doc_pairing.py --stale-paths`) flagged its own pattern-list and config file. A user-supplied allow-list that *replaces* the default would re-expose them. Fix: a small `_STALE_ALWAYS_ALLOWLIST` merged unconditionally for the files that DEFINE the patterns. Lesson: any "find forbidden strings" audit needs a non-overridable self-exemption for the files that legitimately enumerate the forbidden strings.
+
 ## Marker-walk discovery family (S004, MI-18 closure)
 
 When a v1.0→v1.1 layout migration moves `_canon/`, `_decisions/`, `_config/` from wiki root to system-side (`Biz.Automation/wikisys.<name>/_*`), every script reading `wiki_root / "_<dir>"` breaks silently. Symptoms: empty dashboard sections, missing customization, false-positive regressions that hide as "validators OK" because they take no input.

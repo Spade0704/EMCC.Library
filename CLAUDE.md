@@ -59,7 +59,7 @@ machine-readable old-path → new-path manifest.
 | `tests/` | Python stdlib `unittest` suite (~589 tests post-S002 / MI-16 retirements) | Test work; verify after any code change |
 | `wiki.codex/git/` | Library's self-hosted dogfood wiki content + `git/.claude/personas/CLAUDE.librarian.md` drop-in | Reference / self-documentation |
 | `wiki.codex/local/` | Library's private zone (gitignored; brain-dump / unfiled) | Operator's private |
-| `.claude/personas/CLAUDE.librarian.md` | Librarian persona (canonical at project root; v1.1 extension mirrors `wiki.codex/git/codex/CODEX_LIBRARIAN.md`) | Persona / agent work |
+| `.claude/personas/CLAUDE.librarian.md` | Librarian persona drop-in — **GENERATED** from `wiki.codex/git/codex/CODEX_LIBRARIAN.md` via `generate_persona_dropin.py`; do not hand-edit (drift guard: `tests/test_persona_dropin.py`). OBS-4 closure. | Persona / agent work |
 | `.claude/personas/CLAUDE.auditor.md` | Auditor persona (carried verbatim from DFDU) | On-demand audit work; Lattice 3.0 Regime B |
 | `tasks/*.md` | Operational state for THIS repo's build | Every session start |
 | `0-Inbox/` | Triage area for in-flight planning docs | When planning a change to canon |

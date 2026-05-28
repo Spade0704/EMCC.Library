@@ -40,12 +40,13 @@ from pathlib import Path
 from typing import Any, Dict
 
 from _lib import dashboard
+from _lib import cli
 from _lib import frontmatter
 from _lib import markdown
 from _lib.config_loader import ConfigYamlError, load_config_yaml
 
 
-WIKI_ROOT = frontmatter.find_wiki_root()
+WIKI_ROOT = frontmatter.find_wiki_content_root()
 DASHBOARD_RELATIVE = "_dashboards/terminology.md"
 CONFIG_RELATIVE = "_config/forbidden_terms.yaml"
 VALID_SEVERITIES = set(dashboard.SEVERITY_ORDER)
@@ -222,6 +223,7 @@ def _build_dashboard_markdown(wiki_root, findings, pages_scanned):
 
 
 if __name__ == "__main__":
+    WIKI_ROOT = cli.resolve_cli_wiki_root(WIKI_ROOT)
     try:
         summary = run(WIKI_ROOT)
     except ConfigYamlError as exc:

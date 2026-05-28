@@ -60,7 +60,7 @@ from _lib import frontmatter
 from _lib.config_loader import ConfigYamlError, load_config_yaml
 
 
-WIKI_ROOT = frontmatter.find_wiki_root()
+WIKI_ROOT = frontmatter.find_wiki_content_root()
 DASHBOARD_RELATIVE = "_dashboards/canon_drift.md"
 SNAPSHOT_BASE_RELATIVE = "_canon/.snapshots"
 
@@ -388,7 +388,15 @@ def _main(wiki_root, argv=None, stdout=None, stderr=None):
         action="store_true",
         help="Write a new snapshot under _canon/.snapshots/ before diffing.",
     )
+    parser.add_argument(
+        "--wiki-root",
+        dest="wiki_root",
+        default=None,
+        help="content root to operate on (default: auto-detected)",
+    )
     args = parser.parse_args(argv if argv is not None else [])
+    if args.wiki_root is not None:
+        wiki_root = Path(args.wiki_root).resolve()
 
     try:
         if args.snapshot:
