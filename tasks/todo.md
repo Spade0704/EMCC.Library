@@ -57,7 +57,8 @@ Cross-repo sprint with `spade0704/Project-Mentor`. Mentor migrated v1.0 → v1.1
 
 - **S003** (master plan Step 5) — Telegram channel boot. **Partially done**: Option A (local-only Windows env vars; bot at chat_id 1415844818) configured by operator post-S002. Cloud-CC remainder: no action required (network policy blocks `api.telegram.org`; soft-compliance contract honored).
 - **S005** (master plan Step 7) — bootstrap DFDU's own `wiki/` directory.
-- **S006+** — remaining consumer wikis on v1.1 canonical scaffold (greenfield via `bootstrap.py <projectname> --full`; no migration). Progress (2026-05-28): **Aviation ✅, eddyandwolff ✅, Mentor ✅** repositioned/done in wiki. **aviation-career — DROPPED** (no wiki needed). Remaining: **EMCC, EMCC.DFDU** (next). Tat / iSommelier status TBD.
+- **S006+** — consumer/module wikis on v1.1 canonical scaffold (via `bootstrap.py <projectname> --full`). Progress (2026-05-28): **Aviation ✅, eddyandwolff ✅, Mentor ✅** repositioned/done. **aviation-career — DROPPED** (no wiki). **EMCC ✅, EMCC.DFDU ✅** scaffolded this session (operator override: all projects get a wiki — spec updated). Tat / iSommelier status TBD.
+  - **S006 follow-up (functional wiring, deferred)** — the EMCC + EMCC.DFDU wikis are scaffold-only (empty `wiki.<name>/{git,local}` + `wikisys.<name>/` engine dirs). To make them operable: (1) `emcc.modules.json` consumer marker so `find_wiki_root` detects them; (2) `sync_from_kit.py` to ship Codex `_scripts`/`_template`/`_config` + `Home.md` skeleton + verbatim procedures; (3) first ingest. Likely lands with EMCC Step 4 consumer-wiring.
 
 ---
 
