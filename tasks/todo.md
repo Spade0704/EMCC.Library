@@ -44,8 +44,8 @@ Cross-repo sprint with `spade0704/Project-Mentor`. Mentor migrated v1.0 → v1.1
 - [x] **OBS-1** — RESOLVED. `audit_doc_pairing.py --stale-paths` + `_config/stale_paths.yaml` allow-list.
 - [x] **OBS-4** — RESOLVED. `.claude/personas/CLAUDE.librarian.md` generated from canonical via `generate_persona_dropin.py`; drift guard in `tests/test_persona_dropin.py`.
 - [x] **Library `_dashboards/` location** — RESOLVED (coupled with MI-17). Content dashboards now write to `wiki.codex/git/_dashboards/` (was leaking to repo-root `_dashboards/`). NOTE: the S002 audit scripts (`audit_doc_pairing`/`audit_local_split`/etc.) still write to system-side `wikisys.library/_dashboards/` by design — that path is NOT stale.
-- [ ] **MI-12** (historical curation, S001 carry) — Codex-class entries from project-codex's tasks/* (5,223 lines) + CHANGELOG.md (337KB) classifying for migration. Low priority.
-- [ ] **portfolio-folder-structure-spec.md line 881 outdated** — reads "Mentor was greenfield, no migration needed" — false post-S004. Carry to next spec touch.
+- [ ] **MI-12** (historical curation, S001 carry) — Codex-class entries from project-codex's tasks/* (5,223 lines) + CHANGELOG.md (337KB) classifying for migration. Low priority. **NOTE: not actionable in the current cloud env — `project-codex` is not cloned here and is outside the EMCC/EMCC.DFDU/EMCC.Library working set.** Needs a session with project-codex access.
+- [x] **portfolio-folder-structure-spec.md greenfield claim** — RESOLVED. §883 "Mentor was greenfield, no migration needed" corrected to reflect the S004 v1.0→v1.1 migration.
 - [ ] **Content-side bootstrap drop-in** (`wiki.codex/git/.claude/personas/CLAUDE.librarian.md`) — still hand/bootstrap-maintained; its drift cure belongs to `bootstrap.py`'s generation path, separate from the OBS-4 project-root fix. Low priority.
 
 ### Cross-repo (Mentor-side; tracked here for visibility)

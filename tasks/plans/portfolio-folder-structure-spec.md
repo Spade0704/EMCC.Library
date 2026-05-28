@@ -880,9 +880,13 @@ the full report integration):
   per-project override via wiki-internal config precedence. Codified
   in Phase B7.
 
-**No on-disk migration needed.** Mentor was greenfield. Library's
-S002 work brings `bootstrap.py` up to spec (c) so future consumer
-wikis can be produced mechanically.
+**Migration status (updated post-S004).** This was originally written as
+"no on-disk migration needed — Mentor was greenfield." That is no longer
+accurate: in S004 (2026-05-28) Mentor was migrated from the v1.0 wiki layout
+to the v1.1 canonical layout (`wiki/_*` → `Biz.Automation/wikisys.mentor/_*`
++ `wiki.mentor/git/`). Library's S002 work brought `bootstrap.py` up to spec
+(c) so future consumer wikis can be produced mechanically; greenfield
+consumers (e.g. Aviation, eddyandwolff) need no migration, but Mentor did.
 
 ---
 
