@@ -83,16 +83,16 @@ its own per-project manifest. The table below indexes them.
 | Project | Manifest location | Status |
 |---|---|---|
 | **EMCC.Library** (this module) | `EMCC.Library/reorganization-instructions.library.md` (this repo) | Migration closed in S002 + S003b (2026-05-27). Manifest extracted from this master 2026-05-28. |
+| **Project-Mentor** | `<mentor-root>/reorganization-instructions.mentor.md` (in the Project-Mentor repo) | Migration closed in S004 (2026-05-28). Manifest extracted from this master 2026-05-28, then moved cross-repo into Mentor on branch `claude/gallant-bohr-ePBuX` (Mentor commit `7ed7f30`). Library staging copy deleted. |
 
 ### Pending cross-repo migration
 
-These projects have a manifest authored but it has not yet been moved
-to its destination repo. Each carries a TODO at the top of its file
-naming the next session that must complete the cross-repo move.
+_(none — Mentor completed 2026-05-28)_
 
-| Project | Manifest staging location | Destination | Status |
-|---|---|---|---|
-| **Project-Mentor** | `EMCC.Library/tasks/plans/cross-repo-pending/reorganization-instructions.mentor.md` | `<mentor-root>/reorganization-instructions.mentor.md` | Migration closed in S004 (2026-05-28). Manifest extracted from this master 2026-05-28; awaits cross-repo move when next Mentor session opens. |
+When a future project's manifest needs staging before its destination
+repo is available, place it under
+`tasks/plans/cross-repo-pending/reorganization-instructions.<projectname>.md`
+with a TODO header naming the session that must complete the move.
 
 ### Planned (greenfield bootstrap or migration not yet started)
 

@@ -20,7 +20,7 @@ Aviation pivot coordination + Library hygiene. See `/root/.claude/plans/before-w
 
 ### Open
 - [ ] Operator: copy `tasks/plans/aviation-bootstrap-seed/reorganization-instructions.aviation.md` into aviation/ root after `bootstrap.py aviation --full --yes` lands (overwrites the bootstrap-emitted generic stub with the pre-populated seed).
-- [ ] Next Mentor session: complete the cross-repo move per the TODO inside `tasks/plans/cross-repo-pending/reorganization-instructions.mentor.md`.
+- [x] Mentor cross-repo move complete — manifest moved into Project-Mentor (commit `7ed7f30`, branch `claude/gallant-bohr-ePBuX`); Library staging copy deleted; master index flipped Mentor → Migrated.
 
 ## Past sprint — Post-S004 carry closure (2026-05-28, CLOSED)
 
