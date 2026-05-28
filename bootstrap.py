@@ -16,10 +16,12 @@ CLI:
 Modes:
     --full     (default) Canonical tree: 0-Inbox/ + Biz.Automation/
                + wiki.<name>/{local,git}/ + tasks/ + assets/ + root
-               files (Index.md, CLAUDE.md, Cheatsheet.md, .gitignore).
+               files (Index.md, CLAUDE.md, Cheatsheet.md,
+               reorganization-instructions.<name>.md, .gitignore).
     --minimal  Thin braindump (aviation-career style): 0-Inbox/ +
                wiki.<name>/{local,git}/ + tasks/ + root files. No
-               Biz.Automation/, no assets/, no Cheatsheet.md.
+               Biz.Automation/, no assets/, no Cheatsheet.md, no
+               reorganization-instructions.<name>.md.
     --code     --full + <product-code-root>/.gitkeep placeholder +
                code-aware .gitignore additions.
     --website  --full + website/.gitkeep + web-aware .gitignore
@@ -215,6 +217,54 @@ def _stub_cheatsheet_md(projectname: str) -> str:
     ).format(name=projectname)
 
 
+def _stub_reorganization_md(projectname: str) -> str:
+    return (
+        "# reorganization-instructions.{name}.md\n"
+        "\n"
+        "> **Scope:** Per-project path-migration manifest for **{name}** only.\n"
+        "> Cross-repo patterns (P1–P8), audit-hook contract, and the master index\n"
+        "> of per-project files live in `EMCC.Library/REORGANIZATION-INSTRUCTIONS.md`.\n"
+        "> Read the master first for pattern definitions; come here for the concrete\n"
+        "> {name}-side moves.\n"
+        "\n"
+        "> **Audience:** the Librarian agent in this repo, audit scripts, and any\n"
+        "> Claude Code session that hits a \"file not found\" error referencing an\n"
+        "> old path.\n"
+        "\n"
+        "> **Pair docs:** `EMCC.Library/tasks/plans/portfolio-folder-structure-spec.md`\n"
+        "> (canonical layout decisions).\n"
+        "\n"
+        "---\n"
+        "\n"
+        "## {name} — per-project moves\n"
+        "\n"
+        "**Pre-migration state:** [describe the on-disk shape before the canonical\n"
+        "layout was adopted — e.g., `wiki/` at root, custom builder output dirs,\n"
+        "Title-Case task files, etc. If this project is greenfield (bootstrap-only),\n"
+        "write \"Greenfield — no pre-migration content\" and skip the move tables.]\n"
+        "\n"
+        "**Migration moves** — [branch + commit range + date]\n"
+        "\n"
+        "| Old path | New path | Pattern | Status |\n"
+        "|---|---|---|---|\n"
+        "| _(add rows as moves land. Pattern column: P1–P8 per master, or `—` if no pattern applies.)_ | | | |\n"
+        "\n"
+        "## Internal callers updated\n"
+        "\n"
+        "[List scripts, configs, or docs whose path literals had to be rewritten\n"
+        "after the moves above. Reference commit SHAs for traceability.]\n"
+        "\n"
+        "---\n"
+        "\n"
+        "## See also\n"
+        "\n"
+        "- `EMCC.Library/REORGANIZATION-INSTRUCTIONS.md` (master) — patterns P1–P8,\n"
+        "  audit hooks contract, per-project file index.\n"
+        "- `EMCC.Library/tasks/plans/portfolio-folder-structure-spec.md` — canonical\n"
+        "  layout decisions.\n"
+    ).format(name=projectname)
+
+
 def _stub_gitignore(mode: str) -> str:
     base = (
         "# OS\n"
@@ -335,9 +385,14 @@ def _emit_root_stubs(
         (target / "Index.md", _stub_index_md(projectname)),
         (target / ".gitignore", _stub_gitignore(mode)),
     ]
-    # --minimal omits Cheatsheet.md per spec c.
+    # --minimal omits Cheatsheet.md + reorganization-instructions.<name>.md
+    # per spec c (thin braindump projects don't need a migration manifest).
     if mode != "minimal":
         files.append((target / "Cheatsheet.md", _stub_cheatsheet_md(projectname)))
+        files.append((
+            target / "reorganization-instructions.{}.md".format(projectname),
+            _stub_reorganization_md(projectname),
+        ))
     created = []
     for path, content in files:
         if not dry_run and not path.exists():
@@ -375,9 +430,12 @@ def _post_bootstrap_checklist(projectname: str, mode: str) -> str:
         "  1. cd {}".format(projectname),
         "  2. Edit CLAUDE.md: one-line description + hard rules.",
         "  3. Edit Index.md: rows for any non-stub folders you add.",
-        "  4. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.",
-        "  5. git init && git add -A && git commit -m \"bootstrap\"",
-        "  6. First real session: populate tasks/todo.md with the actual first task.",
+        "  4. Edit reorganization-instructions.{}.md: fill in the move table".format(projectname),
+        "     once any pre-canonical content is migrated. Greenfield projects can",
+        "     leave the stub intact or write \"Greenfield — no pre-migration content\".",
+        "  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.",
+        "  6. git init && git add -A && git commit -m \"bootstrap\"",
+        "  7. First real session: populate tasks/todo.md with the actual first task.",
         "",
         "Notes:",
         "  - wiki.{}/local/ is gitignored. Use it for confidential content.".format(projectname),

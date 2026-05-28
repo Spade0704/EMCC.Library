@@ -326,6 +326,9 @@ portfolio frame wraps around them, never relocates them).
 ├── Index.md                          # RECOMMENDED — file-map / routing table
 ├── CLAUDE.md                         # REQUIRED — rules, persona, memory architecture
 ├── Cheatsheet.md                     # RECOMMENDED — quick reference
+├── reorganization-instructions.<projectname>.md
+│                                     # RECOMMENDED — per-project path-migration manifest
+│                                     # (pairs with EMCC.Library/REORGANIZATION-INSTRUCTIONS.md master)
 └── .gitignore                        # REQUIRED
 ```
 
@@ -355,6 +358,7 @@ portfolio frame wraps around them, never relocates them).
 | `Index.md` | File-map / routing table. Markdown table. |
 | `CLAUDE.md` | Operating rules, hard constraints, persona, memory architecture. |
 | `Cheatsheet.md` | Quick reference for the operator. |
+| `reorganization-instructions.<projectname>.md` | Per-project path-migration manifest. Concrete (Old path) → (New path) → (Pattern) → (Status) rows for moves this project applied when adopting the canonical layout. Cross-repo patterns (P1–P8) and audit hooks live in `EMCC.Library/REORGANIZATION-INSTRUCTIONS.md` (master). Emitted by `bootstrap.py` as a stub for new projects. |
 | `.gitignore` | Excludes secrets, build artifacts, OS files, `wiki.*/local/`, optionally `Local/`, optionally heavy `assets/` patterns. |
 
 ## Variance allowance (required / recommended / optional)
@@ -366,6 +370,7 @@ portfolio frame wraps around them, never relocates them).
 | `tasks/` w/ `todo.md`/`sessions.md`/`lessons.md`/`archive.md` | **REQUIRED** | **Lowercase filenames** (matches EMCC/DFDU/isommelier/tat_app). `archive.md` may upgrade to `archive/` folder when >50KB. |
 | `Index.md` (root) | **RECOMMENDED** | May be embedded as a top section in CLAUDE.md (matches tat_app/isommelier). Bootstrap emits separate; projects may collapse. `PROJECT_INDEX.md` and `INDEX.md` (all-caps) are migration targets → rename to `Index.md`. |
 | `Cheatsheet.md` (root) | **RECOMMENDED** | May be omitted for thin projects. Casing must match `CLAUDE.md`/`Index.md` (mixed case, capital first letter). |
+| `reorganization-instructions.<projectname>.md` (root) | **RECOMMENDED** | Lowercase filename with the projectname as middle segment (matches lowercase tasks/*.md convention; distinct from the master `REORGANIZATION-INSTRUCTIONS.md` which is uppercase to stand out as cross-repo). `bootstrap.py` emits a stub in --full / --code / --website modes; omitted in --minimal. Greenfield projects may leave the stub unfilled or write "Greenfield — no pre-migration content". |
 | `0-Inbox/` (root) | **RECOMMENDED** | Capital I, hyphen, zero-prefix mandatory. `0. Inbox`, `_inbox`, `inbox/` rejected → migration targets. |
 | `.claude/` (root) | **OPTIONAL** | Must be at project root if present. Bootstrap does NOT create. Workspace projects (tat_app, isommelier) have it; spec/docs modules (EMCC.Library) usually don't. |
 | `Biz.Automation/` | **OPTIONAL** | Omit if no automations. |

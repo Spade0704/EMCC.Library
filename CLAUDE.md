@@ -26,9 +26,9 @@ The bus root is relative; `SessionManager` resolves it against this repo root at
 
 This module reorganized into the canonical portfolio layout in S002 (Codex v1.0 → v1.1, 2026-05-27). Module source files moved from project-root `_scripts/_template/_config/` to `Biz.Automation/wikisys.library/_*`; Codex spec docs moved from project-root markdown files to `wiki.codex/git/codex/<filename>`; `wiki.codex/` restructured into `git/`+`local/` subzones.
 
-**If you encounter an old path reference** in a script, doc, import, or test fixture (e.g., `_scripts/` at project root, `wiki.codex/_brain_dump/`, `Sources/Raw/`, `documents/codex/`), **consult `REORGANIZATION-INSTRUCTIONS.md`** for the new location.
+**If you encounter an old path reference** in a script, doc, import, or test fixture (e.g., `_scripts/` at project root, `wiki.codex/_brain_dump/`, `Sources/Raw/`, `documents/codex/`), **consult `reorganization-instructions.library.md`** for Library-specific moves. For cross-repo patterns + the index of other projects' manifests, fall back to **`REORGANIZATION-INSTRUCTIONS.md`** (master).
 
-**Do NOT guess** at the new path. Do NOT "fix" path references by inferring from context. Use the manifest. Patterns P1–P8 cover the eight generic transformation classes; the per-project moves table records the explicit S002 mappings.
+**Do NOT guess** at the new path. Do NOT "fix" path references by inferring from context. Use the manifests. Patterns P1–P8 (in the master) cover the eight generic transformation classes; the per-project `reorganization-instructions.library.md` records the explicit Session 1 + S002 + S003b mappings.
 
 If a path you encounter isn't in either the patterns OR the per-project table, surface it as a finding (it may indicate an incomplete migration or a stale reference that needs explicit disposition; add as a new MI entry per `MIGRATION-ISSUES.md` convention).
 
@@ -66,7 +66,8 @@ machine-readable old-path → new-path manifest.
 | `module.json` | EMCC module registration (v1.1.0) | Module hookup |
 | `SOURCE-HISTORY.md` | Pointer to project-codex archived SHA + per-file move inventory | "Where did this come from?" |
 | `MIGRATION-ISSUES.md` | Append-only registry (MI-01..MI-16) | Any new extraction or rename touches |
-| `REORGANIZATION-INSTRUCTIONS.md` | Machine-readable migration manifest (old-path → new-path per pattern + per-project) | "Where did this PATH go?" — see also CLAUDE.md §Path migrations |
+| `REORGANIZATION-INSTRUCTIONS.md` | **Master** manifest (patterns P1–P8 + audit hooks + cross-repo per-project index). | "Which pattern covers this old path?" — see also CLAUDE.md §Path migrations |
+| `reorganization-instructions.library.md` | **Per-project** manifest for EMCC.Library itself (Session 1 + S002 + S003b concrete moves). Pairs with the master above per the v1.3 addendum (2026-05-28). | "Where did this Library PATH go specifically?" |
 
 ## R_STATE
 
