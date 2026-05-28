@@ -18,7 +18,7 @@
 2. Future: an **`emcc-codex`** marketplace plugin for Librarian skills (Ingest / Semantic-Lint / Maintain), mirroring `emcc-lattice` — factor prompts from `CODEX_LIBRARIAN.md`. Open question: do we want a drift guard (`claude-library.md` ⇄ `CODEX_LIBRARIAN.md`) analogous to `generate_persona_dropin.py`'s `--check`?
 3. tat_app + supplystationusa still carry the inlined Codex block; they get migrated to the modular layout when DFDU is wired into them.
 
-**Decision forks still open:** (a) Librarian skill names + whether to ship `emcc-codex` now or after first real ingests; (b) drift-guard for the vendored `claude-library.md`; (c) whether `bootstrap.py` should emit the modular `.claude/modules/` layout for greenfield wikis directly (today `emcc_wire.py` adds it post-hoc).
+**Decision forks:** (a) ~~Librarian skill names + ship `emcc-codex` now vs later~~ **RESOLVED 2026-05-28** — shipped now as `/ingest` `/lint` `/maintain` `/sync` (skills load persona + verbatim procedure; no spec change). (b) drift-guard for the vendored `claude-library.md` ⇄ `CODEX_LIBRARIAN.md` — still open. (c) whether `bootstrap.py` should emit the modular `.claude/modules/` layout for greenfield wikis directly (today `emcc_wire.py` adds it post-hoc) — still open.
 
 ## S004-mentor-v1.1-migration (2026-05-27) — Architect plan
 

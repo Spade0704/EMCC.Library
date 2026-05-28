@@ -12,6 +12,8 @@
 
 **Next:** implement alongside DFDU fan-out to tat_app / supplystationusa.
 
+**Update (2026-05-28):** S007 fork (a) resolved — the **`emcc-codex`** marketplace plugin shipped (`/ingest` `/lint` `/maintain` `/sync`) and iSommelier was wired to the modular layout (Lattice lite + Codex). tat_app + supplystationusa migrate during their DFDU wiring. Delivery-only; no Codex spec/scripts/`sync_from_kit` change. See architect-notes §S007 + todo §S007 (b).
+
 ## Session 7 — 2026-05-28 — CLOSED — S006 consumer-wiki bootstrap (Tat / iSommelier / SupplyStationUSA) + sprint close
 
 **Status:** CLOSED. The three remaining consumer wikis are scaffolded on the v1.1 canonical frame; **consumer bootstrapping is COMPLETE and S006 is closed.** Scaffold-only (no Sync yet) per the v1.1 contract — script init + first ingest carry to the next phase.
