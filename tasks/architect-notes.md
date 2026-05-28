@@ -353,10 +353,10 @@ The Auditor (general-purpose Agent dispatch, fresh context; 116-line CLAUDE.audi
 
 | # | Severity | Disposition |
 |---|---|---|
-| **OBS-1** | info | **Deferred (S004+)**: AC12 sweep methodology under-counts; suggest structural enforcement via audit_doc_pairing.py / audit_local_split.py at runtime with explicit allow-list. Tracked here for future audit-method sprint. |
+| **OBS-1** | info | **RESOLVED (Post-S004 carry-closure, 2026-05-28)**: structural enforcement landed as `audit_doc_pairing.py --stale-paths` — corpus scan for old-layout path fragments with an explicit allow-list (`_config/stale_paths.yaml`; migration-trail/planning docs + pattern-definition files exempt). Repo-guard test asserts 0 un-allowlisted hits. Replaces the under-counting manual `git grep`. |
 | **OBS-2** | info | **Fixed inline (this B10 commit)**: REORGANIZATION-INSTRUCTIONS.md §245 `import librarian, pathlib` example was inert (Library not on PyPI / not packaged). Rewrote the consumer-project pointer to reference vendored / submodule / sibling-checkout resolution. MI-13 cross-link added. |
 | **OBS-3** | info | **Fixed inline (this B10 commit)**: README.md added §"v1.1 known limitations" surfacing the sync_from_kit-broken-against-v1.1-bootstrap chain (MI-16) + the no-packaging-artifact caveat (MI-13). Consumer-facing surface now accurately reflects v1.1 carry. |
-| **OBS-4** | info | **Deferred (Step 4 / future persona-discipline sprint)**: `.claude/personas/CLAUDE.librarian.md` is a 28-line manual mirror of the +174-line canonical at `wiki.codex/git/codex/CODEX_LIBRARIAN.md`. Mirror could drift. Karpathy Structural-over-Advisory suggests either a one-line redirect persona OR build-time generation. Tracked here. |
+| **OBS-4** | info | **RESOLVED (Post-S004 carry-closure, 2026-05-28)**: chose build-time generation (Karpathy Structural-over-Advisory). `.claude/personas/CLAUDE.librarian.md` is now generated from the canonical `wiki.codex/git/codex/CODEX_LIBRARIAN.md` by `generate_persona_dropin.py` (generated fm + DO-NOT-EDIT banner + canonical body verbatim; `last_updated` sourced from canonical → deterministic). `tests/test_persona_dropin.py` fails CI on drift. Mirror drift now structurally impossible. (Content-side bootstrap drop-in `wiki.codex/git/.claude/personas/CLAUDE.librarian.md` remains a `bootstrap.py` concern — see todo.md.) |
 
 Auditor envelope content preserved in B10 commit body (Session 1 precedent — Library bus root deferred; envelope captured in-commit-message-trail rather than written to `.lattice/bus/outbox/`).
 

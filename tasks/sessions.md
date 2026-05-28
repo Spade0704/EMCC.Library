@@ -2,6 +2,28 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 5 — 2026-05-28 — CLOSED — Post-S004 carry closure (MI-17 / OBS-1 / OBS-4 / dashboard relocation)
+
+**Status:** CLOSED — four post-S004 carried items closed in one maintenance sprint. Tests 605 → 630 (+25), all green. Operator confirmed S006 progress (Aviation / eddyandwolff / Mentor done; aviation-career dropped; EMCC + EMCC.DFDU next).
+
+**Operator-selected approaches (AskUserQuestion at session open):**
+- Dashboards → content-side resolver (`find_wiki_content_root()`).
+- OBS-4 → build-time generation (over redirect-stub / drift-audit).
+- OBS-1 → extend existing audit (`audit_doc_pairing.py`) over a new standalone script.
+
+**Commits (branch `claude/trusting-babbage-9oThb`):**
+- `3017b7c` — MI-17 full closure + dashboard relocation to content side (`find_wiki_content_root()` + `_lib/cli.py` `--wiki-root` across 17 scripts; +10 tests)
+- `8d48984` — OBS-4: generate Librarian persona drop-in from canonical (`generate_persona_dropin.py` + drift guard; +8 tests)
+- `9eb6067` — OBS-1: AC12 stale-path sweep with explicit allow-list (`audit_doc_pairing.py --stale-paths` + `_config/stale_paths.yaml`; +7 tests)
+- (this commit) — task-doc updates: todo/sessions/architect-notes/lessons + MIGRATION-ISSUES MI-17 RESOLVED
+
+**What shipped:**
+- **MI-17 + dashboard relocation (coupled):** the S002/S004 partial fix pointed scripts at `find_wiki_root()` = install root, so standalone dashboard runs leaked to repo-root `_dashboards/` and page-walks scanned the whole repo. New `find_wiki_content_root()` descends a v1.1 install to `wiki.<name>/git/`; all 17 scripts switched. New `_lib/cli.py::resolve_cli_wiki_root()` adds a `--wiki-root` override (or bare positional) to every standalone `__main__`. MI-17 RESOLVED.
+- **OBS-4:** project-root `.claude/personas/CLAUDE.librarian.md` is now a generated reflection of the canonical (fm + DO-NOT-EDIT banner + verbatim body; `last_updated` from canonical → deterministic). Drift guard test fails CI on divergence.
+- **OBS-1:** `--stale-paths` corpus sweep with config-driven allow-list replaces the under-counting manual `git grep`; repo-guard test pins 0 un-allowlisted hits.
+
+**Lessons banked** (`tasks/lessons.md`): orchestrator side-effects during exploration; install-root vs content-root distinction; deterministic generation for drift guards.
+
 ## Session 4 — 2026-05-28 — CLOSED — Mentor v1.1 migration arc + MI-16 + MI-18 closure (S004)
 
 **Status:** CLOSED — all 6 phases shipped (A + B + C + D + E + F). Auditor verdict `concerns` with 3 actionable findings + 2 info findings; all 3 actionable findings addressed inline (F10 + F11 + F12 fixed); no blocking findings. AC1-AC9 met objectively + verified; AC10 Auditor verdict = `concerns` (resolved inline per architect plan F4 "Concerns → address inline + close on pass").

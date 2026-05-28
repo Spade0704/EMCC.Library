@@ -2,6 +2,17 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
+## Past sprint — Post-S004 carry closure (2026-05-28, CLOSED)
+
+Closed four post-S004 carried items in one maintenance sprint. 630 tests pass (+25 from S004's 605 baseline).
+
+### Done
+- [x] **MI-17 full closure** + **dashboard relocation** (coupled) — added `_lib/frontmatter.py::find_wiki_content_root()`; switched all 17 dashboard/validator scripts off the install-root `find_wiki_root()` so dashboards now land at `wiki.codex/git/_dashboards/` (gitignored) instead of leaking to repo-root `_dashboards/`, and page-walks scan only the content side. Added `_lib/cli.py::resolve_cli_wiki_root()` + a `--wiki-root` override (or bare positional) in every standalone P-script `__main__`. MI-17 marked RESOLVED in `MIGRATION-ISSUES.md`. (+10 tests)
+- [x] **OBS-4** — `.claude/personas/CLAUDE.librarian.md` is now GENERATED from the canonical `wiki.codex/git/codex/CODEX_LIBRARIAN.md` via `generate_persona_dropin.py` (deterministic; `last_updated` sourced from canonical). `tests/test_persona_dropin.py` fails CI on drift. Drift is now structurally impossible. (+8 tests)
+- [x] **OBS-1** — `audit_doc_pairing.py --stale-paths`: AC12 stale-path sweep with an explicit allow-list (`_config/stale_paths.yaml`); replaces the under-counting manual `git grep`. Repo-guard test asserts 0 un-allowlisted hits. (+7 tests)
+
+→ See `tasks/sessions.md` for the close record and `tasks/architect-notes.md` §S002 for the updated OBS-1/OBS-4 dispositions.
+
 ## Past sprint — S004-mentor-v1.1-migration (2026-05-28, CLOSED)
 
 Cross-repo sprint with `spade0704/Project-Mentor`. Mentor migrated v1.0 → v1.1 canonical layout; Library shipped MI-16 + MI-18 closures + walker fix + manifest update.
@@ -29,12 +40,13 @@ Cross-repo sprint with `spade0704/Project-Mentor`. Mentor migrated v1.0 → v1.1
 ## Carried + Open (post-S004)
 
 ### Library-side
-- [ ] **MI-17 full closure** — 16 scripts still use hardcoded `WIKI_ROOT = Path(__file__).resolve().parent.parent`. S004 closed `_lib/frontmatter.py::WIKI_ROOT` + `update_dashboards.py` CLI arg only. Per-script CLI argparse support pending. Tests don't currently cover these scripts' default-WIKI_ROOT behavior; add coverage as part of follow-up.
+- [x] **MI-17 full closure** — RESOLVED (Post-S004 carry-closure sprint). `find_wiki_content_root()` + per-script `--wiki-root` CLI via `_lib/cli.py`. See `MIGRATION-ISSUES.md` MI-17.
+- [x] **OBS-1** — RESOLVED. `audit_doc_pairing.py --stale-paths` + `_config/stale_paths.yaml` allow-list.
+- [x] **OBS-4** — RESOLVED. `.claude/personas/CLAUDE.librarian.md` generated from canonical via `generate_persona_dropin.py`; drift guard in `tests/test_persona_dropin.py`.
+- [x] **Library `_dashboards/` location** — RESOLVED (coupled with MI-17). Content dashboards now write to `wiki.codex/git/_dashboards/` (was leaking to repo-root `_dashboards/`). NOTE: the S002 audit scripts (`audit_doc_pairing`/`audit_local_split`/etc.) still write to system-side `wikisys.library/_dashboards/` by design — that path is NOT stale.
 - [ ] **MI-12** (historical curation, S001 carry) — Codex-class entries from project-codex's tasks/* (5,223 lines) + CHANGELOG.md (337KB) classifying for migration. Low priority.
-- [ ] **OBS-1** (S002 carry, Auditor info) — AC12 sweep methodology under-counts; explicit runtime allow-list for legitimate verbatim/template encoding. Audit-method sprint TBD.
-- [ ] **OBS-4** (S002 carry, Auditor info) — persona-mirror drift risk between `.claude/personas/CLAUDE.librarian.md` and `wiki.codex/git/codex/CODEX_LIBRARIAN.md`. Persona-discipline sprint TBD.
-- [ ] **Library `_dashboards/` location** — consider migrating from `wikisys.library/_dashboards/` to `wiki.codex/git/_dashboards/` (content-side; matches Mentor convention from S004 F12). Operator decision; default path math change is invasive.
 - [ ] **portfolio-folder-structure-spec.md line 881 outdated** — reads "Mentor was greenfield, no migration needed" — false post-S004. Carry to next spec touch.
+- [ ] **Content-side bootstrap drop-in** (`wiki.codex/git/.claude/personas/CLAUDE.librarian.md`) — still hand/bootstrap-maintained; its drift cure belongs to `bootstrap.py`'s generation path, separate from the OBS-4 project-root fix. Low priority.
 
 ### Cross-repo (Mentor-side; tracked here for visibility)
 - [ ] Mentor SPLIT pairing for Karpathy + Cherny — backfill stub R-XXXXX on next publish event
@@ -45,7 +57,7 @@ Cross-repo sprint with `spade0704/Project-Mentor`. Mentor migrated v1.0 → v1.1
 
 - **S003** (master plan Step 5) — Telegram channel boot. **Partially done**: Option A (local-only Windows env vars; bot at chat_id 1415844818) configured by operator post-S002. Cloud-CC remainder: no action required (network policy blocks `api.telegram.org`; soft-compliance contract honored).
 - **S005** (master plan Step 7) — bootstrap DFDU's own `wiki/` directory.
-- **S006+** — remaining consumer wikis (Aviation / Tat / iSommelier / eddyandwolff / aviation-career / EMCC / EMCC.DFDU) on v1.1 canonical scaffold. No migration needed — greenfield via `bootstrap.py <projectname> --full`.
+- **S006+** — remaining consumer wikis on v1.1 canonical scaffold (greenfield via `bootstrap.py <projectname> --full`; no migration). Progress (2026-05-28): **Aviation ✅, eddyandwolff ✅, Mentor ✅** repositioned/done in wiki. **aviation-career — DROPPED** (no wiki needed). Remaining: **EMCC, EMCC.DFDU** (next). Tat / iSommelier status TBD.
 
 ---
 
