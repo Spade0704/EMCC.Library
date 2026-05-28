@@ -2,6 +2,23 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 7 — 2026-05-28 — CLOSED — S006 consumer-wiki bootstrap (Tat / iSommelier / SupplyStationUSA) + sprint close
+
+**Status:** CLOSED. The three remaining consumer wikis are scaffolded on the v1.1 canonical frame; **consumer bootstrapping is COMPLETE and S006 is closed.** Scaffold-only (no Sync yet) per the v1.1 contract — script init + first ingest carry to the next phase.
+
+**What shipped (cross-repo, each on branch `claude/nifty-ritchie-f6snD`):**
+- **tat_app** — `bootstrap.py tat_app --code` scaffold. Kept the existing capital `Tasks/` tracker; dropped the bootstrap's lowercase `tasks/` (case-collision on macOS/Windows). Added `wiki.*/local/` ignore rule.
+- **isommelier** — `bootstrap.py isommelier --website` scaffold. Existing `tasks/` + `CLAUDE.md` preserved; only `tasks/archive.md` newly added. Added `wiki.*/local/` ignore rule.
+- **supplystationusa** — `bootstrap.py supplystationusa --website` scaffold. Dropped the bootstrap `Index.md` stub (case-collision with existing `INDEX.md`). Added `wiki.*/local/` ignore rule. NOTE: its CLAUDE.md `git/`+`Local/` zoning now coexists with the canonical `wiki.supplystationusa/{git,local}/` + root `website/` — operator reconcile when convenient.
+
+**Decisions:**
+- Bootstrapped into the *existing* consumer repos (not greenfield): trimmed scaffold byproducts that case-collide with each repo's existing files (lowercase `tasks/` for tat_app; `Index.md` for supplystationusa) and added the `wiki.<name>/local/` ignore rule manually (bootstrap skips an existing `.gitignore`).
+- Updated each consumer's task docs (todo + sessions) to record the bootstrap + the pending script-init (Sync) follow-up.
+
+**Validation:** scaffold-only — no scripts synced, so no `find_wiki_root` validation against synced scripts yet (deferred to the Sync phase). Each repo's `wiki.<name>/local/` confirmed gitignored; `wiki.<name>/git/{raw,ideas}` tracked.
+
+**Remaining (next phase):** script init (`sync_from_kit.py`) + first ingest for all five wikis (the three new consumers + EMCC / EMCC.DFDU module wikis). Operator/Librarian-driven.
+
 ## Session 6 — 2026-05-28 — CLOSED — S006 module-wiki rollout + functional wiring (cross-repo)
 
 **Status:** CLOSED. Rolled out + wired consumer wikis for the two EMCC infra modules, per operator override ("all projects get a wiki"). Cross-repo: scaffolds + wiring live in the EMCC and EMCC.DFDU repos; Library's role was the tooling (`bootstrap.py`, `sync_from_kit.py`), the spec override, and this record.
