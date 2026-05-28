@@ -52,11 +52,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from _lib import dashboard
+from _lib import cli
 from _lib import frontmatter
 from _lib.config_loader import ConfigYamlError, load_config_yaml
 
 
-WIKI_ROOT = frontmatter.find_wiki_root()
+WIKI_ROOT = frontmatter.find_wiki_content_root()
 DASHBOARD_RELATIVE = "_dashboards/cascade.md"
 CONFIG_RELATIVE = "_config/cascade_map.yaml"
 
@@ -238,4 +239,5 @@ def _main(wiki_root, stdout=None, stderr=None):
 
 
 if __name__ == "__main__":
+    WIKI_ROOT = cli.resolve_cli_wiki_root(WIKI_ROOT)
     sys.exit(_main(WIKI_ROOT))

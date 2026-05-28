@@ -196,6 +196,70 @@ def find_decisions_dir(start_path=None):
     )
 
 
+def _resolve_root(start_path):
+    """Walk up from `start_path` (inclusive) to the nearest wiki/install root.
+
+    Same marker set as `find_wiki_root()` but from an arbitrary start (the
+    public function walks from `__file__`). Returns the first ancestor that
+    is either a v1.0 wiki root (`Home.md`), a v1.1 Library install
+    (`CLAUDE.md` + `module.json`), or a v1.1 consumer install
+    (`CLAUDE.md` + `emcc.modules.json`). Raises RuntimeError if none found.
+    """
+    start = Path(start_path).resolve()
+    for ancestor in [start] + list(start.parents):
+        if (ancestor / "Home.md").exists():
+            return ancestor
+        if (ancestor / "CLAUDE.md").exists() and (ancestor / "module.json").exists():
+            return ancestor
+        if (ancestor / "CLAUDE.md").exists() and (ancestor / "emcc.modules.json").exists():
+            return ancestor
+    raise RuntimeError(
+        "no wiki/install root marker found in any ancestor of "
+        f"{start} (expected Home.md, CLAUDE.md+module.json, or "
+        "CLAUDE.md+emcc.modules.json)."
+    )
+
+
+def find_wiki_content_root(start_path=None):
+    """Return the wiki CONTENT root (where content pages + `_dashboards/` live).
+
+    Distinct from `find_wiki_root()` for v1.1 installs. `find_wiki_root()`
+    returns the *install* root for Library/consumer layouts (so the
+    `find_*_dir()` helpers can reach the system-side `wikisys.*/_canon/` etc.).
+    But content pages and generated dashboards live on the *content* side at
+    `<install>/wiki.<name>/git/`. Scripts that scan pages or write
+    `_dashboards/<name>.md` must target the content root, NOT the install
+    root — otherwise dashboards leak to `<install>/_dashboards/` and the
+    page-walk scans the whole repo (the MI-17 dashboard-relocation surface).
+
+    Discovery:
+    - v1.0 bootstrapped wiki: the resolved root has `Home.md` and IS the
+      content root — return it unchanged.
+    - v1.1 install: the resolved root is the install root; descend to the
+      first `wiki.*/git/` content dir and return it.
+
+    `start_path` defaults to walking from this file (matches `find_wiki_root`).
+    Raises `FileNotFoundError` if no content root is discoverable.
+    """
+    if start_path is None:
+        base = find_wiki_root()
+    else:
+        base = _resolve_root(start_path)
+
+    if (base / "Home.md").exists():
+        return base
+
+    for entry in sorted(base.glob("wiki.*")):
+        git_dir = entry / "git"
+        if git_dir.is_dir():
+            return git_dir
+
+    raise FileNotFoundError(
+        f"find_wiki_content_root: base {base} is neither a v1.0 wiki root "
+        "(no Home.md) nor a v1.1 install with a wiki.*/git/ content dir."
+    )
+
+
 SPEC_2_3_FM_FIELDS_DOC = """SSOT registry of fm field names defined by CODEX_BUILD_SPEC_v1_3.md §2.3.
 
 Coverage:

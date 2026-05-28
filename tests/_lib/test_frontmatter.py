@@ -507,5 +507,62 @@ class TestCanonAndDecisionsLookup(unittest.TestCase):
             self.assertIsNone(frontmatter._find_install_root(empty))
 
 
+class TestWikiContentRoot(unittest.TestCase):
+    """Content-root resolver: dashboards + page-walk target wiki.*/git/, not install root."""
+
+    def test_v1_0_wiki_root_is_content_root(self):
+        """v1.0 wiki: Home.md at root -> root IS content root."""
+        with TemporaryDirectory() as tmp:
+            wiki = Path(tmp) / "wiki"
+            wiki.mkdir(parents=True)
+            (wiki / "Home.md").write_text("# Home\n", encoding="utf-8")
+            self.assertEqual(frontmatter.find_wiki_content_root(wiki), wiki)
+
+    def test_v1_0_wiki_from_deep_start(self):
+        """v1.0 wiki: walk up from a nested start to the Home.md root."""
+        with TemporaryDirectory() as tmp:
+            wiki = Path(tmp) / "wiki"
+            deep = wiki / "_scripts" / "_lib"
+            deep.mkdir(parents=True)
+            (wiki / "Home.md").write_text("# Home\n", encoding="utf-8")
+            self.assertEqual(frontmatter.find_wiki_content_root(deep), wiki)
+
+    def test_v1_1_library_install_descends_to_content_side(self):
+        """v1.1 Library install: resolve to <install>/wiki.codex/git/."""
+        with TemporaryDirectory() as tmp:
+            install = Path(tmp) / "library"
+            wiki_git = install / "wiki.codex" / "git"
+            wiki_git.mkdir(parents=True)
+            (wiki_git / "Home.md").write_text("# Home\n", encoding="utf-8")
+            (install / "CLAUDE.md").write_text("# C\n", encoding="utf-8")
+            (install / "module.json").write_text("{}\n", encoding="utf-8")
+            start = install / "Biz.Automation" / "wikisys.library" / "_scripts" / "_lib"
+            start.mkdir(parents=True)
+            self.assertEqual(frontmatter.find_wiki_content_root(start), wiki_git)
+
+    def test_v1_1_consumer_install_descends_to_content_side(self):
+        """v1.1 consumer install: resolve to <consumer>/wiki.mentor/git/."""
+        with TemporaryDirectory() as tmp:
+            consumer = Path(tmp) / "consumer"
+            wiki_git = consumer / "wiki.mentor" / "git"
+            wiki_git.mkdir(parents=True)
+            (wiki_git / "Home.md").write_text("# Home\n", encoding="utf-8")
+            (consumer / "CLAUDE.md").write_text("# C\n", encoding="utf-8")
+            (consumer / "emcc.modules.json").write_text("{}\n", encoding="utf-8")
+            start = consumer / "Biz.Automation" / "wikisys.mentor" / "_scripts"
+            start.mkdir(parents=True)
+            self.assertEqual(frontmatter.find_wiki_content_root(start), wiki_git)
+
+    def test_install_without_content_dir_raises(self):
+        """Install root with no wiki.*/git/ -> FileNotFoundError."""
+        with TemporaryDirectory() as tmp:
+            install = Path(tmp) / "library"
+            install.mkdir(parents=True)
+            (install / "CLAUDE.md").write_text("# C\n", encoding="utf-8")
+            (install / "module.json").write_text("{}\n", encoding="utf-8")
+            with self.assertRaises(FileNotFoundError):
+                frontmatter.find_wiki_content_root(install)
+
+
 if __name__ == "__main__":
     unittest.main()

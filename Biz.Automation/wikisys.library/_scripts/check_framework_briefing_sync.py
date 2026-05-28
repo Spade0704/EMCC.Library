@@ -66,11 +66,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from _lib import dashboard
+from _lib import cli
 from _lib import frontmatter
 from _lib import markdown
 
 
-WIKI_ROOT = frontmatter.find_wiki_root()
+WIKI_ROOT = frontmatter.find_wiki_content_root()
 DASHBOARD_RELATIVE = "_dashboards/framework_briefing_sync.md"
 
 REASON_PAIR_MISSING = "public_pair declared but target file not on disk"
@@ -225,4 +226,5 @@ def _main(wiki_root, stdout=None, stderr=None):
 
 
 if __name__ == "__main__":
+    WIKI_ROOT = cli.resolve_cli_wiki_root(WIKI_ROOT)
     sys.exit(_main(WIKI_ROOT))

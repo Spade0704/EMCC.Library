@@ -136,6 +136,14 @@ For BOOTSTRAPPED CONSUMING WIKIS the old math still works correctly (the bootstr
 
 **Verified end-to-end:** Running `python Biz.Automation/wikisys.library/_scripts/update_dashboards.py` from Library root now produces real dashboards at `wiki.codex/git/_dashboards/` reflecting Library's actual dogfood wiki content (27 pages tracked, 37% avg completion, 20/34 cross-link coverage). 16 of 17 sub-scripts emit clean dashboards. The 17th (`check_concept_coverage.py`) fails on missing `_canon/roster.yaml` — surfaced as MI-18.
 
+**Full closure (post-S004 carry — this commit):** Two coupled changes land, resolving the per-script CLI gap and the dashboard-output leak that the S002/S004 partial fixes left open.
+
+1. **Content-root resolver** — `_lib/frontmatter.py::find_wiki_content_root()`. The S002 partial fix pointed scripts at `find_wiki_root()`, which for a v1.1 install returns the *install root* (`EMCC.Library/`), not the content side. Symptom: standalone runs wrote dashboards to `<install>/_dashboards/` (a non-gitignored repo-root leak) and scanned the whole repo for content pages. The new helper returns the v1.0 wiki root unchanged but descends a v1.1 install to `<install>/wiki.<name>/git/`. All 17 dashboard/validator scripts switched their module-level `WIKI_ROOT` to it; dashboards now land at `wiki.codex/git/_dashboards/` (already gitignored) and page-walks scan only the content side. Matches Mentor's S004 F12 content-side convention.
+
+2. **Per-script `--wiki-root` CLI** — new `_lib/cli.py::resolve_cli_wiki_root()`. Previously only `update_dashboards.py` accepted an explicit root (bare positional). Every standalone P-script `__main__` now rebinds `WIKI_ROOT` via the shared helper, accepting `--wiki-root PATH` or a bare positional (named wins). `build_canon_drift_report.py` got `--wiki-root` added to its own argparse (it has `--snapshot`). `delta_source_docs.py` keeps its bespoke `<version_a> <version_b>` positional contract (already takes `wiki_root` as a param; module default now points content-side).
+
+**Verified:** `build_completion_dashboard.py` standalone writes to `wiki.codex/git/_dashboards/completion.md` (27 pages, content side — no more repo-root leak); `--wiki-root tests/fixtures/sample_wiki` correctly retargets (5 pages). 615 tests pass (+10: 5 `find_wiki_content_root` + 5 `resolve_cli_wiki_root`). **Status: RESOLVED.**
+
 ### MI-18 — `_canon/` lookup divergence for system-vs-content split (surfaced post-MI-17)
 
 **Discovered:** 2026-05-27 immediately after MI-17 fix landed — first time `update_dashboards.py` correctly targeted `wiki.codex/git/` and `check_concept_coverage.py` ran with a real WIKI_ROOT.

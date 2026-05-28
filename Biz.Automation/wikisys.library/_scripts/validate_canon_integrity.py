@@ -38,11 +38,12 @@ from pathlib import Path
 from typing import Any, Dict
 
 from _lib import dashboard
+from _lib import cli
 from _lib import frontmatter
 from _lib import markdown
 
 
-WIKI_ROOT = frontmatter.find_wiki_root()
+WIKI_ROOT = frontmatter.find_wiki_content_root()
 DASHBOARD_RELATIVE = "_dashboards/canon_integrity.md"
 CATEGORY_ORDER = ("missing_canon_sources", "unverified_claims_present")
 REASON_MISSING = "status:ready page has no canon_sources"
@@ -156,4 +157,5 @@ def _main(wiki_root, stdout=None, stderr=None):
 
 
 if __name__ == "__main__":
+    WIKI_ROOT = cli.resolve_cli_wiki_root(WIKI_ROOT)
     sys.exit(_main(WIKI_ROOT))

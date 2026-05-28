@@ -38,11 +38,12 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
+from _lib import cli
 from _lib import frontmatter
 from _lib import markdown
 
 
-WIKI_ROOT = frontmatter.find_wiki_root()
+WIKI_ROOT = frontmatter.find_wiki_content_root()
 
 # Byte-exact marker constants per spec §2.7 marker contract.
 MARKER_START = "<!-- codex:see-also:start -->"
@@ -275,6 +276,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
+    WIKI_ROOT = cli.resolve_cli_wiki_root(WIKI_ROOT)
     summary = run(WIKI_ROOT)
     print(
         "cross_link_topics: topics={} pages_seen={} updated={} idempotent={}".format(

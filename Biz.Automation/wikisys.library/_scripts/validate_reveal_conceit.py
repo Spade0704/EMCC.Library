@@ -44,12 +44,13 @@ from pathlib import Path
 from typing import Any, Dict
 
 from _lib import dashboard
+from _lib import cli
 from _lib import frontmatter
 from _lib import markdown
 from _lib.config_loader import ConfigYamlError, load_config_yaml
 
 
-WIKI_ROOT = frontmatter.find_wiki_root()
+WIKI_ROOT = frontmatter.find_wiki_content_root()
 DASHBOARD_RELATIVE = "_dashboards/reveal_conceit.md"
 CONFIG_RELATIVE = "_config/reveal_leak_patterns.yaml"
 # P8-local render-order subset. `info` rules are filtered upstream in
@@ -250,4 +251,5 @@ def _main(wiki_root, stdout=None, stderr=None):
 
 
 if __name__ == "__main__":
+    WIKI_ROOT = cli.resolve_cli_wiki_root(WIKI_ROOT)
     sys.exit(_main(WIKI_ROOT))

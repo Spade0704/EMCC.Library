@@ -46,6 +46,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 from _lib import dashboard
+from _lib import cli
 from _lib import frontmatter
 from _lib import markdown
 from _lib.topics import (
@@ -57,7 +58,7 @@ from _lib.topics import (
 )
 
 
-WIKI_ROOT = frontmatter.find_wiki_root()
+WIKI_ROOT = frontmatter.find_wiki_content_root()
 DASHBOARD_RELATIVE = "_dashboards/topic_index.md"
 TOPICS_RELATIVE = "_canon/topics.yaml"
 
@@ -415,6 +416,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
+    WIKI_ROOT = cli.resolve_cli_wiki_root(WIKI_ROOT)
     summary = run(WIKI_ROOT)
     rel = summary["dashboard_path"].relative_to(WIKI_ROOT).as_posix()
     print(
