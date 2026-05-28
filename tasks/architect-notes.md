@@ -2,6 +2,24 @@
 
 > Active scope notes, open threads, deferred decisions. Auditor MAY READ this for scope context (per `EMCC.DFDU/personas/CLAUDE.auditor.md` allow-list — `tasks/lessons.md` and `tasks/plans/` are off-limits; this file is not).
 
+## S007 — EMCC shared package + modular `claude-<module>.md` delivery (2026-05-28, OPEN/planned)
+
+> Cross-repo architectural alignment recorded here so Codex stays consistent with how DFDU/Lattice is now delivered into projects. Implementation co-ships with DFDU per-project wiring (operator: "we will implement this together as we implement DFDU on a project"). Tracked actionably in `tasks/todo.md` S007.
+
+**Context.** While making Lattice 3.0 bootstrappable into all projects, EMCC gained a *shared package* + a *merge-safe wiring tool* (built 2026-05-28, EMCC branch `claude/nifty-ritchie-f6snD`):
+- `EMCC/scripts/emcc_wire.py` — idempotent, merge-safe initializer for **existing** repos (vs `emcc_bootstrap.py`, which is greenfield-only). Reuses `sync_from_kit.py`'s OVERWRITE / MERGE-NEW / NEVER-TOUCH model.
+- `EMCC/templates/shared/module-templates/{claude-dfdu,claude-library}.md` — vendored per-module instruction drop-ins (placeholder-substituted: `{{PROJECT_NAME}}`, `{{WIKINAME}}`, profile fields).
+- `EMCC/marketplace/` — a Claude Code plugin marketplace; first plugin `emcc-lattice` ships `/research` `/build` `/update_doc`.
+
+**Modular CLAUDE.md convention (now portfolio-standard).** Root `CLAUDE.md` carries only a marker-delimited (`<!-- EMCC:MODULES:BEGIN/END -->`) "Connected EMCC modules" index; per-module detail lives in `.claude/modules/claude-<module>.md`, loaded on-demand. This *supersedes* the S006-era pattern of inlining the Codex/Librarian block at the bottom of each consumer's root `CLAUDE.md`. iSommelier pilot migrated 2026-05-28 (`emcc_wire.py --module dfdu --module library --tier lite`): its inlined Codex block was lifted into `.claude/modules/claude-library.md`.
+
+**Implication for Codex (delivery only — spec/scripts/`sync_from_kit` unchanged):**
+1. The Librarian consumer guidance is now a *vendored module file* (`claude-library.md`), not an inline CLAUDE.md block. The canonical source stays `wiki.codex/git/codex/CODEX_LIBRARIAN.md` (synced to each consumer's `_context/`); `claude-library.md` is the routing/summary drop-in.
+2. Future: an **`emcc-codex`** marketplace plugin for Librarian skills (Ingest / Semantic-Lint / Maintain), mirroring `emcc-lattice` — factor prompts from `CODEX_LIBRARIAN.md`. Open question: do we want a drift guard (`claude-library.md` ⇄ `CODEX_LIBRARIAN.md`) analogous to `generate_persona_dropin.py`'s `--check`?
+3. tat_app + supplystationusa still carry the inlined Codex block; they get migrated to the modular layout when DFDU is wired into them.
+
+**Decision forks:** (a) ~~Librarian skill names + ship `emcc-codex` now vs later~~ **RESOLVED 2026-05-28** — shipped now as `/ingest` `/lint` `/maintain` `/sync` (skills load persona + verbatim procedure; no spec change). (b) drift-guard for the vendored `claude-library.md` ⇄ `CODEX_LIBRARIAN.md` — still open. (c) whether `bootstrap.py` should emit the modular `.claude/modules/` layout for greenfield wikis directly (today `emcc_wire.py` adds it post-hoc) — still open.
+
 ## S004-mentor-v1.1-migration (2026-05-27) — Architect plan
 
 ### Goal

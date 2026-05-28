@@ -2,6 +2,18 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 8 — 2026-05-28 — NOTE — S007 alignment recorded (EMCC marketplace + `claude-<module>.md` delivery)
+
+**Status:** NOTE (no Codex code/spec change). Recorded the cross-repo architecture that DFDU/Lattice now uses for per-project initialization, so Codex delivery stays consistent. Implementation is deferred to co-ship with DFDU per-project wiring (operator directive).
+
+**What landed elsewhere (EMCC repo, 2026-05-28):** shared package — `EMCC/templates/shared/` (module-instruction templates incl. `claude-library.md` + auditor persona), `EMCC/marketplace/` (`emcc-lattice` plugin: `/research` `/build` `/update_doc`), and `EMCC/scripts/emcc_wire.py` (merge-safe wiring for existing repos). iSommelier pilot wired Lattice (lite) + migrated its inlined Codex block → `.claude/modules/claude-library.md`.
+
+**Codex-side record:** see `tasks/architect-notes.md` §S007 (decision + open forks) and `tasks/todo.md` §S007 (actionable: migrate tat_app/supplystationusa Codex blocks to the modular layout during their DFDU wiring; consider an `emcc-codex` skills plugin + a `claude-library.md` ⇄ `CODEX_LIBRARIAN.md` drift guard). No change to Codex spec, scripts, or the `sync_from_kit` contract.
+
+**Next:** implement alongside DFDU fan-out to tat_app / supplystationusa.
+
+**Update (2026-05-28):** S007 fork (a) resolved — the **`emcc-codex`** marketplace plugin shipped (`/ingest` `/lint` `/maintain` `/sync`) and iSommelier was wired to the modular layout (Lattice lite + Codex). tat_app + supplystationusa migrate during their DFDU wiring. Delivery-only; no Codex spec/scripts/`sync_from_kit` change. See architect-notes §S007 + todo §S007 (b).
+
 ## Session 7 — 2026-05-28 — CLOSED — S006 consumer-wiki bootstrap (Tat / iSommelier / SupplyStationUSA) + sprint close
 
 **Status:** CLOSED. The three remaining consumer wikis are scaffolded on the v1.1 canonical frame; **consumer bootstrapping is COMPLETE and S006 is closed.** Scaffold-only (no Sync yet) per the v1.1 contract — script init + first ingest carry to the next phase.
