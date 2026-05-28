@@ -4,7 +4,7 @@ EMCC.Library wraps the **Codex** protocol — the Librarian agent and the wiki s
 
 ## Status
 
-**v1.1 — Ready** as of 2026-05-27 (Session 2 / S002 close). The canonical portfolio folder layout per `tasks/plans/portfolio-folder-structure-spec.md` section (a) + (c) is shipped:
+**v1.1 — Ready** as of 2026-05-27 (Session 2 / S002 close); consumer-wiki Sync shipped in S004 (2026-05-28, MI-16 + MI-18 closure). The canonical portfolio folder layout per `tasks/plans/portfolio-folder-structure-spec.md` section (a) + (c) is shipped:
 
 - `bootstrap.py` — scaffold a canonical-shape project (`python bootstrap.py <projectname> [--full|--minimal|--code|--website]`); spec section (c). v1.1 is scaffold-only — no script copy.
 - `Biz.Automation/wikisys.library/_scripts/` — Codex automation (27 .py: 20 root + 7 `_lib/` + 5 launcher .ps1). Source-of-truth for the protocol's runtime.
@@ -57,11 +57,12 @@ CI runs on push to `main` and `claude/**`, plus PRs to `main`. See `.github/work
 
 ## v1.1 known limitations
 
-- **`sync_from_kit.py` v1.0 contract.** v1.1's new `bootstrap.py` is scaffold-only (canonical portfolio frame per spec section c); the consumer wiki it produces has no `_scripts/_template/_config/_context/` subfolders at the wiki root. `sync_from_kit.py` was NOT rewritten in S002 and still writes to those v1.0 target paths — so running Sync against a v1.1-bootstrapped wiki will create paths that don't fit the new shape. MI-16 in `MIGRATION-ISSUES.md` documents this; S004 (consumer-wikis sprint) decides whether to (a) rewrite `sync_from_kit` for the new shape, (b) keep it as v1.0-compat for legacy wikis, or (c) force-migrate legacy wikis forward. Bootstrap a new project with v1.1, but DON'T run Sync against it yet.
+- **`sync_from_kit.py` is now v1.1-only.** Resolved in S004 (MI-16 closure): Sync was rewritten for the canonical layout and delivers Codex runtime into the consumer at `Biz.Automation/wikisys.<consumer>/_scripts/` + `_context/` (`INGEST_PROCEDURE.md`, `SEMANTIC_LINT_PROCEDURE.md`, `CODEX_LIBRARIAN.md`) + `wiki.<consumer>/git/codex/PROJECT_WIKI_BUILD_SPEC.md`. It is invoked from the consumer project root: `python <library>/Biz.Automation/wikisys.library/_scripts/sync_from_kit.py <library> [--dry-run] [--force]`. v1.0-shape Sync (writing to `<wiki>/_scripts/` at the wiki root) is **no longer supported** — pre-S004 consumers either migrate to v1.1 first (S004 Mentor-pattern playbook) or freeze at v1.0 on a pre-S004 build.
 - **No packaging artifact.** Library is not distributed as a Python wheel (MI-13 — stdlib-only discipline). Consumers vendor via clone / submodule / sibling-directory checkout. If a packaging story is needed, re-open MI-13.
 
 ## Next sprints
 
-- **S003 (master plan Step 5)** — Telegram channel boot (operator action; bot already exists at chat_id 1415844818 with `TELEGRAM_BOT_TOKEN` in env).
-- **S004 (master plan Step 6)** — bootstrap the operator's first real consumer wikis (Aviation / Tat / etc.) using the v1.1 canonical scaffold. Retires the MI-16-deferred v1.0-shape tests + decides sync_from_kit's post-v1.1 delivery target.
+- **S003 (master plan Step 5)** — Telegram channel boot. **Partially done** (Option A local env vars + bot configured post-S002; cloud-CC remainder blocked by network policy, soft-compliance honored).
+- **S004 (master plan Step 6)** — **CLOSED 2026-05-28.** First real consumer wiki (Mentor) migrated v1.0 → v1.1; shipped MI-16 (sync_from_kit v1.1 rewrite) + MI-18 (canon/decisions lookup) closures.
 - **S005 (master plan Step 7)** — bootstrap DFDU's own `wiki/` directory.
+- **S006+** — remaining consumer wikis (Aviation / Tat / iSommelier / eddyandwolff / aviation-career / EMCC / EMCC.DFDU) on the v1.1 canonical scaffold; greenfield via `bootstrap.py <projectname> --full`.
