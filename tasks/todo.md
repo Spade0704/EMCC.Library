@@ -44,7 +44,7 @@ Cross-repo sprint with `spade0704/Project-Mentor`. Mentor migrated v1.0 → v1.1
 - [x] **OBS-1** — RESOLVED. `audit_doc_pairing.py --stale-paths` + `_config/stale_paths.yaml` allow-list.
 - [x] **OBS-4** — RESOLVED. `.claude/personas/CLAUDE.librarian.md` generated from canonical via `generate_persona_dropin.py`; drift guard in `tests/test_persona_dropin.py`.
 - [x] **Library `_dashboards/` location** — RESOLVED (coupled with MI-17). Content dashboards now write to `wiki.codex/git/_dashboards/` (was leaking to repo-root `_dashboards/`). NOTE: the S002 audit scripts (`audit_doc_pairing`/`audit_local_split`/etc.) still write to system-side `wikisys.library/_dashboards/` by design — that path is NOT stale.
-- [ ] **MI-12** (historical curation, S001 carry) — Codex-class entries from project-codex's tasks/* (5,223 lines) + CHANGELOG.md (337KB) classifying for migration. Low priority. **NOTE: not actionable in the current cloud env — `project-codex` is not cloned here and is outside the EMCC/EMCC.DFDU/EMCC.Library working set.** Needs a session with project-codex access.
+- [x] **MI-12** (historical curation, S001 carry) — **DROPPED (2026-05-28, operator decision).** `project-codex` is being deprecated, so its historical `tasks/*` + `CHANGELOG.md` no longer need curating/migrating. Won't-do.
 - [x] **portfolio-folder-structure-spec.md greenfield claim** — RESOLVED. §883 "Mentor was greenfield, no migration needed" corrected to reflect the S004 v1.0→v1.1 migration.
 - [ ] **Content-side bootstrap drop-in** (`wiki.codex/git/.claude/personas/CLAUDE.librarian.md`) — still hand/bootstrap-maintained; its drift cure belongs to `bootstrap.py`'s generation path, separate from the OBS-4 project-root fix. Low priority.
 
@@ -57,8 +57,9 @@ Cross-repo sprint with `spade0704/Project-Mentor`. Mentor migrated v1.0 → v1.1
 
 - **S003** (master plan Step 5) — Telegram channel boot. **Partially done**: Option A (local-only Windows env vars; bot at chat_id 1415844818) configured by operator post-S002. Cloud-CC remainder: no action required (network policy blocks `api.telegram.org`; soft-compliance contract honored).
 - **S005** (master plan Step 7) — bootstrap DFDU's own `wiki/` directory.
-- **S006+** — consumer/module wikis on v1.1 canonical scaffold (via `bootstrap.py <projectname> --full`). Progress (2026-05-28): **Aviation ✅, eddyandwolff ✅, Mentor ✅** repositioned/done. **aviation-career — DROPPED** (no wiki). **EMCC ✅, EMCC.DFDU ✅** scaffolded this session (operator override: all projects get a wiki — spec updated). Tat / iSommelier status TBD.
-  - **S006 follow-up (functional wiring, deferred)** — the EMCC + EMCC.DFDU wikis are scaffold-only (empty `wiki.<name>/{git,local}` + `wikisys.<name>/` engine dirs). To make them operable: (1) `emcc.modules.json` consumer marker so `find_wiki_root` detects them; (2) `sync_from_kit.py` to ship Codex `_scripts`/`_template`/`_config` + `Home.md` skeleton + verbatim procedures; (3) first ingest. Likely lands with EMCC Step 4 consumer-wiring.
+- **S006+** — consumer/module wikis on v1.1 canonical scaffold (via `bootstrap.py <projectname> --full`). Progress (2026-05-28): **Aviation ✅, eddyandwolff ✅, Mentor ✅** repositioned/done. **aviation-career — DROPPED** (no wiki). **EMCC ✅, EMCC.DFDU ✅** scaffolded AND wired this session (operator override: all projects get a wiki — spec updated). Tat / iSommelier status TBD.
+  - **S006 functional wiring ✅ (2026-05-28)** — both module wikis are now operable. EMCC got a `module.json` (Codex install marker; `emcc.modules.json` rejected as the consumer-app marker, semantically wrong for a module); DFDU's existing `module.json` already served. Ran `sync_from_kit.py` into both (OVERWRITE `_scripts`/`_context` procedures + `PROJECT_WIKI_BUILD_SPEC`; MERGE-NEW `_config`/`_template`) + added `Home.md` skeletons. `find_wiki_root`/`find_wiki_content_root` detection validated from each repo's synced scripts. Cross-repo PRs: EMCC #6 (scaffold, merged) + #7 (wiring); EMCC.DFDU #5 (scaffold, merged) + #6 (wiring).
+  - **Remaining** — first ingest for the two new wikis (operator/Librarian-driven); Tat / iSommelier scaffolds (priority 3).
 
 ---
 
