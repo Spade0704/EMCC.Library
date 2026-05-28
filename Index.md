@@ -16,7 +16,8 @@ This file is the file-map for Library. It was added as a backfill (Session 2b, p
 | `.gitignore` | Excludes `wiki.*/local/`, `.lattice/`, `.DS_Store`, `__pycache__`, etc. |
 | `SOURCE-HISTORY.md` | Per-file move inventory from project-codex at SHA `ccf21b7` (Session 1 extraction). |
 | `MIGRATION-ISSUES.md` | Append-only registry of migration issues (currently MI-01..MI-17). |
-| `REORGANIZATION-INSTRUCTIONS.md` | Machine-readable old-path → new-path manifest for the v1.1 restructure. |
+| `REORGANIZATION-INSTRUCTIONS.md` | **Master** manifest (patterns P1–P8 + audit-hook contract + cross-repo index of per-project files). Updated 2026-05-28 per v1.3 addendum: trimmed to master-only; per-project content extracted. |
+| `reorganization-instructions.library.md` | **Per-project** manifest for EMCC.Library: Session 1 + S002 + S003b concrete moves. Pairs with the master above. |
 
 ## Top-level folders
 

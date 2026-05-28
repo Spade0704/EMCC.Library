@@ -2,6 +2,26 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
+## Current sprint — Pre-S006 Aviation-prep (2026-05-28, IN PROGRESS)
+
+Aviation pivot coordination + Library hygiene. See `/root/.claude/plans/before-we-go-to-warm-cocke.md` (operator-side plan file) for the full coordination plan.
+
+### Done
+- [x] Closed stale MI-17 carried entry (commit `109d42e`, branch `claude/gallant-bohr-ePBuX`).
+- [x] **Per-project reorganization manifest convention** (v1.3 addendum, 2026-05-28):
+  - `REORGANIZATION-INSTRUCTIONS.md` trimmed to master (patterns P1–P8 + audit hooks + cross-repo per-project index)
+  - `reorganization-instructions.library.md` created at Library root with Session 1 + S002 + S003b moves
+  - Mentor section extracted to `tasks/plans/cross-repo-pending/reorganization-instructions.mentor.md` pending cross-repo move on next Mentor session
+  - Aviation seed staged at `tasks/plans/aviation-bootstrap-seed/reorganization-instructions.aviation.md` (operator copies to aviation/ root during Phase 1)
+  - `bootstrap.py::_stub_reorganization_md` added; emits stub at root for --full / --code / --website modes (omitted in --minimal)
+  - 2 new tests in `tests/test_bootstrap_canonical.py`; 606 tests still passing
+  - Spec amended: `CODEX_BUILD_SPEC_v1_3.md` (v1.3 addendum + §4.2 NEVER-touched list), `tasks/plans/portfolio-folder-structure-spec.md` (canonical tree + variance allowance + per-folder purpose)
+  - `CLAUDE.md` + `Index.md` updated to reference the master/per-project pair
+
+### Open
+- [ ] Operator: copy `tasks/plans/aviation-bootstrap-seed/reorganization-instructions.aviation.md` into aviation/ root after `bootstrap.py aviation --full --yes` lands (overwrites the bootstrap-emitted generic stub with the pre-populated seed).
+- [ ] Next Mentor session: complete the cross-repo move per the TODO inside `tasks/plans/cross-repo-pending/reorganization-instructions.mentor.md`.
+
 ## Past sprint — Post-S004 carry closure (2026-05-28, CLOSED)
 
 Closed four post-S004 carried items in one maintenance sprint. 630 tests pass (+25 from S004's 605 baseline).

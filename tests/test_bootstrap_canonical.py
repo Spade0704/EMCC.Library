@@ -123,6 +123,25 @@ class TestCanonicalFullTree(unittest.TestCase):
             cheat = (target / "Cheatsheet.md").read_text(encoding="utf-8")
             self.assertIn("mentor", cheat)
 
+    def test_full_emits_reorganization_instructions_stub(self):
+        """v1.1 post-2026-05-28: bootstrap emits a per-project reorg manifest stub."""
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            _run_bootstrap(cwd, "mentor", mode="full")
+            target = cwd / "mentor"
+            reorg = target / "reorganization-instructions.mentor.md"
+            self.assertTrue(reorg.is_file(), "missing reorganization-instructions.mentor.md")
+            content = reorg.read_text(encoding="utf-8")
+            # Projectname interpolated in title + scope blurb
+            self.assertIn("reorganization-instructions.mentor.md", content)
+            self.assertIn("mentor", content)
+            # Points to master in EMCC.Library
+            self.assertIn("EMCC.Library/REORGANIZATION-INSTRUCTIONS.md", content)
+            # Has the move-table scaffold
+            self.assertIn("Old path", content)
+            self.assertIn("New path", content)
+            self.assertIn("Pattern", content)
+
     def test_full_gitignore_excludes_wiki_local(self):
         with TemporaryDirectory() as tmp:
             cwd = Path(tmp)
@@ -142,6 +161,10 @@ class TestCanonicalMinimalTree(unittest.TestCase):
             self.assertFalse((target / "Biz.Automation").exists())
             self.assertFalse((target / "assets").exists())
             self.assertFalse((target / "Cheatsheet.md").exists())
+            self.assertFalse(
+                (target / "reorganization-instructions.thin.md").exists(),
+                "minimal mode should omit per-project reorg manifest",
+            )
 
     def test_minimal_emits_required_core(self):
         with TemporaryDirectory() as tmp:
