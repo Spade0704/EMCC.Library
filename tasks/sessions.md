@@ -2,6 +2,14 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 9 — 2026-05-28 — NOTE — S007 (b) shipped + operator Cheatsheet.md
+
+**Docs/delivery only (no Codex spec/scripts/`sync_from_kit` change):**
+- **S007 (b) (PR #16):** `emcc-codex` marketplace plugin shipped (`/ingest` `/lint` `/maintain` `/sync`) + iSommelier wired to the modular layout; architect-notes §S007 fork (a) resolved.
+- **Cheatsheet (PR #17):** added the standardized operator `Cheatsheet.md` (source-special variant — Library is the Codex source, so it ships sync OUT to consumers; runs its own dashboards locally).
+
+→ See `tasks/architect-notes.md` §S007 + `tasks/todo.md` §S007.
+
 ## Session 8 — 2026-05-28 — NOTE — S007 alignment recorded (EMCC marketplace + `claude-<module>.md` delivery)
 
 **Status:** NOTE (no Codex code/spec change). Recorded the cross-repo architecture that DFDU/Lattice now uses for per-project initialization, so Codex delivery stays consistent. Implementation is deferred to co-ship with DFDU per-project wiring (operator directive).
