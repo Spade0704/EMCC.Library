@@ -1,0 +1,30 @@
+# Stale-path sweep config — OBS-1 closure (AC12 structural enforcement).
+#
+# audit_doc_pairing.py --stale-paths scans the corpus for these old-layout
+# path fragments (pre-S002/S004 migration) and fails (exit 1) on any hit in a
+# file NOT covered by the allow-list. Migration-trail / planning / brain docs
+# legitimately reference old paths and are allow-listed; new references in
+# scripts, content pages, or config are caught.
+#
+# Patterns are matched as plain substrings (case-sensitive). Allow-list entries
+# are fnmatch globs against the repo-root-relative POSIX path.
+
+patterns:
+  - "wiki.codex/_brain_dump"
+  - "wiki.codex/_dashboards"
+  - "Sources/Raw"
+  - "documents/codex/"
+
+allowlist:
+  - "MIGRATION-ISSUES.md"
+  - "REORGANIZATION-INSTRUCTIONS.md"
+  - "SOURCE-HISTORY.md"
+  - "CLAUDE.md"
+  - "CHANGELOG.md"
+  - "Index.md"
+  - "tasks/*.md"
+  - "tasks/plans/*.md"
+  # The sweep's own definition surfaces + tests legitimately contain these.
+  - "Biz.Automation/wikisys.*/_config/stale_paths.yaml"
+  - "Biz.Automation/wikisys.*/_scripts/audit_doc_pairing.py"
+  - "tests/*.py"
