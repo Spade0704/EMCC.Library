@@ -18,6 +18,7 @@ patterns:
 allowlist:
   - "MIGRATION-ISSUES.md"
   - "REORGANIZATION-INSTRUCTIONS.md"
+  - "reorganization-instructions.*.md"
   - "SOURCE-HISTORY.md"
   - "CLAUDE.md"
   - "CHANGELOG.md"
