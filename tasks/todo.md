@@ -20,6 +20,18 @@ Aviation pivot coordination + Library hygiene. See `/root/.claude/plans/before-w
 
 ### Open
 - [ ] Operator: copy `tasks/plans/aviation-bootstrap-seed/reorganization-instructions.aviation.md` into aviation/ root after `bootstrap.py aviation --full --yes` lands (overwrites the bootstrap-emitted generic stub with the pre-populated seed).
+
+## Reusable patterns — lifted from tat_app (2026-05-30, PR #21 MERGED)
+
+First batch of cross-project engineering patterns generalized from the `tat_app` consumer during the TAT audit/modernization. Hosted at repo-root `patterns/` (Codex frontmatter format), **deliberately outside** `wiki.codex/git/` so the Codex self-canon stays pure and the cross-link orchestrator doesn't bleed app-domain topics into Codex's topic graph.
+
+### Done
+- [x] Authored 6 pattern pages + index in `patterns/`: Decision-Scoring, Opportunistic-Bundling, Offline-First-Sync, Soft-Delete-Signal-Preservation, AI-Memory-And-Insight-Extraction, Neurodivergent-First-UX. Frontmatter validated with the `_lib` parser; dogfood wiki byte-unchanged. (PR #21, squash `44d716e`)
+
+### Open
+- [ ] **Cartometrics/WYAI seed** — `patterns/Opportunistic-Bundling.md` is flagged as the consumer-level seed for the deferred EMCC.Cartometrics (WYAI) module. Fold it in when that module opens.
+- [ ] **Graduation decision** — if/when these patterns earn their own first-class module (or a shared `emcc_flutter_kit` Dart package once a 2nd Flutter consumer exists), give them a dedicated wiki + canon. Until then they stay as `patterns/` docs.
+- [ ] **Consumer-side carry (tat_app):** TAT's `Biz.Automation/wikisys.tat_app/_canon/roster.yaml` is still template-only, so the Codex `concept_coverage` check (P13) errors on the new TAT wiki. Populate it on the next TAT wiki session (tracked in tat_app `Tasks/todo.md`).
 - [x] Mentor cross-repo move complete — manifest moved into Project-Mentor (commit `7ed7f30`, branch `claude/gallant-bohr-ePBuX`); Library staging copy deleted; master index flipped Mentor → Migrated.
 
 ## Past sprint — Post-S004 carry closure (2026-05-28, CLOSED)
