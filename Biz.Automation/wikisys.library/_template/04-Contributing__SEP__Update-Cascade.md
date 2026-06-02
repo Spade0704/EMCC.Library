@@ -47,6 +47,19 @@ This is mtime-based, not content-based — a no-op `touch` on a source counts as
 
 `_scripts/delta_source_docs.py` takes two versions of a source document and emits the structural diff (sections added / modified / removed). Pair it with `_config/cascade_map.yaml` when reviewing a non-trivial source edit: every derived page listed for the changed source is in scope for review.
 
+## Per build session (required)
+
+The wiki is **derived documentation, kept current every build session** — not a one-time artifact. A build/coding session that changes the project (code, schema, config, APIs, behavior) is not complete until this wiki reflects it. This mirrors the "Wiki Maintenance Behavior" rule in `_context/CLAUDE_CONTEXT_RULES.md`.
+
+At the end of each build session, before reporting it done:
+
+1. **List what changed** — touched areas + any new/renamed names, contracts, routes, schema, or behavior.
+2. **Update the affected pages** so they match the new reality (add pages for genuinely new surfaces; edit the most specific existing page over a parent index). Update each page's `canon_sources` + `last_updated`.
+3. **Run the cascade** (the Workflow below) and re-derive or acknowledge each stale pair.
+4. **Log the session** in the project's task/session record.
+
+If a change is genuinely doc-irrelevant (pure formatting / no behavior), state that explicitly rather than skipping silently. The goal: the wiki never lags more than one session behind the project.
+
 ## Workflow
 
 1. Edit the source page; update `last_updated`.
