@@ -2,6 +2,27 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 10 — 2026-06-02 — Codex canon: wiki updated every build session
+
+**Operator request:** Codex should make every build session also update the consuming project's wiki.
+Encoded the rule into Codex canon + the scaffold templates so it propagates to all consumer wikis.
+
+**Changes (docs/templates only; no scripts):**
+- `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` + `…/PROJECT_WIKI_BUILD_SPEC.md`: new **Design Principle
+  #14 "Build sessions keep the wiki current"** + amended §7 Phase 4 — bootstrapped `CLAUDE_CONTEXT_RULES.md`
+  must also include a **"Wiki Maintenance Behavior"** section (the per-session wiki-update rule), like the
+  four Q&A rules.
+- `_template/_context__SEP__CLAUDE_CONTEXT_RULES.md`: added the "Wiki Maintenance Behavior" required section
+  (end-of-session: identify changes → update affected pages → run cascade → bump `last_updated` → log
+  session); extended the Update-protocol note to protect it.
+- `_template/04-Contributing__SEP__Update-Cascade.md`: added a "Per build session (required)" section.
+
+**Verify:** `python -m unittest discover -s tests -t .` → 631 pass (skipped 6), unchanged. Sync ships the
+amended templates into consumer wikis; existing project `CLAUDE_CONTEXT_RULES.md` files are project-owned
+(not overwritten by Sync) — backfill the section per the new spec on their next build session.
+
+**Next:** PR → merge → delete branch (`claude/codex-wiki-per-session`).
+
 ## Session 9 — 2026-05-28 — NOTE — S007 (b) shipped + operator Cheatsheet.md
 
 **Docs/delivery only (no Codex spec/scripts/`sync_from_kit` change):**

@@ -362,6 +362,7 @@ Running `cross_link_topics.py` twice in succession with no source changes produc
 11. **Ingest proposes, humans dispose (v1.1).** Canon writes require confirmation. Contradictions get flagged, not overwritten. Archived sources are read-only.
 12. **Frameworks are load-bearing; references are derived inventory.** Pages with `type: framework` are the structural rules of a project — they should exist in both the wiki and an external durable location (e.g. project knowledge files uploaded to a Claude project). Pages with `type: reference` (and similar inventory types: `episode`, etc.) are generated from frameworks plus sources, and are durable only to the extent that the wiki itself is. Losing a reference is recoverable from its framework; losing a framework is not. The wiki is the source of truth for both, but frameworks earn a second home.
 13. **Cross-link injection is marker-bracketed and idempotent.** Frontmatter `related_files: []` is the source of truth; the body "See also" block is its rendered view. Content between `<!-- codex:see-also:start -->` and `<!-- codex:see-also:end -->` is regenerated every run; human prose around the markers is preserved. Humans curate `topics: []` to influence what gets linked; they do not hand-edit the rendered block. Frontmatter `tags: []` is human-owned but optionally mirror-augmented from `topics:` per `_config/cross_link.yaml`. Codex never removes entries from `tags:` — additive only.
+14. **Build sessions keep the wiki current.** A consuming project's wiki is derived documentation maintained **every build session**, not a one-time artifact. A coding session that changes a project (code, schema, config, APIs, behavior) is not done until that project's wiki reflects it: update the affected pages, run the cascade, bump `last_updated`, and log the session. This per-session contract is encoded in the bootstrapped `_context/CLAUDE_CONTEXT_RULES.md` ("Wiki Maintenance Behavior") and `04-Contributing/Update-Cascade.md` ("Per build session").
 
 ---
 
@@ -589,6 +590,8 @@ Create page templates in `_template/` with:
   4. For cross-source synthesis, name every page being synthesized.
 
   These four rules are the minimum. Projects may add more. The section must exist in every bootstrapped `CLAUDE_CONTEXT_RULES.md`.
+
+  It must **also** include a **"Wiki Maintenance Behavior"** section (per Principle #14) requiring that **every build/coding session updates the project wiki before it ends** — identify what changed, update the affected pages (+ `canon_sources`/`last_updated`), run the update cascade, and log the session. The bootstrapped `_context/CLAUDE_CONTEXT_RULES.md` and `04-Contributing/Update-Cascade.md` templates ship this rule; like the four Q&A rules, it is the minimum and must remain present.
 
 ### Phase 5 — Build bootstrap.py and sync_from_kit.py
 

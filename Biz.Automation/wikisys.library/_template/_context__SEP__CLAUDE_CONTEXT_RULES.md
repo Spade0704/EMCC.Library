@@ -51,6 +51,28 @@ For cross-source synthesis, name every page being synthesized. When an answer dr
 - `<add project-specific rule>`
 - `<add project-specific rule>`
 
+## Wiki Maintenance Behavior
+
+**Every build/coding session updates this wiki before it ends.** The wiki is derived documentation; a
+session that changes the project without reconciling its wiki leaves the wiki silently stale. This rule is
+required behavior for every bootstrapped wiki and must remain in this file.
+
+At the **end of every build session** (a session that changed code, schema, config, APIs, or behavior), and
+before reporting the work complete:
+
+1. **Identify what changed** — the files/areas touched and any new or renamed names, contracts, routes,
+   schema, or behavior.
+2. **Update the affected wiki pages** so they reflect the new reality (architecture, data model, API
+   reference, glossary, page/feature inventory, etc.). Add pages for genuinely new surfaces; prefer editing
+   the most specific existing page over a parent index. Cite source via `canon_sources`.
+3. **Run the update cascade** — follow [[Update-Cascade]] (run the cascade-staleness check + dashboards) and
+   re-derive or acknowledge each stale pair.
+4. **Bump `last_updated`** on every page you touched.
+5. **Record the session** in the project's task/session log so the next session starts from accurate state.
+
+Treat this as part of "done": a build session is not complete until the wiki reflects it. If a change is
+genuinely doc-irrelevant (pure formatting / no behavior), say so explicitly rather than skipping silently.
+
 ## Working with `<Project Name>` content
 
 Optional section. Use this space for guidance an agent will benefit from beyond question-answering — e.g. "always check `_canon/timeline.yaml` before describing version-relative events," "treat `_brain_dump/` entries as explicitly non-canonical," "the `outlined` status band means the page is a sketch, not a stub."
@@ -68,4 +90,4 @@ If your session does not auto-load `.claude/personas/`, read `.claude/personas/C
 
 ## Update protocol
 
-This file is **not** overwritten by `sync_from_kit.py`. Editing it is safe at any time. If the four-rule structure under "Question-Answering Behavior" is removed or substantially reworded, downstream agents may degrade silently — keep the four rule headings and their leading sentence intact even when extending the section.
+This file is **not** overwritten by `sync_from_kit.py`. Editing it is safe at any time. If the four-rule structure under "Question-Answering Behavior" — or the "Wiki Maintenance Behavior" rule — is removed or substantially reworded, downstream agents may degrade silently (answers drift, or the wiki goes stale because sessions stop updating it). Keep the four rule headings and their leading sentence, and the per-session wiki-update rule, intact even when extending these sections.

@@ -7,6 +7,10 @@
 Aviation pivot coordination + Library hygiene. See `/root/.claude/plans/before-we-go-to-warm-cocke.md` (operator-side plan file) for the full coordination plan.
 
 ### Done
+- [x] **Codex canon: wiki updated every build session** (Session 10, 2026-06-02): Design Principle #14 +
+  §7 Phase-4 requirement in `CODEX_BUILD_SPEC_v1_3.md` + `PROJECT_WIKI_BUILD_SPEC.md`; "Wiki Maintenance
+  Behavior" section in the `CLAUDE_CONTEXT_RULES` template + "Per build session" in the `Update-Cascade`
+  template. 631 tests still pass. (branch `claude/codex-wiki-per-session`).
 - [x] Closed stale MI-17 carried entry (commit `109d42e`, branch `claude/gallant-bohr-ePBuX`).
 - [x] **Per-project reorganization manifest convention** (v1.3 addendum, 2026-05-28):
   - `REORGANIZATION-INSTRUCTIONS.md` trimmed to master (patterns P1–P8 + audit hooks + cross-repo per-project index)
