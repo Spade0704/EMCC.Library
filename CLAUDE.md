@@ -87,6 +87,7 @@ Codex is built under its own spec (§7 + §8): stdlib-only Python, `pathlib.Path
 - **Stdlib only.** No `pip install`. Tests use `python -m unittest discover -s tests -t .` (matches Codex spec §7 Phase 3; matches `.github/workflows/test.yml`).
 - **Verbatim discipline.** `INGEST_PROCEDURE.md` + `SEMANTIC_LINT_PROCEDURE.md` ship into bootstrapped wikis byte-identical. No paraphrasing, no "improvements," no shortening.
 - **Lattice 3.0 protocol governs Library's own sessions.** When Library work is Level-2+ (cross-module touches, spec changes, etc.), Library boots a Lattice 3.0 session per the `LATTICE_PROFILE` block above. Architect plan + Auditor verdict required. Persona files in `.claude/personas/` (project-codex layout preserved per AC8; DFDU-style `personas/` flat layout is a Step 4 v1.1 follow-up).
+- **Orchestrator participation (cross-session cascade).** When this session participates in an EMCC Orchestrator cascade (the Director coordinates this repo's Librarian over the `claude-peers` channel), load `.claude/modules/claude-orchestrator.md` on-demand. It covers channel participation + the rule that Codex hard rules (verbatim procedures, canon-write confirmation) still bind under the cascade. Canon: `spade0704/EMCC` → `framework/09-orchestrator-cross-session.md`.
 
 ## Out of scope (deferred to future sprints)
 
