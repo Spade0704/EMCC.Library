@@ -1,0 +1,60 @@
+{
+  "module": "EMCC.Library",
+  "protocol": "Codex",
+  "version": "1.1.0",
+  "ui_bindings": [
+    {
+      "surface_id": "library.wiki_dashboard",
+      "surface_name": "Wiki Dashboard",
+      "component_path": "ui/WikiDashboard",
+      "system_facing": false,
+      "owner_visible": true,
+      "description": "Per-project wiki completion overview: status bands (ready/solid/outlined/gap), page counts, open questions. Backed by build_completion_dashboard.py + collect_open_questions.py."
+    },
+    {
+      "surface_id": "library.completion",
+      "surface_name": "Completion & Coverage",
+      "component_path": "ui/Completion",
+      "system_facing": false,
+      "owner_visible": true,
+      "description": "Topic coverage + concept-coverage gaps + canon-drift summary per wiki. Backed by check_concept_coverage.py + build_canon_drift_report.py."
+    },
+    {
+      "surface_id": "library.ingest",
+      "surface_name": "Ingest",
+      "component_path": "ui/Ingest",
+      "system_facing": false,
+      "owner_visible": true,
+      "description": "Integrate a new source into a wiki (extract, route, archive, log) per INGEST_PROCEDURE.md. Owner sees what was ingested; canon writes still require confirmation."
+    },
+    {
+      "surface_id": "library.lint",
+      "surface_name": "Semantic Lint",
+      "component_path": "ui/Lint",
+      "system_facing": true,
+      "owner_visible": false,
+      "description": "Semantic-lint pass over wiki content per SEMANTIC_LINT_PROCEDURE.md (terminology, reveal-conceit, cross-refs). System-facing maintenance surface."
+    },
+    {
+      "surface_id": "library.maintain",
+      "surface_name": "Maintain",
+      "component_path": "ui/Maintain",
+      "system_facing": true,
+      "owner_visible": false,
+      "description": "Dashboard-driven maintenance pass (validators + aggregators). Runs update_dashboards.py orchestrator. System-facing."
+    },
+    {
+      "surface_id": "library.sync",
+      "surface_name": "Sync",
+      "component_path": "ui/Sync",
+      "system_facing": true,
+      "owner_visible": false,
+      "description": "Refresh a consuming wiki's infrastructure from the canonical Codex install (sync_from_kit.py: overwrite / merge-new / never-touched matrix). System-facing."
+    }
+  ],
+  "discovery_mode": "manifest",
+  "registration": {
+    "registered_at": "2026-06-03T00:00:00Z",
+    "status": "active"
+  }
+}
