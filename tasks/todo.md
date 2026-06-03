@@ -7,6 +7,12 @@
 Aviation pivot coordination + Library hygiene. See `/root/.claude/plans/before-we-go-to-warm-cocke.md` (operator-side plan file) for the full coordination plan.
 
 ### Done
+- [x] **Orchestrator participation: Librarian cross-session addendum** (Session 11, 2026-06-03):
+  `.claude/modules/claude-orchestrator.md` (Librarian-side cascade rules — role tag, directive handling,
+  envelope logging, and **Codex gates still bind under the cascade**: sources upstream, canon writes need
+  confirmation, INGEST/LINT verbatim, halt-loud on ambiguity) + `CLAUDE.md` Development-discipline pointer.
+  Codex specs untouched; docs-only, tests unaffected. Branch `claude/lattice-cross-persona-messaging-ekVx8`;
+  PR → merge → delete (paired with EMCC + DFDU). Canon: `spade0704/EMCC` → `framework/09-orchestrator-cross-session.md`.
 - [x] **Codex canon: wiki updated every build session** (Session 10, 2026-06-02): Design Principle #14 +
   §7 Phase-4 requirement in `CODEX_BUILD_SPEC_v1_3.md` + `PROJECT_WIKI_BUILD_SPEC.md`; "Wiki Maintenance
   Behavior" section in the `CLAUDE_CONTEXT_RULES` template + "Per build session" in the `Update-Cascade`
