@@ -2,6 +2,18 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 11 — 2026-06-03 — Orchestrator participation: Librarian cross-session addendum (branch: claude/lattice-cross-persona-messaging-ekVx8)
+
+**Mode:** Docs only (no Codex canon, no scripts). Part of a cross-repo session led from EMCC (`framework/09-orchestrator-cross-session.md`) wiring the `claude-peers` cross-session cascade + Karpathy councils. This repo's slice: how the Librarian participates when the Director cascades doc/wiki work.
+
+**Changes (docs only):**
+- `.claude/modules/claude-orchestrator.md` (new) — Librarian-side cascade rules: channel role tag `[ROLE:librarian][REPO:EMCC.Library]`, directive handling, envelope logging to `tasks/orchestrator-log.jsonl`, and the hard rule that **Codex gates still bind under the cascade** — sources stay upstream truth, canon writes (`_canon/*.yaml`) require user confirmation, `INGEST`/`SEMANTIC_LINT` ship verbatim, halt-loud on classification ambiguity. `--dangerously-skip-permissions` does not relax these (workflow rules ≠ permission prompts).
+- `CLAUDE.md` — "Orchestrator participation" bullet added under Development discipline pointing at the addendum.
+
+**Scope guard:** Codex specs (`CODEX_LIBRARIAN.md`, `INGEST_PROCEDURE.md`, `SEMANTIC_LINT_PROCEDURE.md`) untouched. No `_scripts/` or template changes; test suite unaffected.
+
+**Ship:** Operator directed PR → merge → delete branch (paired with EMCC + DFDU).
+
 ## Session 10 — 2026-06-02 — Codex canon: wiki updated every build session
 
 **Operator request:** Codex should make every build session also update the consuming project's wiki.

@@ -55,6 +55,7 @@ How to drive Codex — Bootstrap, Sync, Ingest, build workflow, quickstart.
 - [[Build-Workflow]] — the 8 phases for building Codex itself
 - [[Claude-Behavior-Rules]] — hard rules, operating preferences, red flags
 - [[Quickstart]] — Appendix B reference for consuming projects after Codex is built
+- [[Orchestrator-Participation]] — Librarian in EMCC cascades; Codex gates still bind (2026-06-03)
 
 ### Contributing
 
