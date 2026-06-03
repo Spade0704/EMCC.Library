@@ -2,6 +2,14 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 12 — 2026-06-03 — Publish ui/manifest.json (EMCC Step 4 connect) (branch: claude/connect-dfdu-library-Kp7n2)
+
+**Mode:** Docs/config only (no Codex canon, no scripts). Part of the cross-repo "connect DFDU + Library to EMCC" build (plan: `EMCC/0-Inbox/connect-dfdu-library-plan.md`).
+
+**Change:** added `ui/manifest.json` conforming to `EMCC/templates/ui-manifest-schema.json`. Six surfaces: 2 owner-visible (`library.wiki_dashboard`, `library.completion` — backed by the existing `build_completion_dashboard.py` / `collect_open_questions.py` / `check_concept_coverage.py` / `build_canon_drift_report.py` dashboards + `ingest`) and 3 system-facing (`library.lint`, `library.maintain`, `library.sync`). `registration.status: active`, version `1.1.0`. EMCC vendors this at build time and renders the drill-down tile (Codex hard rules still bind under any cascade).
+
+**Ship:** PR → merge → delete (paired with EMCC + DFDU).
+
 ## Session 11 — 2026-06-03 — Orchestrator participation: Librarian cross-session addendum (branch: claude/lattice-cross-persona-messaging-ekVx8)
 
 **Mode:** Docs only (no Codex canon, no scripts). Part of a cross-repo session led from EMCC (`framework/09-orchestrator-cross-session.md`) wiring the `claude-peers` cross-session cascade + Karpathy councils. This repo's slice: how the Librarian participates when the Director cascades doc/wiki work.
