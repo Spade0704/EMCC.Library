@@ -2,6 +2,20 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 13 — 2026-06-04 — Librarian v1.2: plain-language audience summary op (branch: claude/codex-plain-language-summary-op)
+
+**Mode:** Codex canon (Librarian spec). Cross-repo with EMCC (the dashboard surfaces it).
+
+**Change:** added a **v1.2 extension** to `CODEX_LIBRARIAN.md` — canonical operation
+`summarize(source, audience)` (default audience = `entrepreneur`): plain, concise, jargon-free,
+faithful summaries of canon/notes (todo/sessions/lessons/wiki) for non-technical readers; raw view
+for `developer`; producer≠judge preserved. This makes "knowledge presentation / audience
+translation" an explicit Librarian capability that consumers (EMCC dashboard's "Plain language"
+toggle + `librarian_summarize.py`) request rather than reimplement. Regenerated the persona drop-in
+(`generate_persona_dropin.py`; drift-check in sync). 631 tests green.
+
+**Ship:** PR → merge → delete.
+
 ## Session 12 — 2026-06-03 — Publish ui/manifest.json (EMCC Step 4 connect) (branch: claude/connect-dfdu-library-Kp7n2)
 
 **Mode:** Docs/config only (no Codex canon, no scripts). Part of the cross-repo "connect DFDU + Library to EMCC" build (plan: `EMCC/0-Inbox/connect-dfdu-library-plan.md`).
