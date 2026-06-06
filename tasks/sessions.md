@@ -2,6 +2,19 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 14 — 2026-06-06 — Caution-lint spike + qa-sweep + MI-19 stale-consumer advisory (branch: claude/emcc-repo-start-eInGS)
+
+**Mode:** Codex engine code (Level-2+). Part of an EMCC `/start` + Director session; gated by `/llm-council` (EMCC `tasks/council/2026-06-06-tiered-caution-index.md`) + `/delta-force` (`EMCC.DFDU/tasks/delta-force/2026-06-06-caution-lint.md`).
+
+**Change:**
+- **Caution-lint spike** — new `check_consequence(path, enforce=False)` + `ConsequenceResult` + `_count_frontmatter_key` in `_lib/doc_lint.py`. Per-page `consequence: high|low` (absent/unrecognized -> HIGH fail-safe); HIGH requires `cite_anchor`; report-only by default (WARNING/ok), `enforce=True` -> ERROR; read-only. Field name `consequence` provisional pending canon promotion (also the Gateway-fence class). NO generated CAUTIONS block / `--check` / canon edits (descoped by delta-force).
+- **qa-sweep hardening** (`tasks/qa-sweep/2026-06-06-caution-lint.md`) — fixed a CRITICAL fail-open (unguarded read raised on missing/non-utf8 -> aborted gate loops, skipping downstream HIGH pages) and a HIGH key-flip (duplicate `consequence:` last-wins could flip HIGH->LOW). +5 regression tests; 2 defect classes captured in `tasks/lessons.md`.
+- **MI-19** in `MIGRATION-ISSUES.md` — stale-vendored-engine consumer re-sync advisory (cross-room finding). Verified blast radius: eddyandwolff stale (now re-synced), aviation a separate bespoke-toolchain case, 10 consumers + Library current, Mentor handled out-of-room.
+
+**Verified:** full suite **644/644** (6 skipped), no regressions; a live gate-loop sim confirmed the fail-open fix. **Owed:** independent Lattice Auditor (Regime B) on the diff before canon promotion. Picked up the other room's pending CLAUDE.md block (PR #28) via rebase — preserved.
+
+**Next:** version-stamp/`--check` mechanism (delta-force PROCEED, build pending operator go); promote `consequence` field + verbatim policy to Codex canon (separate, gated); aviation Codex-adoption P0.5+.
+
 ## Session 13 — 2026-06-04 — Librarian v1.2: plain-language audience summary op (branch: claude/codex-plain-language-summary-op)
 
 **Mode:** Codex canon (Librarian spec). Cross-repo with EMCC (the dashboard surfaces it).
