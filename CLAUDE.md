@@ -12,6 +12,15 @@ LATTICE_BUS_ROOT: .lattice/bus
 
 The bus root is relative; `SessionManager` resolves it against this repo root at session start. `.lattice/` is gitignored — bus state is per-machine, never committed. The `personas/CLAUDE.auditor.md` carry from DFDU is byte-equal (verified at Session 1 Phase B2); the Auditor judges Library work against the same canonical 116-line persona DFDU uses.
 
+## The Library module — Codex (protocol) + Librarian (agent)
+
+The Library module ships **two distinct things**; keep them separate.
+
+- **Codex** is the **protocol / engine** — the *HOW*: the ingest + semantic-lint procedures, the frontmatter schema, the validators + dashboards, R-XXXXX numbering, and the cross-link graph. It defines how raw material becomes a structured, validated wiki. Canon lives in `wiki.codex/git/codex/` (spec `CODEX_BUILD_SPEC_v1_3.md`).
+- **Librarian** is the **agent / persona** that *operates* Codex — the *WHO*: it ingests sources, curates pages, maintains canon, and runs the dashboards. Declared canonically in `wiki.codex/git/codex/CODEX_LIBRARIAN.md`; the `.claude/personas/CLAUDE.librarian.md` drop-in is **generated** from it (`generate_persona_dropin.py`).
+
+This module is the **home** of both: changes to Codex (protocol) or the Librarian (persona) are made here and propagate to consumer projects (DFDU, Mentor, etc.) via Sync (`sync_from_kit.py`). Consumers never re-invent either — they vendor the engine and operate as the Librarian. Codex = the machine; the Librarian = the operator of the machine; the consuming project supplies the material + curation judgment.
+
 ## Required reading (in this order, before any code)
 
 1. **`Index.md` — read FIRST.** File-map / routing table. Tells you where every folder + key file lives + when to load each. Avoids unnecessary searching; gives the operator + agent a shared mental model. Per portfolio spec section (a) RECOMMENDED set; `bootstrap.py` auto-emits this for new consumer projects (this Library copy was backfilled post-S002 since Library was hand-bootstrapped before the canonical-output rewrite landed).
