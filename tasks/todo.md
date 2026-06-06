@@ -2,6 +2,33 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
+## Inbound handoff — Cairn/Gateway reframe folds accuracy work into Library (2026-06-06)
+
+Two EMCC.Gateway councils + a fidelity probe concluded the accuracy-critical
+context work belongs in Library/Codex, NOT a separate module. Decision trail:
+`EMCC/tasks/council/2026-06-06-cairn-v1.md`, `EMCC/tasks/council/2026-06-06-cairn-reframe.md`,
+`EMCC.DFDU/tasks/delta-force/2026-06-06-cairn-phase0.md`,
+`EMCC.Gateway/wiki.EMCC.Gateway/git/_spike/RESULTS.md`. Backlog to absorb (each its
+own sprint; council/delta-force before building):
+
+- [ ] **Verbatim-only / cite-always / correct-refusal** formalized as Codex canon
+  (most consumer wikis' CLAUDE.md already declare a "never fabricate, cite source"
+  rule — make it a first-class Codex policy + lint).
+- [ ] **Tiered caution-index**: an `index.md` improvement that surfaces a cheap
+  decision/router layer + verbatim safety cautions, then loads full source on demand.
+  Deterministic — NO neural picker in the safety path (grep/keyword search is the
+  retriever).
+- [ ] **Gated experiment — lossless effectivity-normalization** (dedupe repeated
+  MSN/effectivity variants → canonical body + diff). Belongs in the wiki BUILD
+  pipeline (single-writer), not a runtime module. KILL CRITERIA: must pass BOTH
+  (a) byte-for-byte reconstruction of every variant AND (b) correct-variant
+  retrieval at query time, or it's dropped. First real target:
+  `aviation .../FCTM/PR/AEP/NAV/Unreliable_Airspeed_Indications.md` (prints ~the same
+  procedure twice for two MSN ranges).
+
+(EMCC.Gateway keeps the local LLM for LOW-consequence compression — transcripts,
+logs, references, drafts — separate from this accuracy track.)
+
 ## Current sprint — Pre-S006 Aviation-prep (2026-05-28, IN PROGRESS)
 
 Aviation pivot coordination + Library hygiene. See `/root/.claude/plans/before-we-go-to-warm-cocke.md` (operator-side plan file) for the full coordination plan.
