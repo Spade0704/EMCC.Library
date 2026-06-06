@@ -2,6 +2,22 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 15 — 2026-06-06 — Self-knowledge wiki assess + gap-fill (branch: claude/emcc-tasks-overview-K7pvO)
+
+**Mode:** Codex dogfood wiki content only (no canon, no scripts, no procedures). Conservative assess-then-gap-fill pass on `wiki.codex/git/`.
+
+**Assessment:** the two distinct things this module ships are both genuinely covered — **Codex** (the engine) by `01-Architecture/Overview` + the full 01-Architecture domain, and **the Librarian** (the agent) by `02-Operations/Librarian` — each a well-cited derived overview pointing at the `wiki.codex/git/codex/*` canon. The real gaps are three untouched 00-Start-Here template stubs (`status: gap`, placeholder `last_updated: <YYYY-MM-DD>`): `Project-Overview`, `How-to-Use-This-Wiki`, `Terminology-Rules`. Of those, only `Project-Overview` was pure placeholder text (and is Home's first Start-Here entry); the other two already carry faithful generic content, so left untouched (no churn).
+
+**Change:**
+- Filled `00-Start-Here/Project-Overview.md` — derived overview of *what Codex is / why it exists / who it serves*, strictly from spec §1, citing `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md §1` (canon_sources -> `raw/...` path per house convention). Status `gap` -> `outlined` (completion 40). Clearly an overview that points at canon, not a replacement.
+- `Home.md` — tidied the Project-Overview TOC line + rewrote the Status note to state both distinct things are covered and to record the explicit decision to **keep Home at `outlined`** (a few Start-Here stubs remain at `gap`; `solid` not yet warranted). `last_updated: 2026-06-06`.
+
+**Flagged (not resolved — verbatim/spec discipline):** pre-existing `canon_integrity` finding — `codex/CODEX_LIBRARIAN.md` is `status:ready` with empty `canon_sources` (it is a canon doc, not mine to edit). Pre-existing cross-ref "broken" findings are the folder-prefixed `[[00-Start-Here/X]]` vs bare-name resolver mismatch on Home's hand-authored TOC + intentional illustrative `[[Page-One]]` links inside the verbatim `SEMANTIC_LINT_PROCEDURE.md`.
+
+**Verified:** `validate_terminology.py` -> pages_scanned=34, findings=0. Introduced no new broken refs or canon findings. Verbatim procedures (`INGEST_PROCEDURE.md`, `SEMANTIC_LINT_PROCEDURE.md`) and the `codex/` canon docs untouched.
+
+**Ship:** commit + push (no PR).
+
 ## Session 14 — 2026-06-06 — Caution-lint spike + qa-sweep + MI-19 stale-consumer advisory (branch: claude/emcc-repo-start-eInGS)
 
 **Mode:** Codex engine code (Level-2+). Part of an EMCC `/start` + Director session; gated by `/llm-council` (EMCC `tasks/council/2026-06-06-tiered-caution-index.md`) + `/delta-force` (`EMCC.DFDU/tasks/delta-force/2026-06-06-caution-lint.md`).
