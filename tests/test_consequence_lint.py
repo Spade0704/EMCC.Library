@@ -146,5 +146,58 @@ class TestCheckConsequenceReadOnly(unittest.TestCase):
             self.assertTrue(r.ok)                     # high + cite present
 
 
+class TestCheckConsequenceQASweepRegressions(unittest.TestCase):
+    """Regressions for QA-sweep findings (tasks/qa-sweep/2026-06-06)."""
+
+    def test_unreadable_nonutf8_file_never_raises_failclosed(self):
+        # CRITICAL: an unguarded read raises -> batch-level fail-open. Must not.
+        with TemporaryDirectory() as d:
+            p = Path(d) / "binary.md"
+            p.write_bytes(b"\xff\xfe consequence: low \x00 not text")
+            r = doc_lint.check_consequence(p, enforce=True)   # must not raise
+            self.assertEqual(r.consequence, "high")           # fail-safe
+            self.assertFalse(r.ok)                             # enforce -> error
+            self.assertTrue(any("unreadable" in e.lower() for e in r.errors))
+            # report-only stays non-raising + non-blocking
+            r2 = doc_lint.check_consequence(p, enforce=False)
+            self.assertTrue(r2.ok)
+            self.assertTrue(r2.warnings)
+
+    def test_missing_file_never_raises_failclosed(self):
+        with TemporaryDirectory() as d:
+            p = Path(d) / "does_not_exist.md"
+            r = doc_lint.check_consequence(p, enforce=True)   # must not raise
+            self.assertEqual(r.consequence, "high")
+            self.assertFalse(r.ok)
+
+    def test_duplicate_key_cannot_flip_high_to_low(self):
+        # HIGH: parser is last-wins; a trailing `consequence: low` must NOT win.
+        with TemporaryDirectory() as d:
+            p = Path(d) / "page.md"
+            _write(p, "---\ntitle: x\nconsequence: high\nconsequence: low\n---\n# B\n")
+            r = doc_lint.check_consequence(p, enforce=True)
+            self.assertEqual(r.consequence, "high")           # not flipped to low
+            self.assertFalse(r.field_present)                 # ambiguous
+            self.assertFalse(r.ok)                             # high + no cite + enforce
+            self.assertTrue(any("duplicate" in m.lower() for m in r.errors))
+
+    def test_no_frontmatter_body_only_resolves_high_failsafe(self):
+        # The most likely real input on an un-migrated wiki (README/legacy page).
+        with TemporaryDirectory() as d:
+            p = Path(d) / "legacy.md"
+            _write(p, "# Just a body\n\nNo frontmatter block at all.\n")
+            r = doc_lint.check_consequence(p, enforce=False)
+            self.assertEqual(r.consequence, "high")
+            self.assertFalse(r.field_present)
+            self.assertTrue(r.warnings)                        # report-only warns
+
+    def test_enforced_field_echoes_input(self):
+        with TemporaryDirectory() as d:
+            p = Path(d) / "page.md"
+            _write(p, _page(consequence="low"))
+            self.assertTrue(doc_lint.check_consequence(p, enforce=True).enforced)
+            self.assertFalse(doc_lint.check_consequence(p, enforce=False).enforced)
+
+
 if __name__ == "__main__":
     unittest.main()

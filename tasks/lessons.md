@@ -92,3 +92,8 @@ Captured in PR #11 (post-MI-17 housekeeping) and preserved through the S004 reba
 - One commit per file = clean per-file blame; relocation would have been one bulk commit
 
 Exception: Lattice 2.0 launchers/ DID get moved to `_archive/launchers/` because they were a folder of related artifacts with zero inbound cross-links — wholesale relocation was clean. **Rule of thumb:** relocate only when the entire subtree is dead AND has no inbound links; banner everything else.
+
+## QA-sweep findings (2026-06-06, caution-lint spike)
+
+- **Unguarded I/O in a gate function = fail-open.** A build/safety-gate function that can `raise` (e.g. an unguarded `read_text("utf-8")` on a missing/non-utf-8 file) will abort the caller's loop and silently skip every downstream item — the opposite of fail-safe. Guard I/O in gate functions; on failure return a result at the *safe* tier (HIGH/deny); never let a gate raise. Caught in `check_consequence` (a poison file skipped a downstream federal HIGH page in a live sim).
+- **Subset-YAML last-wins enables a silent safety-key flip.** The frontmatter subset parser keeps the last value for a repeated key, so a duplicate `consequence: low` appended after `consequence: high` flipped a HIGH page to LOW with no warning. For safety-critical fields, detect duplicate top-level keys and treat as ambiguous → fail-safe (don't trust last-wins).
