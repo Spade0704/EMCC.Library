@@ -169,6 +169,17 @@ class S1DocResult:
     elapsed_seconds: float = 0.0
 
 
+@dataclass
+class ConsequenceResult:
+    ok: bool
+    errors: List[str] = field(default_factory=list)
+    warnings: List[str] = field(default_factory=list)
+    consequence: str = "high"          # resolved tier: "high" | "low"
+    cite_anchor: Optional[str] = None
+    field_present: bool = False         # True only if a recognized high|low was declared
+    enforced: bool = False
+
+
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
@@ -264,6 +275,78 @@ def check_frontmatter(path: Path) -> FrontmatterResult:
         required_keys_missing=missing,
         unknown_keys=unknown,
     )
+
+
+def check_consequence(path: Path, enforce: bool = False) -> ConsequenceResult:
+    """Consequence/cite lint (caution-lint spike) — read-only.
+
+    Resolves a page's consequence tier from frontmatter and, for HIGH pages,
+    requires a non-empty ``cite_anchor`` so accuracy-critical content is always
+    traceable to a verbatim source.
+
+    Fail-safe: a missing OR unrecognized ``consequence`` value resolves to HIGH
+    (never silently LOW). Only an explicit ``consequence: low`` opts out.
+
+    Report-only by default (``enforce=False`` -> WARNING, ``ok=True``) so the
+    lint can run across an un-migrated wiki without red-barring it.
+    ``enforce=True`` promotes the finding to an ERROR (``ok=False``) — opt-in
+    per wiki once migrated.
+
+    The field name ``consequence`` is provisional for this spike; the final
+    contract (``consequence`` vs ``verbatim``) is locked at canon promotion —
+    it is the cross-module class the Gateway compression fence also reads. No
+    canon file is touched here. This function only READS the file (block-level
+    effectivity-normalization is a separate, out-of-scope experiment).
+    """
+    path = Path(path)
+    text = path.read_text(encoding="utf-8")
+    parsed = _frontmatter.parse_frontmatter(text)
+
+    raw = parsed.get("consequence") if parsed is not None else None
+    norm = raw.strip().lower() if isinstance(raw, str) else None
+
+    if norm == "low":
+        tier, field_present = "low", True
+    elif norm == "high":
+        tier, field_present = "high", True
+    else:
+        tier, field_present = "high", False  # absent / non-str / unrecognized -> fail-safe HIGH
+
+    cite = None
+    if parsed is not None:
+        c = parsed.get("cite_anchor")
+        if isinstance(c, str) and c.strip():
+            cite = c.strip()
+
+    result = ConsequenceResult(
+        ok=True,
+        consequence=tier,
+        cite_anchor=cite,
+        field_present=field_present,
+        enforced=enforce,
+    )
+
+    if tier == "low" or cite is not None:
+        return result
+
+    # HIGH page with no cite_anchor — the finding.
+    if not field_present:
+        if raw is None:
+            msg = ("consequence: no `consequence` field -> treated as HIGH "
+                   "(fail-safe); add a cite_anchor, or set consequence: low to opt out")
+        else:
+            msg = (f"consequence: unrecognized value {raw!r} -> treated as HIGH "
+                   "(fail-safe); use high|low, add a cite_anchor, or set consequence: low")
+    else:
+        msg = ("consequence: HIGH page missing required cite_anchor "
+               "(add a verbatim source ref, or set consequence: low)")
+
+    if enforce:
+        result.ok = False
+        result.errors.append(msg)
+    else:
+        result.warnings.append(msg)
+    return result
 
 
 def check_cross_refs(path: Path, repo_root: Path) -> CrossRefResult:
