@@ -1,14 +1,38 @@
-# INDEX — EMCC.Library
+# Index — EMCC.Library
 
-Route lookups via this file. **Read BEFORE searching the project.** Pair with `CLAUDE.md` (read second — `CLAUDE.md` is operating rules + memory architecture).
+> The single repo **MAP + routing header** for `EMCC.Library` (the Codex **home** — the module that owns the Codex protocol/engine + the Librarian agent). `CLAUDE.md` reads this FIRST. *(Restructured 2026-06-06 into the 3-zone wiki-as-memory form per `EMCC/framework/18-wiki-memory-routing.md`; all prior file-map content preserved below in Zone 2.)*
+>
+> **Wiki router:** `wiki.codex/git/Home.md` (the topic/semantic router over Codex's self-knowledge). **Protocol canon:** `wiki.codex/git/codex/` (the authoritative Codex spec docs — `CODEX_BUILD_SPEC_v1_3.md` is the single canonical version; **spec wins** any contradiction). **Note:** EMCC.Library is the Codex home, so its wiki dir is **`wiki.codex`** (not `wiki.EMCC.Library`).
 
-This file is the file-map for Library. It was added as a backfill (Session 2b, post-S002) after the canonical-output `bootstrap.py` rewrite (which auto-emits Index.md for new consumer projects); Library itself was hand-bootstrapped in Session 1 before that wiring existed.
+## Routing contract (how to get full context at minimum tokens)
 
-## Top-level files
+- **Topic / domain / task question** -> **Zone 1**: go to the wiki router (`wiki.codex/git/Home.md`), open the ONE relevant page, then **expand one hop** via its `related_files:` + `[[wikilinks]]` for related context. Drill to the cited canon (`wiki.codex/git/codex/`) only when you need authoritative precision / exact spec wording. (Lexical, not vector — `EMCC/framework/13`.)
+- **"Where does X live / which operational file" question** -> **Zone 2** (the non-wiki knowledge catalog below — this is the original Library file-map, preserved in full).
+- **Private / not-yet-in-repo** -> **Zone 3** (Phase 2 stub).
+
+---
+
+## Zone 1 — Topic / knowledge -> the wiki
+
+Route any topic/domain/task question into the wiki; do not grep blindly.
+
+- **Entry: `wiki.codex/git/Home.md`** — TOC + semantic router over Codex's self-knowledge (architecture, operations, the Librarian agent, build-spec derivations).
+- Load the single relevant page, then **follow its `related_files:`/`[[wikilinks]]` one hop** to pull the related cluster (the cross-link graph is the context-expansion engine). Wiki pages are derived overviews that cite their canon via `canon_sources` — the **Codex spec docs live under `wiki.codex/git/codex/`** and are reachable as the canon drill-down (e.g. an Architecture overview cites `CODEX_BUILD_SPEC_v1_3.md`). Drill to `wiki.codex/git/codex/` for exact wording/numbers.
+- The wiki's page list lives in `Home.md`; this Index does **not** duplicate it (the router owns it).
+
+> Cross-link note: the verbatim-shipped procedures (`INGEST_PROCEDURE.md`, `SEMANTIC_LINT_PROCEDURE.md`) under `wiki.codex/git/codex/` are **canon, not curation targets** — quote them verbatim; never paraphrase or restructure (CLAUDE.md "Verbatim discipline").
+
+---
+
+## Zone 2 — Non-wiki knowledge (committed)
+
+The knowledge-bearing files that live OUTSIDE the wiki, catalogued by purpose with when-to-load. (Codex spec canon under `wiki.codex/git/codex/` is also reachable as a topic via its wiki overview page; this zone is the drill-down map.) *This is the original Library file-map, preserved in full.*
+
+### Top-level files
 
 | File | Purpose |
 |---|---|
-| `Index.md` | **This file.** File-map / routing table. |
+| `Index.md` | **This file.** The repo MAP + 3-zone routing header (routes topics to the wiki + maps the non-wiki files). |
 | `CLAUDE.md` | Operating rules + memory architecture for sessions working on Library. Read AFTER Index. |
 | `README.md` | Public-facing module description; what Library is + how consumers use it. |
 | `module.json` | EMCC module registration (v1.1.0). EMCC's consumer-bootstrap auto-detection reads this. |
@@ -19,7 +43,7 @@ This file is the file-map for Library. It was added as a backfill (Session 2b, p
 | `REORGANIZATION-INSTRUCTIONS.md` | **Master** manifest (patterns P1–P8 + audit-hook contract + cross-repo index of per-project files). Updated 2026-05-28 per v1.3 addendum: trimmed to master-only; per-project content extracted. |
 | `reorganization-instructions.library.md` | **Per-project** manifest for EMCC.Library: Session 1 + S002 + S003b concrete moves. Pairs with the master above. |
 
-## Top-level folders
+### Top-level folders
 
 | Folder | Contains | When to load |
 |---|---|---|
@@ -31,7 +55,7 @@ This file is the file-map for Library. It was added as a backfill (Session 2b, p
 | `.claude/` | Claude Code config — `personas/CLAUDE.{librarian,auditor}.md` | Persona / agent work; auto-loaded by Claude Code at session start |
 | `.github/` | CI workflow (tests + JSON schema validation) | CI-related changes |
 
-## `Biz.Automation/wikisys.library/` — Codex engine
+### `Biz.Automation/wikisys.library/` — Codex engine
 
 | Subfolder | What | When to load |
 |---|---|---|
@@ -43,9 +67,9 @@ This file is the file-map for Library. It was added as a backfill (Session 2b, p
 | `_context/` | Runtime context rules | Reference |
 | `_decisions/` | Decision history (e.g., `ingest-log.md`) | Reference |
 
-## `wiki.codex/git/codex/` — Codex authoritative spec docs
+### `wiki.codex/git/codex/` — Codex authoritative spec docs (protocol canon)
 
-These are the spec docs the Librarian agent + consumers reference for Codex semantics. Moved here in S002 per spec section (b) (the DFDU analogy: `documents/lattice/` → `wiki.dfdu/git/lattice/`).
+These are the spec docs the Librarian agent + consumers reference for Codex semantics. They are the **protocol canon** the Zone 1 wiki overviews drill down into. Moved here in S002 per spec section (b) (the DFDU analogy: `documents/lattice/` → `wiki.dfdu/git/lattice/`).
 
 | File | What |
 |---|---|
@@ -58,7 +82,7 @@ These are the spec docs the Librarian agent + consumers reference for Codex sema
 | `codex-build-plan.html` | Original Codex build plan (P1–P54 priorities) |
 | `Codex_Project_Documentation.pdf` + `Codex_Workflow_Cheatsheet_v1.txt` + `codex-build-progress.md` | Background / historical Codex materials |
 
-## `_scripts/` — automation (P-indexed per `CODEX_BUILD_SPEC_v1_3.md` §2.4)
+### `_scripts/` — automation (P-indexed per `CODEX_BUILD_SPEC_v1_3.md` §2.4)
 
 | Priority | Script | What |
 |---|---|---|
@@ -89,7 +113,7 @@ These are the spec docs the Librarian agent + consumers reference for Codex sema
 | **S002** | `audit_assets.py` | Heavy-file scan + duplicate detection |
 | **S002** | `audit_local_split.py` | Misclassification suspects in `local/` vs `git/` |
 
-## `tasks/` — operational state
+### `tasks/` — operational state
 
 | File | What | When to read |
 |---|---|---|
@@ -101,33 +125,56 @@ These are the spec docs the Librarian agent + consumers reference for Codex sema
 | `tasks/v1.1-backlog.md` | Codex v1.1 enhancement queue (mostly shipped in S002) | Reference for what's done vs deferred |
 | `tasks/plans/portfolio-folder-structure-spec.md` | Multi-session planning spec for the v1.1 layout (1,500+ lines; signed off + 4 amendments applied) | Architect reference for canonical structure |
 
-## `wiki.codex/` content layout (post-S002)
+### `wiki.codex/` content layout (post-S002)
 
 | Path | What |
 |---|---|
 | `wiki.codex/git/` | Public content side (per portfolio spec F10) |
-| `wiki.codex/git/Home.md` | Wiki home / front page |
+| `wiki.codex/git/Home.md` | Wiki home / front page (**the Zone 1 router**) |
 | `wiki.codex/git/00-Start-Here/` | Onboarding pages |
 | `wiki.codex/git/01-Architecture/` | Architecture docs |
 | `wiki.codex/git/02-Operations/` | Operations docs |
 | `wiki.codex/git/04-Contributing/` | Contributing guide |
-| `wiki.codex/git/codex/` | Codex authoritative spec docs (see table above) |
+| `wiki.codex/git/codex/` | Codex authoritative spec docs (see table above — protocol canon) |
 | `wiki.codex/git/raw/` | Source archive (formerly `_sources/raw/`) |
-| `wiki.codex/local/` | Private content side (gitignored; never committed) |
-| `wiki.codex/local/ideas/` | Brain-dump / unfiled notes (formerly `_brain_dump/`) |
+| `wiki.codex/local/` | Private content side (gitignored; never committed) — see Zone 3 |
+| `wiki.codex/local/ideas/` | Brain-dump / unfiled notes (formerly `_brain_dump/`) — see Zone 3 |
 
-## Cross-module references
+### Cross-module references
 
 | Module | Relationship | Where to read |
 |---|---|---|
 | `EMCC.DFDU` | Library consumes DFDU's Lattice 3.0 protocol for Library's own session work | `EMCC.DFDU/documents/lattice/00-README.md` (ToC) |
-| `EMCC` | EMCC's consumer-project template references Library via `templates/consumer-project/emcc.modules.json`; status = `ready` (flipped Session 1) | `EMCC/templates/consumer-project/CLAUDE.md` (consumer-side wiring) |
+| `EMCC` | EMCC's consumer-project template references Library via `templates/consumer-project/emcc.modules.json`; status = `ready` (flipped Session 1). Wiki-as-memory routing standard canon: `EMCC/framework/18-wiki-memory-routing.md` | `EMCC/templates/consumer-project/CLAUDE.md` (consumer-side wiring) |
 | `spade0704/project-codex` | Source of Session 1 extraction (now archived) | `SOURCE-HISTORY.md` for SHA + per-file move inventory |
 | `spade0704/Project-Mentor` | First dogfood wiki bootstrapped via Codex (wiki #2, 2026-05-25); findings folded into S002 | `tasks/architect-notes.md` §S002 + `tasks/plans/portfolio-folder-structure-spec.md` §"Mentor — Greenfield bootstrap (shipped 2026-05-25)" |
 
-## Maintenance discipline
+### Inventory-seed (non-wiki, committed)
 
-- **When you add a new file under any folder above, update this Index.md row for that folder.** Keep the index authoritative.
+From `python EMCC/scripts/inventory_repo.py /home/user/EMCC.Library` (2026-06-06; 195 non-wiki-git files, 37 wiki-git-content, 3 wiki-git-infra, 0 wiki-local). The folder tables above are the curated catalog; these are the inventory-classified roots for cross-check:
+
+| Path | Files | When to load |
+|---|---|---|
+| `.claude/` | 3 | Personas / modules / skills / commands (agent config). |
+| `CLAUDE.md` | 1 | Operating brain — read first every session. |
+| `Index.md` | 1 | This file — the repo MAP + routing header. |
+| `README.md` | 1 | Repo overview. |
+| `module.json` | 1 | Module runtime manifest. |
+| `tasks/` | 10 | Operational state (Boris: todo/sessions/lessons/...). Read at session start. |
+
+### Maintenance discipline
+
+- **When you add a non-wiki file under any folder above, update its Zone 2 row.** Keep the MAP authoritative. **When you add WIKI content, update `wiki.codex/git/Home.md`** (not this Index) — Zone 1 delegates the wiki page list to the router.
 - **When a new MI lands in `MIGRATION-ISSUES.md`, update the file's purpose row above** (just bump the MI count range).
 - **When a new tasks/* file is added (e.g., a new planning doc), add a row** under the "tasks/" table.
 - This file is the operator's first stop for "where is X?"; let it rot and the value drops sharply.
+
+---
+
+## Zone 3 — Private / uncommitted (Phase 2)
+
+Placeholder per `EMCC/framework/18-wiki-memory-routing.md` Phase 2. Will catalog the knowledge that is NOT in the committed repo:
+
+- `wiki.codex/local/` (gitignored; never committed) — Library's private zone, including `wiki.codex/local/ideas/` (brain-dump / unfiled notes, formerly `_brain_dump/`). Currently 0 committed files; indexed here when Phase 2 builds out the owner-cadence ingest model.
+- `.lattice/bus/` (per-machine, gitignored) — Lattice session bus state when Library dogfoods DFDU.
+- Outside-repo sources (operator Drive, external Codex source material) indexed via the owner-cadence ingest model; optionally a machine-readable index manifest for the Director / `build_director_context`.

@@ -31,6 +31,10 @@ This module is the **home** of both: changes to Codex (protocol) or the Libraria
 6. `wiki.codex/git/codex/CODEX_LIBRARIAN.md` — Librarian agent specification (the persona this module ships; S002 v1.1 extension adds 3 new ops + 5 Mentor patterns + Telegram auto-summary contract). Load on demand for Librarian-related work.
 7. `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` — wiki build spec (what `bootstrap.py` materializes for consuming projects). Load on demand for bootstrap behavior changes.
 
+## Routing discipline (wiki-as-memory)
+
+> **Route, don't grep.** For a topic/domain/task question, go via `Index.md` **Zone 1** to the wiki router (`wiki.codex/git/Home.md`), load the ONE relevant page, then **expand one hop** via its `related_files:`/`[[wikilinks]]` for related context (the cross-link graph is the context engine — lexical, not vector). Drill to the Codex spec canon under `wiki.codex/git/codex/` only for authoritative precision / exact spec wording (**spec wins**). For "where does X live," use `Index.md` **Zone 2**. One canonical index per repo: **`Index.md`** (the ROOT_INDEX table below is the operating-room view; `Index.md` is the MAP + router). Standard: `EMCC/framework/18-wiki-memory-routing.md`.
+
 ## Path migrations
 
 This module reorganized into the canonical portfolio layout in S002 (Codex v1.0 → v1.1, 2026-05-27). Module source files moved from project-root `_scripts/_template/_config/` to `Biz.Automation/wikisys.library/_*`; Codex spec docs moved from project-root markdown files to `wiki.codex/git/codex/<filename>`; `wiki.codex/` restructured into `git/`+`local/` subzones.
