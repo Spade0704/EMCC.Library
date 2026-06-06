@@ -2,6 +2,20 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 16 — 2026-06-06 — Wiki-as-memory routing standard applied (branch: claude/emcc-tasks-overview-K7pvO)
+
+**Mode:** Routing/index normalization only (no wiki content, no canon, no scripts, no verbatim procedures). Applies `EMCC/framework/18-wiki-memory-routing.md` to this repo. Conservative — spec wins; verbatim `INGEST_PROCEDURE.md` + `SEMANTIC_LINT_PROCEDURE.md` untouched.
+
+**Special case:** EMCC.Library is the Codex **home**, so its wiki dir is `wiki.codex` (NOT `wiki.EMCC.Library`). Wiki router = `wiki.codex/git/Home.md`; protocol canon = `wiki.codex/git/codex/` (the Codex spec docs, reachable as the canon drill-down behind Zone 1 overviews). The repo already had a root `Index.md` (the S002 backfill file-map), so it was **restructured in place** into the 3-zone form, preserving every existing row.
+
+**Change:**
+- `Index.md` — restructured into the fixed 3-zone form: routing header (wiki-router + protocol-canon declaration + the special-case note) + routing contract; **Zone 1** routes topics -> `wiki.codex/git/Home.md` + one-hop `related_files:`/`[[wikilinks]]` expansion (notes the `codex/` spec docs are the canon drill-down; verbatim procedures are canon, not curation targets); **Zone 2** wraps the entire original file-map (all top-level-file / folder / `_scripts` P-index / `tasks` / `wiki.codex` / cross-module tables preserved verbatim, with routing annotations added) + an inventory-seed sub-table from `inventory_repo.py`; **Zone 3** stub names `wiki.codex/local/` (+ `local/ideas/`), `.lattice/bus/`, and outside-repo sources.
+- `CLAUDE.md` — added a "Routing discipline (wiki-as-memory)" block after Required reading (route topic -> `Index.md` -> `wiki.codex/git/Home.md` -> one hop; drill to `wiki.codex/git/codex/` for precision). Honored existing structure; SPEC-WINS framing intact; no emojis.
+
+**Verified:** `python EMCC/scripts/inventory_repo.py` -> 37 wiki-git-content / 3 wiki-git-infra / 195 non-wiki-git / 0 wiki-local (matches the Zone 2 inventory-seed). `validate_terminology.py` -> pages_scanned=34, findings=0, exit 0 (wiki unchanged). Git status: only `Index.md` + `CLAUDE.md` + this entry changed; `wiki.codex/git/codex/`, `Biz.Automation/`, `.claude/` untouched. Catalog-only — no crawl into the topic graph.
+
+**Ship:** commit + push (no PR).
+
 ## Session 15 — 2026-06-06 — Self-knowledge wiki assess + gap-fill (branch: claude/emcc-tasks-overview-K7pvO)
 
 **Mode:** Codex dogfood wiki content only (no canon, no scripts, no procedures). Conservative assess-then-gap-fill pass on `wiki.codex/git/`.
