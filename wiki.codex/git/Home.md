@@ -4,8 +4,8 @@ type: overview
 visibility: internal
 completion: 30
 status: outlined
-last_updated: 2026-05-27
-dependencies: ["01-Architecture/Overview", "02-Operations/Bootstrap"]
+last_updated: 2026-06-06
+dependencies: ["01-Architecture/Overview", "02-Operations/Bootstrap", "02-Operations/Librarian"]
 public_pair: null
 blocking_questions: []
 topics: [codex_architecture, codex_operations, cross_link_generation]
@@ -17,15 +17,26 @@ unverified_claims: []
 
 # Codex — Home
 
-Landing page for the **Codex** wiki. Codex is a scaffolding-and-sync tool that creates and maintains markdown documentation wikis for other projects. This wiki documents Codex itself — its architecture, operations, and the build-spec it derives from.
+Landing page for the **Codex** wiki. This wiki documents the Library module's
+two distinct things — keep them separate:
 
-For a one-page orientation, start with [[Overview]].
+- **Codex** (the engine) — the scaffolding-and-sync tool that creates and
+  maintains markdown documentation wikis for other projects. *How* raw material
+  becomes a structured, validated wiki. Start with [[Overview]].
+- **The Librarian** (the agent) — the single canonical Codex persona that
+  *operates* the engine: ingests sources, curates pages, maintains canon, runs
+  the dashboards. *Who* does the work. See [[Librarian]].
+
+This wiki documents both — Codex's architecture, operations, the Librarian
+agent, and the build-spec they derive from.
+
+For a one-page orientation, start with [[Overview]]; for the agent, [[Librarian]].
 
 ## Table of Contents
 
 ### Start Here
 
-- [[00-Start-Here/Project-Overview]] — what `Codex` is and why it exists
+- [[00-Start-Here/Project-Overview]] — what `Codex` is, why it exists, who it serves
 - [[00-Start-Here/How-to-Use-This-Wiki]] — navigation, conventions, status bands
 - [[00-Start-Here/Glossary]] — terms and definitions
 - [[00-Start-Here/Terminology-Rules]] — forbidden-term policy and rationale
@@ -47,8 +58,9 @@ What Codex is — folders, schema, scripts, principles.
 
 ### 02 — Operations
 
-How to drive Codex — Bootstrap, Sync, Ingest, build workflow, quickstart.
+How to drive Codex — the Librarian agent, Bootstrap, Sync, Ingest, build workflow, quickstart.
 
+- [[Librarian]] — the agent that operates Codex (the single canonical persona; drives the operations below)
 - [[Bootstrap]] — one-time wiki creation
 - [[Sync]] — ongoing infrastructure refresh (overwrite / merge / never-touched matrix)
 - [[Ingest]] — source integration (most frequent operation; refusal conditions; `--dry-run`)
@@ -73,7 +85,7 @@ How to drive Codex — Bootstrap, Sync, Ingest, build workflow, quickstart.
 
 ## Status
 
-This wiki was scaffolded by Codex and seeded by the v1.3 spec ingest (2026-05-24). Pages currently sit at `status: outlined` — sections are named and key claims cited, but most pages are sketches not yet promoted through the status bands (`gap → outlined → solid → ready`). See [[Frontmatter-Schema]] for the status-band rules.
+This wiki was scaffolded by Codex and seeded by the v1.3 spec ingest (2026-05-24). The two distinct things this module ships are both covered: **Codex** (the engine) by the [[Overview]] plus the full 01-Architecture domain, and **the Librarian** (the agent) by [[Librarian]] — each a derived overview citing the `wiki.codex/git/codex/*` canon. Most pages sit at `status: outlined` — sections are named and key claims cited, but they are not yet promoted through the status bands (`gap → outlined → solid → ready`); a few 00-Start-Here pages remain raw template stubs at `status: gap`. Home stays `outlined` until that tail is filled. See [[Frontmatter-Schema]] for the status-band rules.
 
 <!-- codex:see-also:start -->
 ## See also
