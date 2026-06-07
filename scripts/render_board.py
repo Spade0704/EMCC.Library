@@ -26,8 +26,6 @@ sys.path.insert(0, str(_SCRIPTS))
 import task_state as ts          # noqa: E402
 import task_driver as td         # noqa: E402
 
-GENERATED = Path("tasks") / "board.md"
-
 # (section title, the machine states it groups, blurb). Order is the rendered column order.
 # The lane is named "Ready to Draft (autonomous)" -- draft-only, never "execute/ship" (council #3).
 SECTIONS: tuple = (
@@ -108,9 +106,10 @@ def render_board(board_tasks: Sequence["ts.Task"], transitions: Sequence[dict], 
     return "\n".join(lines).rstrip() + "\n"
 
 
-def build(root: Path) -> str:
-    todo = root / "tasks" / "todo.md"
-    log = root / "tasks" / "orchestrator-log.jsonl"
+def build(root: Path, tasks_dir: str = "tasks") -> str:
+    base = root / tasks_dir
+    todo = base / "todo.md"
+    log = base / "orchestrator-log.jsonl"
     board = ts.parse_todo(todo) if todo.is_file() else []
     transitions = td.read_transitions(log)
     return render_board(board, transitions)
@@ -119,17 +118,21 @@ def build(root: Path) -> str:
 def main(argv: Optional[list] = None) -> int:
     p = argparse.ArgumentParser(prog="render_board", description=__doc__)
     p.add_argument("--root", default=".", help="repo root (default: cwd)")
-    p.add_argument("--check", action="store_true", help="exit 1 if tasks/board.md is stale (CI drift guard)")
+    p.add_argument("--tasks-dir", default="tasks",
+                   help="the tasks directory holding todo.md/orchestrator-log.jsonl/board.md "
+                        "(default: tasks; use 'Tasks' for repos that capitalize it, e.g. tat_app)")
+    p.add_argument("--check", action="store_true", help="exit 1 if board.md is stale (CI drift guard)")
     args = p.parse_args(argv)
     root = Path(args.root)
-    content = build(root)
-    out = root / GENERATED
+    content = build(root, args.tasks_dir)
+    out = root / args.tasks_dir / "board.md"
     if args.check:
         existing = out.read_text(encoding="utf-8") if out.is_file() else ""
         if existing != content:
-            print("tasks/board.md is stale — run: python scripts/render_board.py", file=sys.stderr)
+            print(f"{out} is stale — run: python scripts/render_board.py --tasks-dir {args.tasks_dir}",
+                  file=sys.stderr)
             return 1
-        print("tasks/board.md: in sync")
+        print(f"{out}: in sync")
         return 0
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(content, encoding="utf-8")
