@@ -2,6 +2,15 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 17 — 2026-06-08 — Librarian CLAUDE.md->wiki migration lessons + honesty-block cascade
+
+Part of the portfolio CLAUDE.md anatomy initiative (`EMCC/framework/20`; councils `EMCC/tasks/council/2026-06-07-claude-md-length.md` + `...-honesty-4layer-in-emcc.md`).
+
+- **`tasks/lessons.md`** (PR #33) — captured 6 reusable Librarian lessons from the tat_app/isommelier CLAUDE.md->wiki migrations: verbatim slice-script move (not hand-copy); rules-stay/reference-routes; the canon inversion (overview page becomes canonical -> update `Index.md` drill-to, avoid stale routes); operational state -> archive not wiki not drop; the post-move nav test; and the later-Codex-cross-link/lint-pass note (don't run `update_dashboards.py` to probe — it's a write).
+- **`CLAUDE.md`** (PR #34) — received the portfolio honesty/verification block at the top (first ~50 lines) via the framework/20 cascade (`claude_md_health` honesty-in-head now true). Library itself was already under the line budget.
+- **Verified:** docs-only; no Codex `_scripts`/spec/persona changes. Library remains under the 200-line CLAUDE.md soft budget.
+- **Next:** unchanged Library backlog; a later Codex cross-link/lint pass over the consumer wikis that received migrated content (tat_app, isommelier) once their `wikisys.*` tooling is initialized.
+
 ## Session 16 — 2026-06-06 — Wiki-as-memory routing standard applied (branch: claude/emcc-tasks-overview-K7pvO)
 
 **Mode:** Routing/index normalization only (no wiki content, no canon, no scripts, no verbatim procedures). Applies `EMCC/framework/18-wiki-memory-routing.md` to this repo. Conservative — spec wins; verbatim `INGEST_PROCEDURE.md` + `SEMANTIC_LINT_PROCEDURE.md` untouched.
