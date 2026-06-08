@@ -4,6 +4,24 @@
 
 ---
 
+## CLAUDE.md → wiki migration (anatomy standard, framework/20; tat_app pilot 2026-06-07/08)
+
+When the Librarian migrates an over-long `CLAUDE.md` by routing its reference content into the wiki (per `EMCC/framework/20-claude-md-anatomy.md`), these held:
+
+**Move verbatim via a throwaway slice script, not by hand.** The reference rooms were hundreds of lines of schemas/prompts. Hand-copying invites transcription/fidelity loss. A small one-shot Python script that slices the exact line ranges out of `CLAUDE.md` and appends them to the target pages is *move-not-copy* with zero drift. Delete the script after; never commit it. Locate boundaries by **content markers** (the room/drawer header text), not hardcoded line numbers — the file shifts under you between increments.
+
+**Rules stay, reference routes.** The win is not "shrink the file" — it is separating always-on instruction from task-conditional reference. Leave the load-bearing **invariants** inline as a short pointer block (e.g. "DB-is-memory; soft-delete; PII-strip") and move only the detailed schema/table/prose. A room becomes: header + `! MOVED to [[Page]]` + invariants.
+
+**The canon relationship inverts — fix the framing both ways.** Overview pages that cited `CLAUDE.md` rooms in `canon_sources` (derived-from-CLAUDE.md) become the *canonical home* after the move. Append the moved detail under a clear `## Canonical detail — moved from CLAUDE.md <room> (date)` heading, and **update the repo `Index.md` drill-to** so routes point at the wiki page, not the now-emptied room. A stale drill-to ("→ CLAUDE.md R_DATA") is the main hazard: it sends the next session to a room that no longer holds the detail.
+
+**Operational state is duplication, not knowledge — archive it, don't wiki it and don't drop it.** A `R_STATE`/"current progress" room duplicating `tasks/` does not belong in the wiki (it isn't reference knowledge) nor inline (it drifts). Replace it with a pointer to `tasks/` (the canonical source, matching the DFDU/Library pattern) and preserve the stale snapshot in `tasks/archive.md` — honors don't-delete without leaving a drift source.
+
+**Nav test before declaring done.** After the move, verify: every `CLAUDE.md` route resolves to a real page that actually contains the moved content (grep a known string); the `<!-- EMCC:MODULES:BEGIN/END -->` managed block is byte-intact; and **zero** moved content is left orphaned inline. Re-measure with `EMCC/scripts/inventory_repo.py` `claude_md_health` (honesty-in-first-50 + under soft budget). Pilot one repo, pass the nav test, then do the next — don't batch repos.
+
+**Appended page content still owes a later Codex pass where the wiki is initialized.** The raw append does not run `cross_link_topics`/semantic-lint (and must not — running `update_dashboards.py` to "see" it is a *write*, per the orchestrator-side-effects lesson below). In a Codex-initialized wiki, a later lint/cross-link pass reconciles `related_files`/see-also; in a scaffold-only wiki (e.g. tat_app), the append stands until tooling is initialized.
+
+---
+
 ## Install-root vs content-root, and orchestrator side-effects (Post-S004 carry closure)
 
 **Install-root ≠ content-root.** `find_wiki_root()` returns the *install* root for a v1.1 layout (so the `find_*_dir()` helpers can reach system-side `wikisys.*/_canon/`). But content pages and generated dashboards live on the *content* side (`wiki.<name>/git/`). Scripts that conflate the two write dashboards to `<install>/_dashboards/` (a non-gitignored repo-root leak) and page-walk the entire repo. Lesson: a script's "root" has (at least) two distinct meanings post-split — be explicit about which. Added `find_wiki_content_root()` as the companion to `find_wiki_root()`; the MI-18 `find_*_dir()` helpers already walk up to install root so they work from either start.
