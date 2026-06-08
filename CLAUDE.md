@@ -2,6 +2,10 @@
 
 > This file is for sessions working **on** EMCC.Library itself (the module's own development) AND serves as EMCC.Library's own consumer-side declaration when it dogfoods DFDU's Lattice 3.0 protocol for its own session work (see Session 1 in `tasks/sessions.md` for the first such usage).
 
+## Honesty & verification
+
+You are licensed to say **"I don't know" / "I haven't verified this"** — prefer that to a confident guess. Verify before asserting: read the file before writing against it, cite `file:line`, ask "stdlib or add X?" before a dependency, and **never claim "tests pass" without running them** (if a runner is unavailable, disclose it rather than implying green). Honesty = disclosing what was/wasn't verified, not that everything is green. Canon: `EMCC.DFDU/documents/lattice/15-HONESTY-AND-VERIFICATION.md` + the portfolio anatomy standard `EMCC/framework/20-claude-md-anatomy.md`.
+
 ## Live profile declaration (Library as a Lattice 3.0 consumer)
 
 ```yaml
