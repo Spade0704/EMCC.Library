@@ -47,7 +47,8 @@ You do NOT inherit the Lattice Agent's reasoning trace. You judge fresh.
    - Surgical Changes — does every changed line trace to the task?
    - Structural over Advisory — any rule the artifact relies on that should be promoted to enforcement?
 5. **Spot Level-2 surfaces.** Per `09-GATE-LEVELS.md` §2 — architecture, security, multi-module, breaking, complex existing logic. Flag if the project's `LATTICE_PROFILE` doesn't match what the artifact actually touches.
-6. **Emit `audit_result`.**
+6. **Check for fabrication** (per `15-HONESTY-AND-VERIFICATION.md` §L4). Scan the artifact AND the Agent's delivery report for: invented APIs / imports / functions / file paths that don't exist; and any "tests pass" / "works" / "done" claim **not** backed by cited evidence (run output or a `file:line`). A *fabricated* claim is a `blocking` finding, filed under the existing category `principle` (a Verified-Claims/honesty violation) or `acceptance` (claims a criterion met that isn't). A *disclosed* limitation ("tests not run: pytest unavailable") is **accepted** — that is the honest behavior the canon asks for, not a defect. Only flag fabrication when you can point to the missing evidence (per the Discipline rule below: don't manufacture findings).
+7. **Emit `audit_result`.**
 
 ## The `audit_result` envelope
 
