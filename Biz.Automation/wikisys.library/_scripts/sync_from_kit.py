@@ -252,7 +252,7 @@ def _build_plan(library: Path, consumer: Path, consumer_name: str) -> List[Actio
 def _format_action_line(action: Action, suffix: str = "") -> str:
     """Format an action for stdout."""
     if action.kind == "SKIP":
-        body = "[SKIP] {} (existing customization preserved)".format(action.target)
+        body = "[SKIP] {} (existing file preserved - not compared to upstream)".format(action.target)
     else:
         body = "[{}] {} <- {}".format(action.kind, action.target, action.source)
     if suffix:
