@@ -2,6 +2,10 @@
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
 
+## Session 18 — 2026-06-10 — Fable 5 portfolio audit (read-only) — Grade B+
+
+Wave-2 deep audit of the 16-repo Fable 5 campaign → `tasks/audits/2026-06-10-fable5-audit.md`. No code changed. Tests run for real: **644 OK (skipped=6)** — CLAUDE.md's "~589" is stale; compileall clean; stdlib-only claim verified TRUE by full import sweep; persona drift guard (test_persona_dropin.py, 8/8) works. Top findings: LIB-01 (High, MI-19) Sync is manual + version-stampless and **6 of 7 consumers run pre-Session-14 `doc_lint.py`** (`76acd58c…`; canon `e889e5c7…` @ `405064e`) — MI-19's "CURRENT" labels are wrong at byte level (feature probe, not byte-equality); LIB-02 (High) consumer Librarian drop-ins ungoverned (Sync never touches `.claude/*`; 3 hashes in the wild; eddyandwolff has none); LIB-03 (Medium) Session-14 caution-lint shipped with the mandatory Regime-B Auditor verdict still owed. Canonical artifact hashes recorded in the report appendix for the portfolio synthesis. Fixes via normal gates.
+
 ## Session 17 — 2026-06-08 — Librarian CLAUDE.md->wiki migration lessons + honesty-block cascade
 
 Part of the portfolio CLAUDE.md anatomy initiative (`EMCC/framework/20`; councils `EMCC/tasks/council/2026-06-07-claude-md-length.md` + `...-honesty-4layer-in-emcc.md`).
