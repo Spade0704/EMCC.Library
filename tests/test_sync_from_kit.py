@@ -455,5 +455,149 @@ class TestCrossLinkArtifactSync(unittest.TestCase):
             self.assertIn("_template/_canon__SEP__topics.yaml", stdout)
 
 
+def _git_init_library(library: Path) -> str:
+    """Make the library fixture a git checkout; return its HEAD SHA."""
+    subprocess.run(["git", "init", "-q"], cwd=str(library), check=True)
+    subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=str(library), check=True)
+    subprocess.run(["git", "config", "user.name", "test"], cwd=str(library), check=True)
+    subprocess.run(["git", "config", "commit.gpgsign", "false"], cwd=str(library), check=True)
+    subprocess.run(["git", "add", "."], cwd=str(library), check=True)
+    subprocess.run(
+        ["git", "commit", "-q", "-m", "kit", "--no-verify"],
+        cwd=str(library),
+        check=True,
+    )
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=str(library),
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+
+
+def _commit_all(repo: Path, message: str) -> None:
+    subprocess.run(["git", "add", "."], cwd=str(repo), check=True)
+    subprocess.run(
+        ["git", "commit", "-q", "-m", message, "--no-verify"],
+        cwd=str(repo),
+        check=True,
+    )
+
+
+def _read_stamp(consumer: Path) -> dict:
+    import json
+
+    path = consumer / "Biz.Automation" / ("wikisys." + CONSUMER_NAME) / "SYNC-STAMP.json"
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+class TestSyncStamp(unittest.TestCase):
+    """M-A component 2: SYNC-STAMP.json — the dedicated final action."""
+
+    def test_stamp_written_with_kit_commit_and_overwrite_manifest(self):
+        import hashlib
+
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            library = _make_library_install(tmp_path / "library")
+            sha = _git_init_library(library)
+            consumer = _make_consumer(tmp_path / "consumer")
+            rc, stdout, _stderr = _run_sync(library, consumer)
+            self.assertEqual(rc, 0)
+            stamp = _read_stamp(consumer)
+            self.assertEqual(stamp["kit_commit"], sha)
+            self.assertIn("synced_at", stamp)
+            marker_rel = "Biz.Automation/wikisys.{}/_scripts/marker.py".format(CONSUMER_NAME)
+            expected = hashlib.sha256(b"# library marker\n").hexdigest()
+            self.assertEqual(stamp["manifest"][marker_rel], expected)
+            # Spec doc delivered into the wiki zone is manifested too.
+            self.assertIn(
+                "wiki.{}/git/codex/PROJECT_WIKI_BUILD_SPEC.md".format(CONSUMER_NAME),
+                stamp["manifest"],
+            )
+            # MERGE-NEW lane is consumer-owned: deliberately NOT manifested.
+            config_rel = "Biz.Automation/wikisys.{}/_config/example.yaml".format(CONSUMER_NAME)
+            self.assertNotIn(config_rel, stamp["manifest"])
+            self.assertIn("[STAMP]", stdout)
+
+    def test_second_sync_rewrites_stamp(self):
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            library = _make_library_install(tmp_path / "library")
+            first_sha = _git_init_library(library)
+            consumer = _make_consumer(tmp_path / "consumer")
+            rc, _stdout, _stderr = _run_sync(library, consumer)
+            self.assertEqual(rc, 0)
+            self.assertEqual(_read_stamp(consumer)["kit_commit"], first_sha)
+            # Kit moves on; consumer commits the first sync, then re-syncs.
+            _write(
+                library / "Biz.Automation" / "wikisys.library" / "_scripts" / "marker.py",
+                "# library marker v2\n",
+            )
+            _commit_all(library, "kit v2")
+            _commit_all(consumer, "first sync")
+            rc, _stdout, _stderr = _run_sync(library, consumer)
+            self.assertEqual(rc, 0)
+            import hashlib
+
+            stamp = _read_stamp(consumer)
+            self.assertNotEqual(stamp["kit_commit"], first_sha)
+            marker_rel = "Biz.Automation/wikisys.{}/_scripts/marker.py".format(CONSUMER_NAME)
+            self.assertEqual(
+                stamp["manifest"][marker_rel],
+                hashlib.sha256(b"# library marker v2\n").hexdigest(),
+            )
+
+    def test_failed_action_writes_no_stamp(self):
+        from unittest import mock
+
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            library = _make_library_install(tmp_path / "library")
+            _git_init_library(library)
+            consumer = _make_consumer(tmp_path / "consumer")
+            real_apply = sync_from_kit._apply_action
+
+            def failing_apply(action):
+                if "PROJECT_WIKI_BUILD_SPEC" in action.target:
+                    raise OSError("forced failure")
+                real_apply(action)
+
+            with mock.patch.object(sync_from_kit, "_apply_action", failing_apply):
+                rc, stdout, _stderr = _run_sync(library, consumer)
+            self.assertEqual(rc, 1)
+            stamp_path = (
+                consumer / "Biz.Automation" / ("wikisys." + CONSUMER_NAME) / "SYNC-STAMP.json"
+            )
+            self.assertFalse(stamp_path.exists())
+            self.assertIn("[STAMP] skipped", stdout)
+
+    def test_dry_run_writes_no_stamp(self):
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            library = _make_library_install(tmp_path / "library")
+            _git_init_library(library)
+            consumer = _make_consumer(tmp_path / "consumer")
+            rc, _stdout, _stderr = _run_sync(library, consumer, "--dry-run")
+            self.assertEqual(rc, 0)
+            stamp_path = (
+                consumer / "Biz.Automation" / ("wikisys." + CONSUMER_NAME) / "SYNC-STAMP.json"
+            )
+            self.assertFalse(stamp_path.exists())
+
+    def test_non_git_library_records_null_kit_commit(self):
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            # Library fixture deliberately NOT a git checkout.
+            library = _make_library_install(tmp_path / "library")
+            consumer = _make_consumer(tmp_path / "consumer")
+            rc, _stdout, stderr = _run_sync(library, consumer)
+            self.assertEqual(rc, 0)
+            stamp = _read_stamp(consumer)
+            self.assertIsNone(stamp["kit_commit"])
+            self.assertIn("kit_commit: null", stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
