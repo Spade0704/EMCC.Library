@@ -12,22 +12,27 @@
 #
 # Edit the commented examples below when project values are known.
 # Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+#
+# Regex convention: the YAML-subset parser does NO escape processing —
+# quoted strings are delivered verbatim to re.compile. Write regexes
+# SINGLE-backslash (e.g. "(?i)\bterm\b"), never real-YAML double-backslash
+# ("\\b" arrives as a literal backslash pair = a dead rule that never fires).
 
 rules: []
 
 # Example rules (uncomment + customize per project):
 #
-# - pattern: "(?i)\\bcompetitor-trademark\\b"
+# - pattern: "(?i)\bcompetitor-trademark\b"
 #   severity: error
 #   message: "Trademark violation — use the approved alternative noun."
 #   context: all
 #
-# - pattern: "(?i)\\binternal-codename\\b"
+# - pattern: "(?i)\binternal-codename\b"
 #   severity: warning
 #   message: "Internal codename leaked onto a public surface — replace with public-facing term."
 #   context: audience
 #
-# - pattern: "(?i)\\b(TODO|DRAFT)\\b"
+# - pattern: "(?i)\b(TODO|DRAFT)\b"
 #   severity: info
 #   message: "Draft marker present — confirm before promoting to status: ready."
 #   context: internal

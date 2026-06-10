@@ -14,6 +14,10 @@ This directory holds the YAML rule files that drive Codex's content-quality vali
 
 **`concept_coverage.yaml`** (v1.1, optional) — Tunes `_scripts/check_concept_coverage.py`. Keys: `min_mentions` (default 2; threshold for "entity mentioned in N+ pages but lacks a dedicated page"), `exclude_folders` (folder names skipped during scanning), `exclude_entities` (canonical names skipped — escape hatch for entities deliberately without a dedicated page).
 
+## Regex convention (single-backslash)
+
+The config files are parsed by Codex's YAML-subset parser (`_lib/frontmatter.py`), which does **no escape processing**: a quoted string is delivered verbatim to `re.compile`. Write regexes **single-backslash** — `"(?i)\bterm\b"` — exactly as you would in a raw Python regex. Real-YAML double-backslash (`"\\b"`) arrives as a literal backslash pair and produces a rule that compiles cleanly but **never fires** (a silent false-green validator). Do not "fix" this in the parser: adding escape processing would turn `\b` into backspace `0x08` and silently kill every live single-backslash rule in consuming wikis. Negative-control tests welded to the shipped examples: `tests/test_validate_terminology.py` + `tests/test_validate_reveal_conceit.py` (M-A component 1).
+
 ## Schema authority
 
 Full schema definitions and rule semantics live in `<wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md` §2.5 (synced verbatim from Codex). Edit examples in-file when project values are known; ship as-is for skeleton wikis.
