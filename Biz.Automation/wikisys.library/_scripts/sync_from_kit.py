@@ -329,6 +329,26 @@ def _kit_commit(library: Path) -> Optional[str]:
     return result.stdout.strip() or None
 
 
+def _library_dirty(library: Path) -> bool:
+    """True if the Library checkout has uncommitted changes.
+
+    A dirty kit means kit_commit (HEAD) may misdescribe the delivered bytes,
+    which would mislead check_drift's `git show <kit_commit>:<path>` upstream
+    comparison — the stamp caller WARNs (M-A commit-2 audit, warning 1).
+    """
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=str(library),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        return False
+    return result.returncode == 0 and bool(result.stdout.strip())
+
+
 def _hash_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -372,6 +392,13 @@ def _write_stamp(
         print(
             "WARN: library install path is not a git checkout; "
             "SYNC-STAMP.json records kit_commit: null",
+            file=stderr,
+        )
+    elif _library_dirty(library):
+        print(
+            "WARN: library checkout has uncommitted changes; SYNC-STAMP.json "
+            "kit_commit records HEAD but the delivered bytes may differ from "
+            "it (check_drift upstream comparison may misreport STALE/MODIFIED)",
             file=stderr,
         )
     stamp = {

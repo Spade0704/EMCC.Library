@@ -586,6 +586,23 @@ class TestSyncStamp(unittest.TestCase):
             )
             self.assertFalse(stamp_path.exists())
 
+    def test_dirty_library_checkout_warns(self):
+        # Audit M-A-2 warning 1: a dirty kit means kit_commit (HEAD) may
+        # misdescribe the delivered bytes; sync must say so.
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            library = _make_library_install(tmp_path / "library")
+            _git_init_library(library)
+            _write(
+                library / "Biz.Automation" / "wikisys.library" / "_scripts" / "marker.py",
+                "# uncommitted kit edit\n",
+            )
+            consumer = _make_consumer(tmp_path / "consumer")
+            rc, _stdout, stderr = _run_sync(library, consumer)
+            self.assertEqual(rc, 0)
+            self.assertIn("uncommitted changes", stderr)
+            self.assertIn("kit_commit records HEAD", stderr)
+
     def test_non_git_library_records_null_kit_commit(self):
         with TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
