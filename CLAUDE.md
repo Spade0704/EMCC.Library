@@ -14,7 +14,7 @@ AUDITOR_MODE: persona
 LATTICE_BUS_ROOT: .lattice/bus
 ```
 
-The bus root is relative; `SessionManager` resolves it against this repo root at session start. `.lattice/` is gitignored — bus state is per-machine, never committed. The `personas/CLAUDE.auditor.md` carry from DFDU is byte-equal (verified at Session 1 Phase B2); the Auditor judges Library work against the same canonical 116-line persona DFDU uses.
+The bus root is relative; `SessionManager` resolves it against this repo root at session start. `.lattice/` is gitignored — bus state is per-machine, never committed. The `personas/CLAUDE.auditor.md` carry from DFDU is byte-equal (verified at Session 1 Phase B2); the Auditor judges Library work against the same canonical 117-line persona DFDU uses.
 
 ## The Library module — Codex (protocol) + Librarian (agent)
 
@@ -67,13 +67,13 @@ machine-readable old-path → new-path manifest.
 | `wiki.codex/git/codex/INGEST_PROCEDURE.md` + `…/SEMANTIC_LINT_PROCEDURE.md` | Verbatim procedures shipped into bootstrapped wikis | Never edit without an explicit spec amendment |
 | `wiki.codex/git/codex/CODEX_LIBRARIAN.md` | Librarian agent specification (S002 v1.1 extension: 3 new ops + 5 Mentor patterns + Telegram contract) | Persona / agent work |
 | `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` | Wiki build spec (what bootstrap.py creates) | Bootstrap behavior changes |
-| `Biz.Automation/wikisys.library/_scripts/` | Codex automation: 20 root `.py` (P1–P54-indexed) + 7 `_lib/` foundation modules + 5 new S002 audit scripts (audit_doc_pairing, audit_gitignore, route_inbox, audit_assets, audit_local_split) + 5 launcher `.ps1` | Logic / script work |
+| `Biz.Automation/wikisys.library/_scripts/` | Codex automation: 26 root `.py` (P1–P54-indexed, incl. the 5 S002 audit scripts: audit_doc_pairing, audit_gitignore, route_inbox, audit_assets, audit_local_split) + 8 `_lib/` foundation modules + 5 launcher `.ps1` | Logic / script work |
 | `Biz.Automation/wikisys.library/_template/` | 26 wiki templates with `__SEP__` path encoding | Template work (Sync ships templates into consumer wikis) |
 | `Biz.Automation/wikisys.library/_config/` | 5 YAML config files + README + cross_link.yaml | Config work |
 | `Biz.Automation/wikisys.library/_canon/` | Library's own canon entities (roster/taxonomy/timeline/topics — Codex documenting Codex) | Canon work |
 | `Biz.Automation/wikisys.library/_context/` + `_decisions/` | Runtime context rules + decision history | Reference |
 | `bootstrap.py` | v1.1 canonical-output scaffolder per spec (c); `<projectname>` positional CLI | Bootstrap-behavior changes |
-| `tests/` | Python stdlib `unittest` suite (~589 tests post-S002 / MI-16 retirements) | Test work; verify after any code change |
+| `tests/` | Python stdlib `unittest` suite (644 tests, 6 skipped — verified 2026-06-10) | Test work; verify after any code change |
 | `wiki.codex/git/` | Library's self-hosted dogfood wiki content + `git/.claude/personas/CLAUDE.librarian.md` drop-in | Reference / self-documentation |
 | `wiki.codex/local/` | Library's private zone (gitignored; brain-dump / unfiled) | Operator's private |
 | `.claude/personas/CLAUDE.librarian.md` | Librarian persona drop-in — **GENERATED** from `wiki.codex/git/codex/CODEX_LIBRARIAN.md` via `generate_persona_dropin.py`; do not hand-edit (drift guard: `tests/test_persona_dropin.py`). OBS-4 closure. | Persona / agent work |
@@ -82,7 +82,7 @@ machine-readable old-path → new-path manifest.
 | `0-Inbox/` | Triage area for in-flight planning docs | When planning a change to canon |
 | `module.json` | EMCC module registration (v1.1.0) | Module hookup |
 | `SOURCE-HISTORY.md` | Pointer to project-codex archived SHA + per-file move inventory | "Where did this come from?" |
-| `MIGRATION-ISSUES.md` | Append-only registry (MI-01..MI-16) | Any new extraction or rename touches |
+| `MIGRATION-ISSUES.md` | Append-only registry (MI-01..MI-19) | Any new extraction or rename touches |
 | `REORGANIZATION-INSTRUCTIONS.md` | **Master** manifest (patterns P1–P8 + audit hooks + cross-repo per-project index). | "Which pattern covers this old path?" — see also CLAUDE.md §Path migrations |
 | `reorganization-instructions.library.md` | **Per-project** manifest for EMCC.Library itself (Session 1 + S002 + S003b concrete moves). Pairs with the master above per the v1.3 addendum (2026-05-28). | "Where did this Library PATH go specifically?" |
 
