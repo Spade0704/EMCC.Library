@@ -1,6 +1,17 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-10 — LIB-NEW-A honest Sync skip message (EMCC C-lane session)
+
+C2 council finding executed + merged (PR #39): sync_from_kit's MERGE-NEW SKIP line claimed
+"existing customization preserved" without comparing to upstream — now says "(existing file
+preserved - not compared to upstream)". Suite 644 OK. Queued on this repo via EMCC's M-A gate
+(now REVISE-AND-PROCEED, transcript `EMCC.DFDU/tasks/delta-force/2026-06-10-ma-structural-sync.md`):
+SYNC-STAMP.json (stamp-IS-the-manifest), the dead-regex EXAMPLE-config fix (single-backslash
+convention + negative-control tests — NOT a parser change), MI-20, the canon contract page, and
+the consumer refresh wave. LIB-NEW-B (consumer-modified _scripts pre-clobber detection) rides
+check_drift. Next: the dedicated M-A build session.
+
 
 ## Session 18 — 2026-06-10 — Fable 5 portfolio audit (read-only) — Grade B+
 
