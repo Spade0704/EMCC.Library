@@ -1,6 +1,12 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-11b — Boilerplate-location spec proposal AUTHORED (pending Operator ratification); LIB-08 upstream confirmed complete
+
+**Spec proposal:** `tasks/plans/boilerplate-location-spec-proposal.md` — the per-repo-vs-once-upstream boilerplate question (routed here by C2 resolution 2; the spec's materialize-then-link note marks it pending). Proposes the council's named split: How-to-Use-This-Wiki / Style-Guide / Update-Cascade / File-Routing once-upstream in `wiki.codex` with generated per-consumer stubs (Option A — static stubs, no sync-contract change, recommended); Glossary + Terminology-Rules stay per-repo. Migration = byte-equal-guarded demote loop across the 11 wave consumers. PROPOSAL only — no canon amended; Operator ratifies §2 split + §3 mechanism. No fresh council run (C2 already deliberated and named the direction — disclosed).
+
+**LIB-08 close-out (verified, not built):** the upstream fix is fully landed since M-A component 1 — single-backslash examples + convention comment in both `_config` templates, spec §2.5 amendment (`PROJECT_WIKI_BUILD_SPEC.md`), negative-control tests welded to the shipped examples (`test_validate_terminology.py` + `test_validate_reveal_conceit.py`). Remaining exposure is consumer-side only: `_config` is MERGE-NEW, so 10 consumers still carry the old dead-double-backslash examples (all verified `rules: []` empty — dead examples, no live dead rules; iron_soul already fixed in its #24). Delivery rides the kit-refresh wave (EMCC-side, this session): stamped sync + template swap where byte-safe.
+
 ## 2026-06-11 — M-A components 5+6 shipped + merged; M-A COMPLETE
 
 Operator-authorized merge run (continuation of 2026-06-10b). **Component 5 (PR #42, merged):** `_scripts/materialize_boilerplate.py` (CARTO-06 materialize-then-link — the 6 boilerplate pages from `__SEP__` templates, idempotent SKIP, standalone CLI for existing wikis) + `bootstrap.py` `_emit_boilerplate_pages` carve-out + `PROJECT_WIKI_BUILD_SPEC.md` materialize-then-link note. Regime-B Auditor PASS-WITH-CONCERNS -> all 3 warnings fixed same-session (`d33921c`: honest CREATE-count, `--minimal` skip, structural importlib binding). Suite 655 -> 666 green (6 skipped). Components 1+2+4-docs merged earlier today via PR #41.

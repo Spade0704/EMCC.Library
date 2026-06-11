@@ -2,6 +2,10 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
+## Open — boilerplate-location spec proposal (2026-06-11, pending Operator)
+
+- [ ] **Operator ratifies** `tasks/plans/boilerplate-location-spec-proposal.md` — the C2-routed per-repo-vs-once-upstream split (4 protocol pages once-upstream + stubs; Glossary/Terminology-Rules per-repo) + stub mechanism (Option A recommended). On ratification: the §6 build list is a gated Library session. On rejection: materialize-then-link stands as-is.
+
 ## Sprint — M-A structural Sync build, Library half (CLOSED 2026-06-11 — ALL components shipped + merged)
 
 Gate: `EMCC.DFDU/tasks/delta-force/2026-06-10-ma-structural-sync.md`. Branch `claude/emcc-ma-build-p7ohln` (pushed; no PRs — operator disposes). Session record: `tasks/sessions.md` 2026-06-10b + EMCC `tasks/sessions.md` 2026-06-10g.
