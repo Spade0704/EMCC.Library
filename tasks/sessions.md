@@ -1,6 +1,16 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-10b — M-A structural Sync build: Library half of components 1-4 (dedicated session)
+
+Branch `claude/emcc-ma-build-p7ohln` (pushed; no PRs per standing instruction — operator disposes). Executed the Library side of the M-A gate's FINAL build list (`EMCC.DFDU/tasks/delta-force/2026-06-10-ma-structural-sync.md`), Regime-B Auditor per commit, stop-line honored after component 4:
+
+- **`da16ecf` (component 1)** — the 6 shipped double-backslash regex examples in `_config/forbidden_terms.yaml` + `_config/reveal_leak_patterns.yaml` rewritten single-backslash (the YAML-subset parser does no escape processing; the old examples delivered dead rules — a false-green leak scanner). Convention documented in both headers + `_config/README.md` + canon `PROJECT_WIKI_BUILD_SPEC.md` §2.5. Negative-control tests welded to the shipped examples (failed pre-fix) + iron_soul-style single-backslash controls. Auditor PASS (3 info). Suite 644→648.
+- **`260d6c7` (component 2)** — `sync_from_kit.py` `_write_stamp` dedicated final action → `Biz.Automation/wikisys.<name>/SYNC-STAMP.json` `{kit_commit, synced_at, manifest: OVERWRITE-lane relpath→sha256 as delivered}`; the stamp IS the manifest; only on all-OK, never on `--dry-run`; outside the rmtree + MERGE-NEW lanes; stamp failure fails the run. 5 tests. Auditor PASS-WITH-CONCERNS → **`9f3ff95`** fixed the warning same-session (WARN when the Library checkout is dirty: kit_commit could misdescribe delivered bytes). Suite →654.
+- **`66a8e22` (component 4 docs)** — `wiki.codex/git/codex/SYNC_STAMP_CONTRACT.md` (schema / three-state drift vocabulary STALE-MODIFIED-PERSONA-DRIFT / lifecycle / fences) + MI-20 in `MIGRATION-ISSUES.md` (closes MI-19's version-staleness follow-up) + Index.md codex-canon rows. Suite 655 OK (6 skipped). The consuming script is EMCC `scripts/check_drift.py` (report-only; EMCC `022bcaa`); the Lock-1 Librarian carry is EMCC `emcc_wire._copy_librarian` (`fbfaa2b`) — sources THIS repo's generated drop-in by path (generator untouched, Auditor-verified byte-equal to fresh regeneration).
+
+**Remaining (follow-up session):** M-A component 5 (CARTO-06 materialize-then-link in `bootstrap.py` + one-off loop) + component 6 (the 10-consumer refresh wave, excluding aviation/project-codex/SSUSA). Full cross-repo record: EMCC `tasks/sessions.md` 2026-06-10g.
+
 ## 2026-06-10 — LIB-NEW-A honest Sync skip message (EMCC C-lane session)
 
 C2 council finding executed + merged (PR #39): sync_from_kit's MERGE-NEW SKIP line claimed
