@@ -2,9 +2,10 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
-## Open — boilerplate-location spec proposal (2026-06-11, pending Operator)
+## Sprint — boilerplate-location convention (RATIFIED + BUILT 2026-06-11)
 
-- [ ] **Operator ratifies** `tasks/plans/boilerplate-location-spec-proposal.md` — the C2-routed per-repo-vs-once-upstream split (4 protocol pages once-upstream + stubs; Glossary/Terminology-Rules per-repo) + stub mechanism (Option A recommended). On ratification: the §6 build list is a gated Library session. On rejection: materialize-then-link stands as-is.
+- [x] **Operator ratified** `tasks/plans/boilerplate-location-spec-proposal.md` (§2 split + §3 Option A) — 2026-06-11.
+- [x] **Built** under the gate `EMCC.DFDU/tasks/delta-force/2026-06-11-boilerplate-stub-build.md`: 4 protocol templates -> stubs (canonical pointer + summary; frontmatter parity); `demote_boilerplate_stubs.py` one-off (body-only guard, git-history baseline at pinned `08d87ac`, structural codex exclusion, dry-run); spec amendment in `PROJECT_WIKI_BUILD_SPEC.md` §"Boilerplate location"; canonical-copy notes on the 4 `wiki.codex` pages; `materialize_boilerplate.py` docstring. Suite 666 -> 678 (6 skipped). Migration run across the wave consumers EMCC-side.
 
 ## Sprint — M-A structural Sync build, Library half (CLOSED 2026-06-11 — ALL components shipped + merged)
 

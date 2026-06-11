@@ -14,6 +14,8 @@ unverified_claims: []
 
 # Codex — Update Cascade
 
+> **Canonical copy.** This page is the canonical, once-upstream home of this protocol content (boilerplate-location convention, Operator-ratified 2026-06-11): consumer wikis carry a generated stub that points here. Edit HERE; never fork into a consumer wiki.
+
 When a source page changes, derived pages downstream of it need review or re-derivation. This page explains how `Codex` tracks those dependencies, how staleness is detected, and the workflow for resolving a cascade event.
 
 ## Cascade map

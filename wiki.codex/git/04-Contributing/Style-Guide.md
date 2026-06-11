@@ -17,6 +17,8 @@ related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md,
 
 # Codex — Style Guide
 
+> **Canonical copy.** This page is the canonical, once-upstream home of this protocol content (boilerplate-location convention, Operator-ratified 2026-06-11): consumer wikis carry a generated stub that points here. Edit HERE; never fork into a consumer wiki.
+
 Conventions for authoring pages in the `Codex` wiki. The goal is consistency that lets validators and human readers parse pages quickly without surprises.
 
 ## Frontmatter

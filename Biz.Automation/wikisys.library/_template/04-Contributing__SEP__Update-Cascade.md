@@ -14,77 +14,8 @@ unverified_claims: []
 
 # <Project Name> — Update Cascade
 
-When a source page changes, derived pages downstream of it need review or re-derivation. This page explains how `<Project Name>` tracks those dependencies, how staleness is detected, and the workflow for resolving a cascade event.
+This page is a deliberate stub (Codex boilerplate-location convention, ratified 2026-06-11): the cascade workflow is protocol content, identical for every Codex consumer, so it lives ONCE in the canonical Codex wiki rather than as a forkable per-repo copy.
 
-## Cascade map
+**Canonical page:** `EMCC.Library` repo -> `wiki.codex/git/04-Contributing/Update-Cascade.md` (https://github.com/Spade0704/EMCC.Library)
 
-The machine-readable dependency graph lives in `_config/cascade_map.yaml`. Each entry pairs one source page with one derived page:
-
-```yaml
-pairs:
-  - source: "01-Framework/Spec.md"
-    derived: "public/Spec-Briefing.md"
-
-  - source: "02-Domain/Glossary.md"
-    derived: "public/Glossary-Public.md"
-```
-
-Schema (per spec §2.5):
-
-- Top-level wrapper key: `pairs` (list).
-- Per-pair required keys: `source`, `derived`.
-- Paths are wiki-root-relative POSIX strings.
-
-One source may appear in multiple pairs (one source → many derived). One derived may also appear in multiple pairs (one derived from many sources); each cascade event fires independently.
-
-## Staleness detection
-
-`_scripts/check_cascade.py` reads `_config/cascade_map.yaml` and compares modification times: when a `source` is newer than its `derived`, the pair is reported as stale. Output flows into `_dashboards/` via the orchestrator (`_scripts/update_dashboards.py`).
-
-This is mtime-based, not content-based — a no-op `touch` on a source counts as a change. Treat it as a coarse signal: a stale entry means "review whether the derived page still reflects the source."
-
-## Diff-time cascade impact
-
-`_scripts/delta_source_docs.py` takes two versions of a source document and emits the structural diff (sections added / modified / removed). Pair it with `_config/cascade_map.yaml` when reviewing a non-trivial source edit: every derived page listed for the changed source is in scope for review.
-
-## Per build session (required)
-
-The wiki is **derived documentation, kept current every build session** — not a one-time artifact. A build/coding session that changes the project (code, schema, config, APIs, behavior) is not complete until this wiki reflects it. This mirrors the "Wiki Maintenance Behavior" rule in `_context/CLAUDE_CONTEXT_RULES.md`.
-
-At the end of each build session, before reporting it done:
-
-1. **List what changed** — touched areas + any new/renamed names, contracts, routes, schema, or behavior.
-2. **Update the affected pages** so they match the new reality (add pages for genuinely new surfaces; edit the most specific existing page over a parent index). Update each page's `canon_sources` + `last_updated`.
-3. **Run the cascade** (the Workflow below) and re-derive or acknowledge each stale pair.
-4. **Log the session** in the project's task/session record.
-
-If a change is genuinely doc-irrelevant (pure formatting / no behavior), state that explicitly rather than skipping silently. The goal: the wiki never lags more than one session behind the project.
-
-## Workflow
-
-1. Edit the source page; update `last_updated`.
-2. Run `python _scripts/update_dashboards.py` from the wiki root.
-3. Open the cascade-staleness dashboard in `_dashboards/` and locate any newly stale pairs.
-4. For each stale pair, decide:
-   - **Re-derive** — update the derived page to match the new source; bump `last_updated` and `completion`/`status` as appropriate.
-   - **Suppress** — if the change does not affect the derived page, simply bump `last_updated` on the derived page (acknowledges review) without further edits.
-5. Re-run the dashboards to confirm the pair is no longer stale.
-
-## Adding a new pair
-
-1. Add the `{source, derived}` entry to `_config/cascade_map.yaml`.
-2. Bump `last_updated` on the derived page so the new pair starts in a "fresh" state.
-3. Run `_scripts/update_dashboards.py` to confirm the addition is picked up cleanly.
-
-## Removing a pair
-
-If a derivation relationship no longer holds, remove the pair from `_config/cascade_map.yaml`. Consider whether the derived page should be archived, repurposed, or deleted; cascade map removal is independent of the derived page's lifecycle.
-
-## Related pages
-
-- [[File-Routing]]
-- [[Style-Guide]]
-- `_config/cascade_map.yaml`
-- `_scripts/check_cascade.py`
-- `_scripts/delta_source_docs.py`
-- `04-Contributing/PROJECT_WIKI_BUILD_SPEC.md` §2.5 (schema authority)
+In one paragraph: when a source page changes, pages derived from it need review or re-derivation; the cascade map (`_config/cascade_map.yaml`) declares those dependencies, validators detect staleness, and the workflow walks the affected pages until the cascade clears. Read the canonical page for the detection rules and resolution workflow; this repo's project-specific dependency declarations live in its own `_config/cascade_map.yaml`.

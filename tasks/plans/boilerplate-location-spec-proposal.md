@@ -1,8 +1,13 @@
 # Spec-amendment PROPOSAL — boilerplate-page location (per-repo vs once-upstream)
 
-> **Status: PROPOSAL — pending Operator ratification.** Nothing in this document
-> amends canon. On ratification the spec edits + build items in §6 become a gated
-> session; on rejection the current materialize-then-link convention simply stands.
+> **Status: RATIFIED (Operator, 2026-06-11) — and BUILT same-session.** The §2
+> split + §3 Option A were ratified as proposed; the §6 build list shipped under
+> the Delta Force gate `EMCC.DFDU/tasks/delta-force/2026-06-11-boilerplate-stub-build.md`
+> (PROCEED with 4 binding revisions: body-only comparison guard, structural
+> wiki.codex exclusion, stub frontmatter parity, skip+report on modified copies).
+> Spec canon now carries the convention (`PROJECT_WIKI_BUILD_SPEC.md` §"Boilerplate
+> location"); migration ran across the wave consumers (see Library
+> `tasks/sessions.md` 2026-06-11c).
 >
 > Routed here by the C2 council (2026-06-10, resolution 2:
 > `EMCC/tasks/council/2026-06-10-c2-zoning-doc-conventions.md` — "the prior question

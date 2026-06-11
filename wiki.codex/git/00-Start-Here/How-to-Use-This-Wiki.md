@@ -14,6 +14,8 @@ unverified_claims: []
 
 # Codex — How to Use This Wiki
 
+> **Canonical copy.** This page is the canonical, once-upstream home of this protocol content (boilerplate-location convention, Operator-ratified 2026-06-11): consumer wikis carry a generated stub that points here. Edit HERE; never fork into a consumer wiki.
+
 This page explains how the `Codex` wiki is organized, how to navigate it, and the conventions that pages follow. It is generic across projects scaffolded by Codex; minor customization is usually unnecessary.
 
 ## Navigation
