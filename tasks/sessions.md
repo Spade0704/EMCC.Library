@@ -1,6 +1,17 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-11c — Boilerplate-location convention RATIFIED + BUILT (4 protocol pages once-upstream; stubs ship; demote one-off)
+
+Operator ratified the proposal (§2 split + §3 Option A) same-day; built under `/delta-force` PROCEED-with-revisions (`EMCC.DFDU/tasks/delta-force/2026-06-11-boilerplate-stub-build.md` — run inline, Stage 3 chairman cross-review, disclosed). Shipped:
+
+1. **4 protocol templates -> stubs** (`_template/{00-Start-Here__SEP__How-to-Use-This-Wiki,04-Contributing__SEP__{Style-Guide,Update-Cascade,File-Routing}}.md`): frontmatter parity (R3), one-paragraph summary, canonical pointer to `wiki.codex/git/`. Glossary + Terminology-Rules untouched (project content). `materialize_boilerplate.py` unchanged behaviorally (content-agnostic; docstring notes the convention) — new wikis are born with stubs for free; bootstrap untouched.
+2. **`_scripts/demote_boilerplate_stubs.py`** (one-off migration): demotes a consumer page IFF its BODY equals the old full template with the project name substituted (R1 — frontmatter excluded, so cross_link-injected keys + dates can't false-positive); old baseline read from Library git history at pinned `08d87ac`; structural refusal on the codex wiki (R2); modified copies SKIP-MODIFIED + reported (R4); `--dry-run`; stdlib.
+3. **Spec amendment** — `PROJECT_WIKI_BUILD_SPEC.md` new §"Boilerplate location" note (the ratified split; closes the materialize-then-link note's "SEPARATE pending" line). Canonical-copy notes added to the 4 `wiki.codex` pages (edit HERE, never fork).
+4. **Tests** — `tests/test_demote_boilerplate_stubs.py` (guard matrix: demote/skip-modified/missing/no-baseline/dry-run; injected-frontmatter tolerance; structural exclusion; shipped-stub shape welded to the real templates; git-baseline integration test, skip-on-shallow). Suite 666 -> 678 green (6 skipped).
+
+Regime-B: inline persona audit (disclosed) — findings closed in-build: injectable `old_body_fn` for hermetic tests; `NO-BASELINE` action so an unreachable pinned SHA can never demote on a bad comparison. Migration across the wave consumers runs EMCC-side (Mentor expected to SKIP — its pages predate the wave and are consumer content; that is the guard working).
+
 ## 2026-06-11b — Boilerplate-location spec proposal AUTHORED (pending Operator ratification); LIB-08 upstream confirmed complete
 
 **Spec proposal:** `tasks/plans/boilerplate-location-spec-proposal.md` — the per-repo-vs-once-upstream boilerplate question (routed here by C2 resolution 2; the spec's materialize-then-link note marks it pending). Proposes the council's named split: How-to-Use-This-Wiki / Style-Guide / Update-Cascade / File-Routing once-upstream in `wiki.codex` with generated per-consumer stubs (Option A — static stubs, no sync-contract change, recommended); Glossary + Terminology-Rules stay per-repo. Migration = byte-equal-guarded demote loop across the 11 wave consumers. PROPOSAL only — no canon amended; Operator ratifies §2 split + §3 mechanism. No fresh council run (C2 already deliberated and named the direction — disclosed).

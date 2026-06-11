@@ -13,6 +13,13 @@ The six pages:
     04-Contributing/Update-Cascade.md
     04-Contributing/File-Routing.md
     04-Contributing/Style-Guide.md
+Boilerplate-location convention (Operator-RATIFIED 2026-06-11; proposal at
+`tasks/plans/boilerplate-location-spec-proposal.md`): the four PROTOCOL pages
+(How-to-Use-This-Wiki, Style-Guide, Update-Cascade, File-Routing) ship as
+STUB templates pointing at the canonical copies in `wiki.codex/git/`;
+Glossary + Terminology-Rules remain full per-repo templates. This script is
+content-agnostic — it materializes whatever the templates contain; existing
+wikis migrate via `demote_boilerplate_stubs.py` (one-off, guard-protected).
 
 Behavior:
     - Decodes `__SEP__` template names to real paths under the wiki content root.

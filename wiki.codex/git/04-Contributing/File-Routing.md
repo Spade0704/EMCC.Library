@@ -14,6 +14,8 @@ unverified_claims: []
 
 # Codex — File Routing
 
+> **Canonical copy.** This page is the canonical, once-upstream home of this protocol content (boilerplate-location convention, Operator-ratified 2026-06-11): consumer wikis carry a generated stub that points here. Edit HERE; never fork into a consumer wiki.
+
 Use this page to decide which folder a new piece of content belongs in. The decision turns on three questions: *what is the content*, *who is it for*, and *what is its lifecycle*.
 
 ## Quick reference
