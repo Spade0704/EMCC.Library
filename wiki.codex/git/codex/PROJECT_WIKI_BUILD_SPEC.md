@@ -224,6 +224,8 @@ All pure Python stdlib. No `pip install`. Live in `_scripts/` of every wiki, mas
 - **`steel_threads.yaml`** — multi-layer feature manifest
 - **`concept_coverage.yaml`** (v1.1, optional) — tunes `check_concept_coverage.py`. Keys: `min_mentions` (default 2), `exclude_folders` (list of folder names skipped during scanning), `exclude_entities` (list of canonical names skipped — escape hatch)
 
+> **Regex convention (amended 2026-06-10, M-A component 1).** The `_config/` files are read by Codex's YAML-subset parser, which performs **no escape processing**: quoted strings are delivered verbatim to `re.compile`. Regex values MUST be written **single-backslash** (`"(?i)\bterm\b"`), never real-YAML double-backslash (`"\\b"` is delivered as a literal backslash pair — a rule that compiles but never fires). The parser must NOT gain escape processing: it would reinterpret `\b` as backspace and silently break every live single-backslash rule in consuming wikis. Shipped examples follow this convention and are guarded by negative-control tests in the Library suite.
+
 **`_canon/`** (ground-truth facts, per-project):
 
 - **`counts.yaml`** — every canonical number that appears more than once

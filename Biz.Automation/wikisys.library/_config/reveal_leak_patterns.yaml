@@ -12,19 +12,24 @@
 #
 # Edit the commented examples below when project values are known.
 # Schema authority: <wiki>/04-Contributing/PROJECT_WIKI_BUILD_SPEC.md §2.5.
+#
+# Regex convention: the YAML-subset parser does NO escape processing —
+# quoted strings are delivered verbatim to re.compile. Write regexes
+# SINGLE-backslash (e.g. "(?i)\bterm\b"), never real-YAML double-backslash
+# ("\\b" arrives as a literal backslash pair = a dead rule that never fires).
 
 rules: []
 
 # Example rules (uncomment + customize per project):
 #
-# - pattern: "(?i)\\bspoiler-codename\\b"
+# - pattern: "(?i)\bspoiler-codename\b"
 #   severity: error
 #   message: "Pre-release codename appears on a public page — strip or replace before publish."
 #
-# - pattern: "(?i)\\bdraft\\s+section\\b"
+# - pattern: "(?i)\bdraft\s+section\b"
 #   severity: warning
 #   message: "Draft-section marker on a public page — confirm intent before publish."
 #
-# - pattern: "(?i)\\bapproved-public-term\\b"
+# - pattern: "(?i)\bapproved-public-term\b"
 #   severity: info
 #   message: "This term is approved for public surfaces — documenting to suppress future false-positive flags."

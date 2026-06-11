@@ -77,7 +77,8 @@ These are the spec docs the Librarian agent + consumers reference for Codex sema
 | `CODEX_LIBRARIAN.md` | Librarian agent specification (S002 v1.1 extension: 3 new ops — Inbox-Sort / Pairing-Audit / Cross-Project-Scan; 5 Mentor pattern codifications; Telegram auto-summary contract) |
 | `INGEST_PROCEDURE.md` | Verbatim-shipped procedure for ingesting new sources into wikis |
 | `SEMANTIC_LINT_PROCEDURE.md` | Verbatim-shipped lint procedure |
-| `PROJECT_WIKI_BUILD_SPEC.md` | Wiki build spec (what `bootstrap.py` materializes for consuming projects) |
+| `PROJECT_WIKI_BUILD_SPEC.md` | Wiki build spec (what `bootstrap.py` materializes for consuming projects). §2.5 carries the single-backslash regex convention for `_config/` rule files (M-A, 2026-06-10: the YAML-subset parser does no escape processing). |
+| `SYNC_STAMP_CONTRACT.md` | **SYNC-STAMP contract** (M-A, 2026-06-10; MI-20) — schema of the `SYNC-STAMP.json` version stamp `sync_from_kit.py` writes as its dedicated final action (`{kit_commit, synced_at, manifest}`; the stamp IS the kit manifest), the three-state drift vocabulary (STALE / MODIFIED / PERSONA-DRIFT — co-occurring, never blended) consumed by report-only `EMCC/scripts/check_drift.py`, the lifecycle (all-OK only; never on `--dry-run`; dirty-kit WARN), and the locked fences. |
 | `Obsidian-Setup-Guide.md` | Consumer guidance for Obsidian users |
 | `codex-build-plan.html` | Original Codex build plan (P1–P54 priorities) |
 | `Codex_Project_Documentation.pdf` + `Codex_Workflow_Cheatsheet_v1.txt` + `codex-build-progress.md` | Background / historical Codex materials |

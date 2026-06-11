@@ -391,6 +391,81 @@ class ValidateTerminologyTests(unittest.TestCase):
             if line.startswith("- "):
                 self.assertNotIn("\\", line)
 
+    # --- Shipped-example negative controls (M-A component 1) --------------
+    # Same convention guard as test_validate_reveal_conceit: the YAML-subset
+    # parser does NO escape processing, so shipped examples must be
+    # single-backslash or they deliver dead regexes silently.
+
+    def _write_page(self, rel_path, body):
+        path = self.wiki / rel_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fm = (
+            "---\n"
+            'title: "Test Page"\n'
+            "type: reference\n"
+            "visibility: public\n"
+            "completion: 0\n"
+            "status: outlined\n"
+            "last_updated: 2026-05-07\n"
+            "---\n\n"
+        )
+        path.write_text(fm + body, encoding="utf-8")
+
+    def test_shipped_example_rules_fire_on_violating_page(self):
+        self._set_rules(_uncomment_shipped_examples(SHIPPED_TERMS_CONFIG))
+        self._write_page(
+            Path("01-Domain") / "Violating.md",
+            "This page names the competitor-trademark in prose.\n",
+        )
+        with redirect_stderr(io.StringIO()):
+            summary = validate_terminology.run(self.wiki)
+        violating = self._findings_for(summary, "Violating.md")
+        self.assertGreaterEqual(len(violating), 1)
+
+    def test_single_backslash_rule_fires(self):
+        # iron_soul-style live rule: single-backslash \b is the working
+        # convention under the no-escape parser and must keep firing.
+        self._set_rules(
+            "rules:\n"
+            "  - pattern: \"(?i)\\bscoria\\b\"\n"
+            "    severity: error\n"
+            "    message: \"single-backslash convention control\"\n"
+            "    context: all\n"
+        )
+        self._write_page(
+            Path("01-Domain") / "Control.md",
+            "Scoria appears here.\n",
+        )
+        summary = validate_terminology.run(self.wiki)
+        control = self._findings_for(summary, "Control.md")
+        self.assertEqual(len(control), 1)
+
+
+SHIPPED_TERMS_CONFIG = (
+    Path(__file__).resolve().parents[1]
+    / "Biz.Automation" / "wikisys.library" / "_config"
+    / "forbidden_terms.yaml"
+)
+
+
+def _uncomment_shipped_examples(config_path):
+    """Return the shipped '# Example rules' block as live rules YAML.
+
+    Mirrors what a consuming-wiki maintainer does: uncomment the examples
+    and fill in project values. Keeps the negative-control tests welded to
+    the example text that actually ships.
+    """
+    lines = config_path.read_text(encoding="utf-8").splitlines()
+    out = []
+    started = False
+    for line in lines:
+        if line.startswith("# Example rules"):
+            started = True
+            continue
+        if started and line.startswith("# "):
+            out.append("  " + line[2:])
+    return "rules:\n" + "\n".join(out) + "\n"
+
 
 if __name__ == "__main__":
     unittest.main()

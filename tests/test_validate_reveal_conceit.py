@@ -481,6 +481,74 @@ class ValidateRevealConceitTests(unittest.TestCase):
         sevs = [f["severity"] for f in summary["findings"]]
         self.assertEqual(sevs, sorted(sevs, key=("error", "warning").index))
 
+    # --- Shipped-example negative controls (M-A component 1) --------------
+    # The YAML-subset parser (_lib.frontmatter._parse_value) does NO escape
+    # processing: a double-backslash example delivers a literal backslash
+    # pair to re.compile — a dead regex and a false-green leak scanner.
+    # Shipped examples must therefore be single-backslash, and these tests
+    # weld that convention to the actual shipped config file.
+
+    def test_shipped_example_rules_fire_on_leaky_page(self):
+        self._set_rules(_uncomment_shipped_examples(SHIPPED_REVEAL_CONFIG))
+        self._write_page(
+            Path("01-PublicDomain") / "Leaky.md",
+            "The spoiler-codename appears in this public page body.\n",
+            visibility="public",
+        )
+        with redirect_stderr(io.StringIO()) as err:
+            summary = validate_reveal_conceit.run(self.wiki)
+        leaky = [f for f in summary["findings"]
+                 if f["page_path"].name == "Leaky.md"]
+        self.assertGreaterEqual(len(leaky), 1)
+        # Dead-regex failure mode is SILENT (a literal-backslash pattern
+        # still compiles) — assert no compile warnings either way.
+        self.assertNotIn("regex compile error", err.getvalue())
+
+    def test_single_backslash_rule_fires(self):
+        # iron_soul-style live rule: single-backslash \b is the working
+        # convention under the no-escape parser and must keep firing.
+        self._set_rules(
+            "rules:\n"
+            "  - pattern: \"(?i)\\bscoria\\b\"\n"
+            "    severity: error\n"
+            "    message: \"single-backslash convention control\"\n"
+        )
+        self._write_page(
+            Path("01-PublicDomain") / "Control.md",
+            "Scoria appears here.\n",
+            visibility="public",
+        )
+        summary = validate_reveal_conceit.run(self.wiki)
+        control = [f for f in summary["findings"]
+                   if f["page_path"].name == "Control.md"]
+        self.assertEqual(len(control), 1)
+
+
+SHIPPED_REVEAL_CONFIG = (
+    Path(__file__).resolve().parents[1]
+    / "Biz.Automation" / "wikisys.library" / "_config"
+    / "reveal_leak_patterns.yaml"
+)
+
+
+def _uncomment_shipped_examples(config_path):
+    """Return the shipped '# Example rules' block as live rules YAML.
+
+    Mirrors what a consuming-wiki maintainer does: uncomment the examples
+    and fill in project values. Keeps the negative-control tests welded to
+    the example text that actually ships.
+    """
+    lines = config_path.read_text(encoding="utf-8").splitlines()
+    out = []
+    started = False
+    for line in lines:
+        if line.startswith("# Example rules"):
+            started = True
+            continue
+        if started and line.startswith("# "):
+            out.append("  " + line[2:])
+    return "rules:\n" + "\n".join(out) + "\n"
+
 
 if __name__ == "__main__":
     unittest.main()

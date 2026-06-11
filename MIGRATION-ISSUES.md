@@ -240,3 +240,15 @@ Per S002 architect plan §B9 disposition table:
 - **`aviation` toolchain assessment** — decide whether it adopts the Codex engine at all, or stays on bespoke `build_wiki`.
 
 **Status:** OPEN (advisory recorded; Mentor handled out-of-room; `eddyandwolff` re-sync + `aviation` assessment + version-stamp mechanism are proposed follow-ups).
+
+### MI-20 — SYNC-STAMP.json version stamp + EMCC check_drift (M-A structural Sync build)
+
+**Landed:** 2026-06-10, branch `claude/emcc-ma-build-p7ohln` (Library commits `da16ecf`/`260d6c7`/`9f3ff95` + EMCC commits `fbfaa2b`/`022bcaa`). Pre-build gate: `EMCC.DFDU/tasks/delta-force/2026-06-10-ma-structural-sync.md` (REVISE AND PROCEED).
+
+**Closes MI-19's "version-staleness detection" follow-up.** `sync_from_kit.py` now ends every fully-successful real-run with a dedicated final action writing `Biz.Automation/wikisys.<consumer>/SYNC-STAMP.json` — `{kit_commit (Library HEAD SHA, null if not a git checkout), synced_at (UTC ISO-8601), manifest (consumer-relative posix relpath -> sha256 of the OVERWRITE-lane files as delivered)}`. The stamp IS the kit manifest (no separate manifest artifact — Library's truth is its own git tree); it is never written on `--dry-run` or after any per-action failure, and a dirty Library checkout WARNs that `kit_commit` may misdescribe the delivered bytes.
+
+**Consumer:** `EMCC/scripts/check_drift.py` (report-only — zero write paths, no `--fix`) reads the stamp and reports three independent, co-occurring states: **STALE** (kit moved on upstream; whole-kit `kit_commit != HEAD` + per-file via `git show <kit_commit>:<path>` vs upstream now), **MODIFIED** (consumer file != stamped as-delivered hash — the LIB-NEW-B pre-clobber warning for the rmtree+OVERWRITE lane), **PERSONA-DRIFT** (carried Librarian/Auditor persona != generator/template output). An unparseable stamp is treated as "no valid stamp" (an interrupted sync may truncate it).
+
+**Contract canon:** `wiki.codex/git/codex/SYNC_STAMP_CONTRACT.md` (schema, vocabulary, lifecycle — spec wins). Related: the same M-A build fixed the dead double-backslash regex examples in `_config/forbidden_terms.yaml` + `_config/reveal_leak_patterns.yaml` (the doc_lint-cohort false-green leak scanner) and added the single-backslash convention to `PROJECT_WIKI_BUILD_SPEC.md` §2.5.
+
+**Status:** LANDED (stamp + drift check shipped; the 10-consumer refresh wave is M-A component 6, sequenced after the component-4 stop-line).

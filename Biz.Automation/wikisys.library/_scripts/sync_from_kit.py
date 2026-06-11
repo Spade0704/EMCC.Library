@@ -60,6 +60,25 @@ Exit codes:
     3  source-missing at Codex install path (operator-actionable error)
     4  consumer-discovery ambiguous (zero or multiple matches; --consumer-name overrides)
 
+Version stamp (M-A component 2, 2026-06-10):
+    Every fully-successful real-run ends with a dedicated final action that
+    writes `Biz.Automation/wikisys.<consumer>/SYNC-STAMP.json` (no underscore
+    prefix — it is metadata ABOUT the kit, not kit content):
+
+        {
+          "kit_commit": "<Library HEAD SHA, or null if not a git checkout>",
+          "synced_at": "<UTC ISO-8601>",
+          "manifest": { "<consumer-relative posix relpath>": "<sha256>" }
+        }
+
+    The stamp IS the kit manifest — there is no separate upstream manifest
+    artifact (Library's truth is its own git tree; check_drift compares
+    upstream via `git show <kit_commit>:<path>`). The manifest hashes the
+    OVERWRITE-lane files as delivered; MERGE-NEW/SKIP files are
+    consumer-owned after first sync and deliberately not manifested.
+    The stamp is written ONLY when every action succeeded, and never on
+    --dry-run. Consumed by EMCC `scripts/check_drift.py` (report-only).
+
 Notes:
     - Pure stdlib (argparse + shutil + subprocess + pathlib).
     - `__pycache__` dirs filtered out at copy time AND wiped post-copy
@@ -74,11 +93,14 @@ Notes:
 """
 
 import argparse
+import hashlib
+import json
 import shutil
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import List, NamedTuple, Optional, Tuple
+from typing import Dict, List, NamedTuple, Optional, Tuple
 
 
 SCRIPTS_DIR = "_scripts"
@@ -96,6 +118,10 @@ PROJECT_WIKI_BUILD_SPEC_FILE = "PROJECT_WIKI_BUILD_SPEC.md"
 INGEST_PROCEDURE_FILE = "INGEST_PROCEDURE.md"
 SEMANTIC_LINT_PROCEDURE_FILE = "SEMANTIC_LINT_PROCEDURE.md"
 CODEX_LIBRARIAN_FILE = "CODEX_LIBRARIAN.md"
+
+# Version-stamp filename (M-A component 2). No underscore prefix: the stamp
+# is metadata ABOUT the kit, not kit content (underscore dirs read as kit).
+SYNC_STAMP_FILE = "SYNC-STAMP.json"
 
 
 class Action(NamedTuple):
@@ -286,6 +312,114 @@ def _wipe_pycache(root: Path) -> None:
             shutil.rmtree(path, ignore_errors=True)
 
 
+def _kit_commit(library: Path) -> Optional[str]:
+    """Resolve the Library install's HEAD SHA; None if git/checkout unavailable."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(library),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        return None
+    if result.returncode != 0:
+        return None
+    return result.stdout.strip() or None
+
+
+def _library_dirty(library: Path) -> bool:
+    """True if the Library checkout has uncommitted changes.
+
+    A dirty kit means kit_commit (HEAD) may misdescribe the delivered bytes,
+    which would mislead check_drift's `git show <kit_commit>:<path>` upstream
+    comparison — the stamp caller WARNs (M-A commit-2 audit, warning 1).
+    """
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=str(library),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        return False
+    return result.returncode == 0 and bool(result.stdout.strip())
+
+
+def _hash_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _stamp_manifest(actions: List[Action], consumer: Path) -> Dict[str, str]:
+    """Hash the OVERWRITE-lane files as delivered (consumer-relative posix).
+
+    MERGE-NEW/SKIP targets are consumer-owned after first sync and are
+    deliberately excluded — "modified" is expected there, not drift.
+    """
+    manifest: Dict[str, str] = {}
+    for action in actions:
+        if action.kind != "OVERWRITE":
+            continue
+        if action.is_dir:
+            for f in sorted(action.target_abs.rglob("*")):
+                if f.is_file() and "__pycache__" not in f.parts:
+                    manifest[f.relative_to(consumer).as_posix()] = _hash_file(f)
+        else:
+            manifest[action.target_abs.relative_to(consumer).as_posix()] = _hash_file(
+                action.target_abs
+            )
+    return manifest
+
+
+def _write_stamp(
+    library: Path,
+    consumer: Path,
+    consumer_name: str,
+    actions: List[Action],
+    stdout,
+    stderr,
+) -> None:
+    """Dedicated FINAL action (M-A component 2): write SYNC-STAMP.json.
+
+    Caller invariants: real-run only (never --dry-run), and only when every
+    preceding action succeeded — a stamp asserts a fully-delivered kit.
+    """
+    commit = _kit_commit(library)
+    if commit is None:
+        print(
+            "WARN: library install path is not a git checkout; "
+            "SYNC-STAMP.json records kit_commit: null",
+            file=stderr,
+        )
+    elif _library_dirty(library):
+        print(
+            "WARN: library checkout has uncommitted changes; SYNC-STAMP.json "
+            "kit_commit records HEAD but the delivered bytes may differ from "
+            "it (check_drift upstream comparison may misreport STALE/MODIFIED)",
+            file=stderr,
+        )
+    stamp = {
+        "kit_commit": commit,
+        "synced_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "manifest": _stamp_manifest(actions, consumer),
+    }
+    stamp_path = (
+        consumer / "Biz.Automation" / ("wikisys." + consumer_name) / SYNC_STAMP_FILE
+    )
+    stamp_path.write_text(
+        json.dumps(stamp, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    print(
+        "[STAMP] Biz.Automation/wikisys.{}/{} (kit_commit: {}) [OK]".format(
+            consumer_name, SYNC_STAMP_FILE, commit or "null"
+        ),
+        file=stdout,
+    )
+
+
 def _print_summary(actions: List[Action], stdout) -> None:
     """Print Overwrites/Merge-new/Skipped counts footer."""
     n_over = sum(1 for a in actions if a.kind == "OVERWRITE")
@@ -384,6 +518,21 @@ def _main(argv=None, consumer_root=None, stdout=None, stderr=None) -> int:
                     action,
                     "[FAILED: {}: {}]".format(type(exc).__name__, exc),
                 ),
+                file=stdout,
+            )
+    if any_failed:
+        print(
+            "[STAMP] skipped (action failure - the stamp records only "
+            "fully-delivered syncs)",
+            file=stdout,
+        )
+    else:
+        try:
+            _write_stamp(library, consumer, consumer_name, actions, stdout, stderr)
+        except Exception as exc:
+            any_failed = True
+            print(
+                "[STAMP] FAILED: {}: {}".format(type(exc).__name__, exc),
                 file=stdout,
             )
     _print_summary(actions, stdout)
