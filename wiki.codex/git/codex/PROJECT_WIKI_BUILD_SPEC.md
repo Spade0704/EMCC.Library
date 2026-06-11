@@ -226,6 +226,8 @@ All pure Python stdlib. No `pip install`. Live in `_scripts/` of every wiki, mas
 
 > **Regex convention (amended 2026-06-10, M-A component 1).** The `_config/` files are read by Codex's YAML-subset parser, which performs **no escape processing**: quoted strings are delivered verbatim to `re.compile`. Regex values MUST be written **single-backslash** (`"(?i)\bterm\b"`), never real-YAML double-backslash (`"\\b"` is delivered as a literal backslash pair — a rule that compiles but never fires). The parser must NOT gain escape processing: it would reinterpret `\b` as backspace and silently break every live single-backslash rule in consuming wikis. Shipped examples follow this convention and are guarded by negative-control tests in the Library suite.
 
+> **Materialize-then-link (amended 2026-06-11, M-A component 5 / CARTO-06).** "Every advertised hop resolves; the generator owns consistency" (C2 council convention lock). Bootstrap materializes the six ToC-advertised boilerplate pages (`00-Start-Here/{How-to-Use-This-Wiki,Glossary,Terminology-Rules}.md` + `04-Contributing/{Update-Cascade,File-Routing,Style-Guide}.md`) from templates into `wiki.<name>/git/` at scaffold time, so a new wiki is never born with dead Home links. Existing wikis use the kit's `materialize_boilerplate.py` standalone (idempotent: existing pages are always SKIPPED — once materialized, a page is consumer content). The per-repo-vs-once-upstream boilerplate-location question is a SEPARATE pending spec proposal, deliberately not resolved here.
+
 **`_canon/`** (ground-truth facts, per-project):
 
 - **`counts.yaml`** — every canonical number that appears more than once

@@ -3,10 +3,16 @@
 
 Generates the canonical portfolio folder layout per
 `tasks/plans/portfolio-folder-structure-spec.md` section (c). Bootstrap
-is SCAFFOLD-ONLY: emits the skeleton (folders + `.gitkeep` markers +
+is SCAFFOLD-ONLY — emits the skeleton (folders + `.gitkeep` markers +
 root stub files) but does NOT copy Codex's `_scripts/` / `_template/` /
-`_config/` contents into the consumer. Sync (`sync_from_kit.py`) is
-the separate operation that pulls Codex content into a consuming wiki.
+`_config/` contents into the consumer — with ONE deliberate carve-out
+(CARTO-06 / M-A component 5, C2-council convention lock
+"materialize-then-link"): the 6 ToC-advertised boilerplate wiki pages
+(How-to-Use-This-Wiki, Glossary, Terminology-Rules, Update-Cascade,
+File-Routing, Style-Guide) are materialized into `wiki.<name>/git/` as
+real content so new wikis are never born with dead Home links. Sync
+(`sync_from_kit.py`) remains the separate operation that pulls Codex
+kit content into a consuming wiki.
 
 CLI:
 
@@ -421,6 +427,38 @@ def _emit_task_stubs(target: Path, dry_run: bool) -> List[str]:
     return created
 
 
+def _emit_boilerplate_pages(target: Path, projectname: str, dry_run: bool) -> List[str]:
+    """Materialize the 6 boilerplate wiki pages (CARTO-06 / M-A component 5).
+
+    Materialize-then-link (C2 council convention lock: "every advertised hop
+    resolves; the generator owns consistency") — new wikis are born with the
+    six ToC-advertised boilerplate pages as real content, not dead links.
+    Sourced from LIBRARY's own `_template/` (at bootstrap time the consumer
+    has no vendored kit yet). Delegates to the kit's
+    `materialize_boilerplate.py` (the same code the existing-wiki one-off
+    loop runs); existing pages are always SKIPPED. Returns the per-action
+    list; the CREATE count is what bootstrap's summary reports (audit
+    M-A-5 finding 1 — SKIP/MISSING must not inflate the "pages written"
+    line, the LIB-NEW-A dishonest-print class).
+    """
+    # Structural file binding (audit M-A-5 finding 3): load the exact kit file
+    # via importlib so a same-named module already in sys.modules (e.g. a
+    # vendored consumer copy) can't silently win over a sys.path dance.
+    import importlib.util
+    scripts_dir = Path(__file__).resolve().parent / "Biz.Automation" / "wikisys.library" / "_scripts"
+    template_dir = scripts_dir.parent / "_template"
+    spec = importlib.util.spec_from_file_location(
+        "_codex_materialize_boilerplate", scripts_dir / "materialize_boilerplate.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    wiki_git = target / "wiki.{}".format(projectname) / "git"
+    actions = mod.materialize_boilerplate(
+        wiki_git, template_dir, projectname, dry_run=dry_run
+    )
+    return ["{} {}".format(action, rel) for action, rel in actions]
+
+
 def _post_bootstrap_checklist(projectname: str, mode: str) -> str:
     """Build the post-bootstrap stdout per spec (c)."""
     lines = [
@@ -479,6 +517,11 @@ def bootstrap(
     folders = _emit_folders(target, folder_rels, dry_run)
     root_stubs = _emit_root_stubs(target, projectname, mode, dry_run)
     task_stubs = _emit_task_stubs(target, dry_run)
+    # Audit M-A-5 finding 2: minimal mode ("thin braindump") ships no
+    # Biz.Automation/ kit + no Home ToC, so the materialize-then-link
+    # rationale (resolve the advertised hops) does not apply — skip it there.
+    boilerplate = _emit_boilerplate_pages(target, projectname, dry_run) if mode != "minimal" else []
+    boilerplate_created = sum(1 for line in boilerplate if line.startswith("CREATE"))
 
     mode_label = "DRY-RUN" if dry_run else "DONE"
     sys.stdout.write(
@@ -487,8 +530,12 @@ def bootstrap(
     sys.stdout.write("  Folders: {}\n".format(len(folder_rels)))
     sys.stdout.write("  Root stubs: {}\n".format(len(root_stubs)))
     sys.stdout.write("  Task stubs: {}\n".format(len(task_stubs)))
+    # Report CREATE count only (SKIP/MISSING do not write a page).
+    sys.stdout.write("  Boilerplate pages: {}\n".format(boilerplate_created))
     sys.stdout.write(
-        "  Total ops: {}\n".format(len(folders) + len(root_stubs) + len(task_stubs))
+        "  Total ops: {}\n".format(
+            len(folders) + len(root_stubs) + len(task_stubs) + boilerplate_created
+        )
     )
 
     if not dry_run:
