@@ -35,8 +35,14 @@ def _write(path: Path, content: str) -> None:
     path.write_text(content, encoding="utf-8")
 
 
+OLDER_BODY = (
+    "\n# <Project Name> — How to Use This Wiki\n\n"
+    "An earlier template vintage of this page.\n"
+)
+
+
 def _old_body_fn(name):
-    return OLD_BODY
+    return [OLD_BODY, OLDER_BODY]
 
 
 class DemoteGuardTests(unittest.TestCase):
@@ -91,6 +97,14 @@ class DemoteGuardTests(unittest.TestCase):
         self.assertEqual(acts[self.PAGE], "MISSING")
         self.assertFalse((wiki / self.PAGE).exists())
 
+    def test_earlier_template_vintage_demoted(self):
+        # R5: a page materialized from an OLDER shipped template version is
+        # still unmodified — any-historical-version match demotes.
+        content = OLD_FRONTMATTER.replace("<Project Name>", "Demo") + \
+            OLDER_BODY.replace("<Project Name>", "Demo")
+        _, acts = self._run(content)
+        self.assertEqual(acts[self.PAGE], "DEMOTE")
+
     def test_no_baseline_untouched(self):
         content = OLD_FRONTMATTER + OLD_BODY
         tmp = TemporaryDirectory()
@@ -98,7 +112,7 @@ class DemoteGuardTests(unittest.TestCase):
         wiki = Path(tmp.name) / "git"
         _write(wiki / self.PAGE, content)
         actions = dbs.demote_boilerplate_stubs(
-            wiki, REPO_ROOT, "Demo", old_body_fn=lambda n: None)
+            wiki, REPO_ROOT, "Demo", old_body_fn=lambda n: [])
         self.assertEqual(actions[0][0], "NO-BASELINE")
         self.assertEqual((wiki / self.PAGE).read_text(encoding="utf-8"), content)
 
@@ -167,19 +181,15 @@ class ShippedStubTemplateTests(unittest.TestCase):
 
 class GitBaselineIntegrationTests(unittest.TestCase):
     """The real git-history baseline (skipped on shallow clones where the
-    pinned SHA is unreachable, e.g. CI fetch-depth=1)."""
+    pre-stub template versions are unreachable, e.g. CI fetch-depth=1)."""
 
-    def test_old_template_body_readable_from_history(self):
-        probe = subprocess.run(
-            ["git", "-C", str(REPO_ROOT), "cat-file", "-e",
-             dbs.OLD_TEMPLATE_SHA], capture_output=True)
-        if probe.returncode != 0:
-            self.skipTest("pinned old-template SHA unreachable (shallow clone)")
-        body = dbs._old_template_body(
+    def test_historical_bodies_include_the_full_template(self):
+        bodies = dbs._historical_template_bodies(
             REPO_ROOT, "00-Start-Here__SEP__How-to-Use-This-Wiki.md")
-        self.assertIsNotNone(body)
-        self.assertIn("This page explains how", body)
-        self.assertNotIn("deliberate stub", body)
+        if len(bodies) < 2:
+            self.skipTest("template history unreachable (shallow clone)")
+        joined = "\n".join(bodies)
+        self.assertIn("This page explains how", joined)
 
 
 if __name__ == "__main__":

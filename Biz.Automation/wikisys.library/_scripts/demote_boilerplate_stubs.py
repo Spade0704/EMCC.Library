@@ -10,17 +10,20 @@ consumer wikis carry generated stubs. Glossary + Terminology-Rules are PROJECT
 content and stay per-repo full pages — this script never touches them.
 
 One-off migration for wikis materialized before the convention. Guard (gate
-revision R1 — the unmodified test): a page is demoted IFF its BODY (content
-after the closing frontmatter fence) equals the OLD full template's body with
-`<Project Name>` substituted. Frontmatter is excluded from the comparison
-entirely, so cross_link-injected keys (`topics`/`tags`/`related_files`) and the
-materialization date can never false-positive a modification. Any body
-difference means consumer content: SKIP and report — never clobber (R4).
+revisions R1 + R5 — the unmodified test): a page is demoted IFF its BODY
+(content after the closing frontmatter fence) equals ANY historical version of
+the shipped template's body with `<Project Name>` substituted. Frontmatter is
+excluded from the comparison entirely, so cross_link-injected keys
+(`topics`/`tags`/`related_files`) and the materialization date can never
+false-positive a modification. Any-historical-version matching (R5, added at
+the migration dry-run) covers wikis materialized from an earlier template
+vintage and then SKIPped by later materialize runs — a page equal to any
+version Codex ever shipped was never consumer-edited. Any other body means
+consumer content: SKIP and report — never clobber (R4).
 
-The OLD template bytes are read from Library git history at the pinned pre-stub
-commit (the templates were byte-stable from the M-A wave kit `019168f` through
-`08d87ac`, verified at the gate), so the comparison works even after the
-templates in the working tree became stubs.
+The historical template bodies are read from Library git history (every unique
+blob of the template path reachable from HEAD), so the comparison works even
+after the templates in the working tree became stubs.
 
 Structural exclusion (gate revision R2): refuses to run against EMCC.Library /
 the `codex` wiki — the canonical copies must never be demoted.
@@ -50,10 +53,6 @@ PROTOCOL_TEMPLATES = (
     "04-Contributing__SEP__Style-Guide.md",
 )
 
-# Last Library commit carrying the FULL templates (pre-stub). Byte-stable for
-# these 4 files from the M-A wave kit 019168f through this SHA (gate-verified).
-OLD_TEMPLATE_SHA = "08d87ace40c870798877cc8cb2558cc205bbfac7"
-
 _TEMPLATE_REL = "Biz.Automation/wikisys.library/_template/"
 
 
@@ -66,18 +65,40 @@ def _body(text: str) -> str:
     return text
 
 
-def _old_template_body(library: Path, template_name: str) -> Optional[str]:
-    """The pre-stub template body from Library git history (None if unreadable)."""
+def _historical_template_bodies(library: Path, template_name: str) -> List[str]:
+    """Bodies of EVERY historical version of the template reachable from HEAD.
+
+    A consumer page whose body equals any of these (project-name substituted)
+    was never consumer-edited — wikis materialized from an earlier template
+    vintage are still unmodified (gate revision R5). Empty list if git history
+    is unreadable (e.g. shallow clone) — the caller then refuses to demote.
+    """
+    path = _TEMPLATE_REL + template_name
     try:
-        out = subprocess.run(
-            ["git", "-C", str(library), "show",
-             f"{OLD_TEMPLATE_SHA}:{_TEMPLATE_REL}{template_name}"],
+        revs = subprocess.run(
+            ["git", "-C", str(library), "rev-list", "HEAD", "--", path],
             capture_output=True, text=True, encoding="utf-8")
+        if revs.returncode != 0:
+            return []
+        blobs: List[str] = []
+        for commit in revs.stdout.split():
+            blob = subprocess.run(
+                ["git", "-C", str(library), "rev-parse", f"{commit}:{path}"],
+                capture_output=True, text=True, encoding="utf-8")
+            if blob.returncode == 0:
+                b = blob.stdout.strip()
+                if b and b not in blobs:
+                    blobs.append(b)
+        bodies: List[str] = []
+        for b in blobs:
+            content = subprocess.run(
+                ["git", "-C", str(library), "cat-file", "blob", b],
+                capture_output=True, text=True, encoding="utf-8")
+            if content.returncode == 0:
+                bodies.append(_body(content.stdout))
+        return bodies
     except OSError:
-        return None
-    if out.returncode != 0:
-        return None
-    return _body(out.stdout)
+        return []
 
 
 def demote_boilerplate_stubs(
@@ -91,15 +112,15 @@ def demote_boilerplate_stubs(
     """Demote unmodified protocol pages under `wiki_git_root` to stubs.
 
     Returns (action, relpath) tuples; action is one of:
-      DEMOTE         — body matched the old full template; stub written
-      SKIP-MODIFIED  — body differs (consumer content; untouched, a finding)
+      DEMOTE         — body matched a shipped template version; stub written
+      SKIP-MODIFIED  — body matches no shipped version (consumer content; a finding)
       MISSING        — page absent (nothing to demote; materialize owns creation)
-      NO-BASELINE    — old template unreadable from git history (untouched)
+      NO-BASELINE    — template history unreadable from git (untouched)
     """
     today = today or date.today()
     stub_dir = library / "Biz.Automation" / "wikisys.library" / "_template"
     if old_body_fn is None:
-        old_body_fn = lambda name: _old_template_body(library, name)  # noqa: E731
+        old_body_fn = lambda name: _historical_template_bodies(library, name)  # noqa: E731
     actions: List[Tuple[str, str]] = []
     for name in PROTOCOL_TEMPLATES:
         rel = decode_sep(name)
@@ -107,12 +128,12 @@ def demote_boilerplate_stubs(
         if not page.is_file():
             actions.append(("MISSING", rel.as_posix()))
             continue
-        old_body = old_body_fn(name)
-        if old_body is None:
+        old_bodies = old_body_fn(name) or []
+        if not old_bodies:
             actions.append(("NO-BASELINE", rel.as_posix()))
             continue
-        expected = old_body.replace("<Project Name>", project_name)
-        if _body(page.read_text(encoding="utf-8")) != expected:
+        expected = {b.replace("<Project Name>", project_name) for b in old_bodies}
+        if _body(page.read_text(encoding="utf-8")) not in expected:
             actions.append(("SKIP-MODIFIED", rel.as_posix()))
             continue
         stub = (
