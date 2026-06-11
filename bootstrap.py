@@ -3,10 +3,16 @@
 
 Generates the canonical portfolio folder layout per
 `tasks/plans/portfolio-folder-structure-spec.md` section (c). Bootstrap
-is SCAFFOLD-ONLY: emits the skeleton (folders + `.gitkeep` markers +
+is SCAFFOLD-ONLY — emits the skeleton (folders + `.gitkeep` markers +
 root stub files) but does NOT copy Codex's `_scripts/` / `_template/` /
-`_config/` contents into the consumer. Sync (`sync_from_kit.py`) is
-the separate operation that pulls Codex content into a consuming wiki.
+`_config/` contents into the consumer — with ONE deliberate carve-out
+(CARTO-06 / M-A component 5, C2-council convention lock
+"materialize-then-link"): the 6 ToC-advertised boilerplate wiki pages
+(How-to-Use-This-Wiki, Glossary, Terminology-Rules, Update-Cascade,
+File-Routing, Style-Guide) are materialized into `wiki.<name>/git/` as
+real content so new wikis are never born with dead Home links. Sync
+(`sync_from_kit.py`) remains the separate operation that pulls Codex
+kit content into a consuming wiki.
 
 CLI:
 
@@ -421,6 +427,31 @@ def _emit_task_stubs(target: Path, dry_run: bool) -> List[str]:
     return created
 
 
+def _emit_boilerplate_pages(target: Path, projectname: str, dry_run: bool) -> List[str]:
+    """Materialize the 6 boilerplate wiki pages (CARTO-06 / M-A component 5).
+
+    Materialize-then-link (C2 council convention lock: "every advertised hop
+    resolves; the generator owns consistency") — new wikis are born with the
+    six ToC-advertised boilerplate pages as real content, not dead links.
+    Sourced from LIBRARY's own `_template/` (at bootstrap time the consumer
+    has no vendored kit yet). Delegates to the kit's
+    `materialize_boilerplate.py` (the same code the existing-wiki one-off
+    loop runs); existing pages are always SKIPPED.
+    """
+    scripts_dir = Path(__file__).resolve().parent / "Biz.Automation" / "wikisys.library" / "_scripts"
+    template_dir = scripts_dir.parent / "_template"
+    sys.path.insert(0, str(scripts_dir))
+    try:
+        from materialize_boilerplate import materialize_boilerplate
+    finally:
+        sys.path.remove(str(scripts_dir))
+    wiki_git = target / "wiki.{}".format(projectname) / "git"
+    actions = materialize_boilerplate(
+        wiki_git, template_dir, projectname, dry_run=dry_run
+    )
+    return ["{} {}".format(action, rel) for action, rel in actions]
+
+
 def _post_bootstrap_checklist(projectname: str, mode: str) -> str:
     """Build the post-bootstrap stdout per spec (c)."""
     lines = [
@@ -479,6 +510,7 @@ def bootstrap(
     folders = _emit_folders(target, folder_rels, dry_run)
     root_stubs = _emit_root_stubs(target, projectname, mode, dry_run)
     task_stubs = _emit_task_stubs(target, dry_run)
+    boilerplate = _emit_boilerplate_pages(target, projectname, dry_run)
 
     mode_label = "DRY-RUN" if dry_run else "DONE"
     sys.stdout.write(
@@ -487,8 +519,11 @@ def bootstrap(
     sys.stdout.write("  Folders: {}\n".format(len(folder_rels)))
     sys.stdout.write("  Root stubs: {}\n".format(len(root_stubs)))
     sys.stdout.write("  Task stubs: {}\n".format(len(task_stubs)))
+    sys.stdout.write("  Boilerplate pages: {}\n".format(len(boilerplate)))
     sys.stdout.write(
-        "  Total ops: {}\n".format(len(folders) + len(root_stubs) + len(task_stubs))
+        "  Total ops: {}\n".format(
+            len(folders) + len(root_stubs) + len(task_stubs) + len(boilerplate)
+        )
     )
 
     if not dry_run:
