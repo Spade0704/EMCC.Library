@@ -2,6 +2,19 @@
 
 > Active scope notes, open threads, deferred decisions. Auditor MAY READ this for scope context (per `EMCC.DFDU/personas/CLAUDE.auditor.md` allow-list — `tasks/lessons.md` and `tasks/plans/` are off-limits; this file is not).
 
+## 2026-06-11 — demote guard observation: raw-placeholder pages evade the substituted-body comparison (proposed enhancement, not built)
+
+Mentor's boilerplate disposition (Operator-ratified demote-all-4) surfaced the root cause of its
+4x SKIP-MODIFIED: the pages were materialized pre-Codex WITHOUT `<Project Name>` substitution, so
+their bodies kept the raw placeholders. `demote_boilerplate_stubs.py` compares against historical
+template bodies with the project name SUBSTITUTED, so a raw-placeholder page can never match even
+when it is byte-identical to a shipped template (Mentor's Style-Guide literally was). The guard
+behaved correctly per R4 (skip + report; a human decided), but a cheap enhancement would also
+compare against the RAW un-substituted template bodies — pages matching those are boilerplate by
+construction. PROPOSED only; needs its own gate if/when a second consumer hits the same vintage.
+(Mentor was hand-demoted 2026-06-11; no other consumer is known to carry raw-placeholder
+boilerplate — the other 10 demoted clean at the wave.)
+
 ## S007 — EMCC shared package + modular `claude-<module>.md` delivery (2026-05-28, OPEN/planned)
 
 > Cross-repo architectural alignment recorded here so Codex stays consistent with how DFDU/Lattice is now delivered into projects. Implementation co-ships with DFDU per-project wiring (operator: "we will implement this together as we implement DFDU on a project"). Tracked actionably in `tasks/todo.md` S007.
