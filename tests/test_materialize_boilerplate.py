@@ -147,6 +147,38 @@ class BootstrapBoilerplateIntegrationTests(unittest.TestCase):
             self.assertEqual(rc, 0)
             self.assertFalse((Path(tmp) / "demo").exists())
 
+    def test_minimal_mode_skips_boilerplate(self):
+        # Audit M-A-5 finding 2: minimal mode ships no kit + no Home ToC.
+        import sys as _sys
+        _sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        try:
+            import bootstrap as bs
+        finally:
+            _sys.path.pop(0)
+        with TemporaryDirectory() as tmp:
+            out = io.StringIO()
+            with redirect_stdout(out):
+                bs.bootstrap("demo", mode="minimal", cwd_override=Path(tmp))
+            self.assertIn("Boilerplate pages: 0", out.getvalue())
+            self.assertFalse(
+                (Path(tmp) / "demo" / "wiki.demo" / "git" / "00-Start-Here"
+                 / "Glossary.md").exists())
+
+    def test_summary_counts_create_only_not_skip(self):
+        # Audit M-A-5 finding 1: a rerun (all SKIP) must report 0 pages written.
+        import sys as _sys
+        _sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        try:
+            import bootstrap as bs
+        finally:
+            _sys.path.pop(0)
+        with TemporaryDirectory() as tmp:
+            bs.bootstrap("demo", yes=True, cwd_override=Path(tmp))
+            out = io.StringIO()
+            with redirect_stdout(out):
+                bs.bootstrap("demo", yes=True, cwd_override=Path(tmp))
+            self.assertIn("Boilerplate pages: 0", out.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()
