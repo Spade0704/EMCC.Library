@@ -1,6 +1,14 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-11 — M-A components 5+6 shipped + merged; M-A COMPLETE
+
+Operator-authorized merge run (continuation of 2026-06-10b). **Component 5 (PR #42, merged):** `_scripts/materialize_boilerplate.py` (CARTO-06 materialize-then-link — the 6 boilerplate pages from `__SEP__` templates, idempotent SKIP, standalone CLI for existing wikis) + `bootstrap.py` `_emit_boilerplate_pages` carve-out + `PROJECT_WIKI_BUILD_SPEC.md` materialize-then-link note. Regime-B Auditor PASS-WITH-CONCERNS -> all 3 warnings fixed same-session (`d33921c`: honest CREATE-count, `--minimal` skip, structural importlib binding). Suite 655 -> 666 green (6 skipped). Components 1+2+4-docs merged earlier today via PR #41.
+
+**Component 6 (the wave, run FROM this kit at `019168f`):** stamped `sync_from_kit` + materialize across 11 consumers (EMCC, DFDU, Cartometrics, CRW, Gateway, Guard-House, eddyandwolff, Mentor, iron_soul, tat_app, isommelier — excluding aviation MI-19 / project-codex / SSUSA / residehub scaffold-only). All 11 merged (tat + isommelier on later explicit operator authorization). Every consumer now carries its first `SYNC-STAMP.json`; MI-19's staleness-invisibility is structurally closed (MI-20). EMCC `check_drift` verified clean stamps + surfaced real PERSONA-DRIFT findings on consumers' Librarian drop-ins — follow-up: an `emcc_wire` re-cascade (EMCC-side).
+
+**M-A is COMPLETE (components 1-6).** Next Library-relevant: M-B publish gate consumes nothing here; the boilerplate-location (per-repo vs once-upstream) spec proposal remains the open queue item.
+
 ## 2026-06-10b — M-A structural Sync build: Library half of components 1-4 (dedicated session)
 
 Branch `claude/emcc-ma-build-p7ohln` (pushed; no PRs per standing instruction — operator disposes). Executed the Library side of the M-A gate's FINAL build list (`EMCC.DFDU/tasks/delta-force/2026-06-10-ma-structural-sync.md`), Regime-B Auditor per commit, stop-line honored after component 4:

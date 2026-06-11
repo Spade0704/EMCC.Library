@@ -2,15 +2,15 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
-## Sprint — M-A structural Sync build, Library half (2026-06-10, components 1-4 SHIPPED to the stop-line)
+## Sprint — M-A structural Sync build, Library half (CLOSED 2026-06-11 — ALL components shipped + merged)
 
 Gate: `EMCC.DFDU/tasks/delta-force/2026-06-10-ma-structural-sync.md`. Branch `claude/emcc-ma-build-p7ohln` (pushed; no PRs — operator disposes). Session record: `tasks/sessions.md` 2026-06-10b + EMCC `tasks/sessions.md` 2026-06-10g.
 
 - [x] **Component 1 — dead-regex example fix** (`da16ecf`): single-backslash examples in `_config/forbidden_terms.yaml` + `reveal_leak_patterns.yaml`; convention in `_config/README.md` + `PROJECT_WIKI_BUILD_SPEC.md` §2.5; negative-control tests welded to the shipped examples. Auditor PASS.
 - [x] **Component 2 — SYNC-STAMP.json** (`260d6c7` + `9f3ff95`): `_write_stamp` dedicated final action; the stamp IS the manifest; all-OK only, never on `--dry-run`; dirty-kit WARN (audit fix). Auditor concerns→fixed.
 - [x] **Component 4 docs** (`66a8e22`): `wiki.codex/git/codex/SYNC_STAMP_CONTRACT.md` canon + MI-20 (closes MI-19's version-staleness follow-up) + Index rows. Suite 644→655 (6 skipped). EMCC-side halves: `check_drift.py` + `emcc_wire._copy_librarian` (Lock 1).
-- [ ] **Component 5 — CARTO-06 materialize-then-link** in `bootstrap.py` + one-off loop for existing wikis (NO spec-proposal drafting). Follow-up session.
-- [ ] **Component 6 — 10-consumer refresh wave** (stamped `sync_from_kit` runs; one branch/commit each; EXCLUDES aviation (MI-19) / project-codex (archived) / SSUSA (nascent); no `--force`; consumer-modified `_scripts/` = LIB-NEW-B findings for `check_drift`, not wave fixes). Follow-up session.
+- [x] **Component 5 — CARTO-06 materialize-then-link** (PR #42, merged 2026-06-11): `materialize_boilerplate.py` + bootstrap carve-out + canon note; Auditor concerns fixed (`d33921c`). Suite 666.
+- [x] **Component 6 — consumer refresh wave** (2026-06-11, all 11 merged incl. tat/isommelier on explicit operator authorization): stamped kit `019168f` + materialize everywhere; first SYNC-STAMP.json portfolio-wide; check_drift verified + surfaced PERSONA-DRIFT follow-ups (emcc_wire re-cascade, EMCC-side).
 
 ## Inbound handoff — Cairn/Gateway reframe folds accuracy work into Library (2026-06-06)
 
