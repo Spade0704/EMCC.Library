@@ -47,6 +47,8 @@ tfidf:
   scan_fields: [h1, h2, intro_para_1]
 
 plugin:
+  # EXPERIMENTAL (v1.3.1): not yet invoked by build_topic_index.py — reserved
+  # contract only. Use the see_also section below for custom See-also ranking.
   module_path: ~
   callable: ~
   weight: 0.5
@@ -56,6 +58,14 @@ tags:
   prefix_scheme: flat
   prefix_map:
     topics: topic
+
+# see_also (v1.3.1) — cross_link_topics.py "See also" block control. Both keys
+# default to pre-v1.3.1 behavior (uncapped list, bare [[Stem]] links), so
+# omitting this section reproduces v1.3 output byte-for-byte. Spec §2.7
+# "See-also list control".
+see_also:
+  max_links_per_page: 0                 # 0 = uncapped; N = cap to top-N (rank: shared-topics, cross-container, path)
+  disambiguate_duplicate_stems: false   # true = path-qualify links whose stem collides wiki-wide
 
 # Customization examples (commented; replace active values above as needed):
 #
@@ -77,3 +87,9 @@ tags:
 #   prefix_scheme: nested
 #   prefix_map:
 #     topics: topic
+#
+# Large multi-manual wiki (e.g. Aviation — QRH/FCOM/FCTM share page stems,
+# broad ATA topics span hundreds of pages):
+# see_also:
+#   max_links_per_page: 25
+#   disambiguate_duplicate_stems: true

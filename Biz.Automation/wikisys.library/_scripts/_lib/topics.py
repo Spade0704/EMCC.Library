@@ -124,6 +124,14 @@ _DEFAULT_CROSS_LINK_CONFIG: Dict[str, Any] = {
         "prefix_scheme": "flat",
         "prefix_map": {"topics": "topic"},
     },
+    # P18.3 cross_link_topics see-also writer (added 2026-06-13 per
+    # 0-Inbox/PLAN-cross-link-promotion). Defaults preserve pre-existing
+    # behavior byte-for-byte: uncapped list, bare [[Stem]] links. Consumers
+    # opt in (e.g. Aviation's large multi-manual wiki).
+    "see_also": {
+        "max_links_per_page": 0,          # 0 = uncapped (back-compat default)
+        "disambiguate_duplicate_stems": False,  # collision-triggered path-qualified links
+    },
 }
 
 
@@ -136,7 +144,7 @@ def load_cross_link_config(wiki_root: Union[str, Path]) -> Dict[str, Any]:
     spec §2.7 'log warning + degrade, never block').
 
     Returns merged dict with same top-level shape as
-    `_DEFAULT_CROSS_LINK_CONFIG` (tfidf / plugin / tags); per-section
+    `_DEFAULT_CROSS_LINK_CONFIG` (tfidf / plugin / tags / see_also); per-section
     keys absent in user config fall back to defaults.
     """
     # S004 MI-18: discovery via frontmatter.find_config_dir() handles v1.0 +

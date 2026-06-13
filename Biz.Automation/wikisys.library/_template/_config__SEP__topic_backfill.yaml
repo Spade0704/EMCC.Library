@@ -1,0 +1,34 @@
+# topic_backfill.yaml — project topic-backfill rules for backfill_topics.py.
+#
+# Only needed when retrofitting `topics:` onto a wiki of pre-existing pages
+# (no ingest-time TF-IDF assignment). The script is generic; THIS file is the
+# per-project normalization map. Absent → backfill_topics is a no-op.
+#
+# Parsed by _lib.frontmatter.parse_config_yaml (YAML subset: top-level scalars,
+# flow lists, and 2-level nested mappings).
+
+# Auto-derive `NN_Name` folders (e.g. 27_Flight_Controls -> flight-controls).
+strip_numeric_prefix: true
+
+# Pages with NO frontmatter get a link-only stub (status: stub-unstamped) so
+# they join the cross-link graph without a false consequence/effectivity claim.
+stub_unstamped: false
+
+# Also tag from _config/keywords.yaml terms (matched in title + H1/H2 + filename).
+use_keywords_yaml: false
+
+# Folder tokens that are STRUCTURE, not topics — never become a topic.
+skip: [DSC, PRO, PER, LIM, NOR, ABN, EMER, Procedures, Front_Matter]
+
+# canonical-topic-slug: [variant folder tokens that mean it]. Canonical slugs
+# should match the auto-derived NN_Name slug so abbreviation folders unify with
+# the descriptive folders.
+systems:
+  # example (Airbus-style abbreviations → ATA system topic):
+  # flight-controls: [F_CTL, FCTL, RUD]
+  # electrical: [ELEC]
+  # hydraulic: [HYD]
+
+# Cross-cutting topics that are foldered AND keyword-matched (overlap is fine).
+crosscutting:
+  # smoke: [SMOKE, CRG_SMOKE]

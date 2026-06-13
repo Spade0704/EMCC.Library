@@ -326,8 +326,28 @@ dashboard) request a summary; they do not re-implement the voice.
   LLM `summarize_fn`); the canonical instruction is *this* section. Other Codex consumers may
   surface it however they like.
 
+## v1.3.1 extension (2026-06-13): Cross-link at scale — which linker, capping, disambiguation, backfill
+
+Surfaced by the Aviation consumer (a 4000+-page, multi-manual wiki). Lessons in `tasks/lessons.md` §"Cross-link engine gaps surfaced by the Aviation consumer"; spec §2.7 "See-also list control".
+
+**Two linkers — run the right one.** The cross-link pipeline is *two* scripts and the Librarian must not conflate them:
+- `build_topic_index.py` (#16, P18.2) **assigns** `topics:` to pages — TF-IDF match against `_canon/topics.yaml`, writes the topic-index dashboard. Run this FIRST (or assign `topics:` at ingest); it is the producer of the topic signal.
+- `cross_link_topics.py` (#17, P18.3) **consumes** `topics:` and writes the `related_files:` frontmatter + `## See also` body block. Run this SECOND. It does NOT do TF-IDF; it unions pages by shared topic.
+
+A wiki with no `topics:` produces no cross-links — assign topics before expecting See-also blocks.
+
+**Correction to Pattern 5 (max_links_per_page).** That knob was historically declared but enforced by neither script (dead config). As of v1.3.1 it is honored by `cross_link_topics.py` via the `_config/cross_link.yaml` **`see_also:` section** (NOT the `tfidf:` section, which only ever fed P18.2's topic assignment). Use `see_also.max_links_per_page` (0 = uncapped default) to bound the See-also list; it ranks by shared-topic-count, then a different top-level container first (surfaces cross-manual jumps), then path.
+
+**Duplicate-stem disambiguation.** Wikis that legitimately carry same-named pages across folders/manuals (e.g. a QRH quick-reference page and its FCOM master sharing a stem) set `see_also.disambiguate_duplicate_stems: true`. Collision-triggered: only stems occurring in >1 page render path-qualified `[[path|Stem (Container)]]`; unique stems stay bare. Default false → byte-identical output for wikis without collisions.
+
+**topics.yaml granularity is the relevance lever.** A page tagged only with one broad topic (e.g. a 900-page ATA chapter) yields an arbitrary capped See-also — the cap prevents noise but cannot manufacture relevance. Author `topics.yaml` so broad parent topics pair with finer child topics (Aviation: `smoke` + `smoke-cargo`/`smoke-avionics`), giving the ranker signal.
+
+**Backfill operation (retrofitting existing wikis).** Codex normally gets `topics:` at ingest. A wiki of thousands of pre-existing pages with no registry needs a one-pass backfill — derive topics from folder structure (via a project normalization map) + keyword match, then run `cross_link_topics.py`. The per-project normalization map stays project-local (`_config/`); the generic tagger is `backfill_topics.py`.
+
 ## Provenance
 
 Introduced 2026-05-20 to declare Codex's persona separately from Nexus personas, ahead of the Codex→Lattice repo split. Pre-split declaration; activates post-split + first wiki bootstrap.
 
 S002 v1.1 extensions (2026-05-27): three new operations (Inbox-Sort, Pairing-Audit, Cross-Project-Scan stub) + five Mentor pattern codifications + Telegram auto-summary contract. Per portfolio-folder-structure-spec section (d) "Librarian Agent + Codex Scripts — Design" and the 2026-05-27 Mentor wiki report.
+
+v1.3.1 extension (2026-06-13): cross-link-at-scale guidance — two-linker distinction, `see_also` cap + duplicate-stem disambiguation (corrects the dead-config Pattern 5), topics.yaml granularity, backfill operation. Surfaced by the Aviation consumer; see spec §2.7 "See-also list control" + `tasks/lessons.md`.

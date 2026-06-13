@@ -325,7 +325,16 @@ Rules:
 - Block placement: end of file by default, before any trailing trivia. If a marker pair already exists anywhere in the file, that position is preserved.
 - Human edits **between** markers are OVERWRITTEN on next run — by design. Humans edit `topics:` in frontmatter to influence the rendered block.
 - Human edits **outside** the marker pair are preserved.
-- Wikilink format: `[[FileStem]]` (precedent: lessons.md "wikilinks use filename stem, not page path or frontmatter title").
+- Wikilink format: `[[FileStem]]` (precedent: lessons.md "wikilinks use filename stem, not page path or frontmatter title"). **Exception (v1.3.1 duplicate-stem disambiguation, opt-in):** see "See-also list control" below.
+
+#### See-also list control (v1.3.1, 2026-06-13 — opt-in, defaults preserve v1.3 output byte-for-byte)
+
+Two `_config/cross_link.yaml` `see_also:` keys tune the `cross_link_topics.py` (#17) block. Both default to the pre-v1.3.1 behavior so existing consumers are unaffected (no `see_also` section → identical output):
+
+- `max_links_per_page` (int; default **0 = uncapped**). When > 0, the related set is ranked and truncated to the top-N. Ranking key: (shared-topic-count desc, then a DIFFERENT top-level container first — surfaces cross-manual/cross-section jumps, then path asc for stable idempotent output). `related_files:` frontmatter records the same capped set. Rationale: a broad topic spanning hundreds of pages otherwise yields an unusable See-also block; the cap keeps the *most related*, not an arbitrary slice.
+- `disambiguate_duplicate_stems` (bool; default **false**). When true, a link whose target stem occurs in **more than one** content page wiki-wide is rendered path-qualified: `[[<wiki-relative-path-without-ext>|<Stem> (<top-level-container>)]]`, so Obsidian resolves it unambiguously. Collision-triggered only — unique stems stay bare `[[Stem]]`, so wikis without cross-folder stem collisions are byte-identical regardless of this flag. Required by wikis that legitimately carry same-named pages across folders/manuals (e.g. a QRH quick-reference page and its FCOM master page sharing a stem).
+
+The marker contract, idempotency requirement, and "frontmatter is source of truth" rule are unchanged by these options.
 
 #### Frontmatter as source of truth
 
@@ -349,6 +358,8 @@ def link(pages):
 `build_topic_index.py`: (1) runs TF-IDF on all pages (always, pure stdlib); (2) if `_config/cross_link.yaml` defines a plug-in, imports `module_path:callable` and calls it; (3) blends both per `plugin.weight` (linear interpolation of similarity scores; union of candidates); (4) writes the final index.
 
 Plug-in failures (import error, callable exception, malformed return) log a warning and **degrade to TF-IDF-only. Never block the pipeline.**
+
+> **! Status (v1.3.1): EXPERIMENTAL — not yet invoked.** `load_plugin`/`blend_results` exist with the contract above, but the live `build_topic_index.py` run path does **not** call them this cycle (`plugin.module_path` defaults unset; the call site is reserved). Custom See-also ranking is shipped instead via `_config/cross_link.yaml` `see_also:` (cap + shared-topic/cross-container ranking). Treat `plugin:` as a forward-declared contract, not a shipped feature, until wired + tested.
 
 > **! R_ARCH carve-out (stdlib-only contract).** Project-local plug-ins are **out-of-scope** for Codex's stdlib-only contract — they are consuming-project artifacts, dynamically imported via opt-in config (`_config/cross_link.yaml` `plugin.module_path`), failure-isolated to log-and-degrade. Codex itself imports **zero** non-stdlib packages; plug-ins may import anything in their own environment. This is **distinct from** the 2026-05-20 triage reject, which targeted a Codex-*bundled* plug-in architecture (rejected). (Mirrored canonically in `CLAUDE.md` R_ARCH › D_RULES.)
 

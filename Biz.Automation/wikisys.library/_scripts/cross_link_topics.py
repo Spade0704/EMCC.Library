@@ -34,13 +34,13 @@ Public API:
 Pure stdlib per spec §8 Hard Rule 1.
 """
 
-import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
 from _lib import cli
 from _lib import frontmatter
 from _lib import markdown
+from _lib.topics import load_cross_link_config
 
 
 WIKI_ROOT = frontmatter.find_wiki_content_root()
@@ -88,29 +88,98 @@ def compute_related_files(
     return sorted(related, key=lambda p: p.as_posix())
 
 
+def _container_of(path: Path, wiki_root: Path) -> str:
+    """Top-level content folder a page lives under (manual/section), or '' .
+
+    Used for cross-container ranking + duplicate-stem disambiguation labels.
+    Handles both absolute (run-time) and already-relative (unit-test) paths.
+    """
+    try:
+        parts = path.relative_to(wiki_root).parts
+    except ValueError:
+        parts = path.parts
+    return parts[0] if parts else ""
+
+
+def _link_target(path: Path, wiki_root: Path, ambiguous_stems) -> str:
+    """Render the wikilink body for one related page.
+
+    Default (spec §2.7): bare `[[Stem]]`. When the stem is ambiguous
+    (occurs in >1 content page wiki-wide — passed via `ambiguous_stems`),
+    emit a path-qualified link `[[rel/path|Stem (Container)]]` so Obsidian
+    resolves it unambiguously. `ambiguous_stems` None/empty → always bare
+    (byte-identical to pre-2026-06-13 behavior).
+    """
+    stem = path.stem
+    if not ambiguous_stems or stem not in ambiguous_stems:
+        return "[[{}]]".format(stem)
+    try:
+        rel = path.relative_to(wiki_root).with_suffix("")
+    except ValueError:
+        rel = path.with_suffix("")
+    return "[[{}|{} ({})]]".format(rel.as_posix(), stem, _container_of(path, wiki_root))
+
+
+def rank_related(
+    page_path: Path,
+    related: List[Path],
+    page_topics: List[str],
+    page_topics_by_path: Dict[Path, List[str]],
+    wiki_root: Path,
+) -> List[Path]:
+    """Order related pages by relevance for capping.
+
+    Key: (shared-topic-count desc, cross-container first, path asc). A page
+    sharing more topics ranks higher; ties broken by preferring a DIFFERENT
+    top-level container (surfaces cross-manual jumps); final tiebreak path
+    for stable/idempotent output.
+    """
+    page_topic_set = set(page_topics)
+    page_container = _container_of(page_path, wiki_root)
+
+    def key(c: Path):
+        shared = len(page_topic_set & set(page_topics_by_path.get(c, [])))
+        cross = 1 if _container_of(c, wiki_root) != page_container else 0
+        return (-shared, -cross, c.as_posix())
+
+    return sorted(related, key=key)
+
+
+def build_ambiguous_stems(wiki_root: Path) -> set:
+    """Stems shared by >1 content page wiki-wide (need path-qualified links)."""
+    by_stem: Dict[str, int] = {}
+    for p in markdown.iter_content_pages(wiki_root):
+        by_stem[p.stem] = by_stem.get(p.stem, 0) + 1
+    return {stem for stem, n in by_stem.items() if n > 1}
+
+
 def render_see_also_block(
     related_files: List[Path],
     page_topics_per_related: Dict[Path, List[str]],
     wiki_root: Path,
+    ambiguous_stems=None,
 ) -> str:
     """Render marker-bracketed 'See also' block CONTENT (no markers).
 
     Per spec §2.7 example format: H2 + bulleted wikilinks with
     topic-annotation italics. Empty related_files → empty string
     (caller appends markers only when content non-empty).
+
+    `ambiguous_stems` (optional set): stems that collide across the wiki get
+    path-qualified links per the §2.7 disambiguation clause; None preserves
+    the bare `[[Stem]]` default.
     """
-    _ = wiki_root  # wiki_root reserved for future relative-path rendering
     if not related_files:
         return ""
     lines: List[str] = ["## See also", ""]
     for path in related_files:
         topics = page_topics_per_related.get(path, [])
-        stem = path.stem
+        link = _link_target(path, wiki_root, ambiguous_stems)
         topics_str = ", ".join(topics)
         if topics_str:
-            lines.append("- [[{}]] — *topic: {}*".format(stem, topics_str))
+            lines.append("- {} — *topic: {}*".format(link, topics_str))
         else:
-            lines.append("- [[{}]]".format(stem))
+            lines.append("- {}".format(link))
     return "\n".join(lines)
 
 
@@ -201,6 +270,8 @@ def process_page(
     topic_to_pages: Dict[str, List[Path]],
     page_topics_by_path: Dict[Path, List[str]],
     wiki_root: Path,
+    max_links: int = 0,
+    ambiguous_stems=None,
 ) -> bool:
     """Atomic update: fm related_files + body marker block. Idempotent.
 
@@ -209,13 +280,22 @@ def process_page(
     only if content differs. Returns True if file was actually written.
     Pages with empty page_topics skip without touching content (caller-
     safety guard; mirrors run() top-level skip behavior).
+
+    `max_links` > 0 caps the related set to the top-N by `rank_related`
+    (default 0 = uncapped, original behavior). `ambiguous_stems` is forwarded
+    to rendering for duplicate-stem disambiguation. Both `related_files:` fm
+    and the see-also block reflect the same (possibly capped) set.
     """
     if not page_topics:
         return False
     related = compute_related_files(page_path, page_topics, topic_to_pages)
+    if max_links and max_links > 0 and len(related) > max_links:
+        related = rank_related(
+            page_path, related, page_topics, page_topics_by_path, wiki_root
+        )[:max_links]
     page_topics_per_related = {p: page_topics_by_path.get(p, []) for p in related}
     see_also_block = render_see_also_block(
-        related, page_topics_per_related, wiki_root
+        related, page_topics_per_related, wiki_root, ambiguous_stems
     )
 
     existing_text = page_path.read_text(encoding="utf-8")
@@ -232,8 +312,22 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     """Orchestrator entry-point — build topic index + write related_files + see-also blocks.
 
     Returns summary dict with pages_seen + pages_updated + idempotent_pages counts.
+
+    Reads `_config/cross_link.yaml` `see_also` section for opt-in behavior:
+    `max_links_per_page` (0 = uncapped default) and
+    `disambiguate_duplicate_stems` (False default). Both defaults reproduce
+    pre-2026-06-13 output byte-for-byte; consumers opt in.
     """
     wiki_root = Path(wiki_root)
+
+    cfg = load_cross_link_config(wiki_root)
+    see_cfg = cfg.get("see_also", {})
+    try:
+        max_links = int(see_cfg.get("max_links_per_page", 0) or 0)
+    except (TypeError, ValueError):
+        max_links = 0
+    disambiguate = bool(see_cfg.get("disambiguate_duplicate_stems", False))
+    ambiguous_stems = build_ambiguous_stems(wiki_root) if disambiguate else None
 
     topic_to_pages = build_topic_to_pages_index(wiki_root)
 
@@ -261,6 +355,8 @@ def run(wiki_root: Path) -> Dict[str, Any]:
             topic_to_pages,
             page_topics_by_path,
             wiki_root,
+            max_links,
+            ambiguous_stems,
         )
         if changed:
             pages_updated += 1

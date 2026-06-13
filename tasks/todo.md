@@ -2,6 +2,18 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
+## Sprint — Codex v1.3.1 cross-link at scale (BUILT 2026-06-13b)
+
+Surfaced by the Aviation consumer; plan `0-Inbox/PLAN-cross-link-promotion-2026-06-13.md`. Opt-in defaults = v1.3 byte-identical. Committed `4dce454`. Independent Auditor: SHIP-WITH-FIXES (fixes applied).
+
+- [x] **P18.3 See-also cap + ranking** — `see_also.max_links_per_page` (0=uncapped) wired into `cross_link_topics.py` with shared-topic/cross-container/path ranking. Fixes the dead `max_links` config.
+- [x] **Duplicate-stem disambiguation** — `see_also.disambiguate_duplicate_stems` → path-qualified links on wiki-wide stem collision; spec §2.7 amended.
+- [x] **`backfill_topics.py`** — generic bulk topic tagger (path + keyword) for retrofitting pre-existing wikis; inline+block-list `topics:` safe (additive). Template config shipped. +tests (suite 690→720).
+- [x] **`CODEX_LIBRARIAN.md` v1.3.1 op** (two-linker distinction, cap, dup-stem, granularity, backfill) + regenerated drop-in. Plugin marked EXPERIMENTAL/not-wired in spec + config.
+- [ ] **⚪ Wire the plugin hook end-to-end (or remove it).** `load_plugin`/`blend_results` exist but the `build_topic_index.py` run path never calls them.
+- [ ] **⚪ Add dotted-code section-topic derivation to `backfill_topics.py`** so Aviation can drop its local `stamp_topics`/`cross_link` forks and Sync the kit instead.
+- [ ] **⚪ Full dry-Sync zero-diff check to DFDU/Mentor** (deferred — sync-stamp tests env-broken on this box; covered indirectly by no-consumer-opt-in grep + default-config test).
+
 ## Sprint — boilerplate-location convention (RATIFIED + BUILT 2026-06-11)
 
 - [x] **Operator ratified** `tasks/plans/boilerplate-location-spec-proposal.md` (§2 split + §3 Option A) — 2026-06-11.

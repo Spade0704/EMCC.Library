@@ -8,13 +8,22 @@ import cross_link_topics
 from cross_link_topics import (
     MARKER_END,
     MARKER_START,
+    build_ambiguous_stems,
     build_topic_to_pages_index,
     compute_related_files,
     process_page,
+    rank_related,
     render_see_also_block,
     replace_or_append_marker_block,
     update_page_related_files_fm,
 )
+
+
+def _see_also_body(text: str) -> str:
+    """Return the content between the see-also markers (for bullet counting)."""
+    if MARKER_START not in text:
+        return ""
+    return text.split(MARKER_START, 1)[1].split(MARKER_END, 1)[0]
 
 
 def _write_page(
@@ -448,6 +457,148 @@ class RunOrchestratorTests(unittest.TestCase):
             a = wiki / "01-Domain" / "A.md"
             content = a.read_text(encoding="utf-8")
             self.assertIn("related_files: []", content)
+
+
+class RankRelatedTests(unittest.TestCase):
+    """2026-06-13 cap-ranking: (shared desc, cross-container first, path)."""
+
+    def test_more_shared_topics_ranks_first(self):
+        P = Path("m1/P.md")
+        X = Path("m1/X.md")
+        Y = Path("m1/Y.md")
+        tbp = {X: ["a", "b"], Y: ["a"]}
+        ranked = rank_related(P, [Y, X], ["a", "b"], tbp, Path("."))
+        self.assertEqual(ranked[0], X)
+
+    def test_cross_container_breaks_tie(self):
+        P = Path("m1/P.md")
+        X = Path("m1/X.md")   # same container as P
+        Z = Path("m2/Z.md")   # different container
+        tbp = {X: ["a"], Z: ["a"]}
+        ranked = rank_related(P, ["a"] and [X, Z], ["a"], tbp, Path("."))
+        self.assertEqual(ranked[0], Z)
+
+    def test_stable_path_tiebreak(self):
+        P = Path("m1/P.md")
+        A = Path("m1/A.md")
+        B = Path("m1/B.md")
+        tbp = {A: ["a"], B: ["a"]}
+        ranked = rank_related(P, [B, A], ["a"], tbp, Path("."))
+        self.assertEqual(ranked, [A, B])
+
+
+class CapTests(unittest.TestCase):
+    """max_links caps the related set; default 0 = uncapped (back-compat)."""
+
+    def test_process_page_caps_to_max_links(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            pages = [a] + [_write_page(wiki, "m1/B{}.md".format(i), ["smoke"]) for i in range(5)]
+            idx = {"smoke": pages}
+            tbp = {p: ["smoke"] for p in pages}
+            process_page(a, ["smoke"], idx, tbp, wiki, max_links=2)
+            self.assertEqual(_see_also_body(a.read_text(encoding="utf-8")).count("- [["), 2)
+
+    def test_default_uncapped(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            pages = [a] + [_write_page(wiki, "m1/B{}.md".format(i), ["smoke"]) for i in range(5)]
+            idx = {"smoke": pages}
+            tbp = {p: ["smoke"] for p in pages}
+            process_page(a, ["smoke"], idx, tbp, wiki)  # no max_links
+            self.assertEqual(_see_also_body(a.read_text(encoding="utf-8")).count("- [["), 5)
+
+
+class DuplicateStemDisambiguationTests(unittest.TestCase):
+    """§2.7 amendment: collision-triggered path-qualified links."""
+
+    def test_build_ambiguous_stems(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            _write_page(wiki, "FCOM/A/SMOKE.md", ["smoke"])
+            _write_page(wiki, "QRH/B/SMOKE.md", ["smoke"])
+            _write_page(wiki, "FCOM/A/UNIQUE.md", ["x"])
+            amb = build_ambiguous_stems(wiki)
+        self.assertIn("SMOKE", amb)
+        self.assertNotIn("UNIQUE", amb)
+
+    def test_render_disambiguates_ambiguous_stem(self):
+        related = [Path("FCOM/X/SMOKE.md")]
+        topics = {Path("FCOM/X/SMOKE.md"): ["smoke"]}
+        out = render_see_also_block(related, topics, Path("."), ambiguous_stems={"SMOKE"})
+        self.assertIn("[[FCOM/X/SMOKE|SMOKE (FCOM)]]", out)
+
+    def test_render_unique_stem_stays_bare(self):
+        related = [Path("FCOM/X/SMOKE.md")]
+        topics = {Path("FCOM/X/SMOKE.md"): ["smoke"]}
+        out = render_see_also_block(related, topics, Path("."), ambiguous_stems={"OTHER"})
+        self.assertIn("- [[SMOKE]]", out)
+
+    def test_render_none_byte_identical_to_default(self):
+        related = [Path("FCOM/X/SMOKE.md")]
+        topics = {Path("FCOM/X/SMOKE.md"): ["smoke"]}
+        self.assertEqual(
+            render_see_also_block(related, topics, Path("."), ambiguous_stems=None),
+            render_see_also_block(related, topics, Path(".")),
+        )
+
+
+class ConfigDrivenRunTests(unittest.TestCase):
+    """run() reads _config/cross_link.yaml see_also section; defaults = back-compat."""
+
+    def _write_config(self, wiki: Path, body: str):
+        (wiki / "_config").mkdir(parents=True, exist_ok=True)
+        (wiki / "_config" / "cross_link.yaml").write_text(body, encoding="utf-8")
+
+    def test_run_honors_cap(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            self._write_config(wiki, "see_also:\n  max_links_per_page: 2\n")
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            for i in range(5):
+                _write_page(wiki, "m1/B{}.md".format(i), ["smoke"])
+            cross_link_topics.run(wiki)
+            self.assertEqual(_see_also_body(a.read_text(encoding="utf-8")).count("- [["), 2)
+
+    def test_run_honors_disambiguate(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            self._write_config(wiki, "see_also:\n  disambiguate_duplicate_stems: true\n")
+            _write_page(wiki, "FCOM/A/SMOKE.md", ["smoke"])
+            _write_page(wiki, "QRH/B/SMOKE.md", ["smoke"])
+            third = _write_page(wiki, "FCTM/C/Cargo.md", ["smoke"])
+            cross_link_topics.run(wiki)
+            content = third.read_text(encoding="utf-8")
+        self.assertIn("|SMOKE (FCOM)]]", content)
+        self.assertIn("|SMOKE (QRH)]]", content)
+
+    def test_run_default_no_config_uncapped_bare(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            a = _write_page(wiki, "FCOM/A/SMOKE.md", ["smoke"])
+            _write_page(wiki, "QRH/B/SMOKE.md", ["smoke"])
+            _write_page(wiki, "FCTM/C/Cargo.md", ["smoke"])
+            cross_link_topics.run(wiki)
+            content = a.read_text(encoding="utf-8")
+        # no config → bare links, no path-qualification even though SMOKE collides
+        self.assertNotIn("|SMOKE", content)
+
+    def test_capped_run_idempotent(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            self._write_config(wiki, "see_also:\n  max_links_per_page: 2\n  disambiguate_duplicate_stems: true\n")
+            _write_page(wiki, "FCOM/A/SMOKE.md", ["smoke"])
+            _write_page(wiki, "QRH/B/SMOKE.md", ["smoke"])
+            for i in range(4):
+                _write_page(wiki, "FCTM/C{}/Cargo.md".format(i), ["smoke"])
+            cross_link_topics.run(wiki)
+            first = {p: p.read_text(encoding="utf-8") for p in wiki.rglob("*.md")}
+            summary2 = cross_link_topics.run(wiki)
+            second = {p: p.read_text(encoding="utf-8") for p in wiki.rglob("*.md")}
+        self.assertEqual(first, second)
+        self.assertEqual(summary2["pages_updated"], 0)
 
 
 if __name__ == "__main__":

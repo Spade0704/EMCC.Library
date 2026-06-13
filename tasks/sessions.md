@@ -1,6 +1,18 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-13b — Codex v1.3.1: See-also cap + duplicate-stem disambiguation + backfill tagger
+
+Surfaced by the Aviation consumer (4000+-page multi-manual wiki) needing cross-manual topic linking the engine couldn't do well. Six engine gaps recorded in `tasks/lessons.md` §"Cross-link engine gaps…". All new behavior is **opt-in / collision-triggered**; defaults reproduce v1.3 output byte-for-byte (verified: no consumer sets a `see_also` section → DFDU/Mentor unaffected). Committed `4dce454`.
+
+1. **Engine** (`cross_link_topics.py` P18.3 + `_lib/topics.py`): new `_config/cross_link.yaml` `see_also` section — `max_links_per_page` (0 = uncapped default) wired into the See-also writer with ranking (shared-topic-count → cross-container → path), and `disambiguate_duplicate_stems` (false default) → path-qualified `[[rel|Stem (Container)]]` only when a stem collides wiki-wide. Fixes the long-dead `max_links` config (was enforced nowhere).
+2. **`backfill_topics.py` (NEW)**: generic bulk topic tagger for retrofitting pre-existing wikis (path-derived via project `_config/topic_backfill.yaml` + keyword); merge/stub; idempotent; parses inline AND block-list `topics:` (additive, never drops — Auditor fix). Template config shipped.
+3. **Canon/persona**: `CODEX_BUILD_SPEC_v1_3.md` + `PROJECT_WIKI_BUILD_SPEC.md` §2.7 — see-also list control + AI one-hop routing guidance; **plugin marked EXPERIMENTAL/not-wired** (honest — `load_plugin` exists but the run path doesn't call it). `CODEX_LIBRARIAN.md` v1.3.1 op (two-linker distinction, cap, dup-stem, granularity, backfill) + regenerated drop-in (drift guard green).
+
+Independent **Auditor pass: SHIP-WITH-FIXES** — engine sound + back-compat byte-identical; the one MEDIUM (backfill block-list `topics:` could drop existing topics) + LOWs fixed, +block-list regression tests. Suite **720** (was 690); the 2 `test_sync_from_kit` TestSyncStamp failures remain a Windows CRLF/git-state issue, confirmed identical with edits stashed (NOT caused by this change). Plan doc: `0-Inbox/PLAN-cross-link-promotion-2026-06-13.md`.
+
+! Deferred: wire the plugin hook (or remove it); port section-level (dotted-code) topic derivation into `backfill_topics.py` so Aviation can drop its local forks; full dry-Sync zero-diff check to DFDU/Mentor (skipped — sync tests env-broken here; covered by the no-consumer-opt-in grep + default-config test).
+
 ## 2026-06-13 — Cairn-absorption item 1 BUILT: citation-presence lint + accuracy canon (/llm-council + /delta-force)
 
 `/llm-council` (EMCC `tasks/council/2026-06-13-library-cairn-absorption-track.md`) sequenced the track 1→2→3; built item (1). `/delta-force` REVISE-AND-PROCEED chose a standalone audit over `s1_doc` injection (a report-only audit can't red-bar the full-tree gate) and canon-first. Shipped (`d2c7667`):

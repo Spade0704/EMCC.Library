@@ -280,9 +280,15 @@ tags:
   prefix_scheme: flat                   # flat | nested ; "nested" emits "topic/smoke" instead of "smoke"
   prefix_map:                           # used only when prefix_scheme: nested
     topics: topic                       # topics: [smoke] → tags: [topic/smoke]
+
+see_also:                               # v1.3.1 — cross_link_topics.py See-also control (opt-in)
+  max_links_per_page: 0                 # 0 = uncapped (default); N = cap to top-N (rank: shared-topics, cross-container, path)
+  disambiguate_duplicate_stems: false   # true = path-qualify links whose stem collides wiki-wide
 ```
 
-If `plugin.module_path` is unset, #16 runs **TF-IDF only (pure stdlib)**. If set, Codex dynamically imports the project-local module and merges its output with TF-IDF results per `plugin.weight`. Tag mirroring defaults to mirror-from-`topics`, flat prefix.
+If `plugin.module_path` is unset, #16 runs **TF-IDF only (pure stdlib)**. Tag mirroring defaults to mirror-from-`topics`, flat prefix. The `see_also` keys default to pre-v1.3.1 behavior (uncapped list, bare `[[Stem]]`), so omitting the section reproduces v1.3 output byte-for-byte.
+
+> **Plug-in status (v1.3.1):** the `plugin:` hook (`load_plugin`/`blend_results`) is **EXPERIMENTAL — not yet invoked** in the live `build_topic_index.py` run path (`plugin.module_path` defaults unset; the call site is reserved). Custom See-also ranking is instead available via the `see_also` cap+ranking above. Treat `plugin:` as a forward-declared contract, not a shipped feature.
 
 ---
 
@@ -306,7 +312,15 @@ Rules:
 - Block placement: end of file by default, before any trailing trivia. If a marker pair already exists anywhere in the file, that position is preserved.
 - Human edits **between** markers are OVERWRITTEN on next run — by design. Humans edit `topics:` in frontmatter to influence the rendered block.
 - Human edits **outside** the marker pair are preserved.
-- Wikilink format: `[[FileStem]]` (precedent: lessons.md "wikilinks use filename stem, not page path or frontmatter title").
+- Wikilink format: `[[FileStem]]` (precedent: lessons.md "wikilinks use filename stem, not page path or frontmatter title"). **v1.3.1 exception:** when `see_also.disambiguate_duplicate_stems: true`, a target whose stem collides wiki-wide renders path-qualified `[[rel/path|Stem (Container)]]`; unique stems stay bare (collision-triggered, default off).
+
+#### See-also list control + AI routing (v1.3.1, opt-in)
+
+Two `_config/cross_link.yaml` `see_also:` keys tune the block; both default to pre-v1.3.1 behavior:
+- `max_links_per_page` (0 = uncapped) — cap the list, ranked by shared-topic-count → cross-container (surfaces cross-manual jumps) → path. Stops a broad topic spanning hundreds of pages from emitting an unusable block.
+- `disambiguate_duplicate_stems` (false) — path-qualified links for cross-folder stem collisions (per the format note above).
+
+**Consumer AI routing guidance (bake into the wiki's CLAUDE.md):** a Codex-linked wiki is a one-hop expansion graph. The consuming project's `CLAUDE.md` should instruct: *after loading the primary page, expand one hop through its `## See also` / `related_files:` to pull same-topic pages (incl. across manuals/sections); `topics:` frontmatter is the routing axis.* This turns the cross-link graph into the wiki-as-memory router (EMCC `framework/18`), rather than dead metadata. Pair broad parent topics with finer child topics in `_canon/topics.yaml` so ranking has signal (see Librarian v1.3.1).
 
 #### Frontmatter as source of truth
 
