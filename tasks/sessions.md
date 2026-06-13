@@ -1,6 +1,16 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-13 — Cairn-absorption item 1 BUILT: citation-presence lint + accuracy canon (/llm-council + /delta-force)
+
+`/llm-council` (EMCC `tasks/council/2026-06-13-library-cairn-absorption-track.md`) sequenced the track 1→2→3; built item (1). `/delta-force` REVISE-AND-PROCEED chose a standalone audit over `s1_doc` injection (a report-only audit can't red-bar the full-tree gate) and canon-first. Shipped (`d2c7667`):
+
+1. **Canon (additive):** `01-Architecture/Frontmatter-Schema.md` §"Accuracy fields" + `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` §"Accuracy contract" lock the `consequence`/`cite_anchor` contract (fail-safe HIGH; HIGH ⇒ non-empty `cite_anchor`) + the verbatim/cite/refuse rule + the **Presence-Not-Accuracy** caveat (proves a citation is *present*, not correct).
+2. **`_scripts/audit_citations.py`** — report-only standalone audit reusing the existing tested-but-unwired `_lib/doc_lint.py::check_consequence`; `--enforce` opt-in; can't red-bar the full-tree gate.
+3. **+11 tests** (`tests/test_audit_citations.py`): report-only never red-bars, whitespace `cite_anchor` treated empty, duplicate-key fail-safe HIGH both orderings, canon-reference desync guard. Plus the council verdict-record (`9b03f7a`).
+
+Suite 690 — 2 pre-existing `test_sync_from_kit` (TestSyncStamp) failures are a Windows CRLF/git-state issue, confirmed identical with these edits stashed (NOT caused by this change). Items (2) caution-index + (3) lossless-normalization prover sequenced behind, deferred. Sweep run from EMCC (see EMCC sessions 2026-06-13).
+
 ## 2026-06-11c — Boilerplate-location convention RATIFIED + BUILT (4 protocol pages once-upstream; stubs ship; demote one-off)
 
 Operator ratified the proposal (§2 split + §3 Option A) same-day; built under `/delta-force` PROCEED-with-revisions (`EMCC.DFDU/tasks/delta-force/2026-06-11-boilerplate-stub-build.md` — run inline, Stage 3 chairman cross-review, disclosed). Shipped:
