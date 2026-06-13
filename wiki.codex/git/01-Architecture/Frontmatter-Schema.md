@@ -44,6 +44,10 @@ topics: []              # list of topic names; human-curated + script-augmented 
 related_files: []       # repo-relative paths; SCRIPT-MANAGED — do not hand-edit
 tags: []                # Obsidian tags; HUMAN-OWNED, optional script-mirroring from topics
 
+# Accuracy tier (optional; see "Accuracy fields" below):
+consequence: high | low                    # absent/unrecognized/duplicate -> fail-safe HIGH
+cite_anchor: "verbatim source ref"         # required (non-empty) when consequence resolves HIGH
+
 # Brain dump entries only:
 dump_status: exploring | validated | migrated | superseded | rejected
 migrated_to: ["Path/To/Canon-Page.md"]
@@ -85,6 +89,19 @@ A page with `status: ready` MUST have at least one entry in `canon_sources` AND 
 | `confidential` | Project secrets, business strategy, Claude behavior rules. Never publish. |
 
 Direction is one-way: `internal → public`, never reverse. See [[Design-Principles]] #3.
+
+## Accuracy fields — `consequence` / `cite_anchor` (Codex canon)
+
+The accuracy contract behind verbatim-only / cite-always / correct-refusal. Two optional content-page fields lock when a page must carry a source citation:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `consequence` | `high` \| `low` | The page's accuracy tier. **Fail-safe HIGH:** absent, unrecognized, or duplicated → resolves to HIGH. Only an explicit `consequence: low` opts out. |
+| `cite_anchor` | non-empty string | A verbatim source reference. **Required when `consequence` resolves HIGH** (`cite_required` is the derived rule). Whitespace-only counts as absent. |
+
+Enforced by `_scripts/_lib/doc_lint.py::check_consequence` and surfaced by the `audit_citations.py` audit (report-only by default; `--enforce` promotes findings to errors per-wiki once migrated).
+
+> **Presence-Not-Accuracy caveat.** This lint verifies that a citation *exists* on a HIGH page. It does **not** verify that the quote is verbatim, that the anchor resolves, or that a refusal was the correct call. It is a presence check, not a correctness check — do not read a green run as "the content is accurate."
 
 ## Source-file frontmatter (v1.1, reduced)
 

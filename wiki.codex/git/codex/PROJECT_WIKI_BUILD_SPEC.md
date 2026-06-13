@@ -723,6 +723,18 @@ python _scripts/update_dashboards.py
 
 ---
 
+## Accuracy contract — verbatim-only / cite-always / correct-refusal (v1.3)
+
+Codex content must never fabricate. The accuracy posture is three rules:
+
+1. **Verbatim-only** — quote source material exactly; never paraphrase a load-bearing fact into a new claim.
+2. **Cite-always** — a HIGH-`consequence` page carries a non-empty `cite_anchor` pointing at its verbatim source.
+3. **Correct-refusal** — when a fact is not in the corpus, refuse or escalate rather than invent.
+
+The enforceable slice is the `consequence`/`cite_anchor` frontmatter contract (see [[Frontmatter-Schema]] §"Accuracy fields — consequence / cite_anchor"): fail-safe HIGH; a HIGH page requires a non-empty `cite_anchor`. Checked by `_scripts/_lib/doc_lint.py::check_consequence` and surfaced by the report-only `_scripts/audit_citations.py` audit. **Presence-Not-Accuracy:** the lint proves a citation is *present*, not that it is verbatim or correct — a floor, not a guarantee.
+
+---
+
 *— END OF CODEX BUILD SPECIFICATION —*
 
 *Codex Build Spec v1.2 — April 2026*
