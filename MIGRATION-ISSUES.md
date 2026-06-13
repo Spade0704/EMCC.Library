@@ -218,7 +218,7 @@ Per S002 architect plan §B9 disposition table:
 
 ### MI-19 — Stale vendored Codex engine in consumers bootstrapped before `find_wiki_content_root()` (consumer re-sync advisory)
 
-**Discovered:** 2026-06-06, cross-room coordination. One room consuming Library found **Project-Mentor** running a stale vendored Codex engine that predated `find_wiki_content_root()` (the content-root resolver landed under MI-17 "Full closure"). That room fixed Mentor by re-syncing via `sync_from_kit.py` (engine now byte-equal to Library; 631/631 Library tests pass) and flagged that other pre-fix consumers are likely also stale.
+**Discovered:** 2026-06-06, cross-room coordination. One room consuming Library found **Mentor** running a stale vendored Codex engine that predated `find_wiki_content_root()` (the content-root resolver landed under MI-17 "Full closure"). That room fixed Mentor by re-syncing via `sync_from_kit.py` (engine now byte-equal to Library; 631/631 Library tests pass) and flagged that other pre-fix consumers are likely also stale.
 
 **Description:** A consumer that vendored its Codex `_scripts/` engine **before** the MI-17 content-root fix resolves `WIKI_ROOT`/content-root to the **repo root** instead of `<project>/wiki.<name>/git/`. Symptoms (same class MI-17 fixed inside Library): dashboard runs leak output to a stray repo-root `_dashboards/` (not gitignored), and page-walks scan non-content dirs (`tasks/`, `Biz.Automation/`) as wiki content. Library itself is correct — all its scripts call `find_wiki_content_root()`.
 
@@ -226,7 +226,7 @@ Per S002 architect plan §B9 disposition table:
 
 - **CURRENT** (defines fn + 19 callers, 34 `.py`): `EMCC`, `EMCC.CRW`, `EMCC.Cartometrics`, `EMCC.DFDU`, `EMCC.Guard-House`, `Gateway`, `isommelier`, `project_iron_soul`, `supplystationusa`, `tat_app`, and Library itself. No action.
 - **STALE** (no `find_wiki_content_root`, ~32 `.py` — same pattern as pre-fix Mentor): **`eddyandwolff`**. Needs a `/sync` (`sync_from_kit.py`).
-- **`Project-Mentor`**: stale on `main` at scan time, but **already fixed in the discovering room** (re-synced, byte-equal, pending merge to `main`). Do NOT re-fix — coordinate / let that PR land.
+- **`Mentor`**: stale on `main` at scan time, but **already fixed in the discovering room** (re-synced, byte-equal, pending merge to `main`). Do NOT re-fix — coordinate / let that PR land.
 - **`aviation`**: a **separate case**, not a simple stale-sync. It runs a bespoke 15-file `build_wiki` toolchain (PDF→markdown), and has **never** been moved to the synced Codex Librarian engine. Needs its own assessment before any `/sync` (a sync may not be the right action).
 - **`residehub`**: scaffold-only (`0 .py` under `_scripts/`) — not stale, just not bootstrapped yet.
 

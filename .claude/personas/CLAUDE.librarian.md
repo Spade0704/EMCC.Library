@@ -205,7 +205,7 @@ section (d) §"Change 4: Cross-project scope (Phase 2)".
 ### Five Mentor pattern codifications
 
 Surfaced by the 2026-05-27 Mentor wiki report (Mentor bootstrapped
-2026-05-25 as wiki #2 in `spade0704/Project-Mentor`). All five are
+2026-05-25 as wiki #2 in `spade0704/Mentor`). All five are
 now part of the Librarian's standard discipline.
 
 #### Pattern 1: SPLIT — entity-vs-content separation

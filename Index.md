@@ -148,7 +148,7 @@ These are the spec docs the Librarian agent + consumers reference for Codex sema
 | `EMCC.DFDU` | Library consumes DFDU's Lattice 3.0 protocol for Library's own session work | `EMCC.DFDU/documents/lattice/00-README.md` (ToC) |
 | `EMCC` | EMCC's consumer-project template references Library via `templates/consumer-project/emcc.modules.json`; status = `ready` (flipped Session 1). Wiki-as-memory routing standard canon: `EMCC/framework/18-wiki-memory-routing.md` | `EMCC/templates/consumer-project/CLAUDE.md` (consumer-side wiring) |
 | `spade0704/project-codex` | Source of Session 1 extraction (now archived) | `SOURCE-HISTORY.md` for SHA + per-file move inventory |
-| `spade0704/Project-Mentor` | First dogfood wiki bootstrapped via Codex (wiki #2, 2026-05-25); findings folded into S002 | `tasks/architect-notes.md` §S002 + `tasks/plans/portfolio-folder-structure-spec.md` §"Mentor — Greenfield bootstrap (shipped 2026-05-25)" |
+| `spade0704/Mentor` | First dogfood wiki bootstrapped via Codex (wiki #2, 2026-05-25); findings folded into S002 | `tasks/architect-notes.md` §S002 + `tasks/plans/portfolio-folder-structure-spec.md` §"Mentor — Greenfield bootstrap (shipped 2026-05-25)" |
 
 ### Inventory-seed (non-wiki, committed)
 

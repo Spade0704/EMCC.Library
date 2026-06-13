@@ -83,7 +83,7 @@ its own per-project manifest. The table below indexes them.
 | Project | Manifest location | Status |
 |---|---|---|
 | **EMCC.Library** (this module) | `EMCC.Library/reorganization-instructions.library.md` (this repo) | Migration closed in S002 + S003b (2026-05-27). Manifest extracted from this master 2026-05-28. |
-| **Project-Mentor** | `<mentor-root>/reorganization-instructions.mentor.md` (in the Project-Mentor repo) | Migration closed in S004 (2026-05-28). Manifest extracted from this master 2026-05-28, then moved cross-repo into Mentor on branch `claude/gallant-bohr-ePBuX` (Mentor commit `7ed7f30`). Library staging copy deleted. |
+| **Mentor** | `<mentor-root>/reorganization-instructions.mentor.md` (in the Mentor repo) | Migration closed in S004 (2026-05-28). Manifest extracted from this master 2026-05-28, then moved cross-repo into Mentor on branch `claude/gallant-bohr-ePBuX` (Mentor commit `7ed7f30`). Library staging copy deleted. |
 
 ### Pending cross-repo migration
 
