@@ -142,6 +142,35 @@ class TestCanonicalFullTree(unittest.TestCase):
             self.assertIn("New path", content)
             self.assertIn("Pattern", content)
 
+    def test_full_index_md_has_framework18_three_zone_skeleton(self):
+        """Index.md emits the framework/18 Wiki-as-Memory 3-zone skeleton
+        (dir-20260613e SLICE 1b), with safe-default token substitution and
+        no literal 'None'."""
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            _run_bootstrap(cwd, "mentor", mode="full")
+            index_md = (cwd / "mentor" / "Index.md").read_text(encoding="utf-8")
+            # Three zones present, in order
+            i_z1 = index_md.find("## Zone 1")
+            i_z2 = index_md.find("## Zone 2")
+            i_z3 = index_md.find("## Zone 3")
+            self.assertNotEqual(i_z1, -1, "missing Zone 1 heading")
+            self.assertNotEqual(i_z2, -1, "missing Zone 2 heading")
+            self.assertNotEqual(i_z3, -1, "missing Zone 3 heading")
+            self.assertTrue(i_z1 < i_z2 < i_z3, "zones out of order")
+            # Routing contract + 'expand one hop' rule stated
+            self.assertIn("Routing contract", index_md)
+            self.assertIn("expand one hop", index_md)
+            # Zone 1 routes to the wiki router with the safe-default router path
+            self.assertIn("wiki.mentor/git/Home.md", index_md)
+            # Catalog-don't-crawl guardrail: Zone 1 does NOT re-list wiki pages
+            self.assertIn("does NOT duplicate the wiki page list", index_md)
+            # Zone 3 stays a Phase-2 stub
+            self.assertIn("Phase 2", index_md)
+            # Safe-default substitution: never a literal 'None'
+            self.assertNotIn("None", index_md)
+            self.assertNotIn("{{", index_md)
+
     def test_full_gitignore_excludes_wiki_local(self):
         with TemporaryDirectory() as tmp:
             cwd = Path(tmp)

@@ -128,35 +128,69 @@ def _stub_claude_md(projectname: str) -> str:
 
 
 def _stub_index_md(projectname: str) -> str:
+    """Emit the framework/18 Wiki-as-Memory 3-zone Index skeleton.
+
+    Token substitution uses SAFE DEFAULTS so a freshly bootstrapped repo never
+    renders a literal "None":
+      {{PROJECT_NAME}}   -> the projectname positional
+      {{WIKINAME}}       -> wiki.<name> (the canonical wiki dir bootstrap emits)
+      {{WIKI_ROUTER}}    -> wiki.<name>/git/Home.md (artifact-B default router)
+      {{PROTOCOL_CANON}} -> "n/a" (generic bootstrap is not a module/protocol
+                            repo; operator edits this if the project ships canon)
+
+    Guardrails (council, dir-20260613e):
+      - Zone 1 routes to the wiki router + states "load page, expand one hop";
+        it does NOT re-list wiki pages (catalog-don't-crawl — the router owns
+        the page list; duplicating it is the duplicate-map lesson).
+      - Zone 3 stays a STUB (Phase-2 indexing is report-only, not a writer).
+      - No machine-managed region is wrapped: this is a one-shot scaffold the
+        operator owns and hand-populates, not a re-generated block, so no
+        DO-NOT-HAND-EDIT marker is emitted.
+    """
+    wikiname = "wiki.{name}".format(name=projectname)
+    wiki_router = "{wiki}/git/Home.md".format(wiki=wikiname)
+    protocol_canon = "n/a"
     return (
-        "# INDEX\n"
+        "# Index — {name}\n"
         "\n"
-        "Route lookups via this file. Read BEFORE searching the project.\n"
+        "> The single repo MAP + routing header. CLAUDE.md reads this FIRST.\n"
+        "> **Wiki router:** {router}. **Protocol canon:** {canon}.\n"
         "\n"
-        "## Top-level\n"
+        "## Routing contract (full context at minimum tokens)\n"
         "\n"
-        "| Folder / file | Purpose |\n"
+        "- Topic/task -> Zone 1: wiki router -> load the page -> expand one hop "
+        "via `related_files`/`[[wikilinks]]`; drill to canon only for precision.\n"
+        "- \"Where does X live\" -> Zone 2 (non-wiki catalog).\n"
+        "- Private / not-in-repo -> Zone 3 (Phase 2).\n"
+        "\n"
+        "## Zone 1 — Topic / knowledge -> the wiki\n"
+        "\n"
+        "- Entry: **{router}** — the wiki's TOC + semantic router. Load the "
+        "relevant page, then follow its cross-links one hop. This Index does "
+        "NOT duplicate the wiki page list (the router owns it).\n"
+        "\n"
+        "## Zone 2 — Non-wiki knowledge (committed)\n"
+        "\n"
+        "<!-- Seed from `python Biz.Automation/wikisys.{name}/_scripts/inventory_repo.py .` "
+        "(the zone2_knowledge_seed). when-to-load per row. -->\n"
+        "\n"
+        "| Path | When to load |\n"
         "|---|---|\n"
-        "| `0-Inbox/` | Files awaiting Librarian sort. |\n"
-        "| `Biz.Automation/` | Project automations. |\n"
-        "| `Biz.Automation/wikisys.{name}/` | Wiki-system engine. |\n"
-        "| `wiki.{name}/local/` | Confidential wiki content (gitignored). |\n"
-        "| `wiki.{name}/git/` | Public wiki content. |\n"
-        "| `tasks/` | Workflow tracking. |\n"
+        "| `CLAUDE.md` | Operating brain — read first. |\n"
+        "| `tasks/*` | Operational state (todo/sessions/lessons/archive). |\n"
+        "| `Biz.Automation/wikisys.{name}/` | Wiki-system engine (Codex). |\n"
+        "| `.claude/personas|modules|skills/` | Agent config (if present). |\n"
+        "| `module.json` / `emcc.modules.json` | Module manifests (if present). |\n"
         "| `assets/` | Logos, brand, photos, videos, designs. |\n"
-        "| `Index.md` | This file. |\n"
-        "| `CLAUDE.md` | Operating rules + memory. |\n"
-        "| `Cheatsheet.md` | Quick reference. |\n"
+        "| `{canon}` | Protocol canon (module repos) — authoritative drill-down "
+        "behind wiki overviews. Edit when this repo ships canon. |\n"
         "\n"
-        "## Wiki topics\n"
+        "## Zone 3 — Private / uncommitted (Phase 2)\n"
         "\n"
-        "[One row per topic as the wiki grows. Note local vs git per row.]\n"
-        "\n"
-        "## Automations\n"
-        "\n"
-        "[One row per automation. Pair each with its `<name>.doc/` folder "
-        "under `wiki.{name}/git/`.]\n"
-    ).format(name=projectname)
+        "Placeholder per `framework/18` Phase 2: `{wiki}/local/` (gitignored) + "
+        "outside-repo sources. Report-only; not indexed into this file yet.\n"
+    ).format(name=projectname, router=wiki_router, canon=protocol_canon,
+             wiki=wikiname)
 
 
 def _stub_todo_md() -> str:
