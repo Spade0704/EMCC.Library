@@ -26,6 +26,8 @@ context work belongs in Library/Codex, NOT a separate module. Decision trail:
 `EMCC.Gateway/wiki.EMCC.Gateway/git/_spike/RESULTS.md`. Backlog to absorb (each its
 own sprint; council/delta-force before building):
 
+> **/llm-council verdict 2026-06-13** (`EMCC/tasks/council/2026-06-13-library-cairn-absorption-track.md`): **sequence 1 → 2 → 3, don't merge.** (1) **BUILD NOW** — highest safety-per-effort, near-free on the existing lint/audit base; ship the canon doc + ONE lint rule (flag any claim lacking a citation anchor), and **name the lint honestly as a citation-*presence* check** (it verifies a citation exists, not that the quote is verbatim or the refusal correct). (2) **next**, but make the **ambiguity-refuse/escalate default a definition-of-done precondition** (a keyword router that silently returns the wrong caution verbatim is *more* dangerous than none — citable + confident). (3) **do NOT fund the pipeline** — build a one-day throwaway read-only PROVER on the single FCTM doc (dedupe → reconstruct both variants byte-for-byte → retrieve correct per MSN); pass = a funding decision, not auto-build; note B's caution that once (1) cites verbatim with effectivity tags, duplicate bodies are harmless, so (3) may be storage not safety. Next build = item (1), delta-force-gated per Library convention.
+
 - [ ] **Verbatim-only / cite-always / correct-refusal** formalized as Codex canon
   (most consumer wikis' CLAUDE.md already declare a "never fabricate, cite source"
   rule — make it a first-class Codex policy + lint).
