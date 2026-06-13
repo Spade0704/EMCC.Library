@@ -305,6 +305,37 @@ def _stub_reorganization_md(projectname: str) -> str:
     ).format(name=projectname)
 
 
+def _stub_roster_yaml() -> str:
+    """Empty-but-valid `_canon/roster.yaml` skeleton.
+
+    Scaffolded so the P13 `check_concept_coverage` validator (which hard-
+    requires `_canon/roster.yaml` with an `entities:` list — missing file
+    raises FileNotFoundError → exit 2) passes on a freshly bootstrapped
+    project before any canon is populated. Per the dir-20260613h-canon-
+    scaffold Delta Force verdict (`tasks/delta-force/2026-06-13-canon-
+    roster-scaffold.md`): hardcoded constant (not a shipped kit template),
+    bootstrap-only (sync's `_canon/` NEVER-TOUCHED contract is left intact),
+    explicit `entities: []` (not a bare `entities:`).
+
+    NOTE (false-green caveat, Breaker finding): an empty roster makes P13
+    AND sibling canon validators pass while canon is genuinely unpopulated.
+    The header comment makes that state legible to the operator; population
+    is a deliberate later step, not something bootstrap can invent.
+    """
+    return (
+        "# Auto-scaffolded empty canon roster (Codex bootstrap).\n"
+        "# Exists so validator P13 (check_concept_coverage) passes before\n"
+        "# canon is populated. An empty roster is VALID but means this wiki\n"
+        "# has no tracked named entities yet.\n"
+        "# SAFE TO EDIT — add entities below, e.g.:\n"
+        "#   entities:\n"
+        "#     - canonical_name: Some Person\n"
+        "#       aliases: [Nickname]\n"
+        "# sync_from_kit.py will NOT overwrite this file (consumer-owned canon).\n"
+        "entities: []\n"
+    )
+
+
 def _stub_gitignore(mode: str) -> str:
     base = (
         "# OS\n"
@@ -461,6 +492,25 @@ def _emit_task_stubs(target: Path, dry_run: bool) -> List[str]:
     return created
 
 
+def _emit_canon_stubs(target: Path, projectname: str, dry_run: bool) -> List[str]:
+    """Emit `_canon/roster.yaml` (empty-but-valid) for P13 readiness.
+
+    Write-if-absent (matches the other stub emitters): never clobbers a
+    populated roster. Caller skips this for --minimal (which ships no
+    Biz.Automation/ kit, hence no `_canon/`). The `_canon/.gitkeep` from
+    `_emit_folders` is left in place — all four wikisys underscore dirs
+    keep the uniform `_X/.gitkeep` marker (Delta Force: keep .gitkeep,
+    lower scope than editing the folder-marker contract + its test).
+    """
+    canon_dir = target / "Biz.Automation" / "wikisys.{}".format(projectname) / "_canon"
+    roster_path = canon_dir / "roster.yaml"
+    if not dry_run:
+        canon_dir.mkdir(parents=True, exist_ok=True)
+        if not roster_path.exists():
+            roster_path.write_text(_stub_roster_yaml(), encoding="utf-8")
+    return [str(roster_path)]
+
+
 def _emit_boilerplate_pages(target: Path, projectname: str, dry_run: bool) -> List[str]:
     """Materialize the 6 boilerplate wiki pages (CARTO-06 / M-A component 5).
 
@@ -554,6 +604,9 @@ def bootstrap(
     # Audit M-A-5 finding 2: minimal mode ("thin braindump") ships no
     # Biz.Automation/ kit + no Home ToC, so the materialize-then-link
     # rationale (resolve the advertised hops) does not apply — skip it there.
+    # Canon roster stub: only modes that ship Biz.Automation/ (i.e. not
+    # --minimal) have a `_canon/` to seed; P13 readiness for new consumers.
+    canon_stubs = _emit_canon_stubs(target, projectname, dry_run) if mode != "minimal" else []
     boilerplate = _emit_boilerplate_pages(target, projectname, dry_run) if mode != "minimal" else []
     boilerplate_created = sum(1 for line in boilerplate if line.startswith("CREATE"))
 
@@ -564,11 +617,13 @@ def bootstrap(
     sys.stdout.write("  Folders: {}\n".format(len(folder_rels)))
     sys.stdout.write("  Root stubs: {}\n".format(len(root_stubs)))
     sys.stdout.write("  Task stubs: {}\n".format(len(task_stubs)))
+    sys.stdout.write("  Canon stubs: {}\n".format(len(canon_stubs)))
     # Report CREATE count only (SKIP/MISSING do not write a page).
     sys.stdout.write("  Boilerplate pages: {}\n".format(boilerplate_created))
     sys.stdout.write(
         "  Total ops: {}\n".format(
-            len(folders) + len(root_stubs) + len(task_stubs) + boilerplate_created
+            len(folders) + len(root_stubs) + len(task_stubs)
+            + len(canon_stubs) + boilerplate_created
         )
     )
 

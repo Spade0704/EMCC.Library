@@ -171,6 +171,56 @@ class TestCanonicalFullTree(unittest.TestCase):
             self.assertNotIn("None", index_md)
             self.assertNotIn("{{", index_md)
 
+    def test_full_emits_empty_valid_canon_roster(self):
+        """dir-20260613h-canon-scaffold: bootstrap seeds an empty-but-valid
+        `_canon/roster.yaml` so the P13 check_concept_coverage validator
+        (which hard-requires the file) passes on a fresh project. Delta Force
+        verdict: tasks/delta-force/2026-06-13-canon-roster-scaffold.md."""
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            _run_bootstrap(cwd, "mentor", mode="full")
+            roster = (cwd / "mentor" / "Biz.Automation" / "wikisys.mentor"
+                      / "_canon" / "roster.yaml")
+            self.assertTrue(roster.is_file(), "missing _canon/roster.yaml")
+            text = roster.read_text(encoding="utf-8")
+            # Explicit empty-list form (not a bare `entities:`) + operator note.
+            self.assertIn("entities: []", text)
+            self.assertIn("SAFE TO EDIT", text)
+            # Parses to an empty entities list via the SAME loader P13 uses.
+            scripts_dir = (REPO_ROOT / "Biz.Automation" / "wikisys.library"
+                           / "_scripts")
+            if str(scripts_dir) not in sys.path:
+                sys.path.insert(0, str(scripts_dir))
+            from _lib.config_loader import load_config_yaml  # noqa: E402
+            entries = load_config_yaml(
+                roster, wrapper_key="entities",
+                required_keys=("canonical_name",), entity_noun="roster entry")
+            self.assertEqual(entries, [])
+            # Validator-side pin: once the project is wired as a consumer
+            # (emcc.modules.json present so find_canon_dir resolves the
+            # wikisys _canon/), P13 exits 0 on the scaffolded empty roster.
+            # Bootstrap does not emit emcc.modules.json itself (added at
+            # consumer-hookup time per the post-bootstrap checklist); the
+            # two existing consumers already have it, so the scaffold fixes
+            # them. Simulate that wired state here.
+            (cwd / "mentor" / "emcc.modules.json").write_text(
+                "{}\n", encoding="utf-8")
+            import check_concept_coverage  # noqa: E402
+            wiki_root = cwd / "mentor" / "wiki.mentor" / "git"
+            rc = check_concept_coverage._main(wiki_root)
+            self.assertEqual(rc, 0, "P13 check_concept_coverage should pass on "
+                                    "a freshly bootstrapped empty roster")
+
+    def test_minimal_omits_canon_roster(self):
+        """--minimal ships no Biz.Automation/ kit, hence no _canon/roster.yaml."""
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            _run_bootstrap(cwd, "thin", mode="minimal")
+            roster = (cwd / "thin" / "Biz.Automation" / "wikisys.thin"
+                      / "_canon" / "roster.yaml")
+            self.assertFalse(roster.exists(),
+                             "minimal mode should not emit a canon roster")
+
     def test_full_gitignore_excludes_wiki_local(self):
         with TemporaryDirectory() as tmp:
             cwd = Path(tmp)
