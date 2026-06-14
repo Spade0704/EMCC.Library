@@ -83,6 +83,21 @@ How to drive Codex — the Librarian agent, Bootstrap, Sync, Ingest, build workf
 - `_context/CODEX_LIBRARIAN.md` — Librarian persona declaration (canonical)
 - `.claude/personas/CLAUDE.librarian.md` — Librarian persona drop-in (summary form)
 
+### Protocol canon (Codex spec documents)
+
+The authoritative spec docs the overviews above drill down into (the `canon_sources`
+the derived pages cite). Read these for exact wording / numbers — **spec wins** any
+contradiction with a derived page.
+
+- [[codex/CODEX_BUILD_SPEC_v1_3]] — the authoritative Codex build specification (single canonical version)
+- [[codex/PROJECT_WIKI_BUILD_SPEC]] — what `bootstrap.py` materializes for a consuming project
+- [[codex/CODEX_LIBRARIAN]] — the Librarian agent specification (the persona this module ships)
+- [[codex/INGEST_PROCEDURE]] — source-ingest procedure (shipped verbatim into bootstrapped wikis)
+- [[codex/SEMANTIC_LINT_PROCEDURE]] — semantic-lint procedure (shipped verbatim)
+- [[codex/SYNC_STAMP_CONTRACT]] — the `SYNC-STAMP.json` schema + drift vocabulary
+- [[codex/Obsidian-Setup-Guide]] — consumer guidance for Obsidian users
+- [[codex/codex-build-progress]] — archived pre-extraction build snapshot (historical)
+
 ## Status
 
 This wiki was scaffolded by Codex and seeded by the v1.3 spec ingest (2026-05-24). The two distinct things this module ships are both covered: **Codex** (the engine) by the [[Overview]] plus the full 01-Architecture domain, and **the Librarian** (the agent) by [[Librarian]] — each a derived overview citing the `wiki.codex/git/codex/*` canon. Most pages sit at `status: outlined` — sections are named and key claims cited, but they are not yet promoted through the status bands (`gap → outlined → solid → ready`); a few 00-Start-Here pages remain raw template stubs at `status: gap`. Home stays `outlined` until that tail is filled. See [[Frontmatter-Schema]] for the status-band rules.

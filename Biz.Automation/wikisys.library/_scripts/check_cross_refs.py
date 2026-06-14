@@ -2,8 +2,10 @@
 
 P9 validator. Walks the wiki for content pages (skipping infrastructure
 folders prefixed with `_`), strips fenced and inline code spans, scans
-each page's body for wikilinks (bare / alias / section / embed shapes —
-all resolved by filename stem), and emits two finding classes:
+each page's body for wikilinks (bare / alias / section / embed shapes),
+resolves them (bare target by filename stem; path-qualified `Folder/Page`
+target by full wiki-relative path — see `_resolve_target`), and emits two
+finding classes:
 
     broken_wikilinks  link target stem has no corresponding .md content page
     orphan_pages      content page receives zero inbound wikilinks AND
@@ -79,6 +81,24 @@ def _iter_wikilinks(text):
         yield target, body_line
 
 
+def _resolve_target(target, stem_to_page, relpath_to_page):
+    """Resolve a wikilink target to a page, or None if it has no destination.
+
+    A bare target (`Page`) resolves by filename stem. A path-qualified target
+    (`Folder/Page`, the Style-Guide-mandated disambiguation form) resolves ONLY
+    when its full wiki-relative path maps to a real page — never by last segment
+    alone, which would mask genuinely broken or ambiguous links. A trailing
+    `.md` and a leading `./` are tolerated. Case-sensitive on every host.
+    """
+    t = target.strip()
+    if t.endswith(".md"):
+        t = t[:-3]
+    if "/" in t:
+        key = t[2:] if t.startswith("./") else t
+        return relpath_to_page.get(key)
+    return stem_to_page.get(t)
+
+
 def run(wiki_root: Path) -> Dict[str, Any]:
     """Walk the wiki, scan wikilinks + orphan pages, write the dashboard."""
     wiki_root = Path(wiki_root)
@@ -94,7 +114,20 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     for page_path in pages:
         stem_to_page.setdefault(page_path.stem, page_path)
 
-    inbound_targets = set()
+    # Path-qualified resolution map: wiki-relative path WITHOUT extension
+    # (posix, case-sensitive) -> page. The Style-Guide mandates the
+    # `[[Folder/Page]]` form for disambiguation and the cross-link generator
+    # emits it; resolving such a target by its bare last segment alone would
+    # flip a false-positive into a false-negative (two `Setup.md` in different
+    # folders collapsing, or `[[ghost/Page]]` matching a real `Page` elsewhere).
+    # So a path-qualified target resolves ONLY when its full relative path maps
+    # to a real page. Case-sensitive on every host (Obsidian-graph semantics).
+    relpath_to_page = {}
+    for page_path in pages:
+        rel = page_path.relative_to(wiki_root).with_suffix("").as_posix()
+        relpath_to_page.setdefault(rel, page_path)
+
+    inbound_pages = set()
     page_meta = []
     broken_links = []
     for page_path in pages:
@@ -108,7 +141,10 @@ def run(wiki_root: Path) -> Dict[str, Any]:
 
         for target_stem, body_line in _iter_wikilinks(stripped):
             file_line = body_line + fm_lines
-            if target_stem not in stem_to_page:
+            resolved = _resolve_target(
+                target_stem, stem_to_page, relpath_to_page
+            )
+            if resolved is None:
                 broken_links.append({
                     "page_path": page_path,
                     "line": file_line,
@@ -116,10 +152,12 @@ def run(wiki_root: Path) -> Dict[str, Any]:
                 })
                 continue
             # Self-link does NOT clear orphan status — only inbound links
-            # from OTHER pages count (Obsidian-graph semantics).
-            if stem_to_page[target_stem] == page_path:
+            # from OTHER pages count (Obsidian-graph semantics). Track the
+            # resolved page IDENTITY (not its stem) so a link to one of two
+            # same-stem pages does not falsely clear the other's orphan status.
+            if resolved == page_path:
                 continue
-            inbound_targets.add(target_stem)
+            inbound_pages.add(resolved)
 
         page_meta.append({
             "page_path": page_path,
@@ -130,7 +168,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     for meta in page_meta:
         if meta["allow_orphan"]:
             continue
-        if meta["page_path"].stem in inbound_targets:
+        if meta["page_path"] in inbound_pages:
             continue
         orphans.append({"page_path": meta["page_path"]})
 

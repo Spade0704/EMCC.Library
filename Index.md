@@ -105,6 +105,7 @@ These are the spec docs the Librarian agent + consumers reference for Codex sema
 | P18 | `scaffold_source.py` | Create `_inbox/` entry for ingest |
 | P19 | `update_dashboards.py` | Orchestrator; runs all aggs + vals |
 | P20 | `sync_from_kit.py` | Pull updated infrastructure from Codex into a consuming wiki (MI-16: still at v1.0 contract; canonical-shape migration deferred to S004) |
+| — | `summarize.py` | Canonical Librarian `summarize(source, audience)` op (CODEX_LIBRARIAN v1.2) — stdlib extractive default + injectable LLM `summarize_fn` seam |
 | — | `build_topic_index.py` | Topic index builder (v1.1 addition) |
 | — | `cross_link_topics.py` | Topic cross-link generator |
 | — | `validate_topic_registry.py` | Topic registry validator |
