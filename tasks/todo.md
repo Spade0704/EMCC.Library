@@ -2,7 +2,20 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
-## Sprint — Readiness cascade dir-20260614n (BUILT 2026-06-14; branch 583fab3 MERGE-PENDING)
+## Sprint — Readiness cascade dir-ii/hh/jj (DONE 2026-06-14b; all merged)
+
+Gate `tasks/delta-force/delta-force-20260614-092532.md`; Auditor Regime B PASS. Scores reconciled live.
+
+- [x] **lib-codex 90→92** — report-only `audit_citations` wired into the orchestrator (failure-isolated, no health-section, own dashboard) + tests. PR #48.
+- [x] **lib-librarian — CAPPED 85** — honest cap (Cross-Project-Scan blocked on EMCC orchestrator; at-scale curation needs live LLM runtime).
+- [x] **mentor-wiki 75→77** — surgical orphan link (PR #17).
+- [x] **dfdu-wiki 22→48** — Project-Overview + Glossary (18 terms) + orphan link (PR-merged).
+- [x] **iso-wiki 20→38** — orphan link (PR #42).
+- [x] **emcc-wiki 25→50** — patch handed to Director, applied on EMCC main (300ab02/2b85c0b); `tasks/patches/emcc-wiki-fill-dir-jj.md`.
+- [x] **Inbox-Triage.md (EMCC tree)** — 1-line inline-conversion patch handed to Director (block-list `canon_sources` → inline; same sources).
+- [ ] **🔴 Codex engine bug (gated): YAML-subset parser drops block-list sequences.** `canon_sources:` (and any block seq) with `- item` lines parses to `None`. `validate_canon_integrity` only checks `ready` pages, so block-list `canon_sources` on solid/outlined pages is silently ignored and fails on promotion to `ready`. Fix = teach `_lib/frontmatter` block sequences OR ship an inline-only lint (+ migrate existing block-list frontmatter). Level-2+ (Syncs to all consumers) → delta-force + Auditor. Surfaced by EMCC `Inbox-Triage.md`.
+
+## Sprint — Readiness cascade dir-20260614n (BUILT 2026-06-14; MERGED via PR #47)
 
 Director cascade `dir-20260614n-readiness-library` (req `96acbc3a`). Gate `tasks/delta-force/delta-force-20260614-061339.md` (DFTS=8). Auditor Regime B: PASS. Branch `claude/readiness-lib-wiki-summary-op-20260614` @ `583fab3` — **operator human-at-merge; scores bump on merge.**
 

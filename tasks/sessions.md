@@ -1,6 +1,25 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-14b — Readiness cascade dir-ii/hh/jj: lib-95 push, mentor-wiki, 3 wiki skeletons (delta-force + Auditor PASS)
+
+Continuation of the 24h autonomous readiness loop (Director `dir-20260614*` over `claude-peers`). Three directives, all gated (one consolidated `/delta-force` per directive-batch — `tasks/delta-force/delta-force-20260614-092532.md`, DFTS≥4) and Auditor (Regime B) PASS. **Honest-cap rule governed:** real work where there was headroom, explicit caps where the gap is the systemic LLM-runtime/orchestrator seam — no score-gaming. All branches operator-merged (PRs #48 Library, #17 Mentor, #42 isommelier; emcc-wiki applied direct on EMCC main); readiness reconciled live.
+
+**dir-20260614ii-lib-95:**
+- **lib-codex 90 → 92.** Wired the existing report-only `audit_citations.py` into the `update_dashboards.py` orchestrator (`run()`→dict, registered in `SUBSCRIPTS`, failure-isolated, forces `enforce=False` so it can never red-bar; own `_dashboards/citation_audit.md`; NO health-section — the 7-signal contract is frozen) + tests. Capped <95: ceiling = the dead plugin SCORING subsystem (run path is keyword-presence, `blend_results` is score-based — they don't connect; a future sprint) + fleet-wide dry-Sync verification (env-blocked).
+- **lib-librarian — CAPPED at 85** (flat, no code). Cross-Project-Scan blocked on the EMCC orchestrator; reliable curation/ingest at scale needs the live LLM runtime. Declined to invent a delta for a flag (the council's + Director's "exactly right" call).
+
+**dir-20260614hh-mentor-wiki: 75 → 77** (cross-repo, PR #17). Surgical one-file fix — cleared the lone `codex/PROJECT_WIKI_BUILD_SPEC` orphan via a path-qualified Home link; validators 0 broken/0 orphans. Rejected a `cross_link_topics` refresh (30-file cross-repo churn — council + the cosmetic-churn-revert discipline). Content-depth capped (needs source material + live ingest runtime).
+
+**dir-20260614jj-wiki-skeletons** (RED-BAND, atomic one-at-a-time):
+- **dfdu-wiki 22 → 48** (PR-merged). NEW `00-Start-Here/Project-Overview.md` (full derived overview, cites lattice 00+01; fixes the broken Home link) + populated the empty Glossary with 18 Lattice 3.0 terms (gap→solid) + orphan link. Validators 4 broken/1 orphan → 0/0; completion 50→54.
+- **iso-wiki 20 → 38** (isommelier, PR #42). Found it already well-built (8 solid pages + populated Glossary); cleared the lone codex orphan from Home. 0/0.
+- **emcc-wiki 25 → 50** (applied by the Director on EMCC main, commits 300ab02/2b85c0b). `wiki.EMCC` is in the Director's SHARED EMCC checkout, so branching it = a shared-tree HEAD race; held and handed a **ready-to-apply patch** (option c, `tasks/patches/emcc-wiki-fill-dir-jj.md`): Glossary (18 EMCC terms) + codex-orphan link + `allow_orphan` on the 8 `status:generated` `tasks/*.md` mirrors. Validators 0/0/0.
+
+**Engine finding surfaced (FLAGGED, gated backlog):** the Codex YAML-subset frontmatter parser **silently drops block-list sequences** — `canon_sources:` with `- item` lines parses to `None`. `validate_canon_integrity` only checks `status:ready` pages, so block-list `canon_sources` on solid/outlined pages is silently ignored TODAY and would fail the instant a page is promoted to `ready` (this is exactly what flagged EMCC's `Inbox-Triage.md`, which DID declare its sources — in block form). Handed the Director the 1-line inline-conversion fix for Inbox-Triage; queued the proper parser fix (support block sequences) OR an inline-only lint as a delta-force-gated EMCC.Library engine task (Syncs to all consumers).
+
+Suite 749 (was 747; +2 audit_citations `run()` tests). Only the 2 pre-existing `TestSyncStamp` CRLF failures remain. Stdlib only; verbatim INGEST/SEMANTIC_LINT bodies untouched throughout.
+
 ## 2026-06-14 — Readiness cascade dir-20260614n: self-wiki + plain-language summary op (delta-force + Auditor PASS)
 
 EMCC Orchestrator cascade (Director `dir-20260614n-readiness-library`, req `96acbc3a`, autonomous 24h readiness loop iter 1) over `claude-peers`. Two readiness functions hardened to their honest ceiling. Pre-build gate `/delta-force` (DFTS=8, Fable 5 unavailable → seats on Opus 4.8; transcript `tasks/delta-force/delta-force-20260614-061339.md`); post-build independent **Auditor (Regime B): PASS** (all findings info-level). Branch `claude/readiness-lib-wiki-summary-op-20260614` @ **583fab3** — **MERGE-PENDING (operator human-at-merge; do NOT self-merge)**; readiness scores bump on merge. Housekeeping refresh committed on the same branch.
