@@ -2,6 +2,16 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
+## Sprint — Readiness cascade dir-20260614n (BUILT 2026-06-14; branch 583fab3 MERGE-PENDING)
+
+Director cascade `dir-20260614n-readiness-library` (req `96acbc3a`). Gate `tasks/delta-force/delta-force-20260614-061339.md` (DFTS=8). Auditor Regime B: PASS. Branch `claude/readiness-lib-wiki-summary-op-20260614` @ `583fab3` — **operator human-at-merge; scores bump on merge.**
+
+- [x] **lib-wiki 45→70** — self-wiki validators 50 broken + 13 orphans → 0/0: P9 full-path cross-ref resolution (+dup-stem guard), list-aware indented-code strip (clears verbatim-doc false-positives without editing), populated Glossary (16 terms), Home protocol-canon links, CODEX_LIBRARIAN canon_sources. +9 tests.
+- [x] **lib-summary-op 55→68** — canonical `_scripts/summarize.py` (extractive default + injectable LLM seam, honestly named, faithfulness guarantee). +16 tests.
+- [ ] **🔴 LLM-seam unlock (operator-gated; raises both toward 80).** lib-summary-op → 80 needs a consumer to wire a real `summarize_fn` (EMCC `librarian_summarize.py` is the seam — currently no-op without an LLM). Logged Director-side as a top systemic unlock alongside backend-hosting.
+- [ ] **⚪ lib-wiki deeper link-graph-integrity layer** (beyond cross-refs) for the path from 70 → 80.
+- [ ] **⚪ Cleanup: 2 pre-existing `test_sync_from_kit` TestSyncStamp failures** — Windows CRLF/git-state churn (NOT from this work); confirmed on clean tree. Candidate for the CRLF sweep.
+
 ## Sprint — Codex v1.3.1 cross-link at scale (BUILT 2026-06-13b)
 
 Surfaced by the Aviation consumer; plan `0-Inbox/PLAN-cross-link-promotion-2026-06-13.md`. Opt-in defaults = v1.3 byte-identical. Committed `4dce454`. Independent Auditor: SHIP-WITH-FIXES (fixes applied).

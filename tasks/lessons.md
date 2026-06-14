@@ -4,6 +4,16 @@
 
 ---
 
+## `_lib/markdown.strip_code` is load-bearing for the see-also markers — don't strip HTML comments (2026-06-14, dir-20260614n)
+
+`strip_code` feeds the validators (terminology / reveal / canon / cross-refs) AND `cross_link_topics.replace_or_append_marker_block`, which locates the `<!-- codex:see-also:start/end -->` markers **in code-stripped text**. The markers are HTML comments. Extending `strip_code` to blank HTML comments (a "correct markdown" instinct, to kill wikilinks inside commented-out template blocks) silently broke marker detection → `cross_link_topics` appended a *second* see-also block every run (9-test regression in `test_cross_link_topics`). Lesson: **before touching a shared `_lib` helper, grep its callers** — `strip_code` has a non-obvious second consumer whose contract is "comments survive." The Glossary comment false-positives were better fixed by *curating the page* (removing the template residue) than by changing the shared helper. The Surgeon's rule held: a shared-helper change must be justified by a named false-positive AND re-verified against every caller's tests.
+
+**Path-qualified wikilink resolution: resolve by FULL path, never last-segment stem.** The Style-Guide mandates `[[Folder/Page]]`; P9 resolved bare-stem only, flagging them all broken. The fix is NOT "match the last segment" — that converts a false-positive into a false-NEGATIVE (two `Setup.md` in different folders collapse; `[[ghost/Page]]` matches a real `Page` elsewhere). Resolve a path-qualified target only when its full wiki-relative path maps to a real page; track orphan-clearing by resolved-page *identity*, not stem, so a link to one same-stem page doesn't clear the other. (Caught pre-build by the delta-force Breaker seat.)
+
+**"Plain-language summary" is an LLM job; the deterministic path is extractive — name it honestly.** When the capability can't be delivered without the live runtime (an LLM `summarize_fn`), ship the seam + a faithful deterministic fallback (extractive selection, never word-level mutation, every output sentence a verbatim source span) and attach the capability's name to the *seam*, not the fallback. Cap the readiness score below the production target and disclose *why* (no LLM wired) rather than claiming the number. The Director accepts an honest cap as correct, not a shortfall — a whole tier of readiness legitimately sits behind "wire the live runtime."
+
+---
+
 ## CLAUDE.md → wiki migration (anatomy standard, framework/20; tat_app pilot 2026-06-07/08)
 
 When the Librarian migrates an over-long `CLAUDE.md` by routing its reference content into the wiki (per `EMCC/framework/20-claude-md-anatomy.md`), these held:
