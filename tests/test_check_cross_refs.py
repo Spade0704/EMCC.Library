@@ -455,6 +455,143 @@ class CheckCrossRefsTests(unittest.TestCase):
         self.assertNotIn("a/Setup.md", orphan_rels)
         self.assertIn("b/Setup.md", orphan_rels)
 
+    # -- Page-relative (`../`) wikilink resolution (dir-relpath-resolver) ----
+
+    def test_page_relative_sibling_folder_resolves(self):
+        # Page at 01-Domain/ links a sibling folder via `../`. Real residehub
+        # shape: [[../folder/Page]] pointing at 02-Other/Baz.md.
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "See [[../02-Other/Baz]] for detail.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+        orphan_rels = {
+            o["page_path"].relative_to(self.wiki).as_posix()
+            for o in summary["orphans"]
+        }
+        self.assertNotIn("02-Other/Baz.md", orphan_rels)
+
+    def test_page_relative_up_to_root_resolves(self):
+        # `../Home` from a one-deep page reaches the root-level Home.md.
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "Back to [[../Home]].\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+        orphan_rels = {
+            o["page_path"].relative_to(self.wiki).as_posix()
+            for o in summary["orphans"]
+        }
+        self.assertNotIn("Home.md", orphan_rels)
+
+    def test_page_relative_deep_parent_resolves(self):
+        # The depth-2 case where page-relative (A) and strip-to-root (B)
+        # DIVERGE: from a/c/Deep.md, [[../Page]] means a/Page, NOT root Page.
+        self._write_page(Path("a") / "Page.md", "Parent body.\n")
+        self._write_page(
+            Path("a") / "c" / "Deep.md",
+            "Up one to [[../Page]].\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+        orphan_rels = {
+            o["page_path"].relative_to(self.wiki).as_posix()
+            for o in summary["orphans"]
+        }
+        self.assertNotIn("a/Page.md", orphan_rels)
+
+    def test_page_relative_with_md_extension_resolves(self):
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "See [[../02-Other/Baz.md]] here.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+
+    def test_page_relative_mid_dotdot_resolves(self):
+        # A `..` segment in the MIDDLE collapses correctly: from 01-Domain/,
+        # [[ghost/../Bar]] normalizes to 01-Domain/Bar (Bar.md exists there).
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "Round trip [[ghost/../Bar]].\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+        orphan_rels = {
+            o["page_path"].relative_to(self.wiki).as_posix()
+            for o in summary["orphans"]
+        }
+        self.assertNotIn("01-Domain/Bar.md", orphan_rels)
+
+    def test_page_relative_wrong_folder_is_broken(self):
+        # `../ghost/Baz` from 01-Domain resolves to ghost/Baz — no such page.
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "Broken [[../ghost/Baz]] link.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        targets = [f["link"] for f in summary["broken_links"]]
+        self.assertIn("../ghost/Baz", targets)
+
+    def test_page_relative_escapes_root_is_broken(self):
+        # Over-popping past the wiki root must report broken, never resolve.
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "Escape [[../../../Foo]] attempt.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        targets = [f["link"] for f in summary["broken_links"]]
+        self.assertIn("../../../Foo", targets)
+
+    def test_page_relative_from_root_page_is_broken(self):
+        # A root-level page has no parent inside the wiki; any `../` escapes.
+        self._write_page(
+            Path("RootLinker.md"),
+            "From root [[../Foo]] escapes.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        targets = [f["link"] for f in summary["broken_links"]]
+        self.assertIn("../Foo", targets)
+
+    def test_literal_dotdot_in_folder_name_is_not_traversal(self):
+        # `..` is matched by exact segment, so a folder literally named
+        # `my..weird` is a normal root-relative path, not a traversal.
+        self._write_page(Path("my..weird") / "Page.md", "Odd-name body.\n")
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "Plain [[my..weird/Page]] link.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+        orphan_rels = {
+            o["page_path"].relative_to(self.wiki).as_posix()
+            for o in summary["orphans"]
+        }
+        self.assertNotIn("my..weird/Page.md", orphan_rels)
+
+    def test_backslash_target_is_not_silently_resolved(self):
+        # Windows-style backslash separators are not a wikilink path form; the
+        # target is one opaque segment and must report broken (not resolve).
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "Bad sep [[..\\02-Other\\Baz]] link.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        targets = [f["link"] for f in summary["broken_links"]]
+        self.assertIn("..\\02-Other\\Baz", targets)
+
     # -- AC6: wiki_root.is_dir() precheck (S017 lesson, P7 precedent) -------
 
     def test_run_raises_filenotfounderror_on_missing_wiki_root(self):

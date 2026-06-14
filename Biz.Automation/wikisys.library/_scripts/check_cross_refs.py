@@ -4,8 +4,8 @@ P9 validator. Walks the wiki for content pages (skipping infrastructure
 folders prefixed with `_`), strips fenced and inline code spans, scans
 each page's body for wikilinks (bare / alias / section / embed shapes),
 resolves them (bare target by filename stem; path-qualified `Folder/Page`
-target by full wiki-relative path — see `_resolve_target`), and emits two
-finding classes:
+target by full wiki-relative path; `../`-bearing target page-relative to the
+linking page's folder — see `_resolve_target`), and emits two finding classes:
 
     broken_wikilinks  link target stem has no corresponding .md content page
     orphan_pages      content page receives zero inbound wikilinks AND
@@ -16,6 +16,8 @@ Wikilink syntax:
     [[Foo|display]]    alias  (display suffix dropped before stem-match)
     [[Foo#sec]]        section (section suffix dropped before stem-match)
     ![[Foo]]           embed  (! prefix is render-hint; target = stem)
+    [[../bar/Foo]]     page-relative (any `..` segment resolves against the
+                       linking page's folder; see `_resolve_target`)
 
 Orphan-clearance: a page does NOT clear its own orphan status by linking
 to itself. Only inbound links from OTHER content pages count.
@@ -38,6 +40,7 @@ Exit codes (in __main__):
     2 — script-level error (missing wiki_root, IO error).
 """
 
+import posixpath
 import re
 import sys
 from datetime import date
@@ -81,19 +84,44 @@ def _iter_wikilinks(text):
         yield target, body_line
 
 
-def _resolve_target(target, stem_to_page, relpath_to_page):
+def _resolve_page_relative(linking_page_dir, target):
+    """Resolve a `..`-bearing target against the linking page's folder.
+
+    Joins `linking_page_dir` (the wiki-relative posix dir of the page that
+    CONTAINS the link, "" or "." for a root-level page) with `target`, then
+    collapses `.`/`..` segments via `posixpath.normpath` (pure string math, no
+    filesystem touch — never `Path.resolve()`, which would hit disk/symlinks).
+    Returns the resulting wiki-relative key (no extension), or None when the
+    `..` segments walk above the wiki root (an unresolvable escape).
+    """
+    joined = posixpath.normpath(posixpath.join(linking_page_dir, target))
+    if joined == ".." or joined.startswith("../") or joined == ".":
+        return None
+    return joined
+
+
+def _resolve_target(target, stem_to_page, relpath_to_page, linking_page_dir):
     """Resolve a wikilink target to a page, or None if it has no destination.
 
     A bare target (`Page`) resolves by filename stem. A path-qualified target
     (`Folder/Page`, the Style-Guide-mandated disambiguation form) resolves ONLY
     when its full wiki-relative path maps to a real page — never by last segment
-    alone, which would mask genuinely broken or ambiguous links. A trailing
-    `.md` and a leading `./` are tolerated. Case-sensitive on every host.
+    alone, which would mask genuinely broken or ambiguous links. A target that
+    carries ANY `..` segment is page-relative: it resolves against the linking
+    page's own folder (`linking_page_dir`), like a filesystem path, and reports
+    broken if it escapes the wiki root. All other path-qualified targets — bare
+    `Folder/Page` and leading-`./` — stay wiki-root-relative (Codex's deliberate
+    root-default contract; `./` is NOT page-relative here). A trailing `.md` and
+    a leading `./` are tolerated. Case-sensitive on every host. `..` is matched
+    by exact segment, so a folder literally named e.g. `my..weird` is unaffected.
     """
     t = target.strip()
     if t.endswith(".md"):
         t = t[:-3]
     if "/" in t:
+        if ".." in t.split("/"):
+            key = _resolve_page_relative(linking_page_dir, t)
+            return relpath_to_page.get(key) if key is not None else None
         key = t[2:] if t.startswith("./") else t
         return relpath_to_page.get(key)
     return stem_to_page.get(t)
@@ -139,10 +167,14 @@ def run(wiki_root: Path) -> Dict[str, Any]:
         fm_lines = markdown.frontmatter_line_count(raw_text)
         stripped = markdown.strip_code(page["body"])
 
+        # Wiki-relative posix dir of THIS page, the base for page-relative
+        # (`../`) target resolution. "." for a root-level page.
+        linking_page_dir = page_path.relative_to(wiki_root).parent.as_posix()
+
         for target_stem, body_line in _iter_wikilinks(stripped):
             file_line = body_line + fm_lines
             resolved = _resolve_target(
-                target_stem, stem_to_page, relpath_to_page
+                target_stem, stem_to_page, relpath_to_page, linking_page_dir
             )
             if resolved is None:
                 broken_links.append({
