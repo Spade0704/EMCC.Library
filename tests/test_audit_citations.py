@@ -95,6 +95,40 @@ class TestAuditCitations(unittest.TestCase):
         self.assertEqual(audit_citations.audit_citations(self.root), [])
 
 
+class TestRunWrapper(unittest.TestCase):
+    """The orchestrator entry-point: report-only, writes its own dashboard,
+    returns a dict, never red-bars."""
+
+    def setUp(self):
+        self._tmp = TemporaryDirectory()
+        self.root = Path(self._tmp.name)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_run_returns_dict_and_writes_dashboard(self):
+        _page(self.root, "high_missing.md",
+              "---\nconsequence: high\ncite_anchor: \"\"\n---\nbody\n")
+        out = audit_citations.run(self.root)
+        self.assertIn("findings", out)
+        self.assertIn("dashboard_path", out)
+        self.assertEqual(out["findings_count"], len(out["findings"]))
+        dash = out["dashboard_path"]
+        self.assertTrue(dash.is_file())
+        text = dash.read_text(encoding="utf-8")
+        self.assertTrue(text.startswith("---"))  # 5-field dashboard fm header
+        self.assertIn("Presence-Not-Accuracy", text)
+
+    def test_run_is_report_only_findings_are_warnings(self):
+        # run() forces enforce=False — a HIGH-without-cite is a warning, never
+        # an error, so it can never red-bar the orchestrator pass.
+        _page(self.root, "high_missing.md",
+              "---\nconsequence: high\ncite_anchor: \"\"\n---\nbody\n")
+        out = audit_citations.run(self.root)
+        self.assertTrue(out["findings"])
+        self.assertTrue(all(f["severity"] == "warning" for f in out["findings"]))
+
+
 class TestCanonDocumentsTheContract(unittest.TestCase):
     """Desync guard: the canon must name the real fields the lint reads, so a
     future rename can't silently drift the doc away from the code."""

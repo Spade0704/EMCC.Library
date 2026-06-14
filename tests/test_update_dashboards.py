@@ -35,8 +35,10 @@ class TestOrchestrator(unittest.TestCase):
             stdout = io.StringIO()
             rc = update_dashboards._main(wiki, stdout=stdout)
             self.assertEqual(rc, 0)
-            for p_num, _module, _label in update_dashboards.SUBSCRIPTS:
-                self.assertIn("P{}".format(p_num), stdout.getvalue())
+            # Assert by the registered label (not "P{num}") so non-P-indexed
+            # stages like the report-only citation audit are covered too.
+            for _p_num, _module, label in update_dashboards.SUBSCRIPTS:
+                self.assertIn(label, stdout.getvalue())
                 self.assertIn("OK", stdout.getvalue())
             health = wiki / "_dashboards" / "health.md"
             self.assertTrue(health.exists())

@@ -31,6 +31,7 @@ P-priority sub-script order:
     P14 steel_thread_tracker
     P15 build_canon_drift_report
     # P16 delta_source_docs -- DEFER: S037-T4/T5
+    AC  audit_citations (report-only citation-presence; own dashboard, not health.md)
 
 Failure handling: per-script try/except catches Exception; orchestrator
 continues; health.md synthesized against partial outputs (sentinel `?`
@@ -52,6 +53,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+import audit_citations
 import build_canon_drift_report
 import build_completion_dashboard
 import build_topic_index
@@ -95,6 +97,11 @@ SUBSCRIPTS: List[Tuple[int, Any, str]] = [
     (14, steel_thread_tracker, "P14 steel_thread_tracker"),
     (15, build_canon_drift_report, "P15 build_canon_drift_report"),
     # DEFER: S037-T4/T5 P16 delta_source_docs wiring goes here once shipped.
+    # Citation-presence audit (2026-06-13 accuracy track) — report-only stage,
+    # failure-isolated like every other; never red-bars (run() forces enforce=False).
+    # NOT wired into health.md (the 7-signal contract is frozen); emits its own
+    # _dashboards/citation_audit.md.
+    (21, audit_citations, "AC audit_citations"),
 ]
 
 
