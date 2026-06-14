@@ -2,12 +2,20 @@
 
 Foundation module — every Codex script imports this. Pure stdlib.
 Handles the YAML subset that spec §2.3 frontmatter uses: flat mapping
-with scalar values (string, int, bool, null) and flow-style lists.
-Comments (#) and quoted strings supported.
+with scalar values (string, int, bool, null), flow-style lists
+(`key: [a, b]`), and block-style scalar lists (`key:` then indented
+`- item` lines — added dir-20260614qq; both list forms are equivalent,
+inline is the canonical/preferred form per spec §2.3). Comments (#),
+quoted strings, and `~` as null supported.
 
-Out of scope (per tasks/lessons.md 2026-05-01 — Codex script conventions):
-block-style lists, nested mappings, multi-line strings, YAML anchors,
-multi-document streams, datetime parsing, capitalised booleans, ~ as null.
+Out of scope: nested mappings, list-of-mappings (block items that are
+themselves mappings), multi-line strings, YAML anchors, multi-document
+streams, datetime parsing, capitalised booleans. (The richer
+`parse_config_yaml` below — for `_config/*.yaml` — handles list-of-mappings
++ sub-lists; frontmatter intentionally stays flat.) Block-style scalar
+lists were previously out of scope (tasks/lessons.md 2026-05-01) but caused
+silent data loss — a block `canon_sources:` parsed to None — so flat scalar
+block lists are now supported; structured block items still are not.
 """
 
 from pathlib import Path
@@ -353,19 +361,83 @@ def find_frontmatter_close(lines: List[str]) -> Optional[int]:
 
 
 def _parse_yaml_subset(text: str) -> Dict[str, Any]:
-    """Parse the YAML subset Codex frontmatter uses. Returns a dict."""
+    """Parse the YAML subset Codex frontmatter uses. Returns a dict.
+
+    Flat mapping of scalar values (string / int / float / bool / null),
+    flow-style lists (`key: [a, b]`), AND block-style scalar lists:
+
+        canon_sources:
+          - "a.md"
+          - "b.md"
+
+    A block list is collected only when a `key:` has an empty inline value and
+    is followed by consecutive indented `- item` lines (see `_collect_block_list`).
+    A bare `key:` with nothing after stays `None` (back-compat). Nested mappings
+    and list-of-mappings remain out of scope — frontmatter is flat.
+    """
     result = {}
-    for raw_line in text.split("\n"):
+    lines = text.split("\n")
+    n = len(lines)
+    i = 0
+    while i < n:
+        raw_line = lines[i]
         line = _strip_eol_comment(raw_line).rstrip()
         if not line or line.lstrip().startswith("#"):
+            i += 1
             continue
         colon = line.find(":")
         if colon == -1:
+            i += 1
             continue
         key = line[:colon].strip()
         value_str = line[colon + 1:].strip()
-        result[key] = _parse_value(value_str)
+        if value_str == "":
+            # Empty inline value: a block-style scalar list may follow as
+            # consecutive indented `- item` lines (spec §2.3). Collect them;
+            # if none follow, keep the scalar None (a bare `key:` stays None).
+            items, i = _collect_block_list(lines, i + 1)
+            result[key] = items if items is not None else _parse_value(value_str)
+        else:
+            result[key] = _parse_value(value_str)
+            i += 1
     return result
+
+
+def _collect_block_list(lines: List[str], start: int):
+    """Collect a block-style scalar list beginning at line index `start`.
+
+    Returns `(items, next_index)`. `items` is the list of parsed scalars, or
+    `None` when no block-list item line follows (the caller then keeps the
+    scalar `None`, preserving the bare-`key:` → None back-compat). A block-list
+    item is an INDENTED line whose stripped content starts with `- `; each item
+    is routed through `_parse_value` (so quotes/ints/etc. parse as elsewhere).
+    Full-comment lines interleaved between items are skipped; a blank line or
+    any non-item content line terminates the list (and is left for the caller
+    to process — the cursor is not advanced past it). Only flat scalar items
+    are supported; nested mappings / list-of-mappings are not.
+    """
+    items = None
+    j = start
+    n = len(lines)
+    while j < n:
+        raw = lines[j]
+        stripped_raw = raw.strip()
+        if stripped_raw == "":
+            break  # blank line terminates a block list
+        if stripped_raw.startswith("#"):
+            j += 1  # full-comment line between items: skip, keep scanning
+            continue
+        cleaned = _strip_eol_comment(raw).rstrip()
+        content = cleaned.lstrip()
+        indent = len(cleaned) - len(content)
+        if indent > 0 and content.startswith("- "):
+            if items is None:
+                items = []
+            items.append(_parse_value(content[2:].strip()))
+            j += 1
+        else:
+            break  # non-indented or non-dash line ends the block list
+    return items, j
 
 
 def _strip_eol_comment(line: str) -> str:

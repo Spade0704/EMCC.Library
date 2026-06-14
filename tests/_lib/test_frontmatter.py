@@ -564,5 +564,105 @@ class TestWikiContentRoot(unittest.TestCase):
                 frontmatter.find_wiki_content_root(install)
 
 
+class BlockStyleListTests(unittest.TestCase):
+    """dir-20260614qq: `_parse_yaml_subset` now parses block-style scalar lists
+    (`key:` then indented `- item` lines), which previously parsed to None."""
+
+    def test_block_list_canon_sources_parses(self):
+        text = (
+            "---\n"
+            "canon_sources:\n"
+            '  - "a.md"\n'
+            '  - "b.md"\n'
+            "---\n"
+        )
+        fm = frontmatter.parse_frontmatter(text)
+        self.assertEqual(fm["canon_sources"], ["a.md", "b.md"])
+
+    def test_inline_list_still_parses(self):
+        text = '---\ncanon_sources: ["a.md", "b.md"]\n---\n'
+        self.assertEqual(
+            frontmatter.parse_frontmatter(text)["canon_sources"], ["a.md", "b.md"]
+        )
+
+    def test_block_and_inline_equivalent(self):
+        block = frontmatter.parse_frontmatter(
+            '---\nk:\n  - "x"\n  - "y"\n---\n'
+        )["k"]
+        inline = frontmatter.parse_frontmatter('---\nk: ["x", "y"]\n---\n')["k"]
+        self.assertEqual(block, inline)
+
+    def test_bare_empty_key_still_none(self):
+        # A key with empty value and NO following `- ` items stays None.
+        text = "---\ntitle: t\nsource:\nstatus: ready\n---\n"
+        fm = frontmatter.parse_frontmatter(text)
+        self.assertIsNone(fm["source"])
+        self.assertEqual(fm["status"], "ready")
+
+    def test_mixed_scalar_block_inline_one_block(self):
+        text = (
+            "---\n"
+            "title: My Page\n"
+            "completion: 80\n"
+            "canon_sources:\n"
+            '  - "spec.md §4"\n'
+            '  - "other.md"\n'
+            "dependencies: []\n"
+            "---\n"
+        )
+        fm = frontmatter.parse_frontmatter(text)
+        self.assertEqual(fm["title"], "My Page")
+        self.assertEqual(fm["completion"], 80)
+        self.assertEqual(fm["canon_sources"], ["spec.md §4", "other.md"])
+        self.assertEqual(fm["dependencies"], [])
+
+    def test_block_list_is_last_key_before_close(self):
+        text = '---\ntitle: t\ncanon_sources:\n  - "a.md"\n---\nbody\n'
+        self.assertEqual(
+            frontmatter.parse_frontmatter(text)["canon_sources"], ["a.md"]
+        )
+
+    def test_block_list_tab_indent(self):
+        text = '---\nk:\n\t- "a"\n\t- "b"\n---\n'
+        self.assertEqual(frontmatter.parse_frontmatter(text)["k"], ["a", "b"])
+
+    def test_comment_between_block_items_tolerated(self):
+        text = (
+            "---\n"
+            "k:\n"
+            '  - "a"\n'
+            "  # a note\n"
+            '  - "b"\n'
+            "---\n"
+        )
+        self.assertEqual(frontmatter.parse_frontmatter(text)["k"], ["a", "b"])
+
+    def test_empty_key_then_scalar_key_not_overconsumed(self):
+        # An empty key followed by a normal (non-dash) key must not swallow it.
+        text = "---\nsource:\ntitle: Real Title\n---\n"
+        fm = frontmatter.parse_frontmatter(text)
+        self.assertIsNone(fm["source"])
+        self.assertEqual(fm["title"], "Real Title")
+
+    def test_block_item_with_quoted_colon_unmangled(self):
+        text = '---\nk:\n  - "spec.md §4: note"\n---\n'
+        self.assertEqual(
+            frontmatter.parse_frontmatter(text)["k"], ["spec.md §4: note"]
+        )
+
+    def test_block_list_bare_unquoted_items(self):
+        text = "---\ntopics:\n  - alpha\n  - beta\n---\n"
+        self.assertEqual(
+            frontmatter.parse_frontmatter(text)["topics"], ["alpha", "beta"]
+        )
+
+    def test_zero_indent_dash_not_consumed(self):
+        # Documented limitation: block items must be INDENTED. A 0-indent dash
+        # after `key:` is not collected (key stays None) — matches all real
+        # Codex frontmatter, which indents block items.
+        text = "---\nk:\n- a\n---\n"
+        self.assertIsNone(frontmatter.parse_frontmatter(text)["k"])
+
+
 if __name__ == "__main__":
     unittest.main()
