@@ -2,6 +2,10 @@
 
 > Newest sprint at top. Older sprints rolled to `tasks/archive.md` once their work is complete.
 
+## Codex-engine backlog (gated; not yet scheduled)
+
+- [ ] **🔴 Normalize a leading `../` in cross-ref wikilinks portfolio-wide.** `check_cross_refs._resolve_target` resolves wiki-root-relative (`folder/Page`) + bare-stem, but NOT page-relative `[[../folder/Page]]`. Surfaced by residehub (dir-20260614 #6): all 28 of rh-wiki's "broken" links were real targets written `[[../folder/Page]]`; normalized in-place there (c33498e), but other consumer wikis may use the same form. Engine fix = strip/normalize leading `../` segments in the resolver (and decide: resolve relative to the page's folder, or treat `../` as redundant-to-root). **Level-2+** — `_lib`/resolver change Syncs to all consumers → DF + Auditor gated. Pairs with [[the block-list parser fix]] pattern (another resolver/parser gap found via a consumer wiki). Awaiting Director scheduling.
+
 ## Sprint — Readiness cascade dir-ii/hh/jj (DONE 2026-06-14b; all merged)
 
 Gate `tasks/delta-force/delta-force-20260614-092532.md`; Auditor Regime B PASS. Scores reconciled live.
