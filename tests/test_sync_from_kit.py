@@ -20,8 +20,13 @@ CONSUMER_NAME = "test_consumer"
 
 
 def _write(path: Path, content: str) -> None:
+    # newline="" disables platform newline translation so fixture files land
+    # with LF on every OS. Without it, Windows text-mode write turns "\n" into
+    # "\r\n"; the SYNC-STAMP manifest hashes the on-disk bytes (read_bytes),
+    # so CRLF fixtures hash differently from the LF literals the stamp tests
+    # assert (b"...\n") — the prior TestSyncStamp Windows-only failures.
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
+    path.write_text(content, encoding="utf-8", newline="")
 
 
 def _make_library_install(root: Path) -> Path:
