@@ -29,10 +29,14 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import date
 from pathlib import Path
-from typing import List, NamedTuple, Optional
+from typing import Any, Dict, List, NamedTuple, Optional
 
-from _lib import cli, doc_lint, frontmatter, markdown
+from _lib import cli, dashboard, doc_lint, frontmatter, markdown
+
+
+DASHBOARD_RELATIVE = "_dashboards/citation_audit.md"
 
 
 class CitationFinding(NamedTuple):
@@ -89,6 +93,31 @@ def render_dashboard(findings: List[CitationFinding], wiki_root: Path,
     for f in findings:
         lines.append(f"| `{f.path}` | {f.consequence} | {f.severity} | {f.message} |")
     return "\n".join(lines) + "\n"
+
+
+def run(wiki_root: Path) -> Dict[str, Any]:
+    """Orchestrator entry-point — report-only citation-presence audit.
+
+    Conforms to the `module.run(wiki_root) -> dict` contract `update_dashboards.py`
+    invokes. Always report-only here (never `enforce`) so wiring it into the
+    orchestrator can never red-bar the dashboard pass — the standalone CLI keeps
+    the `--enforce` opt-in. Writes `_dashboards/citation_audit.md`, returns a
+    summary dict. Presence-Not-Accuracy caveat carries through render_dashboard.
+    """
+    wiki_root = Path(wiki_root)
+    findings = audit_citations(wiki_root, enforce=False)
+    today = date.today().isoformat()
+    header = "\n".join(dashboard.render_fm_header("Citation Audit Dashboard",
+                                                 today=today))
+    content = header + "\n\n" + render_dashboard(findings, wiki_root, enforce=False)
+    out_path = wiki_root / DASHBOARD_RELATIVE
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(content, encoding="utf-8")
+    return {
+        "findings": [f._asdict() for f in findings],
+        "findings_count": len(findings),
+        "dashboard_path": out_path,
+    }
 
 
 def main(argv: Optional[List[str]] = None) -> int:
