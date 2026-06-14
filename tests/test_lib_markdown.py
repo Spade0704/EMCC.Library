@@ -47,6 +47,53 @@ class StripCodeTests(unittest.TestCase):
         out = markdown.strip_code(body)
         self.assertEqual(len(body.splitlines()), len(out.splitlines()))
 
+    def test_html_comment_NOT_stripped(self):
+        # HTML comments must survive — Codex's see-also markers are comments
+        # that cross_link_topics locates via strip_code.
+        body = "text\n<!-- codex:see-also:start -->\n- [[X]]\n<!-- codex:see-also:end -->\n"
+        out = markdown.strip_code(body)
+        self.assertIn("codex:see-also:start", out)
+        self.assertIn("codex:see-also:end", out)
+
+    def test_indented_code_block_after_paragraph_stripped(self):
+        # CommonMark indented code block (preceded by a blank line, not a
+        # list) — example wikilinks inside must NOT be yielded as real links.
+        body = (
+            "Report template:\n"
+            "\n"
+            "    ## A. Contradictions\n"
+            "    - [[Page-One]] says X. [[Page-Two]] says Y.\n"
+            "\n"
+            "End.\n"
+        )
+        out = markdown.strip_code(body)
+        self.assertNotIn("Page-One", out)
+        self.assertNotIn("Page-Two", out)
+        self.assertIn("Report template:", out)
+        self.assertIn("End.", out)
+        self.assertEqual(len(body.splitlines()), len(out.splitlines()))
+
+    def test_indented_list_continuation_NOT_stripped(self):
+        # The Breaker's false-negative guard: a wikilink in an indented list
+        # continuation is a REAL link and must survive strip_code so the
+        # cross-ref validator still checks it.
+        body = (
+            "- a list item\n"
+            "\n"
+            "    [[Real-But-Broken]] continuation of the item\n"
+            "\n"
+            "next paragraph\n"
+        )
+        out = markdown.strip_code(body)
+        self.assertIn("Real-But-Broken", out)
+
+    def test_indented_block_does_not_interrupt_paragraph(self):
+        # No blank line before the indent => lazy paragraph continuation, not
+        # a code block; the wikilink must survive.
+        body = "a paragraph line\n    [[Still-A-Link]] hanging indent\n"
+        out = markdown.strip_code(body)
+        self.assertIn("Still-A-Link", out)
+
 
 class FrontmatterLineCountTests(unittest.TestCase):
 

@@ -5,7 +5,7 @@ visibility: internal
 completion: 100
 status: ready
 last_updated: 2026-05-25
-canon_sources: []
+canon_sources: ["CODEX_BUILD_SPEC_v1_3.md (Principle #10; spec basis)", "tasks/plans/portfolio-folder-structure-spec.md §(d) (Librarian Agent + Codex Scripts — Design)"]
 unverified_claims: []
 ---
 
@@ -321,10 +321,17 @@ dashboard) request a summary; they do not re-implement the voice.
   the raw canon (no transform).
 - **Producer ≠ judge still holds** — a summary is presentation, not a verdict; it does not replace
   the Auditor or change canon.
+- **Canonical implementation (this module).** The op is implemented stdlib-only in
+  `_scripts/summarize.py` — `summarize(source, audience, summarize_fn=None)`. The deterministic
+  default path is **extractive** (selects salient sentences; the entrepreneur audience drops
+  jargon-/path-/hash-dominated sentences; every returned sentence is a verbatim span of the source
+  — faithful, never a word-level rewrite). True plain-language *rewriting* is delivered only when an
+  LLM `summarize_fn(source, audience)` is injected; the deterministic path is honest-but-extractive,
+  not a plain-language rewrite. Consumers vendor this module via Sync.
 - **Consumer wiring (reference, non-normative):** EMCC sets the audience default + surfaces a
-  "Plain language" toggle and runs the transform via `scripts/librarian_summarize.py` (injectable
-  LLM `summarize_fn`); the canonical instruction is *this* section. Other Codex consumers may
-  surface it however they like.
+  "Plain language" toggle and runs the transform via `scripts/librarian_summarize.py` (which wires
+  an injectable LLM `summarize_fn`); the canonical engine + instruction is *this* module's
+  `_scripts/summarize.py` + *this* section. Other Codex consumers may surface it however they like.
 
 ## v1.3.1 extension (2026-06-13): Cross-link at scale — which linker, capping, disambiguation, backfill
 

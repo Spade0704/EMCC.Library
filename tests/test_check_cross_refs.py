@@ -399,6 +399,62 @@ class CheckCrossRefsTests(unittest.TestCase):
         dash = self._read_dashboard()
         self.assertIn("- orphan: 03-Alpha/OrphSeed.md", dash)
 
+    # -- Path-qualified wikilink resolution (Style-Guide-mandated form) -----
+
+    def test_path_qualified_wikilink_resolves(self):
+        # [[01-Domain/Foo]] points at the real fixture page 01-Domain/Foo.md.
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "See [[01-Domain/Foo]] for detail.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+        orphan_stems = {o["page_path"].stem for o in summary["orphans"]}
+        self.assertNotIn("Foo", orphan_stems)
+
+    def test_path_qualified_with_md_extension_resolves(self):
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "See [[01-Domain/Foo.md]] here.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+
+    def test_path_qualified_wrong_folder_is_broken(self):
+        # The Breaker's guard: a path-qualified link whose folder does NOT
+        # exist must NOT resolve by last segment to a real stem elsewhere.
+        # Foo.md lives at 01-Domain/, not ghost/.
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "Broken [[ghost/Foo]] link.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        targets = [f["link"] for f in summary["broken_links"]]
+        self.assertIn("ghost/Foo", targets)
+
+    def test_duplicate_stem_path_qualified_does_not_false_clear(self):
+        # Two pages share the stem "Setup". [[a/Setup]] must resolve to a/Setup
+        # ONLY — it must not clear b/Setup's orphan status via last-segment match.
+        self._write_page(Path("a") / "Setup.md", "Page A body.\n")
+        self._write_page(Path("b") / "Setup.md", "Page B body.\n")
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "Only [[a/Setup]] is linked.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+        orphan_rels = {
+            o["page_path"].relative_to(self.wiki).as_posix()
+            for o in summary["orphans"]
+        }
+        # a/Setup linked → cleared; b/Setup never linked → still orphan.
+        self.assertNotIn("a/Setup.md", orphan_rels)
+        self.assertIn("b/Setup.md", orphan_rels)
+
     # -- AC6: wiki_root.is_dir() precheck (S017 lesson, P7 precedent) -------
 
     def test_run_raises_filenotfounderror_on_missing_wiki_root(self):
