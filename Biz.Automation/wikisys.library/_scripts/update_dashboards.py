@@ -54,6 +54,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import audit_citations
+import build_caution_index
 import build_canon_drift_report
 import build_completion_dashboard
 import build_topic_index
@@ -102,6 +103,13 @@ SUBSCRIPTS: List[Tuple[int, Any, str]] = [
     # NOT wired into health.md (the 7-signal contract is frozen); emits its own
     # _dashboards/citation_audit.md.
     (21, audit_citations, "AC audit_citations"),
+    # Tiered caution-index (2026-06-13 accuracy track, item 2) — deterministic
+    # grep/keyword router over HIGH pages; report-only stage, failure-isolated,
+    # never red-bars (run() forces enforce=False). NOT wired into health.md (the
+    # 7-signal contract is frozen); emits its own _dashboards/caution_index.md.
+    # Fail-closed by construction: an ambiguous HIGH page ESCALATEs to source
+    # rather than surfacing a guessed caution.
+    (22, build_caution_index, "CI build_caution_index"),
 ]
 
 
