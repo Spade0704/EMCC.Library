@@ -4,10 +4,14 @@ P9 validator. Walks the wiki for content pages (skipping infrastructure
 folders prefixed with `_`), strips fenced and inline code spans, scans
 each page's body for wikilinks (bare / alias / section / embed shapes),
 resolves them (bare target by filename stem; path-qualified `Folder/Page`
-target by full wiki-relative path; `../`-bearing target page-relative to the
-linking page's folder — see `_resolve_target`), and emits two finding classes:
+target by full wiki-relative path; `./`- or `../`-bearing target page-relative
+to the linking page's folder — see `_resolve_target`), and emits two finding
+classes:
 
-    broken_wikilinks  link target stem has no corresponding .md content page
+    broken_wikilinks  link target has no corresponding .md content page. The
+                      dashboard distinguishes two reasons: 'target not found'
+                      (a well-formed but missing target) and 'escapes wiki
+                      root' (a `../` link over-popped above the wiki root).
     orphan_pages      content page receives zero inbound wikilinks AND
                       does not carry frontmatter `allow_orphan: true`
 
@@ -18,6 +22,8 @@ Wikilink syntax:
     ![[Foo]]           embed  (! prefix is render-hint; target = stem)
     [[../bar/Foo]]     page-relative (any `..` segment resolves against the
                        linking page's folder; see `_resolve_target`)
+    [[./bar/Foo]]      page-relative (leading `./` resolves against the linking
+                       page's folder, coherent with `../`; see `_resolve_target`)
 
 Orphan-clearance: a page does NOT clear its own orphan status by linking
 to itself. Only inbound links from OTHER content pages count.
@@ -84,15 +90,26 @@ def _iter_wikilinks(text):
         yield target, body_line
 
 
+# Resolution outcome status (third element of the _resolve_target tuple).
+# ESCAPES_ROOT is reported with a distinct dashboard message; NOT_FOUND is the
+# generic broken-target signal. OK means the target resolved to a real page.
+STATUS_OK = "ok"
+STATUS_NOT_FOUND = "not_found"
+STATUS_ESCAPES_ROOT = "escapes_root"
+
+
 def _resolve_page_relative(linking_page_dir, target):
-    """Resolve a `..`-bearing target against the linking page's folder.
+    """Resolve a `.`/`..`-bearing target against the linking page's folder.
 
     Joins `linking_page_dir` (the wiki-relative posix dir of the page that
     CONTAINS the link, "" or "." for a root-level page) with `target`, then
     collapses `.`/`..` segments via `posixpath.normpath` (pure string math, no
     filesystem touch — never `Path.resolve()`, which would hit disk/symlinks).
     Returns the resulting wiki-relative key (no extension), or None when the
-    `..` segments walk above the wiki root (an unresolvable escape).
+    `..` segments walk above the wiki root (an unresolvable escape) — callers
+    map that None to STATUS_ESCAPES_ROOT (distinct from a resolvable-but-missing
+    target). A `.`-only target (`./` from a root page) normalizes to the wiki
+    root itself, which is not a page, so it too returns None-as-escape.
     """
     joined = posixpath.normpath(posixpath.join(linking_page_dir, target))
     if joined == ".." or joined.startswith("../") or joined == ".":
@@ -101,30 +118,42 @@ def _resolve_page_relative(linking_page_dir, target):
 
 
 def _resolve_target(target, stem_to_page, relpath_to_page, linking_page_dir):
-    """Resolve a wikilink target to a page, or None if it has no destination.
+    """Resolve a wikilink target to (page_or_None, status).
+
+    status is one of STATUS_OK (resolved — page is non-None), STATUS_NOT_FOUND
+    (a well-formed target with no destination page — the generic broken case),
+    or STATUS_ESCAPES_ROOT (a page-relative target whose `..` segments walk
+    above the wiki root — a distinct, more actionable author signal).
 
     A bare target (`Page`) resolves by filename stem. A path-qualified target
     (`Folder/Page`, the Style-Guide-mandated disambiguation form) resolves ONLY
     when its full wiki-relative path maps to a real page — never by last segment
     alone, which would mask genuinely broken or ambiguous links. A target that
-    carries ANY `..` segment is page-relative: it resolves against the linking
-    page's own folder (`linking_page_dir`), like a filesystem path, and reports
-    broken if it escapes the wiki root. All other path-qualified targets — bare
-    `Folder/Page` and leading-`./` — stay wiki-root-relative (Codex's deliberate
-    root-default contract; `./` is NOT page-relative here). A trailing `.md` and
-    a leading `./` are tolerated. Case-sensitive on every host. `..` is matched
-    by exact segment, so a folder literally named e.g. `my..weird` is unaffected.
+    is page-relative — it starts with `./` OR carries ANY `..` segment —
+    resolves against the linking page's own folder (`linking_page_dir`), like a
+    filesystem path, and reports escapes-root if it walks above the wiki root.
+    Leading `./` is page-relative for coherence with `../` (both mean "from
+    here"): `[[./Sub/Page]]` from `a/` resolves to `a/Sub/Page`, not root
+    `Sub/Page`. A bare `Folder/Page` with no `.`/`..` segments stays
+    wiki-root-relative (the disambiguation form). A trailing `.md` is tolerated.
+    Case-sensitive on every host. `.`/`..` are matched by exact segment, so a
+    folder literally named e.g. `my..weird` or `.hidden` is unaffected.
     """
     t = target.strip()
     if t.endswith(".md"):
         t = t[:-3]
     if "/" in t:
-        if ".." in t.split("/"):
+        segments = t.split("/")
+        if ".." in segments or t.startswith("./"):
             key = _resolve_page_relative(linking_page_dir, t)
-            return relpath_to_page.get(key) if key is not None else None
-        key = t[2:] if t.startswith("./") else t
-        return relpath_to_page.get(key)
-    return stem_to_page.get(t)
+            if key is None:
+                return None, STATUS_ESCAPES_ROOT
+            page = relpath_to_page.get(key)
+            return (page, STATUS_OK) if page is not None else (None, STATUS_NOT_FOUND)
+        page = relpath_to_page.get(t)
+        return (page, STATUS_OK) if page is not None else (None, STATUS_NOT_FOUND)
+    page = stem_to_page.get(t)
+    return (page, STATUS_OK) if page is not None else (None, STATUS_NOT_FOUND)
 
 
 def run(wiki_root: Path) -> Dict[str, Any]:
@@ -173,7 +202,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
 
         for target_stem, body_line in _iter_wikilinks(stripped):
             file_line = body_line + fm_lines
-            resolved = _resolve_target(
+            resolved, status = _resolve_target(
                 target_stem, stem_to_page, relpath_to_page, linking_page_dir
             )
             if resolved is None:
@@ -181,6 +210,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
                     "page_path": page_path,
                     "line": file_line,
                     "link": target_stem,
+                    "reason": status,
                 })
                 continue
             # Self-link does NOT clear orphan status — only inbound links
@@ -253,10 +283,23 @@ def _build_dashboard_markdown(wiki_root, broken_links, orphans, pages_scanned):
             rel = f["page_path"].relative_to(wiki_root).as_posix()
             # AC4(b) entry-line literal lock-in (Pattern #5). Format:
             #   '- broken: <rel>:<line>: [[<link>]] target not found'
-            # Asserted by tests::test_dashboard_entry_line_literal_broken.
-            # Edit this format string only with paired test update.
-            lines.append("- broken: {}:{}: [[{}]] target not found".format(
-                rel, f["line"], f["link"]
+            #   '- broken: <rel>:<line>: [[<link>]] escapes wiki root'
+            # The suffix is the resolution reason: the generic 'target not
+            # found' for a well-formed-but-missing target, or the distinct
+            # 'escapes wiki root' for an over-popped `../` link that walks
+            # above the wiki root (a more actionable author signal). The
+            # dashboard is rendered as markdown, not machine-parsed, so the
+            # second suffix is additive at the consumer surface.
+            # Asserted by tests::test_dashboard_entry_line_literal_broken
+            # and ::test_dashboard_entry_line_literal_escapes_root.
+            # Edit these format strings only with paired test update.
+            suffix = (
+                "escapes wiki root"
+                if f.get("reason") == STATUS_ESCAPES_ROOT
+                else "target not found"
+            )
+            lines.append("- broken: {}:{}: [[{}]] {}".format(
+                rel, f["line"], f["link"], suffix
             ))
         lines.append("")
     if orphans:
@@ -287,7 +330,14 @@ def _main(wiki_root, stdout=None, stderr=None):
 
     for f in summary["broken_links"]:
         rel = f["page_path"].relative_to(wiki_root).as_posix()
-        print("broken: {}:{}: [[{}]]".format(rel, f["line"], f["link"]),
+        # Append a terse reason marker only for the distinct escapes-root case;
+        # the generic not-found case keeps its bare CLI form (back-compatible).
+        marker = (
+            " (escapes wiki root)"
+            if f.get("reason") == STATUS_ESCAPES_ROOT
+            else ""
+        )
+        print("broken: {}:{}: [[{}]]{}".format(rel, f["line"], f["link"], marker),
               file=stdout)
     for f in summary["orphans"]:
         rel = f["page_path"].relative_to(wiki_root).as_posix()

@@ -580,6 +580,179 @@ class CheckCrossRefsTests(unittest.TestCase):
         }
         self.assertNotIn("my..weird/Page.md", orphan_rels)
 
+    # -- Item 1: distinct "escapes wiki root" dashboard message -------------
+
+    def test_escapes_root_carries_distinct_reason(self):
+        # An over-popped `../` target is flagged with reason == escapes_root,
+        # distinct from the generic not-found reason.
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "Escape [[../../../Foo]] attempt.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        escapes = [f for f in summary["broken_links"]
+                   if f["link"] == "../../../Foo"]
+        self.assertEqual(len(escapes), 1)
+        self.assertEqual(escapes[0]["reason"], check_cross_refs.STATUS_ESCAPES_ROOT)
+
+    def test_not_found_carries_generic_reason(self):
+        # A well-formed-but-missing target keeps the generic not_found reason.
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "[[Missing]] target.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        missing = [f for f in summary["broken_links"] if f["link"] == "Missing"]
+        self.assertEqual(len(missing), 1)
+        self.assertEqual(missing[0]["reason"], check_cross_refs.STATUS_NOT_FOUND)
+
+    def test_dashboard_entry_line_literal_escapes_root(self):
+        # Pattern #5 literal lock-in for the escapes-root suffix. The escaped
+        # link renders the distinct 'escapes wiki root' message, NOT the
+        # generic 'target not found'.
+        page_path = self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "[[../../../Foo]] on line one.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        escapes = [f for f in summary["broken_links"]
+                   if f["link"] == "../../../Foo"]
+        self.assertEqual(len(escapes), 1)
+        line = escapes[0]["line"]
+        dash = self._read_dashboard()
+        expected = (
+            "- broken: 01-Domain/Linker.md:{}: [[../../../Foo]] "
+            "escapes wiki root".format(line)
+        )
+        self.assertIn(expected, dash)
+        # And it must NOT carry the generic suffix.
+        self.assertNotIn(
+            "[[../../../Foo]] target not found", dash
+        )
+
+    def test_dashboard_root_page_escape_uses_distinct_message(self):
+        # A root-level page has no parent inside the wiki; `../Foo` escapes and
+        # must render the distinct message.
+        self._write_page(
+            Path("RootLinker.md"),
+            "From root [[../Foo]] escapes.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        escapes = [f for f in summary["broken_links"] if f["link"] == "../Foo"]
+        self.assertEqual(len(escapes), 1)
+        self.assertEqual(escapes[0]["reason"], check_cross_refs.STATUS_ESCAPES_ROOT)
+        line = escapes[0]["line"]
+        dash = self._read_dashboard()
+        self.assertIn(
+            "- broken: RootLinker.md:{}: [[../Foo]] escapes wiki root".format(line),
+            dash,
+        )
+
+    def test_main_stdout_marks_escapes_root(self):
+        # The CLI stdout line carries a terse (escapes wiki root) marker for the
+        # distinct case while the generic case stays bare/back-compatible.
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "[[../../../Foo]] and [[Missing]] here.\n",
+            allow_orphan=True,
+        )
+        out, err = io.StringIO(), io.StringIO()
+        check_cross_refs._main(self.wiki, stdout=out, stderr=err)
+        text = out.getvalue()
+        self.assertIn("[[../../../Foo]] (escapes wiki root)", text)
+        # Generic case: bare form, no marker.
+        self.assertIn("[[Missing]]", text)
+        self.assertNotIn("[[Missing]] (escapes wiki root)", text)
+
+    # -- Item 3: leading `./` is page-relative (coherent with `../`) --------
+
+    def test_leading_dot_slash_is_page_relative(self):
+        # `./Sub/Page` from a/ resolves to a/Sub/Page (page-relative), NOT root
+        # Sub/Page. This is the Item-3 coherence flip.
+        self._write_page(Path("a") / "Sub" / "Page.md", "Sub body.\n")
+        self._write_page(
+            Path("a") / "Linker.md",
+            "Here [[./Sub/Page]].\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+        orphan_rels = {
+            o["page_path"].relative_to(self.wiki).as_posix()
+            for o in summary["orphans"]
+        }
+        self.assertNotIn("a/Sub/Page.md", orphan_rels)
+
+    def test_leading_dot_slash_does_not_resolve_root_relative(self):
+        # Divergence proof: a root-level Sub/Page exists, but `./Sub/Page` from
+        # a/ must NOT clear it (page-relative now → looks under a/, finds none).
+        self._write_page(Path("Sub") / "Page.md", "Root-level Sub body.\n")
+        self._write_page(
+            Path("a") / "Linker.md",
+            "Here [[./Sub/Page]].\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        # Target a/Sub/Page does not exist → broken (not_found, not escape).
+        broken = [f for f in summary["broken_links"] if f["link"] == "./Sub/Page"]
+        self.assertEqual(len(broken), 1)
+        self.assertEqual(broken[0]["reason"], check_cross_refs.STATUS_NOT_FOUND)
+        # Root-level Sub/Page never linked → still orphan.
+        orphan_rels = {
+            o["page_path"].relative_to(self.wiki).as_posix()
+            for o in summary["orphans"]
+        }
+        self.assertIn("Sub/Page.md", orphan_rels)
+
+    def test_leading_dot_slash_from_root_page_resolves_root(self):
+        # From a root-level page, page-relative `./Page` == root Page (the dir
+        # is "." so the join collapses to root). Coherent, no regression for
+        # root-level authors.
+        self._write_page(
+            Path("RootLinker.md"),
+            "See [[./01-Domain/Foo]] here.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+        orphan_rels = {
+            o["page_path"].relative_to(self.wiki).as_posix()
+            for o in summary["orphans"]
+        }
+        self.assertNotIn("01-Domain/Foo.md", orphan_rels)
+
+    def test_leading_dot_slash_with_md_extension_resolves(self):
+        self._write_page(Path("a") / "Sub" / "Page.md", "Sub body.\n")
+        self._write_page(
+            Path("a") / "Linker.md",
+            "Here [[./Sub/Page.md]].\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+
+    def test_leading_dot_in_folder_name_is_not_page_relative(self):
+        # A folder literally named `.hidden` (a `.`-prefixed segment that is NOT
+        # the `./` page-relative marker) stays root-relative — only a leading
+        # `./` (exact) triggers page-relative resolution.
+        self._write_page(Path(".hidden") / "Page.md", "Hidden body.\n")
+        self._write_page(
+            Path("01-Domain") / "Linker.md",
+            "Plain [[.hidden/Page]] link.\n",
+            allow_orphan=True,
+        )
+        summary = check_cross_refs.run(self.wiki)
+        self.assertEqual(summary["broken_links"], [])
+        orphan_rels = {
+            o["page_path"].relative_to(self.wiki).as_posix()
+            for o in summary["orphans"]
+        }
+        self.assertNotIn(".hidden/Page.md", orphan_rels)
+
     def test_backslash_target_is_not_silently_resolved(self):
         # Windows-style backslash separators are not a wikilink path form; the
         # target is one opaque segment and must report broken (not resolve).
