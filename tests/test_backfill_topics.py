@@ -7,9 +7,12 @@ from tempfile import TemporaryDirectory
 import backfill_topics
 from backfill_topics import (
     build_revmap,
+    build_section_code_map,
     keyword_topics,
     merge_topics_fm,
+    normalize_section_code,
     path_topics,
+    section_code_topics,
     slug,
     stub_stamp,
 )
@@ -89,6 +92,78 @@ class KeywordTopicsTests(unittest.TestCase):
         terms = [("engine fire", "engine-fire"), ("smoke", "smoke")]
         out = keyword_topics("Engine_Fire.md", '---\ntitle: "Engine Fire"\n---\n# Engine Fire\n', terms)
         self.assertIn("engine-fire", out)
+
+
+class SectionCodeTests(unittest.TestCase):
+    def test_normalize_dot_to_dash(self):
+        self.assertEqual(normalize_section_code("27.10"), "27-10")
+        self.assertEqual(normalize_section_code("27.10.00"), "27-10-00")
+        self.assertEqual(normalize_section_code("27-10"), "27-10")
+
+    def test_build_section_code_map_normalizes_keys_and_slugs_values(self):
+        cfg = {"section_code_topics": {"27.10": "Aileron Control", "27-30": "elevator"}}
+        m = build_section_code_map(cfg)
+        self.assertEqual(m["27-10"], "aileron-control")
+        self.assertEqual(m["27-30"], "elevator")
+
+    def test_mapped_code_in_folder(self):
+        m = {"27-10": "aileron-control"}
+        out = section_code_topics(("FCOM", "27-10_Ailerons", "X.md"), "X.md", m, "ata-")
+        self.assertEqual(out, {"aileron-control"})
+
+    def test_dotted_code_in_filename_maps_via_normalization(self):
+        m = {"27-30": "elevator-control"}
+        out = section_code_topics(("FCOM", "Ch", "S.md"), "Sec_27.30_elev.md", m, "ata-")
+        self.assertEqual(out, {"elevator-control"})
+
+    def test_unmapped_code_falls_back_to_prefix_slug(self):
+        out = section_code_topics(("FCOM", "34-20-00_Nav", "Y.md"), "Y.md", {}, "ata-")
+        self.assertEqual(out, {"ata-34-20-00"})
+
+    def test_plain_numeric_folder_not_matched(self):
+        # Single NN (no second group) is left to strip_numeric_prefix.
+        out = section_code_topics(("FCOM", "27_Flight_Controls", "Z.md"), "Z.md", {}, "ata-")
+        self.assertEqual(out, set())
+
+    def test_code_embedded_in_word_not_matched(self):
+        out = section_code_topics(("FCOM", "rev2.1page", "A.md"), "A.md", {}, "ata-")
+        self.assertEqual(out, set())
+
+    def test_date_stamped_filename_not_matched(self):
+        # 2026-06-13 must NOT yield a stray ata-06-13 (year-prefixed run).
+        out = section_code_topics(("FCOM", "Logs", "x.md"), "2026-06-13.md", {}, "ata-")
+        self.assertEqual(out, set())
+
+    def test_version_token_not_matched(self):
+        # v1.2.3 is a letter-glued version, not a section code.
+        out = section_code_topics(("FCOM", "v1.2.3", "x.md"), "x.md", {}, "ata-")
+        self.assertEqual(out, set())
+
+    def test_three_group_code_in_filename(self):
+        out = section_code_topics(("FCOM", "d", "x.md"), "Sec_27-10-00.md", {}, "ata-")
+        self.assertEqual(out, {"ata-27-10-00"})
+
+    def test_run_section_code_opt_in(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            _write_config(wiki, CONFIG + "derive_section_codes: true\n"
+                          "section_code_topics:\n  27-10: aileron-control\n")
+            a = _write(wiki, "FCOM/27-10_Ailerons/X.md", '---\ntitle: "X"\n---\n# X\n')
+            b = _write(wiki, "FCOM/34-20-00_Nav/Y.md", '---\ntitle: "Y"\n---\n# Y\n')
+            backfill_topics.run(wiki, apply=True)
+            self.assertIn("aileron-control", a.read_text(encoding="utf-8"))
+            self.assertIn("ata-34-20-00", b.read_text(encoding="utf-8"))
+
+    def test_run_section_code_off_by_default(self):
+        # Without derive_section_codes the dotted code yields no topic (a page
+        # with only a dotted-code folder is untouched).
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            _write_config(wiki)  # base CONFIG, no derive_section_codes
+            a = _write(wiki, "FCOM/27-10_Ailerons/X.md", '---\ntitle: "X"\n---\n# X\n')
+            before = a.read_text(encoding="utf-8")
+            backfill_topics.run(wiki, apply=True)
+            self.assertEqual(a.read_text(encoding="utf-8"), before)
 
 
 class FrontmatterTests(unittest.TestCase):
