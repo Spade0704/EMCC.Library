@@ -33,7 +33,7 @@ Director cascade `dir-20260614n-readiness-library` (req `96acbc3a`). Gate `tasks
 
 ## Sprint — Codex v1.3.1 cross-link at scale (BUILT 2026-06-13b)
 
-Surfaced by the Aviation consumer; plan `0-Inbox/PLAN-cross-link-promotion-2026-06-13.md`. Opt-in defaults = v1.3 byte-identical. Committed `4dce454`. Independent Auditor: SHIP-WITH-FIXES (fixes applied).
+Surfaced by the Aviation consumer; plan `0-Inbox/_archive/PLAN-cross-link-promotion-2026-06-13.md` (archived 2026-06-15, dir-20260615 — build-spent; 3 ⚪ tails below tracked here). Opt-in defaults = v1.3 byte-identical. Committed `4dce454`. Independent Auditor: SHIP-WITH-FIXES (fixes applied).
 
 - [x] **P18.3 See-also cap + ranking** — `see_also.max_links_per_page` (0=uncapped) wired into `cross_link_topics.py` with shared-topic/cross-container/path ranking. Fixes the dead `max_links` config.
 - [x] **Duplicate-stem disambiguation** — `see_also.disambiguate_duplicate_stems` → path-qualified links on wiki-wide stem collision; spec §2.7 amended.
