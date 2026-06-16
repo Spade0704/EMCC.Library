@@ -53,6 +53,35 @@ def _flow_list(items):
     return "[" + ", ".join('"' + i + '"' for i in items) + "]"
 
 
+def _make_page_block_canon(path, items, *, status="ready", title="Block Page"):
+    """Write a content page whose canon_sources uses BLOCK-style list form.
+
+    The `_make_page` helper above only emits inline flow-list canon_sources
+    (`[a, b]`). This variant emits the block-style form:
+
+        canon_sources:
+          - "a"
+          - "b"
+
+    so the parser->validator seam can be regression-tested against the form
+    that previously parsed to None (dir-20260614qq; fixed in frontmatter.py
+    commit cf9a834). An empty `items` list emits a bare `canon_sources:`
+    (which now also stays None — the no-source case the validator must flag).
+    """
+    fm_lines = ['---', 'title: "' + title + '"',
+                "type: reference", "visibility: internal",
+                "status: " + status, "canon_sources:"]
+    for item in items:
+        fm_lines.append('  - "' + item + '"')
+    fm_lines.append("unverified_claims: []")
+    fm_lines.append("---")
+    fm_lines.append("")
+    fm_lines.append("# " + title)
+    fm_lines.append("")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(fm_lines), encoding="utf-8")
+
+
 class ValidateCanonIntegrityTests(unittest.TestCase):
 
     def setUp(self):
@@ -186,6 +215,42 @@ class ValidateCanonIntegrityTests(unittest.TestCase):
         pages = {f["page"] for f in summary["findings"]}
         self.assertEqual(pages, {"01-Domain/Both.md"})
         self.assertEqual(summary["pages_scanned"], 1)
+
+    # --- Block-list canon_sources seam (dir-20260614qq regression) -----------
+
+    def test_block_list_canon_sources_honored_at_ready(self):
+        # The parser->validator seam: a status:ready page whose canon_sources
+        # uses BLOCK-style list form (`canon_sources:` then indented `- item`
+        # lines) must be HONORED — i.e. produce NO missing_canon_sources
+        # finding. Before the frontmatter parser fix (cf9a834) a block-list
+        # canon_sources parsed to None, so the validator silently treated a
+        # well-sourced page as missing-sources on promotion to ready. This
+        # locks that the populated block-list value reaches the validator.
+        _make_page_block_canon(
+            self.wiki / "01-Domain" / "BlockSourced.md",
+            ["_sources/raw/x.md", "_sources/raw/y.md"],
+        )
+        summary = validate_canon_integrity.run(self.wiki)
+        self.assertEqual(summary["pages_scanned"], 1)
+        self.assertEqual(
+            summary["findings"], [],
+            "block-list canon_sources on a ready page must be honored, "
+            "not flagged as missing",
+        )
+
+    def test_empty_block_canon_sources_flagged_at_ready(self):
+        # Companion negative: a bare `canon_sources:` (block form with no
+        # items) still parses to None, so a ready page carrying it MUST be
+        # flagged missing_canon_sources — the no-source case the gate exists
+        # to catch.
+        _make_page_block_canon(
+            self.wiki / "01-Domain" / "BlockEmpty.md", [],
+        )
+        summary = validate_canon_integrity.run(self.wiki)
+        self.assertEqual(len(summary["findings"]), 1)
+        self.assertEqual(
+            summary["findings"][0]["category"], "missing_canon_sources"
+        )
 
     # --- Negative-assertion exclusions (2) -----------------------------------
 
