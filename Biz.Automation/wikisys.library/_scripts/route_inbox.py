@@ -25,18 +25,19 @@ file movement is mechanical (script's job).
 Exit codes:
     0  success (scan emitted manifest; or execute applied all moves)
     1  partial failure (e.g. some moves failed during execute)
-    2  malformed input (e.g. manifest with null destinations during execute)
+    2  malformed input (unparseable manifest JSON, or a top-level value that
+       is not a list, during execute). Per-entry null destinations are NOT a
+       hard error: they are reported as status="skipped" in the report.
     3  inbox not found / not a directory
 """
 
 import argparse
 import hashlib
 import json
-import os
 import shutil
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 
 def scan_inbox(inbox: Path) -> List[Dict[str, Any]]:
@@ -53,7 +54,7 @@ def scan_inbox(inbox: Path) -> List[Dict[str, Any]]:
             stat = entry.stat()
             first_bytes = entry.read_bytes()[:4096]
             digest = hashlib.sha256(first_bytes).hexdigest()
-        except OSError as exc:
+        except OSError:
             digest = ""
             stat = None
         entries.append({
@@ -79,6 +80,10 @@ def execute_manifest(manifest_path: Path) -> List[Dict[str, Any]]:
     """Apply moves per manifest; return per-entry result records."""
     text = manifest_path.read_text(encoding="utf-8")
     entries = json.loads(text)
+    if not isinstance(entries, list):
+        raise json.JSONDecodeError(
+            "manifest top-level value is not a list", text, 0
+        )
     results: List[Dict[str, Any]] = []
     for entry in entries:
         dest = entry.get("destination")
@@ -138,7 +143,11 @@ def main(argv=None) -> int:
     if not manifest_path.is_file():
         sys.stderr.write("error: manifest not found: {}\n".format(manifest_path))
         return 2
-    results = execute_manifest(manifest_path)
+    try:
+        results = execute_manifest(manifest_path)
+    except json.JSONDecodeError as exc:
+        sys.stderr.write("error: malformed manifest JSON: {}\n".format(exc))
+        return 2
     failed = [r for r in results if r["status"] == "failed"]
     moved = [r for r in results if r["status"] == "moved"]
     skipped = [r for r in results if r["status"] == "skipped"]

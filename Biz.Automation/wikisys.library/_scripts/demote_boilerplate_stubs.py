@@ -43,7 +43,7 @@ from datetime import date
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from materialize_boilerplate import SEP, decode_sep, _discover
+from materialize_boilerplate import decode_sep, _discover
 
 # The 4 protocol pages (NOT Glossary / Terminology-Rules — those stay per-repo).
 PROTOCOL_TEMPLATES = (

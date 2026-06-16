@@ -370,9 +370,12 @@ def route_scored(board_tasks: Sequence["ts.Task"], transitions: Sequence[dict], 
         # Drive the remaining legal chain (resumes a partial route; preserves the structural
         # mandatory-scoring guarantee — apply_transition enforces a score on the Scored/Ready edges).
         for to_state in _route_chain(state, target):
-            record_transition(t.title, to_state, actor=ts.SCORING, transitions=transitions,
-                              log_path=log_path, score=t.score, now=now)
-            transitions = read_transitions(log_path)
+            env = record_transition(t.title, to_state, actor=ts.SCORING, transitions=transitions,
+                                    log_path=log_path, score=t.score, now=now)
+            # record_transition returns the appended envelope (same shape
+            # read_transitions yields), so append it in-memory instead of
+            # re-reading + re-parsing the whole growing log on every step.
+            transitions = list(transitions) + [env]
         (out["routed_needs_operator"].append((t.title, disq)) if disq
          else out["routed_ready"].append(t.title))
     return out

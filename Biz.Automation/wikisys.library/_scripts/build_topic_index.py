@@ -54,7 +54,6 @@ from _lib.topics import (
     build_alias_index,
     load_cross_link_config,
     load_topics,
-    resolve_topic,
 )
 
 

@@ -47,7 +47,7 @@ Pure stdlib per `CODEX_BUILD_SPEC_v1_3.md` §8 Hard Rule 1.
 import argparse
 import sys
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 
 # ---------------------------------------------------------------------------
