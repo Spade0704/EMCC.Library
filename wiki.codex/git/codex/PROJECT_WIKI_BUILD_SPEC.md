@@ -747,6 +747,20 @@ Codex content must never fabricate. The accuracy posture is three rules:
 
 The enforceable slice is the `consequence`/`cite_anchor` frontmatter contract (see [[Frontmatter-Schema]] §"Accuracy fields — consequence / cite_anchor"): fail-safe HIGH; a HIGH page requires a non-empty `cite_anchor`. Checked by `_scripts/_lib/doc_lint.py::check_consequence` and surfaced by the report-only `_scripts/audit_citations.py` audit. **Presence-Not-Accuracy:** the lint proves a citation is *present*, not that it is verbatim or correct — a floor, not a guarantee.
 
+### Tiered caution-index (the deterministic router) — `build_caution_index.py`
+
+A cheap, grep-able **router tier** over the corpus that operationalises correct-refusal. `_scripts/build_caution_index.py` walks the content tree and writes `_dashboards/caution_index.md` with two tiers:
+
+- **Surfaced** — a HIGH page that has a usable `cite_anchor` AND at least one explicitly-marked caution block (default markers: `> [!CAUTION]` / `> [!WARNING]` / `> [!DANGER]`). The caution text is copied **verbatim** (byte-for-byte; never summarised), tagged with deterministic grep keywords and a source pointer. This is the cheap tier — load the full source on demand via the pointer.
+- **Escalate (fail-closed)** — any HIGH page the router cannot resolve to a verbatim caution+cite escalates: it surfaces **no** caution text, only a pointer to load the full source. Ambiguity = (1) HIGH with no `cite_anchor`, (2) HIGH reached via a fail-safe path (absent / duplicate / unrecognised `consequence` — the author never affirmed it), or (3) a marked-but-empty caution region.
+
+Two **kill-constraints** are load-bearing (per the 2026-06-13 Cairn-absorption council):
+
+1. **Deterministic only.** Pure stdlib; the retriever is grep/keyword over the index — **no neural picker, no embedding, no TF-IDF in the caution path.** HIGH/LOW comes from `check_consequence`; caution text from a literal marker match. (The TF-IDF in `build_topic_index.py` is a *topics* convenience and is deliberately not in this path.)
+2. **Ambiguity-refuse / escalate.** A silently-wrong caution returned verbatim is *more* dangerous than none (citable, confident), so the router fails closed: when uncertain it escalates to source rather than guessing or substituting. Where N pages cover the same hazard it lists **all N** (honest multiplicity) and never picks one. The worst case it can produce is "load the source yourself" — extra verbatim content, never silent corruption.
+
+Report-only by default (its `run()` never red-bars the orchestrator); `--enforce` exits non-zero on any escalation, opt-in per wiki once HIGH pages carry cites. Same **Presence-Not-Accuracy** caveat as the citation audit: a surfaced caution is *present and verbatim*, not verified to be the correct variant for the reader's effectivity — load the cited source before acting.
+
 ---
 
 *— END OF CODEX BUILD SPECIFICATION —*

@@ -17,6 +17,18 @@ stub_unstamped: false
 # Also tag from _config/keywords.yaml terms (matched in title + H1/H2 + filename).
 use_keywords_yaml: false
 
+# Derive topics from dotted/dashed numeric SECTION CODES embedded in path tokens
+# or the filename (e.g. 27-10, 27.10.00, 27-10-00). Off by default. When on, a
+# code listed in `section_code_topics:` (below) maps to its canonical topic; an
+# unlisted code falls back to `<section_code_prefix><normalized-code>`
+# (e.g. 27.10 -> ata-27-10) so dotted codes unify cross-section pages without a
+# per-code entry. Lets consumers retire local stamp_topics/cross_link forks.
+derive_section_codes: false
+
+# Slug prefix for codes NOT found in section_code_topics (used only when
+# derive_section_codes: true). Default "ata-" → 27-10 becomes ata-27-10.
+section_code_prefix: ata-
+
 # Folder tokens that are STRUCTURE, not topics — never become a topic.
 skip: [DSC, PRO, PER, LIM, NOR, ABN, EMER, Procedures, Front_Matter]
 
@@ -32,3 +44,11 @@ systems:
 # Cross-cutting topics that are foldered AND keyword-matched (overlap is fine).
 crosscutting:
   # smoke: [SMOKE, CRG_SMOKE]
+
+# normalized-section-code: canonical topic (used only when derive_section_codes:
+# true). Keys are dash-normalized (27.10 and 27-10 collide to 27-10). Unlisted
+# codes fall back to the section_code_prefix slug, so only override where you
+# want a friendlier canonical name than the auto ata-NN-NN slug.
+section_code_topics:
+  # 27-10: aileron-control
+  # 27-30: elevator-control
