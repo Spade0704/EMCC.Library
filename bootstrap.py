@@ -45,6 +45,8 @@ Pure stdlib per `CODEX_BUILD_SPEC_v1_3.md` §8 Hard Rule 1.
 """
 
 import argparse
+import os
+import re
 import sys
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -407,6 +409,41 @@ def _materialize_folder_list(mode: str, projectname: str) -> List[str]:
     return [p.format(projectname=projectname) for p in base]
 
 
+# Filesystem-safe project-name allowlist (audit B4). The help text promises
+# "Filesystem-safe characters only"; this enforces it. Letters, digits, dot,
+# underscore, hyphen — the same character class the canonical wikisys.<name>/
+# and wiki.<name>/ folder names are built from.
+_PROJECTNAME_RE = re.compile(r"^[A-Za-z0-9._-]+$")
+
+
+def _validate_projectname(projectname: str) -> Optional[str]:
+    """Return error string if `projectname` is not filesystem-safe, else None.
+
+    Enforces the help-text contract ("Filesystem-safe characters only").
+    Traversal is already blocked downstream by `_refuse_outside_cwd`, but an
+    illegal projectname produces malformed wikisys.<name>/ + wiki.<name>/ dir
+    names; this fail-closed gate rejects it up front (audit B4). Rejects:
+    path separators, the `.`/`..` traversal tokens, and any character outside
+    the [A-Za-z0-9._-] allowlist.
+    """
+    if os.sep in projectname or (os.altsep and os.altsep in projectname):
+        return (
+            "projectname {!r} contains a path separator; pass a bare "
+            "filesystem-safe name (allowed: letters, digits, '.', '_', '-')"
+        ).format(projectname)
+    if projectname in (".", ".."):
+        return (
+            "projectname {!r} is a path-traversal token; pass a bare "
+            "filesystem-safe name (allowed: letters, digits, '.', '_', '-')"
+        ).format(projectname)
+    if not _PROJECTNAME_RE.match(projectname):
+        return (
+            "projectname {!r} has illegal characters; allowed: letters, "
+            "digits, '.', '_', '-' (Filesystem-safe characters only)"
+        ).format(projectname)
+    return None
+
+
 def _refuse_outside_cwd(target: Path, cwd: Path) -> Optional[str]:
     """Return error string if target is not a child of cwd, else None."""
     try:
@@ -581,6 +618,14 @@ def bootstrap(
 
     `cwd_override` is for tests; defaults to Path.cwd().
     """
+    # Validate the projectname before it is interpolated into write paths
+    # (audit B4). Fail-closed: an illegal name exits non-zero with a message
+    # matching the help-text contract, before any filesystem work.
+    err = _validate_projectname(projectname)
+    if err:
+        sys.stderr.write("ERROR: " + err + "\n")
+        return 1
+
     cwd = (cwd_override or Path.cwd()).resolve()
     target = (cwd / projectname).resolve()
 

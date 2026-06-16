@@ -384,5 +384,45 @@ class TestCLIParser(unittest.TestCase):
         self.assertTrue(args.yes)
 
 
+class TestProjectnameValidation(unittest.TestCase):
+    """Audit B4: filesystem-safe projectname allowlist (fail-closed)."""
+
+    def test_valid_name_proceeds(self):
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            rc = _run_bootstrap(cwd, "my-proj_2.0", mode="full")
+            self.assertEqual(rc, 0)
+            self.assertTrue((cwd / "my-proj_2.0").is_dir())
+
+    def test_separator_name_exits_nonzero(self):
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            rc = _run_bootstrap(cwd, "foo/bar", mode="full")
+            self.assertNotEqual(rc, 0)
+            # No partial scaffold written for the rejected name.
+            self.assertFalse((cwd / "foo").exists())
+
+    def test_traversal_token_exits_nonzero(self):
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            self.assertNotEqual(_run_bootstrap(cwd, "..", mode="full"), 0)
+            self.assertNotEqual(_run_bootstrap(cwd, ".", mode="full"), 0)
+
+    def test_traversal_path_exits_nonzero(self):
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            rc = _run_bootstrap(cwd, "../escape", mode="full")
+            self.assertNotEqual(rc, 0)
+
+    def test_illegal_char_exits_nonzero(self):
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            for bad in ("bad name", "weird*name", "tab\tname"):
+                self.assertNotEqual(
+                    _run_bootstrap(cwd, bad, mode="full"), 0,
+                    "expected non-zero exit for {!r}".format(bad),
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
