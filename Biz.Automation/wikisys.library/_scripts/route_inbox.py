@@ -37,7 +37,7 @@ import json
 import shutil
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 def scan_inbox(inbox: Path) -> List[Dict[str, Any]]:
@@ -76,8 +76,33 @@ def _format_mtime(ts: float) -> str:
     return datetime.datetime.fromtimestamp(ts).isoformat(timespec="seconds")
 
 
-def execute_manifest(manifest_path: Path) -> List[Dict[str, Any]]:
-    """Apply moves per manifest; return per-entry result records."""
+def _within_root(candidate: str, root: Path) -> bool:
+    """True if `candidate` resolves to a path inside `root` (inclusive).
+
+    Fail-closed confinement helper for execute (audit B3): manifest
+    `destination` / `source_abs` values are agent-populated and could point
+    at arbitrary absolute paths. A path that does not resolve under `root`
+    is rejected by the caller (skipped + flagged), never moved.
+    """
+    try:
+        Path(candidate).resolve().relative_to(root)
+        return True
+    except ValueError:
+        return False
+
+
+def execute_manifest(manifest_path: Path,
+                     root: Optional[Path] = None) -> List[Dict[str, Any]]:
+    """Apply moves per manifest; return per-entry result records.
+
+    `root` confines every move to the project tree (audit B3): both the
+    entry `destination` and `source_abs` must resolve INSIDE `root`, else the
+    entry is skipped + flagged (never aborts the whole run). When `root` is
+    None it defaults to the manifest's parent directory — the manifest is
+    emitted at `<root>/route_candidates.json` by scan, so its parent IS the
+    scan root.
+    """
+    confine_root = (root or manifest_path.parent).resolve()
     text = manifest_path.read_text(encoding="utf-8")
     entries = json.loads(text)
     if not isinstance(entries, list):
@@ -90,6 +115,18 @@ def execute_manifest(manifest_path: Path) -> List[Dict[str, Any]]:
         src_abs = entry.get("source_abs")
         if not dest:
             results.append({**entry, "status": "skipped", "reason": "destination null"})
+            continue
+        # Confinement gate (audit B3): destination + source must stay inside
+        # the project tree. Skip + flag an escaping entry; do not abort.
+        if not _within_root(dest, confine_root):
+            reason = "destination escapes root {}: {}".format(confine_root, dest)
+            sys.stderr.write("warning: skipping entry — {}\n".format(reason))
+            results.append({**entry, "status": "skipped", "reason": reason})
+            continue
+        if src_abs and not _within_root(src_abs, confine_root):
+            reason = "source escapes root {}: {}".format(confine_root, src_abs)
+            sys.stderr.write("warning: skipping entry — {}\n".format(reason))
+            results.append({**entry, "status": "skipped", "reason": reason})
             continue
         src = Path(src_abs) if src_abs else None
         if src is None or not src.exists():
@@ -144,7 +181,7 @@ def main(argv=None) -> int:
         sys.stderr.write("error: manifest not found: {}\n".format(manifest_path))
         return 2
     try:
-        results = execute_manifest(manifest_path)
+        results = execute_manifest(manifest_path, root=manifest_path.resolve().parent)
     except json.JSONDecodeError as exc:
         sys.stderr.write("error: malformed manifest JSON: {}\n".format(exc))
         return 2
