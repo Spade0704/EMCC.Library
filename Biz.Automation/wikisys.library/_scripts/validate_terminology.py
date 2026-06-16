@@ -73,9 +73,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     ))
 
     content = _build_dashboard_markdown(wiki_root, findings, pages_scanned)
-    dashboard_path = wiki_root / DASHBOARD_RELATIVE
-    dashboard_path.parent.mkdir(parents=True, exist_ok=True)
-    dashboard_path.write_text(content, encoding="utf-8")
+    dashboard_path = dashboard.write_dashboard(wiki_root, DASHBOARD_RELATIVE, content)
 
     return {
         "dashboard_path": dashboard_path,

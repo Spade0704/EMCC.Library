@@ -21,7 +21,7 @@ import argparse
 import fnmatch
 import sys
 from pathlib import Path
-from typing import List, NamedTuple, Optional, Set
+from typing import List, NamedTuple, Optional
 
 
 DEFAULT_HEAVY_THRESHOLD_BYTES = 5 * 1024 * 1024  # 5MB

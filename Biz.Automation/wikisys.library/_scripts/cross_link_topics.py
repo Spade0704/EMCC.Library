@@ -329,22 +329,30 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     disambiguate = bool(see_cfg.get("disambiguate_duplicate_stems", False))
     ambiguous_stems = build_ambiguous_stems(wiki_root) if disambiguate else None
 
-    topic_to_pages = build_topic_to_pages_index(wiki_root)
+    # Walk + load each page exactly once. Both topic_to_pages and
+    # page_topics_by_path are pure functions of each page's fm `topics:` list,
+    # so build them in a single pass and invert in-memory. This replaces the
+    # prior 3x rglob walk + 2x load_page-per-page (build_topic_to_pages_index,
+    # then a second walk for page_topics_by_path) with one walk + one read.
+    pages = list(markdown.iter_content_pages(wiki_root))
 
+    topic_to_pages: Dict[str, List[Path]] = {}
     page_topics_by_path: Dict[Path, List[str]] = {}
-    for page_path in markdown.iter_content_pages(wiki_root):
+    for page_path in pages:
         page = frontmatter.load_page(page_path)
         topics = page["frontmatter"].get("topics") or []
-        if isinstance(topics, list):
-            page_topics_by_path[page_path] = [
-                t for t in topics if isinstance(t, str)
-            ]
+        if not isinstance(topics, list):
+            continue
+        str_topics = [t for t in topics if isinstance(t, str)]
+        page_topics_by_path[page_path] = str_topics
+        for topic in str_topics:
+            topic_to_pages.setdefault(topic, []).append(page_path)
 
     pages_seen = 0
     pages_updated = 0
     idempotent_pages = 0
 
-    for page_path in markdown.iter_content_pages(wiki_root):
+    for page_path in pages:
         pages_seen += 1
         page_topics = page_topics_by_path.get(page_path, [])
         if not page_topics:

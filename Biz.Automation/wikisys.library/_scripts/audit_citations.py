@@ -110,9 +110,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     header = "\n".join(dashboard.render_fm_header("Citation Audit Dashboard",
                                                  today=today))
     content = header + "\n\n" + render_dashboard(findings, wiki_root, enforce=False)
-    out_path = wiki_root / DASHBOARD_RELATIVE
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(content, encoding="utf-8")
+    out_path = dashboard.write_dashboard(wiki_root, DASHBOARD_RELATIVE, content)
     return {
         "findings": [f._asdict() for f in findings],
         "findings_count": len(findings),

@@ -404,7 +404,19 @@ def _compute_cascade_impact(
     if not notable_section_titles and not fm_has_changes:
         return []
 
-    cascade_map_path = wiki_root / CASCADE_CONFIG_RELATIVE
+    # S004 MI-18: resolve the cascade_map.yaml location via the same discovery
+    # _load_cascade_map() uses (frontmatter.find_config_dir), so this works for
+    # both the v1.0 layout (config under the wiki content root) and the v1.1
+    # layout (config at the wikisys module root). The previous hardcoded
+    # `wiki_root / CASCADE_CONFIG_RELATIVE` guard returned [] before
+    # _load_cascade_map() ever ran, silently disabling cascade impact on every
+    # v1.1 install. Warn only when the config is genuinely absent everywhere.
+    try:
+        cascade_map_path = (
+            frontmatter.find_config_dir(wiki_root) / "cascade_map.yaml"
+        )
+    except FileNotFoundError:
+        cascade_map_path = wiki_root / CASCADE_CONFIG_RELATIVE
     if not cascade_map_path.is_file():
         if stderr is not None:
             print(

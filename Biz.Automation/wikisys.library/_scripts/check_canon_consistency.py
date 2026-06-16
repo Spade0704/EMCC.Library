@@ -61,7 +61,7 @@ import re
 import sys
 from datetime import date
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from _lib import dashboard
 from _lib import cli
@@ -148,9 +148,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     findings.sort(key=_finding_sort_key)
 
     content = _build_dashboard_markdown(findings, pages_scanned)
-    dashboard_path = wiki_root / DASHBOARD_RELATIVE
-    dashboard_path.parent.mkdir(parents=True, exist_ok=True)
-    dashboard_path.write_text(content, encoding="utf-8")
+    dashboard_path = dashboard.write_dashboard(wiki_root, DASHBOARD_RELATIVE, content)
 
     return {
         "dashboard_path": dashboard_path,
