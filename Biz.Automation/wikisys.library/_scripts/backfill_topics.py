@@ -17,6 +17,15 @@ See-also graph:
        - unknown tokens are reported UNMAPPED (not tagged).
   2. KEYWORD — when `use_keywords_yaml: true`, each `_config/keywords.yaml`
      term matched against a page's title + H1/H2 + filename becomes a topic.
+  3. SECTION-CODE (dotted/dashed) — when `derive_section_codes: true`, bare
+     numeric section codes embedded in path tokens OR the filename
+     (e.g. `27-10`, `27.10.00`, `27-10-00`) derive a topic. A code (normalized
+     to dash form, e.g. `27.10` -> `27-10`) listed in `section_code_topics:`
+     maps to its canonical topic; an unlisted code falls back to a stable
+     `<section_code_prefix><code>` slug (default prefix `ata-`, e.g.
+     `ata-27-10`) so dotted codes still unify cross-section pages without a
+     per-code map entry. This lets consumers (e.g. Aviation) retire local
+     `stamp_topics`/`cross_link` forks and Sync the kit instead.
 
 Additive + idempotent: existing `topics:` are never removed; a page already
 carrying all derived topics is untouched. Pages with NO frontmatter get a
@@ -44,6 +53,16 @@ from _lib import markdown
 
 ATA_RE = re.compile(r"^\d+_(.+)$")
 NOISE_RE = re.compile(r"^(\d+|[A-Za-z])$")
+# Dotted/dashed numeric section code (2-4 numeric groups of 1-3 digits each),
+# e.g. 27-10, 27.10.00, 27-10-00. The code must START a token or follow a
+# non-alphanumeric separator (`27-10_Aileron`, `Sec_27.30`); the lookbehind
+# rejects a preceding digit/letter/`.`/`-` so a longer run is not re-anchored
+# mid-number (a date `2026-06-13` does NOT yield `06-13`; a version `v1.2.3`
+# does NOT match) and a plain single NN (caught by strip_numeric_prefix) is not
+# matched. Letter-glued codes (`Ch27.10`) are intentionally NOT matched —
+# rejecting them is what keeps version/word fragments out; ATA wikis token-split
+# their codes, so this loses nothing real.
+SECTION_CODE_RE = re.compile(r"(?<![0-9A-Za-z.\-])(\d{1,3}(?:[.\-]\d{1,3}){1,3})(?![0-9])")
 H1H2_RE = re.compile(r"^(#{1,2})\s+(.*\S)\s*$", re.MULTILINE)
 TITLE_RE = re.compile(r'^title:\s*"?(.*?)"?\s*$', re.MULTILINE)
 H1_RE = re.compile(r"^#\s+(.*\S)\s*$", re.MULTILINE)
@@ -134,6 +153,44 @@ def keyword_topics(name, text, terms):
         bits.append(head)
     hay = " \n ".join(bits).lower()
     return {ts for term, ts in terms if term in hay}
+
+
+def normalize_section_code(code: str) -> str:
+    """Canonicalize a dotted/dashed section code to dash form: 27.10 -> 27-10."""
+    return code.replace(".", "-")
+
+
+def build_section_code_map(cfg: dict) -> dict:
+    """normalized-code -> canonical topic slug, from `section_code_topics:`.
+
+    Keys are normalized (dash form) so `27.10` and `27-10` in either the config
+    or the page collide to the same canonical topic. Values are passed through
+    `slug` so a human-written canonical topic (e.g. `Aileron Control`) lands as
+    a valid slug.
+    """
+    out = {}
+    sec = cfg.get("section_code_topics")
+    if isinstance(sec, dict):
+        for code, topic in sec.items():
+            out[normalize_section_code(str(code))] = slug(str(topic))
+    return out
+
+
+def section_code_topics(rel_parts, name, code_map, prefix):
+    """Derive topics from dotted/dashed section codes in path tokens + filename.
+
+    A code found in `code_map` maps to its canonical topic; an unmapped code
+    falls back to `<prefix><normalized-code>` (default prefix `ata-`). Scans
+    every path token AND the filename stem so codes carried in either place
+    unify. Returns a set of topic slugs (possibly empty).
+    """
+    out = set()
+    tokens = list(rel_parts[:-1]) + [Path(name).stem]
+    for tok in tokens:
+        for m in SECTION_CODE_RE.finditer(tok):
+            norm = normalize_section_code(m.group(1))
+            out.add(code_map.get(norm, prefix + norm))
+    return out
 
 
 # ---- frontmatter helpers ----
@@ -234,6 +291,11 @@ def run(wiki_root: Path, apply: bool) -> dict:
     strip_numeric = bool(cfg.get("strip_numeric_prefix", True))
     stub = bool(cfg.get("stub_unstamped", False))
     terms = load_keyword_terms(wiki_root) if cfg.get("use_keywords_yaml", False) else []
+    # Section-code derivation is opt-in (default off → byte-identical to prior
+    # behavior for DFDU/Mentor and any consumer that doesn't enable it).
+    derive_codes = bool(cfg.get("derive_section_codes", False))
+    code_map = build_section_code_map(cfg) if derive_codes else {}
+    code_prefix = str(cfg.get("section_code_prefix", "ata-")) if derive_codes else "ata-"
 
     topic_pages = Counter()
     unmapped = Counter()
@@ -245,6 +307,8 @@ def run(wiki_root: Path, apply: bool) -> dict:
         topics = path_topics(rel_parts, revmap, skipset, strip_numeric, unmapped)
         if terms:
             topics |= keyword_topics(md.name, text, terms)
+        if derive_codes:
+            topics |= section_code_topics(rel_parts, md.name, code_map, code_prefix)
         if not topics:
             continue
         matched += 1

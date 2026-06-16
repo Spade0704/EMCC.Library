@@ -437,5 +437,188 @@ class TestT_XL_3a_BuildTopicIndexReadsCrossLinkConfig(unittest.TestCase):
             self.assertIn("dashboard_path", result)
 
 
+class ApplyPluginLinksTests(unittest.TestCase):
+    """apply_plugin_links: fold page->related-pages into the topic index."""
+
+    ROOT = Path("/wiki")
+
+    def test_related_pages_inherit_source_topics(self):
+        topic_to_pages = {"smoke": [self.ROOT / "a.md"]}
+        page_topics = {"a.md": ["smoke"]}
+        plugin_links = {"a.md": ["b.md"]}
+        added = build_topic_index.apply_plugin_links(
+            topic_to_pages, page_topics, plugin_links, self.ROOT
+        )
+        self.assertEqual(added, 1)
+        self.assertIn(self.ROOT / "b.md", topic_to_pages["smoke"])
+
+    def test_additive_no_duplicates(self):
+        topic_to_pages = {"smoke": [self.ROOT / "a.md", self.ROOT / "b.md"]}
+        page_topics = {"a.md": ["smoke"]}
+        plugin_links = {"a.md": ["b.md"]}  # b already under smoke
+        added = build_topic_index.apply_plugin_links(
+            topic_to_pages, page_topics, plugin_links, self.ROOT
+        )
+        self.assertEqual(added, 0)
+        self.assertEqual(topic_to_pages["smoke"].count(self.ROOT / "b.md"), 1)
+
+    def test_unknown_source_page_contributes_nothing(self):
+        topic_to_pages = {"smoke": [self.ROOT / "a.md"]}
+        page_topics = {"a.md": ["smoke"]}
+        plugin_links = {"zzz.md": ["b.md"]}  # zzz not in page_topics
+        added = build_topic_index.apply_plugin_links(
+            topic_to_pages, page_topics, plugin_links, self.ROOT
+        )
+        self.assertEqual(added, 0)
+
+    def test_source_with_no_topics_contributes_nothing(self):
+        topic_to_pages = {}
+        page_topics = {"a.md": []}  # matched no topic
+        plugin_links = {"a.md": ["b.md"]}
+        added = build_topic_index.apply_plugin_links(
+            topic_to_pages, page_topics, plugin_links, self.ROOT
+        )
+        self.assertEqual(added, 0)
+
+    def test_idempotent_second_pass_adds_zero(self):
+        topic_to_pages = {"smoke": [self.ROOT / "a.md"]}
+        page_topics = {"a.md": ["smoke"]}
+        plugin_links = {"a.md": ["b.md"]}
+        build_topic_index.apply_plugin_links(
+            topic_to_pages, page_topics, plugin_links, self.ROOT
+        )
+        added2 = build_topic_index.apply_plugin_links(
+            topic_to_pages, page_topics, plugin_links, self.ROOT
+        )
+        self.assertEqual(added2, 0)
+
+
+class RunPluginWiringTests(unittest.TestCase):
+    """End-to-end: build_topic_index.run() loads + invokes a configured plug-in."""
+
+    def _setup_wiki_with_plugin(self, tmp: Path, plugin_body: str) -> Path:
+        topics_yaml = (
+            "topics:\n  - name: smoke\n    keywords: [\"smoke\"]\n"
+        )
+        canon = tmp / "_canon"
+        canon.mkdir()
+        (canon / "topics.yaml").write_text(topics_yaml, encoding="utf-8")
+        cfgdir = tmp / "_config"
+        cfgdir.mkdir()
+        (cfgdir / "cross_link.yaml").write_text(
+            "plugin:\n"
+            "  module_path: tlinker_fixture\n"
+            "  callable: link\n"
+            "  weight: 0.5\n",
+            encoding="utf-8",
+        )
+        (tmp / "_dashboards").mkdir()
+        # Page A matches the smoke topic; page B does not (no keyword) but the
+        # plug-in relates B to A, so B should inherit smoke.
+        (tmp / "01-Domain").mkdir()
+        (tmp / "01-Domain" / "A.md").write_text(
+            '---\ntitle: "A"\ntopics: []\n---\n\n# Smoke detector\n\nbody\n',
+            encoding="utf-8",
+        )
+        (tmp / "01-Domain" / "B.md").write_text(
+            '---\ntitle: "B"\ntopics: []\n---\n\n# Unrelated valve\n\nbody\n',
+            encoding="utf-8",
+        )
+        # Project-local plug-in module on sys.path.
+        (tmp / "tlinker_fixture.py").write_text(plugin_body, encoding="utf-8")
+        return tmp
+
+    def test_plugin_links_folded_into_index(self):
+        plugin_body = (
+            "def link(pages):\n"
+            "    # relate every page that matched 'smoke' to B.md\n"
+            "    out = {}\n"
+            "    for p in pages:\n"
+            "        if 'smoke' in p['topics']:\n"
+            "            out[p['path']] = ['01-Domain/B.md']\n"
+            "    return out\n"
+        )
+        with TemporaryDirectory() as t:
+            tmp = Path(t)
+            self._setup_wiki_with_plugin(tmp, plugin_body)
+            sys.path.insert(0, str(tmp))
+            try:
+                result = build_topic_index.run(tmp)
+                rels = {
+                    p.relative_to(tmp).as_posix()
+                    for p in result["topic_to_pages"]["smoke"]
+                }
+            finally:
+                sys.path.remove(str(tmp))
+                sys.modules.pop("tlinker_fixture", None)
+        # B.md was NOT keyword-matched but the plug-in folded it under smoke.
+        self.assertIn("01-Domain/A.md", rels)
+        self.assertIn("01-Domain/B.md", rels)
+
+    def test_plugin_exception_degrades_to_tfidf_only(self):
+        plugin_body = (
+            "def link(pages):\n"
+            "    raise RuntimeError('boom')\n"
+        )
+        with TemporaryDirectory() as t:
+            tmp = Path(t)
+            self._setup_wiki_with_plugin(tmp, plugin_body)
+            sys.path.insert(0, str(tmp))
+            buf = io.StringIO()
+            try:
+                with redirect_stderr(buf):
+                    result = build_topic_index.run(tmp)
+                rels = {
+                    p.relative_to(tmp).as_posix()
+                    for p in result["topic_to_pages"]["smoke"]
+                }
+            finally:
+                sys.path.remove(str(tmp))
+                sys.modules.pop("tlinker_fixture", None)
+        # Degrades cleanly: only the keyword-matched A.md under smoke; warning logged.
+        self.assertEqual(rels, {"01-Domain/A.md"})
+        self.assertIn("plug-in raised on call", buf.getvalue())
+
+    def test_plugin_bad_return_degrades(self):
+        plugin_body = (
+            "def link(pages):\n"
+            "    return ['not', 'a', 'dict']\n"
+        )
+        with TemporaryDirectory() as t:
+            tmp = Path(t)
+            self._setup_wiki_with_plugin(tmp, plugin_body)
+            sys.path.insert(0, str(tmp))
+            buf = io.StringIO()
+            try:
+                with redirect_stderr(buf):
+                    result = build_topic_index.run(tmp)
+                pages = list(result["topic_to_pages"]["smoke"])
+            finally:
+                sys.path.remove(str(tmp))
+                sys.modules.pop("tlinker_fixture", None)
+            self.assertEqual(pages, [tmp / "01-Domain" / "A.md"])
+        self.assertIn("expected dict", buf.getvalue())
+
+    def test_no_plugin_configured_is_noop(self):
+        # No cross_link.yaml plugin block → load_plugin returns None → index is
+        # exactly the TF-IDF/keyword path (B.md absent from smoke).
+        topics_yaml = "topics:\n  - name: smoke\n    keywords: [\"smoke\"]\n"
+        with TemporaryDirectory() as t:
+            tmp = Path(t)
+            canon = tmp / "_canon"
+            canon.mkdir()
+            (canon / "topics.yaml").write_text(topics_yaml, encoding="utf-8")
+            (tmp / "01-Domain").mkdir()
+            (tmp / "01-Domain" / "A.md").write_text(
+                '---\ntitle: "A"\ntopics: []\n---\n\n# Smoke detector\n', encoding="utf-8"
+            )
+            (tmp / "01-Domain" / "B.md").write_text(
+                '---\ntitle: "B"\ntopics: []\n---\n\n# Valve\n', encoding="utf-8"
+            )
+            result = build_topic_index.run(tmp)
+            pages = list(result["topic_to_pages"]["smoke"])
+            self.assertEqual(pages, [tmp / "01-Domain" / "A.md"])
+
+
 if __name__ == "__main__":
     unittest.main()

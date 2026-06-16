@@ -17,8 +17,8 @@
 
 ## Codex v1.3.1 cross-link tails (open)
 
-- [ ] **⚪ Wire the plugin hook end-to-end (or remove it).** `load_plugin`/`blend_results` exist but the `build_topic_index.py` run path never calls them.
-- [ ] **⚪ Add dotted-code section-topic derivation to `backfill_topics.py`** so Aviation can drop its local `stamp_topics`/`cross_link` forks and Sync the kit instead.
+- [x] **🟡 BUILT (for review) — Wired the plugin hook end-to-end.** `run()` now loads any configured project-local plug-in (`load_plugin`) and folds its page->related-pages output into the topic index via new `apply_plugin_links()` (spec §2.7 "union of candidates"); failure-isolated (`_call_plugin` logs + degrades). No-op + byte-identical when unconfigured (the shipped default, `plugin.module_path: ~`), so DFDU/Mentor/all consumers unaffected. Tests: 5 `apply_plugin_links` unit + 4 run-path. Branch `claude/codex-topic-pipeline`.
+- [x] **🟡 BUILT (for review) — Added dotted-code section-topic derivation to `backfill_topics.py`.** Opt-in `derive_section_codes:` + `section_code_topics:` map + `section_code_prefix:` (default `ata-`). Derives a topic from dotted/dashed ATA codes (`27-10`, `27.10.00`, `27-10-00`) in path tokens + filename; mapped code → canonical topic, unmapped → stable `ata-<code>` slug. Regex guards reject year-prefixed dates + letter-glued versions. Default off → byte-identical for non-adopters. Lets Aviation retire its local `stamp_topics`/`cross_link` forks + Sync the kit. Template config documented. Tests: 10. Branch `claude/codex-topic-pipeline`.
 - [ ] **⚪ Full dry-Sync zero-diff check to DFDU/Mentor** (deferred — sync-stamp tests env-broken on this box; covered indirectly by no-consumer-opt-in grep + default-config test).
 
 ## Cairn/Gateway accuracy track (absorbed into Library 2026-06-06)

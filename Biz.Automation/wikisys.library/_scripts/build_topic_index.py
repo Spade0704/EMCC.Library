@@ -7,14 +7,13 @@ build a topic → pages map, additively updates each page's frontmatter
 `topics:` + mirrors topic-derived tags per cfg.tags, writes
 `_dashboards/topic_index.md` via _lib.dashboard SSOT.
 
-Scope per S046-T-XL-3 (Architect SCOPE REDUCTION arbitration APPROVED
-2026-05-21): cross_link.yaml parsing DEFERRED to T-XL-3a followup —
-_lib.frontmatter.parse_config_yaml lacks nested-mapping support per
-docstring 'Out of scope: nested mappings'. This cycle ships with
-HARDCODED DEFAULTS matching spec §2.5 _config/cross_link.yaml schema.
-Plug-in path is dead at runtime (plugin.module_path=None default) but
-load_plugin signature + failure-isolation contract maintained for
-T-XL-3a future enablement.
+Plug-in (spec §2.7): the run path loads any project-local plug-in via
+load_plugin() and, when one is configured, folds its page->related-pages
+output into the topic index (union of candidates) via apply_plugin_links().
+When no plug-in is configured (the shipped default, plugin.module_path=None),
+load_plugin() returns None and the index is byte-identical to the TF-IDF-only
+path — so DFDU/Mentor and every unconfigured consumer are unaffected. Plug-in
+failures are failure-isolated (log + degrade to TF-IDF-only; never block).
 
 Public API:
     run(wiki_root: Path) -> Dict[str, Any]
@@ -30,6 +29,7 @@ Public API:
     match_topics_to_page(page_scan_text, topics, alias_index) -> List[str]
     load_plugin(config: Dict[str, Any]) -> Optional[Callable]
     blend_results(tfidf_scores, plugin_scores, weight) -> Dict[str, float]
+    apply_plugin_links(topic_to_pages, page_topics, plugin_links) -> int
     update_page_frontmatter(page_path: Path, matched_topics: List[str], cfg: Dict[str, Any]) -> None
     render_topic_index(topic_to_pages: Dict[str, List[Path]], wiki_root: Path) -> str
 
@@ -134,6 +134,24 @@ def _tokenize(text: str) -> List[str]:
     return _WORD_TOKEN_RE.findall(text.lower())
 
 
+def _wiki_rel(page_path: Path, wiki_root: Path) -> str:
+    """Wiki-relative POSIX path string for plug-in contract keys."""
+    try:
+        return page_path.relative_to(wiki_root).as_posix()
+    except ValueError:
+        return page_path.as_posix()
+
+
+def _first_h1(scan_text: str) -> str:
+    """Best-effort title for the plug-in `pages` contract — first H1 if the
+    scan fields captured one, else the scan text's first segment (may be empty
+    when scan_fields omit h1). Never raises; plug-ins treat title as advisory."""
+    m = _H1_RE.search(scan_text)
+    if m:
+        return m.group(1).strip()
+    return scan_text.split("\n", 1)[0].strip()
+
+
 def tfidf_score(query_text: str, doc_text: str) -> float:
     """Cosine similarity between query and doc TF vectors. Returns 0.0 to 1.0.
 
@@ -235,6 +253,74 @@ def blend_results(
         + weight * plugin_scores.get(k, 0.0)
         for k in keys
     }
+
+
+def _call_plugin(
+    plugin_callable: Callable, pages: List[Dict[str, Any]]
+) -> Optional[Dict[str, List[str]]]:
+    """Invoke a project-local plug-in, failure-isolated per spec §2.7.
+
+    `pages` matches the spec §2.7 contract: list of dicts
+    {path, title, intro, topics, frontmatter}. The callable returns
+    `dict[page_path -> list[related_page_paths]]`. Any exception OR a
+    non-dict return logs a warning to stderr and returns None (degrade to
+    TF-IDF-only; never block the pipeline).
+    """
+    try:
+        result = plugin_callable(pages)
+    except Exception as exc:  # noqa: BLE001 — spec mandates broad isolation
+        print(
+            "WARN: cross-link plug-in raised on call ({}); degrading to "
+            "TF-IDF-only.".format(exc),
+            file=sys.stderr,
+        )
+        return None
+    if not isinstance(result, dict):
+        print(
+            "WARN: cross-link plug-in returned {} (expected dict); "
+            "degrading to TF-IDF-only.".format(type(result).__name__),
+            file=sys.stderr,
+        )
+        return None
+    return result
+
+
+def apply_plugin_links(
+    topic_to_pages: Dict[str, List[Path]],
+    page_topics: Dict[str, List[str]],
+    plugin_links: Dict[str, List[str]],
+    wiki_root: Path,
+) -> int:
+    """Fold plug-in page->related-pages output into the topic index.
+
+    Spec §2.7 "union of candidates": for each (source_page -> related_pages)
+    the plug-in proposes, the related pages inherit the source page's matched
+    topics — surfacing cross-page relations (e.g. Aviation's cross-manual
+    QRH<->FCOM links) the keyword/TF-IDF pass missed. Additive only: never
+    removes an existing topic-page link; a related page already present under a
+    topic is not duplicated. Returns the count of NEW topic-page links added.
+
+    Plug-in keys + related values are wiki-relative POSIX path strings (the
+    contract in spec 2.7). Related paths are JOINED to `wiki_root` (not
+    resolved): the scan stores `wiki_root / rel` unresolved via rglob, so
+    joining reconstructs that exact Path and `render_topic_index` relativizes
+    them uniformly. A source path not present in `page_topics` (unknown page, or
+    a page that matched no topic) contributes nothing. Idempotent: re-running
+    over an already-folded index adds zero links.
+    """
+    added = 0
+    for source_rel, related_rels in plugin_links.items():
+        topics = page_topics.get(source_rel)
+        if not topics or not isinstance(related_rels, (list, tuple)):
+            continue
+        for related_rel in related_rels:
+            related_path = wiki_root / related_rel
+            for topic_name in topics:
+                bucket = topic_to_pages.setdefault(topic_name, [])
+                if related_path not in bucket:
+                    bucket.append(related_path)
+                    added += 1
+    return added
 
 
 def _format_fm_list(values: List[str]) -> str:
@@ -390,10 +476,19 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     topics_list = load_topics(topics_path)
     alias_index = build_alias_index(topics_list)
     plugin_callable = load_plugin(cfg)
-    _ = plugin_callable  # plug-in is dead code this cycle (defaults); kept for API stability
 
     topic_to_pages: Dict[str, List[Path]] = {}
     pages_scanned = 0
+    # page_topics: wiki-relative POSIX path -> matched topics. Feeds the plug-in
+    # contract dicts AND apply_plugin_links() topic inheritance. Only built when
+    # a plug-in is configured (None when not) so the default path allocates and
+    # iterates nothing extra and stays byte-identical.
+    page_topics: Optional[Dict[str, List[str]]] = (
+        {} if plugin_callable is not None else None
+    )
+    plugin_pages: Optional[List[Dict[str, Any]]] = (
+        [] if plugin_callable is not None else None
+    )
     scan_fields = cfg["tfidf"]["scan_fields"]
     for page_path in markdown.iter_content_pages(wiki_root):
         pages_scanned += 1
@@ -403,6 +498,30 @@ def run(wiki_root: Path) -> Dict[str, Any]:
             update_page_frontmatter(page_path, matched, cfg)
             for topic_name in matched:
                 topic_to_pages.setdefault(topic_name, []).append(page_path)
+        if plugin_callable is not None:
+            rel = _wiki_rel(page_path, wiki_root)
+            page_topics[rel] = matched
+            plugin_pages.append(
+                {
+                    "path": rel,
+                    "title": _first_h1(scan_text),
+                    "intro": scan_text,
+                    "topics": matched,
+                    "frontmatter": frontmatter.parse_frontmatter(
+                        page_path.read_text(encoding="utf-8")
+                    ) or {},
+                }
+            )
+
+    # Spec §2.7: if a plug-in is configured, blend its page->related-pages
+    # output into the index (union of candidates). Failure-isolated in
+    # _call_plugin (log + degrade). No-op when unconfigured (default).
+    if plugin_callable is not None:
+        plugin_links = _call_plugin(plugin_callable, plugin_pages)
+        if plugin_links:
+            apply_plugin_links(
+                topic_to_pages, page_topics, plugin_links, wiki_root
+            )
 
     content = render_topic_index(topic_to_pages, wiki_root)
     out_path = dashboard.write_dashboard(
