@@ -5,6 +5,11 @@
   "module_type": "protocol-wrapper",
   "supported_llms": ["claude"],
   "default_llm": "claude",
+  "connector": {
+    "slug": "library",
+    "target_agent": "Librarian",
+    "routing_keywords": ["docs", "doc", "wiki", "ingest", "document", "curate", "lint", "knowledge", "codex"]
+  },
   "lifecycle_hooks": {
     "initialize": null,
     "get_status": null,
