@@ -4,12 +4,12 @@ type: overview
 visibility: internal
 completion: 30
 status: outlined
-last_updated: 2026-06-06
+last_updated: 2026-06-18
 dependencies: ["01-Architecture/Overview", "02-Operations/Bootstrap", "02-Operations/Librarian"]
 public_pair: null
 blocking_questions: []
 topics: [codex_architecture, codex_operations, cross_link_generation]
-related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Configuration-Files.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Overview.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md]
+related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Configuration-Files.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Input-Validation.md, 01-Architecture/Link-Graph-Integrity.md, 01-Architecture/Overview.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Orchestrator-Participation.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md]
 tags: [codex_architecture, codex_operations, cross_link_generation]
 canon_sources: ["wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §1"]
 unverified_claims: []
@@ -49,6 +49,8 @@ What Codex is — folders, schema, scripts, principles.
 - [[Folder-Architecture]] — the three folder roles (`_codex/`, consuming projects, wikis)
 - [[Wiki-Structure]] — what `bootstrap.py` creates in each wiki
 - [[Frontmatter-Schema]] — the YAML header contract + meta-schema enums
+- [[Input-Validation]] — fail-closed tree-confinement + projectname validation (route_inbox + bootstrap)
+- [[Link-Graph-Integrity]] — link-resolver coherence, escapes-root signal, whole-graph integrity validator
 - [[Automation-Scripts]] — 15 base + 3 v1.3 cross-link scripts, orchestrator pipeline, health-summary
 - [[Configuration-Files]] — `_config/` and `_canon/` schemas (+ `cross_link.yaml`, `topics.yaml`)
 - [[Cross-Link-Generation]] — v1.3 marker contract, plug-in interface, idempotency
