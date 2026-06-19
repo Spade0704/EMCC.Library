@@ -89,6 +89,42 @@ def _find_install_root(start_path):
     return None
 
 
+def _find_layout_dir(start_path, subdir, func_name):
+    """Shared v1.0-wiki / v1.1-install discovery for a system-side `<subdir>/`.
+
+    Backs `find_canon_dir` / `find_config_dir` / `find_decisions_dir` (S004
+    MI-18): each of those dirs moved from `<wiki_root>/<subdir>/` to
+    `<install>/Biz.Automation/wikisys.<name>/<subdir>/` in v1.1. Discovery:
+    (1) `<start>/<subdir>/` if it exists (v1.0 direct child); else (2) walk up
+    to an install root and return the first `wikisys.*/<subdir>/` match.
+
+    Returns the dir Path. Raises `FileNotFoundError` (message keyed by
+    `func_name`/`subdir`) if no dir is discoverable.
+    """
+    if start_path is None:
+        start_path = WIKI_ROOT
+    start = Path(start_path).resolve()
+
+    direct = start / subdir
+    if direct.is_dir():
+        return direct
+
+    install = _find_install_root(start)
+    if install is not None:
+        biz_root = install / "Biz.Automation"
+        if biz_root.is_dir():
+            for entry in sorted(biz_root.iterdir()):
+                if entry.is_dir() and entry.name.startswith("wikisys."):
+                    candidate = entry / subdir
+                    if candidate.is_dir():
+                        return candidate
+
+    raise FileNotFoundError(
+        f"{func_name}: no {subdir}/ at v1.0 path {direct} or any v1.1 "
+        f"wikisys.*/{subdir}/ relative to start={start}."
+    )
+
+
 def find_canon_dir(start_path=None):
     """Find `_canon/` dir whether layout is v1.0 wiki or v1.1 install/consumer.
 
@@ -110,28 +146,7 @@ def find_canon_dir(start_path=None):
 
     Raises `FileNotFoundError` if no canon dir is discoverable.
     """
-    if start_path is None:
-        start_path = WIKI_ROOT
-    start = Path(start_path).resolve()
-
-    direct = start / "_canon"
-    if direct.is_dir():
-        return direct
-
-    install = _find_install_root(start)
-    if install is not None:
-        biz_root = install / "Biz.Automation"
-        if biz_root.is_dir():
-            for entry in sorted(biz_root.iterdir()):
-                if entry.is_dir() and entry.name.startswith("wikisys."):
-                    canon = entry / "_canon"
-                    if canon.is_dir():
-                        return canon
-
-    raise FileNotFoundError(
-        f"find_canon_dir: no _canon/ at v1.0 path {direct} or any v1.1 "
-        f"wikisys.*/_canon/ relative to start={start}."
-    )
+    return _find_layout_dir(start_path, "_canon", "find_canon_dir")
 
 
 def find_config_dir(start_path=None):
@@ -147,28 +162,7 @@ def find_config_dir(start_path=None):
     Returns the config dir Path. Raises FileNotFoundError if no _config/
     is discoverable.
     """
-    if start_path is None:
-        start_path = WIKI_ROOT
-    start = Path(start_path).resolve()
-
-    direct = start / "_config"
-    if direct.is_dir():
-        return direct
-
-    install = _find_install_root(start)
-    if install is not None:
-        biz_root = install / "Biz.Automation"
-        if biz_root.is_dir():
-            for entry in sorted(biz_root.iterdir()):
-                if entry.is_dir() and entry.name.startswith("wikisys."):
-                    config = entry / "_config"
-                    if config.is_dir():
-                        return config
-
-    raise FileNotFoundError(
-        f"find_config_dir: no _config/ at v1.0 path {direct} or any v1.1 "
-        f"wikisys.*/_config/ relative to start={start}."
-    )
+    return _find_layout_dir(start_path, "_config", "find_config_dir")
 
 
 def find_decisions_dir(start_path=None):
@@ -180,28 +174,7 @@ def find_decisions_dir(start_path=None):
     because the generator couldn't find `_decisions/` post-S002 split
     (MI-18 surface).
     """
-    if start_path is None:
-        start_path = WIKI_ROOT
-    start = Path(start_path).resolve()
-
-    direct = start / "_decisions"
-    if direct.is_dir():
-        return direct
-
-    install = _find_install_root(start)
-    if install is not None:
-        biz_root = install / "Biz.Automation"
-        if biz_root.is_dir():
-            for entry in sorted(biz_root.iterdir()):
-                if entry.is_dir() and entry.name.startswith("wikisys."):
-                    decisions = entry / "_decisions"
-                    if decisions.is_dir():
-                        return decisions
-
-    raise FileNotFoundError(
-        f"find_decisions_dir: no _decisions/ at v1.0 path {direct} or any v1.1 "
-        f"wikisys.*/_decisions/ relative to start={start}."
-    )
+    return _find_layout_dir(start_path, "_decisions", "find_decisions_dir")
 
 
 def _resolve_root(start_path):

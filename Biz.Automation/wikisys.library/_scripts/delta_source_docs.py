@@ -435,7 +435,9 @@ def _compute_cascade_impact(
     for pair in pairs:
         if pair["source"] in candidates:
             matched_sources.append(pair["source"])
-            entry = per_derived.setdefault(
+            # setdefault keeps the FIRST source_path encountered for a given
+            # derived (R2 aggregation semantics); the return value is unused.
+            per_derived.setdefault(
                 pair["derived"],
                 {
                     "source_path": pair["source"],
@@ -443,9 +445,6 @@ def _compute_cascade_impact(
                     "affected_by_sections": list(notable_section_titles),
                 },
             )
-            # Keep the first source_path encountered for a given derived
-            # to preserve aggregation semantics (R2).
-            _ = entry
 
     if not per_derived:
         if stderr is not None:
