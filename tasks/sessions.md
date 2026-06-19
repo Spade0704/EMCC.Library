@@ -1,6 +1,14 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-19 — EOD housekeeping close-out (Director cascade dir-20260619): branch GC, no pending Level-2+ code
+
+EMCC Orchestrator EOD sweep (Director `v652jhn1` over `claude-peers`). `/housekeeping` on EMCC.Library. Working tree **clean**; `git pull --ff-only origin main` synced down `2e524a0..b0bb64c` (5 files: input-validation + link-graph-integrity wiki pages, Home/module.json, orchestrator-participation — all docs from prior merges). No local content changes this session.
+
+**Branch reconciliation + GC.** 6 lingering local `claude/*` branches resolved against `origin/main`: all squash-merged via PRs #50–#55. `git branch --merged` showed them "unmerged" (squash drops ancestry); verified real-content-shipped by per-file diff — every branch's feature files are **identical to or behind** main (later PRs refactored: `write_dashboard` helper, #54 removed the now-unused `resolve_topic` import; yaml branch's `test_validate_canon_integrity.py` identical, shipped via #50/`ff5a243`). Branch-unique lines were all main-ahead superseding churn + older `tasks/todo.md` states — **zero un-cross-checked Level-2+ code**. Remote feature branches already gone (only `origin/main`). Deleted all 6 local refs (`audit-b34-library-input-validation` f486bcd, `audit-cleanup-emcc-library` 7d93222, `codex-link-resolver` 0f8b7d3, `codex-tiered-caution-index` 48b096d, `codex-topic-pipeline` 74729fd, `codex-yaml-block-list-fix` f6a7728).
+
+**Backlog:** already reconciled — all 6 shipped items marked `[x]` DONE in `tasks/todo.md`; open `[ ]` items are legit operator-gated/deferred (LLM-seam unlock, dry-Sync zero-diff, Cairn effectivity-normalization, consumer carries). No stale-opens. Wiki: nothing changed → skip. Verify: no code touched → skip (docs-only commit). Delivery: `EMCC.Library -> branch GC + this session entry -> pushed to main`.
+
 ## 2026-06-14b — Readiness cascade dir-ii/hh/jj: lib-95 push, mentor-wiki, 3 wiki skeletons (delta-force + Auditor PASS)
 
 Continuation of the 24h autonomous readiness loop (Director `dir-20260614*` over `claude-peers`). Three directives, all gated (one consolidated `/delta-force` per directive-batch — `tasks/delta-force/delta-force-20260614-092532.md`, DFTS≥4) and Auditor (Regime B) PASS. **Honest-cap rule governed:** real work where there was headroom, explicit caps where the gap is the systemic LLM-runtime/orchestrator seam — no score-gaming. All branches operator-merged (PRs #48 Library, #17 Mentor, #42 isommelier; emcc-wiki applied direct on EMCC main); readiness reconciled live.
