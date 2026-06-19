@@ -124,11 +124,12 @@ def run(wiki_root: Path) -> Dict[str, Any]:
 
     findings.sort(key=_finding_sort_key)
 
+    current_canon_files = len([f for f in CANON_LOOKUP if f in current_state])
     content = _build_dashboard_markdown(
         findings,
         baseline_snapshot_id,
         baseline_missing,
-        current_canon_files=len([f for f in CANON_LOOKUP if f in current_state]),
+        current_canon_files=current_canon_files,
     )
     dashboard_path = dashboard.write_dashboard(wiki_root, DASHBOARD_RELATIVE, content)
 
@@ -137,7 +138,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
         "findings": findings,
         "baseline_snapshot_id": baseline_snapshot_id,
         "baseline_missing": baseline_missing,
-        "current_canon_files": len([f for f in CANON_LOOKUP if f in current_state]),
+        "current_canon_files": current_canon_files,
     }
 
 
