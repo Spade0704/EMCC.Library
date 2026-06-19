@@ -1,6 +1,14 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-19b — DFDU dry-Sync zero-diff verify (Director cascade dir-20260619) + housekeeping confirm
+
+Director `v652jhn1` cascade (operator AWAY → EOD). Two asks, both closed.
+
+**Dry-Sync zero-diff verify vs DFDU (read-only) — PASS.** Confirmed the codex-topic-pipeline work (#51 `build_topic_index` plugin hook + `backfill_topics` dotted-code derivation, both defaults-OFF) produces zero unintended/behavioral diff in the DFDU consumer. Checks: (1) live `sync_from_kit.py <Library> --dry-run` from DFDU root → exit 0, plan **5 OVERWRITE / 1 MERGE-NEW** (additive default-OFF `topic_backfill.yaml`) **/ 35 SKIP** (all DFDU config/templates preserved); (2) no-opt-in grep — DFDU `_config`/`_template` set no `derive_section_codes`/`section_code_*`; `cross_link.yaml` plugin seam `module_path: ~`/`callable: ~` (null=OFF); no runtime `topic_backfill.yaml`; (3) default-config proxy — template ships `derive_section_codes: false`; (4) code-gate read — `build_topic_index.run()` allocates the plugin path only when `plugin_callable is not None`, `module_path=None` → `load_plugin()`→None → byte-identical TF-IDF-only index. The `_scripts/` OVERWRITE carries the new engine code (intended propagation); every activation seam is config-gated and DFDU opts into none. **Sync-stamp unit tests bypassed** (env-broken CRLF on this box) — superseded by the live dry-Sync run. Closed the deferred `tasks/todo.md` "Full dry-Sync zero-diff check to DFDU" line (✅ VERIFIED PASS, a61c0d8 direct to main). **Mentor stays open** (not in this room).
+
+**Housekeeping confirm (direct-to-main).** `git pull --ff-only origin main` → already up to date (a61c0d8 already pushed). Working tree clean. Branch GC: only `main` local + `origin/main` remote — already clean (no merged/stale refs to delete; prior EOD GC'd the 6 `claude/*` refs). Reconciler: `reconcile_backlog.py` is EMCC/Director-scope (not vendored in Library); Director ran it `--repo` and flagged one stale-open "Content-side bootstrap drop-in" — **judged FALSE POSITIVE** (drop-in still hand-maintained), line left OPEN per Director. Wiki: nothing changed → skip. Verify: no code touched → skip (docs-only). No stale-opens to close beyond the todo line above.
+
 ## 2026-06-19 — EOD housekeeping close-out (Director cascade dir-20260619): branch GC, no pending Level-2+ code
 
 EMCC Orchestrator EOD sweep (Director `v652jhn1` over `claude-peers`). `/housekeeping` on EMCC.Library. Working tree **clean**; `git pull --ff-only origin main` synced down `2e524a0..b0bb64c` (5 files: input-validation + link-graph-integrity wiki pages, Home/module.json, orchestrator-participation — all docs from prior merges). No local content changes this session.
