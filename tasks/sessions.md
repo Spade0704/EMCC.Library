@@ -1,6 +1,14 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-20 — EOD housekeeping (Director cascade) + M001 queued from Mentor
+
+EMCC Orchestrator EOD sweep (Director `v652jhn1` over `claude-peers`; operator waived human-at-merge for this sweep). **Repo clean — nothing to merge.** No open PRs (`gh pr list` empty), no local/remote feature branches (only `main` + `origin/main`; no Cairn-ingest draft exists yet). `git pull --ff-only origin main` → already up to date (8ce4ce8). No code touched → verify skipped (docs-only). Wiki: nothing changed → skip.
+
+**M001 queued (from Professor/Mentor PM `9pgzq79b`).** Non-blocking upstream flag: make P13 `check_concept_coverage.py` tier-aware — read `tier:` from roster, skip entity when `tier != Authoritative`, gate via `_config/concept_coverage.yaml` `tier_filter: Authoritative` (default OFF → byte-identical for non-adopters). Codex protocol change Library OWNS (not a Mentor fork); ships to Mentor via Sync. Logged to `tasks/todo.md` Codex-engine backlog (build plan: /delta-force gate design first, behind Cairn ingest). Acked to Professor; human-at-merge for the eventual build.
+
+**Delivery:** `EMCC.Library -> M001 backlog entry + this session entry -> pushed to main`. Stale-opens: none.
+
 ## 2026-06-19b — DFDU dry-Sync zero-diff verify (Director cascade dir-20260619) + housekeeping confirm
 
 Director `v652jhn1` cascade (operator AWAY → EOD). Two asks, both closed.
