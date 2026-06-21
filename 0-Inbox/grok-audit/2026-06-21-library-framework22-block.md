@@ -7,7 +7,7 @@ director_id: director
 directive_ref: tasks/orchestrator-log.jsonl#dir-2026-06-21-library-framework22-block
 slug: 2026-06-21-library-framework22-block
 attempt: 1
-status: done
+status: pending
 phase: build
 created_at: 2026-06-21T11:25:00Z
 updated_at: 2026-06-21T11:25:00Z
