@@ -136,3 +136,13 @@ Skip for trivial turns (status checks, file reads with no state change, intermed
 **Soft compliance only** — if the reply tool errors or `chat_id` is unset, log and continue; never block the workflow on Telegram delivery. Operator monitors progress from phone via this channel; decision-needed escalations route to the same chat-id but with explicit `decision_needed` framing per `EMCC.DFDU/documents/lattice/13-TELEGRAM-INTEGRATION.md`. This auto-summary is the "here's where I am" complement.
 
 Future v1.2 escalation: if compliance drifts in practice, ship Option B (Stop hook intervention) per `tasks/architect-notes.md` §S002 Telegram-auto-summary deferred-Option-B note.
+
+<!-- emcc-coding-workflow:framework22 v2 -->
+## Coding workflow (EMCC canon — framework/22)
+
+Coding here follows the locked EMCC gate — **referenced, not vendored**. Full schema + details (cert-handoff **v1.1**, executes-clean rules, Grok-wake) live in `EMCC/framework/22-coding-workflow.md`; this block is the safety invariant, not the source of truth.
+
+`build → executes-clean (verified evidence_ref) → validate_cert_handoff.py → Auditor (Regime B, independent of the builder) → Grok /cross-check cert → Director closes on DUAL PASS`.
+
+- **Dual PASS to close; never self-code.** The Director routes every build to a Lattice peer (the sole coder) and NEVER builds; with no live Lattice peer it escalates (no-implementer) rather than self-coding.
+- **Role separation is mechanical** (`scripts/validate_cert_handoff.py`, cert-handoff/v1.1: builder_id/director_id/directive_ref). Schema, fields, and the Grok-wake decision are all in `EMCC/framework/22-coding-workflow.md`.
