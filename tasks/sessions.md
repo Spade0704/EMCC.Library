@@ -1,6 +1,19 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-21 — P1 workflow-audit DOCUMENT step (Librarian, Director cascade) + EOD housekeeping
+
+EMCC Orchestrator cascade (Director `v652jhn1` over `claude-peers`). This Library session served as the **Librarian** for the P1 workflow-audit DOCUMENT step (framework/22 final, DOCS ONLY) — the Codex curation leg of the EMCC coding-workflow audit. **All artifacts landed in the EMCC repo** (Director's shared checkout), not Library; Library's own tree was untouched by the curation.
+
+**Curated 1 wiki.EMCC Codex page from 4 audit sources** (`tasks/audits/2026-06-21-workflow-{canon-confirmed,audit-deprecations,audit-leanness,audit-inventory}.md`):
+- NEW `wiki.EMCC/git/Coding-Workflow.md` (type:framework; canon_sources framework/22 + framework/09) — (1) the CONFIRMED canonical workflow (roles, gate order, cert-handoff/v1.1, structural `validate_cert_handoff.py`, claude-peers + Grok git-dropbox transport, portfolio-glob poll, Monitor wake, referenced-not-vendored); (2) the DEPRECATION OUTCOME (root cause `scripts/patch_consumer_workflow.py:32` → 11/15 BLOCKING; 4 lexically-invisible role-sep drifts; 5 missing-block consumers; leanness route-not-vendor tie-in). Framed on-page: **P1 = FINDINGS ONLY, zero edits; Phase 2 separate + gated + dual-PASS.**
+- EDIT `wiki.EMCC/git/Home.md` — added `[[Coding-Workflow]]` ToC row (C2 hop-resolves).
+- `canon_sources` written **inline** (dodges the known Codex block-list→None parser-read; engine-side already fixed `cf9a834` but inline is belt-and-suspenders + matches no-churn). Handoff = option (c): left both changes UNCOMMITTED in the Director's `wiki.EMCC` working tree + a portable patch (`tasks/audits/2026-06-21-coding-workflow-page.patch`) — **never branch/commit in the shared EMCC checkout** ([[emcc-tree-shared-checkout-patch]]). Did NOT run the wiki lint/dashboards (would churn the Director's checkout). **Director committed + closed P1 dual-PASS:** page+Home `6c75313`, `sync_wiki` dashboard snapshot `fb4ea16`, pushed to `origin`; semantic lint deferred to merge (operator).
+
+**EOD housekeeping (direct-to-main, EMCC.Library).** `git pull --ff-only origin main` → already up to date (eb96fb2). Working tree clean (P1 work was EMCC-side). No `reconcile_backlog.py` in Library (EMCC/Director-scope, not vendored). Director-flagged stale-open "Content-side bootstrap drop-in" (`bootstrap.py`) — **re-confirmed LEGIT-OPEN, not shipped**: drift cure belongs to `bootstrap.py`'s generation path, distinct from the closed OBS-4 project-root fix; low priority, left OPEN (consistent with the 2026-06-19b adjudication). Wiki: nothing Library-side changed → skip. Verify: no Library code touched → skip (docs-only). Backlog: added a consumer-carry note — Library's `CLAUDE.md` is one of the 5 missing-block consumers in the deprecation report; the framework/22 v1.1 block arrives via the P2 deferred-tail `--apply` (Director-driven, human-at-merge).
+
+**Delivery:** `EMCC.Library -> this session entry + backlog consumer-carry note -> pushed to main`. Stale-opens: none new (the flagged one confirmed legit-open).
+
 ## 2026-06-20 — EOD housekeeping (Director cascade) + M001 queued from Mentor
 
 EMCC Orchestrator EOD sweep (Director `v652jhn1` over `claude-peers`; operator waived human-at-merge for this sweep). **Repo clean — nothing to merge.** No open PRs (`gh pr list` empty), no local/remote feature branches (only `main` + `origin/main`; no Cairn-ingest draft exists yet). `git pull --ff-only origin main` → already up to date (8ce4ce8). No code touched → verify skipped (docs-only). Wiki: nothing changed → skip.
