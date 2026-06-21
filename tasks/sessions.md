@@ -1,6 +1,20 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-21b — framework/22 coding-workflow block add to CLAUDE.md (gated, merged #59) + final EOD branch GC
+
+EMCC Orchestrator cascade (Director `v652jhn1`, operator GO). Drift cleanup: Library was flagged as a **missing-block consumer** by its own P1 deprecation report (`EMCC.Library/CLAUDE.md` had no framework/22 coding-workflow block). Added it under the full Lattice 3.0 gate, DRAFT/human-at-merge, on branch `claude/add-framework22-block` — **merged #59**.
+
+**Build (doc-class mechanical apply).** Builder = the Unit-1-FIXED generator `EMCC/scripts/patch_consumer_workflow.py` (EMCC `e8467a9` / PR #239 "P2 fixes (dual-PASS)": `CURRENT_VERSION = 2`, marker `framework22 v2`, emits **cert-handoff/v1.1** + a **referenced-not-vendored** one-line route to `framework/22` — NOT the frozen-v1 root cause). `--check` pre = `[pending]` (missing-block confirmed; not hand-customized — no `[stale]`/`[custom]`). `--apply` → `[applied]`. `--check` post = exit0 / `1/1 current` = **executes-clean PASS**. Additive EOF append, 10 insertions, zero mutation of existing CLAUDE.md (build `fa548f6`).
+
+**Gate.** executes-clean PASS (`tasks/audits/2026-06-21-library-framework22-block-evidence.md`) → **independent Auditor (Regime B, separate agent)** VERDICT PASS (re-ran executes-clean from disk; confirmed additive-only / v1.1 / referenced-not-vendored / generator v2 / role-sep distinct / no scope creep / verbatim files untouched) → `validate_cert_handoff.py` PASS exit0 (builder_id=lattice ≠ director_id=director ≠ certifier_id=grok; `directive_ref` resolves in Library's OWN new `tasks/orchestrator-log.jsonl#dir-2026-06-21-library-framework22-block`) → Grok cert-handoff dropped to `0-Inbox/grok-audit/2026-06-21-library-framework22-block.md` + pushed → Director dual-PASS close + merge #59.
+
+**Bug caught (Director).** First handoff drop set `status: done` (copied from a post-cert example) — the portfolio-glob poll SKIPS `done` handoffs (only Grok writes `done`), self-blocking the cert. Fixed → `status: pending`, verdict empty (`fe521c1`). Memory saved: `grok-handoff-status-pending` ([[grok-handoff-status-pending]]) — not a `validate_cert_handoff.py`-caught field, it's a poll-protocol rule.
+
+**Final EOD housekeeping + branch GC.** `git checkout main` + `pull --ff-only` → synced #59 (`e2de787`; 4 files / 84 insertions: CLAUDE.md block, orchestrator-log, evidence, handoff). Block present once (line 140, additive). Deleted squash-merged local branch `claude/add-framework22-block` (was `5c8e89f`) + `git remote prune origin` (remote ref pruned). Only `main` remains. No code touched → verify skipped (docs-only). **Flag for Director:** main's merged handoff still shows `status: pending` and there is **no committed grok-cert file** (`tasks/audits/...-grok-cert.md` absent on main) — the Director owns the dual-PASS close (#59) but the on-main Grok cert evidence is not present; surfaced for confirmation, not asserted.
+
+**Delivery:** `EMCC.Library -> todo close (#59) + this session entry + branch GC -> pushed to main`. Stale-opens: none new.
+
 ## 2026-06-21 — P1 workflow-audit DOCUMENT step (Librarian, Director cascade) + EOD housekeeping
 
 EMCC Orchestrator cascade (Director `v652jhn1` over `claude-peers`). This Library session served as the **Librarian** for the P1 workflow-audit DOCUMENT step (framework/22 final, DOCS ONLY) — the Codex curation leg of the EMCC coding-workflow audit. **All artifacts landed in the EMCC repo** (Director's shared checkout), not Library; Library's own tree was untouched by the curation.
