@@ -1,6 +1,20 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-25 — EOD housekeeping (Director cascade) + close stale shipped-but-open (framework/22 #59)
+
+EMCC Orchestrator EOD sweep (Director `l6t93lqx` over `claude-peers`). Per Director ask: sync down → refresh tasks → reconcile backlog (surface stale-opens) → verify → ship per EMCC-family flow.
+
+**Sync.** `git pull --ff-only origin main` → already up to date (`ca396c3`). Working tree clean.
+
+**Reconcile + close the flagged stale-open.** `scripts/reconcile_backlog.py` is EMCC/Director-scope (not vendored in Library — `scripts/` here holds only orchestrator/task/board helpers); Director ran it `--repo` and reported EMCC.Library had **1 shipped-but-open**. Identified: the `[x] DONE (merged #59)` framework/22 coding-workflow block item that was still parked in `todo.md` "Operator / consumer-side carry (open)" rather than archived, carrying a now-stale flag ("main's handoff still `status: pending` + no committed grok-cert file"). **Verified the flag is RESOLVED:** the Grok cert is now committed on main — `tasks/audits/2026-06-21-library-framework22-block-grok-cert.md` (`auditor_verdict: PASS` / `verdict: PASS`, `c80aa77`) and the inbox handoff copy archived (`ca396c3`). Dual-PASS confirmed, #59 merged, branch GC'd. → Rolled the item to `tasks/archive.md` (new § Archived 2026-06-25) with the flag-resolution note; removed from `todo.md`. No other stale-opens.
+
+**Wiki.** Nothing Library wiki-content changed this sweep → skip. **Verify.** No code touched (bookkeeping-only: todo/archive/sessions) → verify skipped (docs-only).
+
+**Backlog state after sweep.** Codex-engine M001 (queued, gated behind Cairn ingest); readiness/cross-link/Cairn for-review `[x]` items remain in `todo.md` awaiting human merge (NOT closed — for-review ≠ merged); operator/consumer carries (bootstrap drop-in, aviation seed, tat_app roster, WYAI seed) genuinely OPEN. All confirmed LEGIT-OPEN, not shipped.
+
+**Delivery:** `EMCC.Library -> archive close (framework/22 #59) + this session entry -> branch -> PR (DRAFT, bookkeeping-only → squash-merge eligible per Director)`. Stale-opens left unclosed: none.
+
 ## 2026-06-21b — framework/22 coding-workflow block add to CLAUDE.md (gated, merged #59) + final EOD branch GC
 
 EMCC Orchestrator cascade (Director `v652jhn1`, operator GO). Drift cleanup: Library was flagged as a **missing-block consumer** by its own P1 deprecation report (`EMCC.Library/CLAUDE.md` had no framework/22 coding-workflow block). Added it under the full Lattice 3.0 gate, DRAFT/human-at-merge, on branch `claude/add-framework22-block` — **merged #59**.

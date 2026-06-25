@@ -2,6 +2,11 @@
 
 > Historical sprints rolled out of `tasks/todo.md` once their work is complete. Newest at top.
 
+## Archived 2026-06-25 (done/stale moved from todo.md)
+
+### Operator / consumer-side carry
+- [x] **DONE (merged #59, 2026-06-21) — Library `CLAUDE.md` framework/22 coding-workflow block added.** Library was flagged as a missing-block consumer by the EMCC P1 deprecation report. Added via the Unit-1-fixed generator `patch_consumer_workflow.py` (EMCC e8467a9/#239): cert-handoff/v1.1, marker `framework22 v2`, referenced-not-vendored (one-line route to `EMCC/framework/22-coding-workflow.md`). Full Lattice gate: executes-clean PASS → independent Auditor (Regime B) PASS → `validate_cert_handoff.py` PASS → Grok cert-handoff dropped+pushed → Director dual-PASS close + merge #59. Branch `claude/add-framework22-block` GC'd. **Prior flag RESOLVED (2026-06-25):** the on-main Grok cert evidence is now committed — `tasks/audits/2026-06-21-library-framework22-block-grok-cert.md` (`auditor_verdict: PASS` / `verdict: PASS`, `c80aa77`) + inbox copy archived (`ca396c3`); the earlier "handoff `status: pending` + no committed grok-cert file" gap is closed. SoT: EMCC `wiki.EMCC/git/Coding-Workflow.md` + `framework/22`.
+
 ## Archived 2026-06-16 (done/stale moved from todo.md)
 
 ### Codex-engine backlog
