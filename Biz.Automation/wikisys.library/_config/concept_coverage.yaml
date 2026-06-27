@@ -7,6 +7,12 @@
 #       min_mentions      — int; threshold for "entity mentioned in N+ pages but no dedicated page"
 #       exclude_folders   — list of folder-name strings; skipped during scanning
 #       exclude_entities  — list of canonical-name strings; escape-hatch for entities deliberately lacking a dedicated page
+#       subject_entities  — list of canonical-name strings; exempt from the no-dedicated-page signal but
+#                           still listed in the dashboard, annotated "subject (exempt)" (spec §2.5)
+#       tier_filter       — str (M001); when set (e.g. "Authoritative") each roster entry is scanned ONLY
+#                           if its `tier:` matches (casefold). A missing/empty/null tier is treated as
+#                           "Authoritative" → included (fail-open: advisory tooling over-reports, never
+#                           silently drops). Absent / empty / non-string → OFF (no tier gating).
 #
 # Entire file is OPTIONAL. Missing-file → defaults applied verbatim. Defaults
 # committed explicitly below for operator-affordance: visible without reading
@@ -23,3 +29,12 @@ exclude_entities: []
 # min_mentions: 3
 # exclude_folders: ["_brain_dump", "_inbox", "_sources"]
 # exclude_entities: ["<deprecated-entity-name>"]
+# subject_entities: ["<this-wiki's-subject-entity>"]
+#
+# tier_filter (M001, default OFF) — leave commented to keep coverage tier-agnostic.
+# Uncomment + set to scope coverage to one roster tier (pairs with an optional
+# per-entry `tier:` key in _canon/roster.yaml). Skipped entries lacking `tier:`
+# are treated as "Authoritative" (included), so turning this on never silently
+# hides a gap. Retires a hand-synced exclude_entities list once References-tier
+# entries carry `tier: References`:
+# tier_filter: "Authoritative"

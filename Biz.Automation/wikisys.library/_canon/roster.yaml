@@ -8,6 +8,13 @@
 #   - wrapper key: `entities` (list)
 #   - per-entry required keys: canonical_name (str)
 #   - per-entry optional keys: aliases (list of str)
+#                              tier (str, M001) — coverage tier label, e.g.
+#                                "Authoritative" / "References". Consumed by
+#                                check_concept_coverage.py ONLY when its
+#                                _config/concept_coverage.yaml sets `tier_filter`;
+#                                otherwise ignored. A missing tier is treated as
+#                                "Authoritative" (included). Other validators
+#                                ignore it (config_loader passes it through).
 #
 # Schema authority: <wiki>/01-Architecture/Frontmatter-Schema.md (meta-schema)
 #                   and _sources/raw/CODEX_BUILD_SPEC_v1_3.md §2.5.

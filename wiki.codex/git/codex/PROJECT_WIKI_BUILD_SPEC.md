@@ -222,7 +222,7 @@ All pure Python stdlib. No `pip install`. Live in `_scripts/` of every wiki, mas
 - **`reveal_leak_patterns.yaml`** — phrases that leak unreleased content. Severities: `error` / `warning` / `info` (info documents approved terms without flagging)
 - **`cascade_map.yaml`** — source → derived doc propagation
 - **`steel_threads.yaml`** — multi-layer feature manifest
-- **`concept_coverage.yaml`** (v1.1, optional) — tunes `check_concept_coverage.py`. Keys: `min_mentions` (default 2), `exclude_folders` (list of folder names skipped during scanning), `exclude_entities` (list of canonical names skipped — escape hatch)
+- **`concept_coverage.yaml`** (v1.1, optional) — tunes `check_concept_coverage.py`. Keys: `min_mentions` (default 2), `exclude_folders` (list of folder names skipped during scanning), `exclude_entities` (list of canonical names skipped — escape hatch), `subject_entities` (list of canonical names exempt from the no-dedicated-page signal but still listed in the dashboard, annotated `subject (exempt)`), `tier_filter` (M001; string, default OFF — when set, e.g. `Authoritative`, a roster entry is scanned only if its `tier:` matches, casefold; a missing/empty/null `tier:` is treated as `Authoritative` → included, so enabling it never silently hides a gap; absent/empty/non-string → OFF, output byte-identical to pre-M001)
 
 > **Regex convention (amended 2026-06-10, M-A component 1).** The `_config/` files are read by Codex's YAML-subset parser, which performs **no escape processing**: quoted strings are delivered verbatim to `re.compile`. Regex values MUST be written **single-backslash** (`"(?i)\bterm\b"`), never real-YAML double-backslash (`"\\b"` is delivered as a literal backslash pair — a rule that compiles but never fires). The parser must NOT gain escape processing: it would reinterpret `\b` as backspace and silently break every live single-backslash rule in consuming wikis. Shipped examples follow this convention and are guarded by negative-control tests in the Library suite.
 
@@ -233,7 +233,7 @@ All pure Python stdlib. No `pip install`. Live in `_scripts/` of every wiki, mas
 **`_canon/`** (ground-truth facts, per-project):
 
 - **`counts.yaml`** — every canonical number that appears more than once
-- **`roster.yaml`** — named entities with canonical names and aliases
+- **`roster.yaml`** — named entities with canonical names and aliases; optional per-entry `tier:` (M001; string, e.g. `Authoritative` / `References`) read by `check_concept_coverage.py` only when its `tier_filter` is set, otherwise ignored (a missing `tier:` is treated as `Authoritative`)
 - **`taxonomy.yaml`** — structured classifications
 - **`timeline.yaml`** — milestones, versions, progression parameters
 

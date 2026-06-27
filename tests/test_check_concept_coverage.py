@@ -86,9 +86,10 @@ class ConceptCoverageConfigTests(unittest.TestCase):
             (wiki / "_config" / "concept_coverage.yaml").unlink()
             cfg = check_concept_coverage._load_concept_coverage_config(wiki)
             # S047-T4 Edit-2: subject_entities key added to DEFAULTS.
+            # M001: tier_filter key added to DEFAULTS (default None -> OFF).
             self.assertEqual(
                 cfg,
-                {"min_mentions": 2, "exclude_folders": [], "exclude_entities": [], "subject_entities": []},
+                {"min_mentions": 2, "exclude_folders": [], "exclude_entities": [], "subject_entities": [], "tier_filter": None},
             )
 
     def test_config_empty_file_returns_defaults(self):
@@ -97,9 +98,10 @@ class ConceptCoverageConfigTests(unittest.TestCase):
             _write_config(wiki, "")
             cfg = check_concept_coverage._load_concept_coverage_config(wiki)
             # S047-T4 Edit-2: subject_entities key added to DEFAULTS.
+            # M001: tier_filter key added to DEFAULTS (default None -> OFF).
             self.assertEqual(
                 cfg,
-                {"min_mentions": 2, "exclude_folders": [], "exclude_entities": [], "subject_entities": []},
+                {"min_mentions": 2, "exclude_folders": [], "exclude_entities": [], "subject_entities": [], "tier_filter": None},
             )
 
     def test_config_partial_keys_missing_applies_per_field_defaults(self):
@@ -108,9 +110,10 @@ class ConceptCoverageConfigTests(unittest.TestCase):
             _write_config(wiki, "min_mentions: 5\n")
             cfg = check_concept_coverage._load_concept_coverage_config(wiki)
             # S047-T4 Edit-2: subject_entities key added to DEFAULTS.
+            # M001: tier_filter key added to DEFAULTS (default None -> OFF).
             self.assertEqual(
                 cfg,
-                {"min_mentions": 5, "exclude_folders": [], "exclude_entities": [], "subject_entities": []},
+                {"min_mentions": 5, "exclude_folders": [], "exclude_entities": [], "subject_entities": [], "tier_filter": None},
             )
 
     def test_config_override_min_mentions(self):
@@ -539,6 +542,199 @@ class EdgeCaseTests(unittest.TestCase):
             out2 = check_concept_coverage.run(wiki)
             body2 = out2["dashboard_path"].read_text(encoding="utf-8")
             self.assertEqual(body1, body2)
+
+
+class TierFilterTests(unittest.TestCase):
+    """M001 — tier-aware coverage: tier_filter skip predicate.
+
+    Default OFF (byte-identical for non-adopters); when set, skip a roster
+    entry whose `tier:` does not match (casefold). Missing / empty / null /
+    whitespace-only / non-string tier -> DEFAULT_TIER -> included (fail-OPEN:
+    an advisory validator over-reports, never silently drops a gap).
+    """
+
+    def _two_pages(self, wiki, name):
+        """Two distinct pages mentioning `name`, no dedicated page -> a gap."""
+        _write_page(wiki, "01-Domain/{}_A.md".format(name),
+            ['title: "A"'], "The {} appears here.\n".format(name))
+        _write_page(wiki, "01-Domain/{}_B.md".format(name),
+            ['title: "B"'], "The {} appears again here.\n".format(name))
+
+    # T1 — tier-skip: a References-tier entry is excluded under an Authoritative filter.
+    def test_t1_tier_skip_references_under_authoritative_filter(self):
+        with TemporaryDirectory() as tmp:
+            wiki = _clone_fixture(Path(tmp) / "wiki")
+            _write_roster(wiki,
+                "entities:\n"
+                "  - canonical_name: Widget\n"
+                "    tier: References\n")
+            _write_config(wiki, 'tier_filter: "Authoritative"\n')
+            self._two_pages(wiki, "Widget")
+            out = check_concept_coverage.run(wiki)
+            self.assertEqual(_findings_for_entity(out["findings"], "Widget"), [])
+
+    # T2 — tier-include: an Authoritative entry still fires under an Authoritative filter.
+    def test_t2_tier_include_authoritative_under_authoritative_filter(self):
+        with TemporaryDirectory() as tmp:
+            wiki = _clone_fixture(Path(tmp) / "wiki")
+            _write_roster(wiki,
+                "entities:\n"
+                "  - canonical_name: Widget\n"
+                "    tier: Authoritative\n")
+            _write_config(wiki, 'tier_filter: "Authoritative"\n')
+            self._two_pages(wiki, "Widget")
+            out = check_concept_coverage.run(wiki)
+            self.assertEqual(len(_findings_for_entity(out["findings"], "Widget")), 1)
+
+    # T3 — OFF byte-identical: tier data present but inert == no tier data.
+    def test_t3_off_byte_identical_tier_present_but_filter_absent(self):
+        def _run(roster_body):
+            tmp = TemporaryDirectory()
+            wiki = _clone_fixture(Path(tmp.name) / "wiki")
+            _write_roster(wiki, roster_body)
+            # No tier_filter key in config -> OFF.
+            _write_config(wiki, "min_mentions: 2\n")
+            self._two_pages(wiki, "Widget")
+            body = check_concept_coverage.run(wiki)["dashboard_path"].read_text(encoding="utf-8")
+            tmp.cleanup()
+            return body
+
+        with_tier = _run(
+            "entities:\n"
+            "  - canonical_name: Widget\n"
+            "    tier: References\n")
+        without_tier = _run(
+            "entities:\n"
+            "  - canonical_name: Widget\n")
+        self.assertEqual(with_tier, without_tier)
+
+    # T4 — missing-tier fail-open: an entry with NO tier key is included.
+    def test_t4_missing_tier_fail_open_included(self):
+        with TemporaryDirectory() as tmp:
+            wiki = _clone_fixture(Path(tmp) / "wiki")
+            _write_roster(wiki,
+                "entities:\n"
+                "  - canonical_name: Widget\n")
+            _write_config(wiki, 'tier_filter: "Authoritative"\n')
+            self._two_pages(wiki, "Widget")
+            out = check_concept_coverage.run(wiki)
+            self.assertEqual(len(_findings_for_entity(out["findings"], "Widget")), 1)
+
+    # T5 — union with exclude_entities: both skip predicates independent.
+    def test_t5_union_with_exclude_entities(self):
+        with TemporaryDirectory() as tmp:
+            wiki = _clone_fixture(Path(tmp) / "wiki")
+            _write_roster(wiki,
+                "entities:\n"
+                "  - canonical_name: RefWidget\n"
+                "    tier: References\n"
+                "  - canonical_name: ExclWidget\n"
+                "    tier: Authoritative\n"
+                "  - canonical_name: PlainWidget\n"
+                "    tier: Authoritative\n")
+            _write_config(wiki,
+                'tier_filter: "Authoritative"\n'
+                'exclude_entities: ["ExclWidget"]\n')
+            self._two_pages(wiki, "RefWidget")
+            self._two_pages(wiki, "ExclWidget")
+            self._two_pages(wiki, "PlainWidget")
+            out = check_concept_coverage.run(wiki)
+            self.assertEqual(_findings_for_entity(out["findings"], "RefWidget"), [])    # skipped by tier
+            self.assertEqual(_findings_for_entity(out["findings"], "ExclWidget"), [])   # skipped by exclude
+            self.assertEqual(len(_findings_for_entity(out["findings"], "PlainWidget")), 1)  # still fires
+
+    # T6 — config parse: tier_filter accepted only as a non-empty string, stripped.
+    def test_t6_config_parse_tier_filter(self):
+        def _cfg(body):
+            with TemporaryDirectory() as tmp:
+                wiki = _clone_fixture(Path(tmp) / "wiki")
+                _write_config(wiki, body)
+                return check_concept_coverage._load_concept_coverage_config(wiki)["tier_filter"]
+        self.assertEqual(_cfg('tier_filter: "Authoritative"\n'), "Authoritative")
+        self.assertEqual(_cfg('tier_filter: "  Authoritative  "\n'), "Authoritative")  # stripped
+        self.assertIsNone(_cfg('tier_filter: ""\n'))        # empty -> OFF
+        self.assertIsNone(_cfg('tier_filter: 123\n'))       # non-string -> OFF
+        self.assertIsNone(_cfg("min_mentions: 2\n"))        # absent -> OFF
+
+    # T7 — unknown-tier WARN: a present-but-unknown filtered tier emits a stderr WARN.
+    def test_t7_unknown_tier_emits_stderr_warning(self):
+        with TemporaryDirectory() as tmp:
+            wiki = _clone_fixture(Path(tmp) / "wiki")
+            _write_roster(wiki,
+                "entities:\n"
+                "  - canonical_name: Widget\n"
+                "    tier: Bogus\n")
+            _write_config(wiki, 'tier_filter: "Authoritative"\n')
+            self._two_pages(wiki, "Widget")
+            buf = io.StringIO()
+            out = check_concept_coverage.run(wiki, stderr=buf)
+            warned = buf.getvalue()
+            self.assertIn("warning:", warned)
+            self.assertIn("Bogus", warned)
+            # WARN is advisory: the entry is still tier-skipped (Bogus != Authoritative).
+            self.assertEqual(_findings_for_entity(out["findings"], "Widget"), [])
+
+    def test_t7b_known_tier_emits_no_warning(self):
+        with TemporaryDirectory() as tmp:
+            wiki = _clone_fixture(Path(tmp) / "wiki")
+            _write_roster(wiki,
+                "entities:\n"
+                "  - canonical_name: Widget\n"
+                "    tier: References\n")
+            _write_config(wiki, 'tier_filter: "Authoritative"\n')
+            self._two_pages(wiki, "Widget")
+            buf = io.StringIO()
+            check_concept_coverage.run(wiki, stderr=buf)
+            self.assertEqual(buf.getvalue(), "")  # References is known -> no WARN
+
+    # T8 — empty/null tier fail-open (regression guard for the silent-drop defect).
+    def test_t8_empty_and_null_tier_fail_open_included(self):
+        for tier_line in ("    tier:\n", "    tier: null\n", "    tier: ~\n"):
+            with self.subTest(tier_line=tier_line):
+                with TemporaryDirectory() as tmp:
+                    wiki = _clone_fixture(Path(tmp) / "wiki")
+                    _write_roster(wiki,
+                        "entities:\n"
+                        "  - canonical_name: Widget\n" + tier_line)
+                    _write_config(wiki, 'tier_filter: "Authoritative"\n')
+                    self._two_pages(wiki, "Widget")
+                    buf = io.StringIO()
+                    out = check_concept_coverage.run(wiki, stderr=buf)
+                    # MUST fire — an empty/null tier is treated Authoritative, never dropped.
+                    self.assertEqual(
+                        len(_findings_for_entity(out["findings"], "Widget")), 1,
+                        "empty/null tier {!r} must fail-open to included".format(tier_line),
+                    )
+                    # And it is a clean default, not an "unknown tier" -> no WARN.
+                    self.assertEqual(buf.getvalue(), "")
+
+    # T9 — casefold match: a case-typo'd tier still matches (no silent drop).
+    def test_t9_casefold_tier_match(self):
+        with TemporaryDirectory() as tmp:
+            wiki = _clone_fixture(Path(tmp) / "wiki")
+            _write_roster(wiki,
+                "entities:\n"
+                "  - canonical_name: Widget\n"
+                "    tier: authoritative\n")  # lowercase
+            _write_config(wiki, 'tier_filter: "Authoritative"\n')
+            self._two_pages(wiki, "Widget")
+            buf = io.StringIO()
+            out = check_concept_coverage.run(wiki, stderr=buf)
+            self.assertEqual(len(_findings_for_entity(out["findings"], "Widget")), 1)
+            self.assertEqual(buf.getvalue(), "")  # casefold-known -> no WARN
+
+    # T10 — whitespace-padded tier is stripped before comparison.
+    def test_t10_whitespace_padded_tier_stripped(self):
+        with TemporaryDirectory() as tmp:
+            wiki = _clone_fixture(Path(tmp) / "wiki")
+            _write_roster(wiki,
+                "entities:\n"
+                "  - canonical_name: Widget\n"
+                '    tier: "Authoritative "\n')  # trailing space
+            _write_config(wiki, 'tier_filter: "Authoritative"\n')
+            self._two_pages(wiki, "Widget")
+            out = check_concept_coverage.run(wiki)
+            self.assertEqual(len(_findings_for_entity(out["findings"], "Widget")), 1)
 
 
 if __name__ == "__main__":

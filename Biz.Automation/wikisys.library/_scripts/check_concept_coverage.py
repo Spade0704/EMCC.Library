@@ -60,10 +60,20 @@ Config files:
                                min_mentions (int, default 2),
                                exclude_folders (list, default []),
                                exclude_entities (list, default []),
-                               subject_entities (list, default []).
+                               subject_entities (list, default []),
+                               tier_filter (str, default None/OFF).
                                Loaded via direct parse_config_yaml
                                (load_config_yaml is wrapper-key-only
                                and does not fit the scalar shape).
+
+    tier_filter (M001): when set (e.g. "Authoritative"), each roster
+    entry is skipped unless its `tier:` matches (casefold, after strip).
+    A missing/empty/null `tier:` is treated as DEFAULT_TIER -> included
+    (fail-OPEN: advisory tools over-report, never silently drop). UNION
+    with exclude_entities (independent skip predicates). Absent / empty /
+    non-string tier_filter -> OFF (no tier gating) -> dashboard output
+    byte-identical to pre-M001 (load-bearing: _scripts/ OVERWRITE-ships
+    to the whole portfolio before any consumer opts in).
 """
 
 import re
@@ -89,13 +99,35 @@ DEFAULTS: Dict[str, Any] = {
     "exclude_folders": [],
     "exclude_entities": [],
     "subject_entities": [],
+    "tier_filter": None,
 }
 
 REASON_COVERAGE_GAP = "entity mentioned in N pages but no dedicated page"
 
+# M001: tier-aware coverage. A roster entry with no `tier:` key (or an empty /
+# null / whitespace-only value) is treated as DEFAULT_TIER — i.e. INCLUDED under
+# any active tier_filter. This is the fail-OPEN-to-inclusion direction: an
+# advisory validator must over-report (a visible, dismissable gap) rather than
+# under-report (a silently hidden gap). Never change this default to fail-closed.
+DEFAULT_TIER = "Authoritative"
 
-def run(wiki_root: Path) -> Dict[str, Any]:
-    """Walk content pages, scan roster entities, write the dashboard."""
+# Known tier vocabulary (casefolded), used ONLY to emit a stderr WARN on a
+# present-but-unknown tier value that gets filtered out — surfaces a misspelled
+# tier (e.g. `Authoritativ`) that would otherwise be silently dropped. This set
+# never enforces: an unknown tier is still filtered per the comparison below, the
+# WARN is advisory only. Casefold comparison handles case-typos structurally; this
+# set catches the residual misspellings the casefold can't.
+KNOWN_TIERS = frozenset({"authoritative", "references"})
+
+
+def run(wiki_root: Path, stderr=None) -> Dict[str, Any]:
+    """Walk content pages, scan roster entities, write the dashboard.
+
+    `stderr` (M001): stream for the unknown-tier WARN; defaults to sys.stderr.
+    Injectable so tests can assert the WARN without capturing the process stream.
+    """
+    if stderr is None:
+        stderr = sys.stderr
     wiki_root = Path(wiki_root)
     if not wiki_root.is_dir():
         raise FileNotFoundError(
@@ -109,6 +141,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     exclude_entities = set(config["exclude_entities"])
     subject_entities = set(config["subject_entities"])
     min_mentions = config["min_mentions"]
+    tier_filter = config["tier_filter"]
 
     all_pages = list(markdown.iter_content_pages(wiki_root))
     dedicated_stems: Set[str] = {_slugify(p.stem) for p in all_pages}
@@ -132,6 +165,34 @@ def run(wiki_root: Path) -> Dict[str, Any]:
         canonical = str(entry["canonical_name"])
         if canonical in exclude_entities:
             continue
+        # M001: tier gating — independent UNION with exclude_entities (neither
+        # supersedes the other). Resolve the entry tier fail-OPEN: missing /
+        # empty / null / whitespace-only -> DEFAULT_TIER -> included. Casefold
+        # the comparison (tier is a controlled-vocabulary label, not prose, so
+        # the script's prose case-sensitivity does not transfer) — this kills
+        # the case-typo silent-drop class structurally.
+        if tier_filter is not None:
+            # Fail-OPEN: a tier is honoured ONLY when it is a non-empty string.
+            # The Codex YAML-subset parser renders an empty `tier:` inside a list
+            # item as [] (not None), and `tier: null`/`~` as None — the isinstance
+            # guard funnels every non-string form (None, [], empty, whitespace) to
+            # DEFAULT_TIER -> included, so an empty/typo'd tier never silently drops.
+            raw_tier = entry.get("tier")
+            entry_tier = (
+                raw_tier.strip()
+                if isinstance(raw_tier, str) and raw_tier.strip()
+                else DEFAULT_TIER
+            )
+            if entry_tier.casefold() not in KNOWN_TIERS:
+                print(
+                    "warning: roster entry {!r} has unknown tier {!r} "
+                    "(known: {}); filtering against tier_filter {!r}".format(
+                        canonical, entry_tier, sorted(KNOWN_TIERS), tier_filter
+                    ),
+                    file=stderr,
+                )
+            if entry_tier.casefold() != tier_filter.casefold():
+                continue
         names = [canonical] + _alias_list(entry)
         regexes = [
             re.compile(r"\b" + re.escape(n) + r"\b") for n in names
@@ -236,6 +297,15 @@ def _load_concept_coverage_config(wiki_root: Path) -> Dict[str, Any]:
         merged["exclude_entities"] = [str(x) for x in parsed["exclude_entities"]]
     if "subject_entities" in parsed and isinstance(parsed["subject_entities"], list):
         merged["subject_entities"] = [str(x) for x in parsed["subject_entities"]]
+    # M001: tier_filter accepted only as a non-empty string; stored stripped.
+    # Anything else (absent / empty / list / non-string) leaves the default None
+    # -> OFF, never crashes, never half-applies.
+    if (
+        "tier_filter" in parsed
+        and isinstance(parsed["tier_filter"], str)
+        and parsed["tier_filter"].strip()
+    ):
+        merged["tier_filter"] = parsed["tier_filter"].strip()
     return merged
 
 
@@ -324,7 +394,7 @@ def _main(wiki_root, stdout=None, stderr=None):
         stderr = sys.stderr
     wiki_root = Path(wiki_root)
     try:
-        summary = run(wiki_root)
+        summary = run(wiki_root, stderr=stderr)
     except ConfigYamlError as exc:
         print(
             "error: roster yaml is structurally malformed: {}".format(exc),
