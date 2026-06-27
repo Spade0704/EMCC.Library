@@ -1,0 +1,15 @@
+# M001 tier-aware coverage — executes-clean evidence
+# repo: EMCC.Library  branch: m001-tier-aware-coverage  commit: 9e5b65deae65a0af72362d6474a20deefa524e15
+# captured: 2026-06-27  by: Lattice peer (builder)
+# NOTE: run the full suite with 'discover -t .' (repo root as top-level dir) so tests/__init__.py
+#       inserts the source _scripts path BEFORE the tests/_lib test-package can shadow the source
+#       _lib package. Without -t . you get ~35 spurious ImportErrors (harness artifact, not the diff).
+
+## Targeted module suite: python -m unittest tests.test_check_concept_coverage
+Ran 43 tests in 1.024s
+OK
+
+## Full Library suite: python -m unittest discover -t . -s tests -p 'test_*.py'
+## (unittest summary only; any 'ERROR:'/'created:' lines elsewhere are tests' own stdout, not failures)
+Ran 867 tests in 19.623s
+OK (skipped=6)
