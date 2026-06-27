@@ -1,6 +1,14 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-06-27 — M001 tier-aware concept-coverage: built + dual-PASS + MERGED (Director /workflow cascade)
+
+Director (EMCC) `/workflow` pass routed M001 end-to-end. Director pre-gate `/delta-force` PROCEED 5/5 -> routed build to Lattice `bw6f7zet`. Lattice ran its OWN decorrelated `/delta-force` (PROCEED 5/5) and **caught a HIGH-sev silent-drop the single pre-gate missed**: an empty/null/`~`/whitespace `tier:` renders `[]`/None (the YAML-subset parser yields `[]` for an empty list-item `tier:`, NOT a missing-key default), so a `.get("tier","Authoritative")` guard would have SILENTLY DROPPED those entities under `tier_filter` -- violating the plan's own never-silent-drop invariant. Corrected to a structural `isinstance(raw_tier,str) and .strip()` guard + casefold compare -> all funnel to `DEFAULT_TIER` = included.
+
+Build `9e5b65d`: `_scripts/check_concept_coverage.py` (tier_filter gating, default OFF byte-identical) + `_config/concept_coverage.yaml` (flag doc) + `_canon/roster.yaml` (optional `tier:` header) + `tests/test_check_concept_coverage.py` (T1-T10) + `PROJECT_WIKI_BUILD_SPEC.md §2.5`. Retires Mentor's manual `exclude_entities` stopgap (UNION semantics).
+
+Gate chain (framework/22): build -> executes-clean (43/43 module + 867/867 full, 6 skipped; `discover -t .` dodges the tests/_lib import-shadow artifact) -> **independent Director-routed Regime-B Auditor PASS** (diff-only, decorrelated from builder; 5/5 invariants, traced never-silent-drop through the parser; `tasks/audits/2026-06-27-library-m001-independent-regime-b-audit.md`) -> **Grok /cross-check PASS** (`tasks/audits/2026-06-27-library-m001-tier-aware-coverage-grok-cert.md`; chat PASS / execute deferred-CISO; `same_model_fallback:false`). `builder=lattice != director != certifier=grok`. **Operator-authorized merge: PR #61 squash-merged to main (`03dd6e2`), branch deleted.** Done-cert archived to `0-Inbox/grok-audit/_archive/`. Stale-opens: none.
+
 ## 2026-06-25 — EOD housekeeping (Director cascade) + close stale shipped-but-open (framework/22 #59)
 
 EMCC Orchestrator EOD sweep (Director `l6t93lqx` over `claude-peers`). Per Director ask: sync down → refresh tasks → reconcile backlog (surface stale-opens) → verify → ship per EMCC-family flow.
