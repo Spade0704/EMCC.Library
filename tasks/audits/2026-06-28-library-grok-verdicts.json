@@ -1,0 +1,55 @@
+{
+  "findings_ref": "tasks/audits/2026-06-28-library-audit.json",
+  "verdicts": [
+    {
+      "id": "LIB-08",
+      "verdict": "corroborated",
+      "note": "Cold read (security first): bootstrap _validate_projectname (416-444) enforces allowlist + rejects separators and . / .. before interpolation; _refuse_outside_cwd (447+) confines via resolve()+relative_to. route_inbox _within_root (79-91) confines both dest and source; execute_manifest skips escapers (119-130). No shell=True, os.system, eval/exec, pickle, or yaml.load in production scripts; sync_from_kit and demote_boilerplate_stubs use list-form git argv. Pure stdlib surface — healthy baseline accurate."
+    },
+    {
+      "id": "LIB-01",
+      "verdict": "corroborated",
+      "note": "Cold read: WIKI_ROOT = find_wiki_root() at module level (line 71) runs eager ancestor walk at import; find_wiki_root raises RuntimeError (57-62) when no marker. config_loader imports frontmatter at line 39 — pure parse callers inherit crash-at-import without needing WIKI_ROOT."
+    },
+    {
+      "id": "LIB-02",
+      "verdict": "corroborated",
+      "note": "Cold read: scan_inbox line 55 uses entry.read_bytes()[:4096] — entire file loaded into RAM to hash 4 KB prefix. OOM risk scales with largest inbox file, not fingerprint size."
+    },
+    {
+      "id": "LIB-03",
+      "verdict": "corroborated",
+      "note": "Cold read: execute_manifest line 138 shutil.move with no dst.exists() guard. _within_root blocks escape but in-tree collision silently overwrites — unrecoverable clobber on agent misclassification."
+    },
+    {
+      "id": "LIB-04",
+      "verdict": "corroborated",
+      "note": "Cold read: _parse_yaml_subset empty key resolves via _parse_value('') → None (372); parse_config_yaml pending_key with no content → [] (707). Module docstring (16-18) documents prior silent data-loss class. Two divergent hand-rolled parsers on same syntactic construct."
+    },
+    {
+      "id": "LIB-05",
+      "verdict": "corroborated",
+      "note": "Cold read + Execute: _parse_value line 472 lstrip('-').isdigit() guard passes '--5' but int('--5') raises ValueError — reproduced in harness. Inconsistent fail-hard vs non-raising scalar contract elsewhere."
+    },
+    {
+      "id": "LIB-06",
+      "verdict": "corroborated",
+      "note": "Cold read: scan_inbox line 51 `if not entry.is_file(): continue` — subdirectories silently omitted from manifest with no stderr or sentinel entry."
+    },
+    {
+      "id": "LIB-07",
+      "verdict": "corroborated",
+      "note": "Cold read: _PROJECTNAME_RE (416) allows [A-Za-z0-9._-]+ only; _validate_projectname does not reject Win32 reserved device names (CON, NUL, COM1, etc.) or all-dot names. Usability gap on primary Windows environment, not traversal escape."
+    },
+    {
+      "id": "LIB-09",
+      "verdict": "corroborated",
+      "note": "Cold read: .github/workflows/test.yml pins python-version 3.11 only (line 16); local __pycache__ shows 3.13 artifacts. 867 unittest OK in Execute on 3.x here; matrix gap for interpreter-drift on parser/pathlib surfaces is real."
+    },
+    {
+      "id": "LIB-10",
+      "verdict": "corroborated",
+      "note": "Cold read: doc_lint check_consequence (318-336) fail-closed on unreadable files — treats as HIGH-unverified rather than raising; explicit comment that raise would fail-open the gate loop. Positive defensive pattern accurate."
+    }
+  ]
+}
