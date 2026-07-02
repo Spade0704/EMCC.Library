@@ -17,21 +17,29 @@ kit content into a consuming wiki.
 CLI:
 
     python bootstrap.py <projectname> [--full | --minimal | --code | --website]
-                                      [--dry-run] [--yes]
+                                      [--assets] [--dry-run] [--yes]
 
 Modes:
     --full     (default) Canonical tree: 0-Inbox/ + Biz.Automation/
-               + wiki.<name>/{local,git}/ + tasks/ + assets/ + root
+               + wiki.<name>/{local,git}/ + tasks/ + root
                files (Index.md, CLAUDE.md, Cheatsheet.md,
                reorganization-instructions.<name>.md, .gitignore).
+               No assets/ by default (opt-in via --assets).
     --minimal  Thin braindump (aviation-career style): 0-Inbox/ +
                wiki.<name>/{local,git}/ + tasks/ + root files. No
-               Biz.Automation/, no assets/, no Cheatsheet.md, no
+               Biz.Automation/, no Cheatsheet.md, no
                reorganization-instructions.<name>.md.
     --code     --full + <product-code-root>/.gitkeep placeholder +
                code-aware .gitignore additions.
     --website  --full + website/.gitkeep + web-aware .gitignore
                additions.
+
+Flags (independent of the mode group, composable with any mode):
+    --assets   Also scaffold assets/{logos,brand,photos,videos,designs,
+               generated}/. Default OFF — assets/ is an OPTIONAL root
+               folder per spec (a); scaffold it only when the project
+               wants it up front (2026-07-02 opt-in ruling: an empty
+               six-.gitkeep assets tree scaffolded-for-all is a smell).
 
 Idempotency + safety (spec c §"Idempotency + safety rules"):
     1. Refuse to overwrite non-empty `<projectname>/` unless --yes.
@@ -69,6 +77,12 @@ CANONICAL_FOLDERS_FULL: Tuple[str, ...] = (
     "wiki.{projectname}/git/raw",
     "wiki.{projectname}/git/ideas",
     "tasks",
+)
+
+# assets/ is OPT-IN (2026-07-02 ruling, Q6): no mode emits assets/ by
+# default; the independent --assets flag appends these six on top of
+# whatever mode is selected (composable, e.g. `--minimal --assets`).
+ASSETS_FOLDERS: Tuple[str, ...] = (
     "assets/logos",
     "assets/brand",
     "assets/photos",
@@ -183,7 +197,8 @@ def _stub_index_md(projectname: str) -> str:
         "| `Biz.Automation/wikisys.{name}/` | Wiki-system engine (Codex). |\n"
         "| `.claude/personas|modules|skills/` | Agent config (if present). |\n"
         "| `module.json` / `emcc.modules.json` | Module manifests (if present). |\n"
-        "| `assets/` | Logos, brand, photos, videos, designs. |\n"
+        "| `assets/` | Logos, brand, photos, videos, designs (if present; "
+        "scaffold via --assets). |\n"
         "| `{canon}` | Protocol canon (module repos) — authoritative drill-down "
         "behind wiki overviews. Edit when this repo ships canon. |\n"
         "\n"
@@ -396,7 +411,8 @@ def _stub_gitignore(mode: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _materialize_folder_list(mode: str, projectname: str) -> List[str]:
+def _materialize_folder_list(mode: str, projectname: str,
+                             assets: bool = False) -> List[str]:
     """Resolve the per-mode folder list, interpolating {projectname}."""
     if mode == "minimal":
         base = list(CANONICAL_FOLDERS_MINIMAL)
@@ -406,6 +422,10 @@ def _materialize_folder_list(mode: str, projectname: str) -> List[str]:
         base.append(WEBSITE_ROOT)
     # --code intentionally adds no folder placeholder; operator names
     # and creates the actual code root (see comment on WEBSITE_ROOT).
+    if assets:
+        # ASSETS_FOLDERS carry no {projectname}; the uniform .format
+        # pass below is a no-op for them but keeps one interpolation path.
+        base.extend(ASSETS_FOLDERS)
     return [p.format(projectname=projectname) for p in base]
 
 
@@ -598,7 +618,7 @@ def _post_bootstrap_checklist(projectname: str, mode: str) -> str:
         "",
         "Notes:",
         "  - wiki.{}/local/ is gitignored. Use it for confidential content.".format(projectname),
-        "  - assets/ has heavy-file patterns commented in .gitignore — uncomment as needed.",
+        "  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.",
         "  - If your project ships a public website, use the --website flag (or add website/ manually).",
         "  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).",
     ]
@@ -610,6 +630,7 @@ def bootstrap(
     mode: str = "full",
     dry_run: bool = False,
     yes: bool = False,
+    assets: bool = False,
     cwd_override: Optional[Path] = None,
 ) -> int:
     """Bootstrap a project scaffold at <cwd>/<projectname>/.
@@ -639,7 +660,7 @@ def bootstrap(
         sys.stderr.write("ERROR: " + err + "\n")
         return 1
 
-    folder_rels = _materialize_folder_list(mode, projectname)
+    folder_rels = _materialize_folder_list(mode, projectname, assets)
     if not dry_run:
         target.mkdir(parents=True, exist_ok=True)
 
@@ -728,6 +749,17 @@ def _build_parser() -> argparse.ArgumentParser:
         const="website",
         help="Full + website/ + web-aware .gitignore.",
     )
+    # Independent boolean flag, deliberately OUTSIDE the mode
+    # mutually-exclusive group: it composes with any mode (opt-in
+    # assets ruling 2026-07-02; assets/ is OPTIONAL per spec a).
+    parser.add_argument(
+        "--assets",
+        action="store_true",
+        help=(
+            "Also scaffold assets/{logos,brand,photos,videos,designs,"
+            "generated}/. Composable with any mode; default off."
+        ),
+    )
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -749,6 +781,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         mode=args.mode,
         dry_run=args.dry_run,
         yes=args.yes,
+        assets=args.assets,
     )
 
 

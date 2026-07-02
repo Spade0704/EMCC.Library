@@ -37,6 +37,10 @@ Folder layout:
 - `_dashboards/` — auto-generated dashboards from `_scripts/update_dashboards.py`.
 - `_scripts/` — automation scripts (validators, aggregators, dashboard builders).
 
+### Section numbering
+
+Section folders use reserved two-digit semantic slots (`00-Start-Here`, `01-Architecture`, `02-Operations`, `04-Contributing`, …). Numbering is **sparse by design** — a project creates a numbered section only when its content earns one, so gaps (e.g. no `03-`) are normal and expected, not a defect. Existing sections are **never renumbered**: wikilinks (`[[FileStem]]`) and `related_files`/`canon_sources` cite stems and paths, so a renumber would silently break the cross-link graph.
+
 ## Page conventions
 
 Every content page carries a YAML frontmatter block. Key fields:
