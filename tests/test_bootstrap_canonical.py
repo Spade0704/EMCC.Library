@@ -211,6 +211,18 @@ class TestCanonicalFullTree(unittest.TestCase):
             self.assertNotIn("None", index_md)
             self.assertNotIn("{{", index_md)
 
+    def test_full_index_md_assets_row_uses_if_present_idiom(self):
+        """Zone-2 assets/ row joins the '(if present)' catalog idiom
+        (Librarian Option B — plain string, no conditional emit)."""
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            _run_bootstrap(cwd, "mentor", mode="full")
+            index_md = (cwd / "mentor" / "Index.md").read_text(encoding="utf-8")
+            assets_row = next(
+                line for line in index_md.splitlines()
+                if line.startswith("| `assets/` |"))
+            self.assertIn("(if present", assets_row)
+
     def test_full_emits_empty_valid_canon_roster(self):
         """dir-20260613h-canon-scaffold: bootstrap seeds an empty-but-valid
         `_canon/roster.yaml` so the P13 check_concept_coverage validator
