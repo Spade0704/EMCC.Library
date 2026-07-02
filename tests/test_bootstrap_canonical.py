@@ -11,10 +11,14 @@ substitution); emits the canonical portfolio frame per spec (c):
     │   └── .gitkeep
     ├── wiki.<name>/{local,git/raw,git/ideas}/.gitkeep
     ├── tasks/{todo,sessions,lessons,archive}.md
-    ├── assets/{logos,brand,photos,videos,designs,generated}/.gitkeep
     ├── Index.md, CLAUDE.md, Cheatsheet.md, .gitignore
 
-Modes covered: --full (default), --minimal, --code, --website.
+assets/{logos,brand,photos,videos,designs,generated}/.gitkeep is OPT-IN
+(2026-07-02 ruling): no mode emits it by default; the independent
+--assets flag (composable with any mode) adds the six subfolders.
+
+Modes covered: --full (default), --minimal, --code, --website; plus the
+orthogonal --assets flag.
 Plus: idempotency (refuse-non-empty + --yes override), refuse-outside-cwd,
 --dry-run no-writes.
 
@@ -24,6 +28,7 @@ MIGRATION-ISSUES.md.
 """
 
 import os
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -38,13 +43,15 @@ import bootstrap  # noqa: E402
 
 
 def _run_bootstrap(target_cwd: Path, projectname: str, mode: str = "full",
-                   yes: bool = False, dry_run: bool = False) -> int:
+                   yes: bool = False, dry_run: bool = False,
+                   assets: bool = False) -> int:
     """Invoke bootstrap.bootstrap() with cwd_override (tests use tmp dirs)."""
     return bootstrap.bootstrap(
         projectname,
         mode=mode,
         dry_run=dry_run,
         yes=yes,
+        assets=assets,
         cwd_override=target_cwd,
     )
 
@@ -60,7 +67,7 @@ class TestCanonicalFullTree(unittest.TestCase):
             target = cwd / "mentor"
             expected_top = {
                 "0-Inbox", "Biz.Automation", "wiki.mentor", "tasks",
-                "assets", "Index.md", "CLAUDE.md", "Cheatsheet.md",
+                "Index.md", "CLAUDE.md", "Cheatsheet.md",
                 ".gitignore",
             }
             actual_top = set(p.name for p in target.iterdir())
@@ -98,16 +105,49 @@ class TestCanonicalFullTree(unittest.TestCase):
                 content = (tasks / fname).read_text(encoding="utf-8")
                 self.assertGreater(len(content), 0)
 
-    def test_full_emits_assets_six_subfolders(self):
+    def test_no_assets_flag_omits_assets(self):
+        """assets/ is opt-in (2026-07-02 ruling): --full alone emits NO assets/."""
         with TemporaryDirectory() as tmp:
             cwd = Path(tmp)
             _run_bootstrap(cwd, "mentor", mode="full")
+            self.assertFalse(
+                (cwd / "mentor" / "assets").exists(),
+                "--full without --assets must not emit assets/",
+            )
+
+    def test_assets_flag_composes_with_full(self):
+        """--full --assets adds the six assets/* subfolders."""
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            rc = _run_bootstrap(cwd, "mentor", mode="full", assets=True)
+            self.assertEqual(rc, 0)
             assets = cwd / "mentor" / "assets"
             for sub in ("logos", "brand", "photos", "videos", "designs", "generated"):
                 self.assertTrue(
                     (assets / sub / ".gitkeep").is_file(),
                     "missing assets/{}/.gitkeep".format(sub),
                 )
+
+    def test_full_omits_numbered_section_stubs(self):
+        """Anti-regression (Candidate A ban): --full emits NO empty numbered
+        section stubs (01-*/02-*/03-*) under wiki.<name>/git/. Section numbers
+        are reserved semantic slots created only when content earns them
+        (Delta Force 2026-07-02-wiki-section-numbering-scheme, 5/5 → B).
+        00-Start-Here/ and 04-Contributing/ exist only because the six
+        materialized boilerplate pages live there."""
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            _run_bootstrap(cwd, "mentor", mode="full")
+            wiki_git = cwd / "mentor" / "wiki.mentor" / "git"
+            self.assertTrue(wiki_git.is_dir())
+            numbered = [
+                child.name for child in wiki_git.iterdir()
+                if child.is_dir() and re.match(r"^0[123]-", child.name)
+            ]
+            self.assertEqual(
+                numbered, [],
+                "--full must not emit numbered section stubs: {}".format(numbered),
+            )
 
     def test_full_root_stub_files_have_projectname_interpolated(self):
         with TemporaryDirectory() as tmp:
@@ -245,6 +285,21 @@ class TestCanonicalMinimalTree(unittest.TestCase):
                 "minimal mode should omit per-project reorg manifest",
             )
 
+    def test_minimal_composes_with_assets_flag(self):
+        """--minimal --assets is legal: the orthogonal flag simply adds
+        the six assets/* folders on top of the thin tree."""
+        with TemporaryDirectory() as tmp:
+            cwd = Path(tmp)
+            rc = _run_bootstrap(cwd, "thin", mode="minimal", assets=True)
+            self.assertEqual(rc, 0)
+            target = cwd / "thin"
+            self.assertFalse((target / "Biz.Automation").exists())
+            for sub in ("logos", "brand", "photos", "videos", "designs", "generated"):
+                self.assertTrue(
+                    (target / "assets" / sub / ".gitkeep").is_file(),
+                    "missing assets/{}/.gitkeep".format(sub),
+                )
+
     def test_minimal_emits_required_core(self):
         with TemporaryDirectory() as tmp:
             cwd = Path(tmp)
@@ -285,7 +340,8 @@ class TestCanonicalCodeMode(unittest.TestCase):
             # Full canonical entries present
             self.assertTrue((target / "Biz.Automation" / "wikisys.myproj").is_dir())
             self.assertTrue((target / "wiki.myproj" / "git" / "raw").is_dir())
-            self.assertTrue((target / "assets" / "logos").is_dir())
+            # assets/ no longer default under --code (opt-in via --assets).
+            self.assertFalse((target / "assets").exists())
 
 
 class TestCanonicalWebsiteMode(unittest.TestCase):
@@ -383,6 +439,21 @@ class TestCLIParser(unittest.TestCase):
         self.assertTrue(args.dry_run)
         self.assertTrue(args.yes)
 
+    def test_assets_flag_independent_of_mode_group(self):
+        """--assets is an orthogonal boolean, NOT a mode: default off,
+        composable with every mode flag."""
+        parser = bootstrap._build_parser()
+        args = parser.parse_args(["mentor"])
+        self.assertFalse(args.assets)
+        args = parser.parse_args(["mentor", "--assets"])
+        self.assertTrue(args.assets)
+        self.assertEqual(args.mode, "full")
+        for mode_flag, mode in (("--minimal", "minimal"), ("--code", "code"),
+                                ("--website", "website"), ("--full", "full")):
+            args = parser.parse_args(["mentor", mode_flag, "--assets"])
+            self.assertTrue(args.assets)
+            self.assertEqual(args.mode, mode)
+
 
 class TestProjectnameValidation(unittest.TestCase):
     """Audit B4: filesystem-safe projectname allowlist (fail-closed)."""
@@ -422,6 +493,25 @@ class TestProjectnameValidation(unittest.TestCase):
                     _run_bootstrap(cwd, bad, mode="full"), 0,
                     "expected non-zero exit for {!r}".format(bad),
                 )
+
+
+class TestSectionNumberingCanonicalNote(unittest.TestCase):
+    """Item-1 guard: the canonical upstream How-to-Use-This-Wiki page states
+    the semantic-slot section-numbering contract (sparse-by-design gaps,
+    never renumber). Guards the self-explaining policy against silent
+    removal. Ruling: tasks/delta-force/2026-07-02-wiki-section-numbering-scheme.md."""
+
+    CANONICAL_PAGE = (REPO_ROOT / "wiki.codex" / "git" / "00-Start-Here"
+                      / "How-to-Use-This-Wiki.md")
+
+    def test_canonical_page_states_semantic_slot_contract(self):
+        self.assertTrue(self.CANONICAL_PAGE.is_file(),
+                        "canonical page missing: {}".format(self.CANONICAL_PAGE))
+        text = self.CANONICAL_PAGE.read_text(encoding="utf-8")
+        self.assertIn("Section numbering", text)
+        self.assertIn("semantic slot", text)
+        self.assertIn("sparse by design", text)
+        self.assertIn("never renumber", text)
 
 
 if __name__ == "__main__":

@@ -361,6 +361,8 @@ portfolio frame wraps around them, never relocates them).
 | `reorganization-instructions.<projectname>.md` | Per-project path-migration manifest. Concrete (Old path) → (New path) → (Pattern) → (Status) rows for moves this project applied when adopting the canonical layout. Cross-repo patterns (P1–P8) and audit hooks live in `EMCC.Library/REORGANIZATION-INSTRUCTIONS.md` (master). Emitted by `bootstrap.py` as a stub for new projects. |
 | `.gitignore` | Excludes secrets, build artifacts, OS files, `wiki.*/local/`, optionally `Local/`, optionally heavy `assets/` patterns. |
 
+Wiki section numbers are reserved semantic slots; sparse numbering (gaps) is canonical; sections are created when content exists and never renumbered. Canonical statement: `wiki.codex/git/00-Start-Here/How-to-Use-This-Wiki.md` §Section numbering.
+
 ## Variance allowance (required / recommended / optional)
 
 | Element | Status | Variance permitted |
@@ -378,7 +380,7 @@ portfolio frame wraps around them, never relocates them).
 | `wiki.<projectname>/` | **OPTIONAL** | Omit if pure code project with no docs. Strict `wiki.<projectname>/` naming **with one allowed variance**: subject-named wikis (`wiki.<subject>/`) permitted when the project name is a role/container and the wiki content is subject-specific. Examples: `wiki.etihad/` inside `aviation/`; `wiki.codex/` inside `EMCC.Library/`. Stronger default: `wiki.<projectname>/` matching the project folder. |
 | `wiki.<name>/git/` + `wiki.<name>/local/` | **REQUIRED if `wiki.<name>/` exists** | Both subfolders mandatory once the wiki exists. `local/` may be empty (`.gitkeep`). |
 | `wiki.<name>/git/raw/` and `/ideas/` | RECOMMENDED if `wiki.<name>/git/` exists | May be empty / `.gitkeep`. |
-| `assets/` (root) | OPTIONAL | Subfolders project-internal. Add to project when first brand/photo lands. |
+| `assets/` (root) | OPTIONAL | Subfolders project-internal. Add to project when first brand/photo lands. Scaffold on demand via `bootstrap.py <name> --assets` (opt-in flag; no mode emits `assets/` by default). |
 | `website/` (root) | OPTIONAL | Only when project ships a public website. Excludes mobile apps and CLIs. |
 | `<product-code-root>/` | OPTIONAL | Out of frame. Code projects keep language-native layout untouched. Multiple roots allowed. |
 | `Local/` (root) | OPTIONAL | eddyandwolff pattern. Project-root private zone, never committed. Use for non-wiki confidential files. Coexists with `wiki.*/local/`. |
@@ -900,7 +902,7 @@ consumers (e.g. Aviation, eddyandwolff) need no migration, but Mentor did.
 ## Invocation
 
 ```
-bootstrap.py <projectname> [--minimal | --code | --website | --full]
+bootstrap.py <projectname> [--minimal | --code | --website | --full] [--assets]
 ```
 
 - `<projectname>` — required. Used as folder name and as suffix for
@@ -912,6 +914,11 @@ bootstrap.py <projectname> [--minimal | --code | --website | --full]
 - `--website` — public-website project (Next.js, Squarespace). Creates
   `website/.gitkeep` placeholder + web-aware `.gitignore`.
 - `--full` — default. Full canonical tree.
+- `--assets` — independent opt-in flag, OUTSIDE the mode group and
+  composable with any mode (e.g. `--minimal --assets`). Adds the six
+  `assets/*` subfolders. Default off: `assets/` is OPTIONAL per section
+  (a) and is added when the first brand/photo lands — or scaffolded up
+  front with this flag.
 
 ## Default output for `bootstrap.py mentor` (`--full`)
 
@@ -935,18 +942,14 @@ mentor/
 │   ├── sessions.md
 │   ├── lessons.md
 │   └── archive.md
-├── assets/
-│   ├── logos/.gitkeep
-│   ├── brand/.gitkeep
-│   ├── photos/.gitkeep
-│   ├── videos/.gitkeep
-│   ├── designs/.gitkeep
-│   └── generated/.gitkeep
 ├── Index.md
 ├── CLAUDE.md
 ├── Cheatsheet.md
 └── .gitignore
 ```
+
+No `assets/` by default — it is opt-in via the `--assets` flag (see
+"`--assets` adds" below).
 
 ## `--minimal` output
 
@@ -983,6 +986,23 @@ mentor/website/.gitkeep
 
 Plus `.gitignore` additions: `node_modules/`, `.next/`, `dist/`,
 `build/`, `.vercel/`.
+
+## `--assets` adds
+
+```
+mentor/assets/
+├── logos/.gitkeep
+├── brand/.gitkeep
+├── photos/.gitkeep
+├── videos/.gitkeep
+├── designs/.gitkeep
+└── generated/.gitkeep
+```
+
+Independent of the mode flags (composable with any mode, e.g.
+`--minimal --assets`); default off. The `.gitignore` stub always ships
+the commented heavy-asset patterns — harmless when `assets/` is absent,
+uncomment as needed when present.
 
 ## File stubs
 
