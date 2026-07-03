@@ -2,6 +2,25 @@
 
 > Historical sprints rolled out of `tasks/todo.md` once their work is complete. Newest at top.
 
+## Archived 2026-07-03 (shipped-but-open moved from todo.md; EOD housekeeping reconcile)
+
+All six items below were still parked `[x]` in `todo.md` ("for-review" / "merge-pending") after their PRs had in fact merged to `main` and the branches were deleted (remote has zero non-main branches, verified `git ls-remote`). Rolled with merge evidence.
+
+### Codex-engine backlog
+- [x] **M001 tier-aware `check_concept_coverage.py`** — **MERGED #61 (`03dd6e2`)**, branch `m001-tier-aware-coverage` deleted. `tier_filter` gating default OFF; Lattice build `9e5b65d`; dual-PASS chain (decorrelated delta-force → executes-clean 867/867 → Regime-B Auditor PASS → Grok /cross-check PASS; audits `tasks/audits/2026-06-27-library-m001-*`). Full history in the 2026-06-27 session entry. Mentor pickup via Sync remains tracked under "Cross-repo (Mentor-side)".
+- [x] **`./Folder/Page` page-relative resolver flip** + **distinct "escapes wiki root" dashboard message** — **MERGED #52 (`f8666f3`)**, branch `claude/codex-link-resolver` deleted. Portfolio-wide `[[./` grep = zero real links, flip changes no current output; `(page, status)` resolver + pattern-#5 literal w/ paired tests; +11 tests.
+- [x] **YAML block-list parser→validator seam regression test** — **MERGED #50 (`ff5a243`)**, branch `claude/codex-yaml-block-list-fix` deleted. Parser itself was fixed earlier (`cf9a834`, merged `fe5ddcb`); #50 locks the seam (block-list canon honored at ready; empty block flagged). +2 tests. Ready-gate filter confirmed working-as-designed, not widened.
+
+### Readiness cascade tails
+- [x] **lib-wiki link-graph-integrity layer** — **MERGED #52 (`f8666f3`)**. `check_link_graph.py` (unreachable_pages + dead_end_pages, SSOT reuse of the cross-refs resolver, `allow_orphan` honored). +22 tests.
+
+### Codex v1.3.1 cross-link tails
+- [x] **Topic-index plugin hook wired end-to-end** + **dotted-code section-topic derivation in `backfill_topics.py`** — **MERGED #51 (`3591c0e`)**, branch `claude/codex-topic-pipeline` deleted. Both opt-in / byte-identical when unconfigured; Aviation can retire its local forks. +19 tests.
+- [x] **Full dry-Sync zero-diff check to DFDU — VERIFIED PASS (2026-06-19, Director cascade).** Verification record (no code): live `sync_from_kit.py --dry-run` from DFDU root exit 0, 5 OVERWRITE / 1 MERGE-NEW / 35 SKIP, zero behavioral diff confirmed via no-opt-in grep + default-config proxy + code-gate read. Mentor-side dry-Sync remains open (tracked under "Cross-repo (Mentor-side)").
+
+### Cairn/Gateway accuracy track
+- [x] **Tiered caution-index** — **MERGED #53 (`02dd5d3`)**, branch `claude/codex-tiered-caution-index` deleted. `build_caution_index.py` (script #19): deterministic two-tier router (surfaced verbatim-caution vs escalate/fail-closed), no neural picker in the caution path, ambiguity-refuse proven by tests; report-only in `update_dashboards.py` (priority 22), `--enforce` opt-in; spec §"Accuracy contract" amended. +20 tests. The gated lossless effectivity-normalization sibling stays OPEN in todo.md (funding decision, not auto-build).
+
 ## Archived 2026-06-25 (done/stale moved from todo.md)
 
 ### Operator / consumer-side carry
