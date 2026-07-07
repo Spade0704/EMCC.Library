@@ -1,0 +1,37 @@
+# EMCC.Library (Codex) — root project metadata (finding LIB-09).
+#
+# Codex (the Library module's protocol/engine) is stdlib-only: the `_scripts`
+# tooling and the `unittest discover` suite import nothing outside the standard
+# library, so there are deliberately NO runtime dependencies here. This file
+# pins the Python range the CI matrix exercises and anchors build metadata
+# (previously absent — the LIB-09 gap). Add a runtime dep ONLY if a real
+# non-stdlib import ever lands; do not invent one.
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "emcc-library"
+version = "0.0.0"
+description = "EMCC.Library — Codex (documentation protocol/engine) + Librarian: ingest, semantic-lint, validators, cross-link graph."
+readme = "README.md"
+# The CI matrix (.github/workflows/test.yml) runs the 3.10 floor through
+# current 3.13; requires-python must track it (LIB-09).
+requires-python = ">=3.10"
+authors = [{ name = "Spade0704" }]
+keywords = ["emcc", "codex", "librarian", "wiki", "documentation"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+]
+# Stdlib-only by design — see the header note.
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/Spade0704/EMCC.Library"
