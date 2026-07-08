@@ -24,6 +24,7 @@ Exit codes:
     1  --enforce run with one or more HIGH-without-cite errors
     2  no content root resolved (malformed/empty tree)
 """
+# @component Codex[validators]
 from __future__ import annotations
 
 import argparse

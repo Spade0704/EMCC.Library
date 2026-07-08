@@ -65,6 +65,7 @@ Public API:
         sites (P6-P14) deferred to future cleanup sweep per JP T0a
         scope.
 """
+# @component Codex[dashboards]
 
 from pathlib import Path
 from typing import Callable, Dict, Final, Iterable, List, Tuple, TypeVar

@@ -45,6 +45,7 @@ Consumes `_lib.dashboard` primitives (T6 promotion gate validation):
     sort key + group_by_fixed_order arg + counts-line iteration +
     section-render iteration), `group_by_fixed_order` (1 call-site).
 """
+# @component Codex[validators]
 
 import sys
 from datetime import date

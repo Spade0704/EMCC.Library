@@ -66,6 +66,7 @@ Severity mapping:
     partial    -> info      (in-progress thread; advisory)
     complete   -> suppressed (no finding emitted)
 """
+# @component Codex[dashboards]
 
 import sys
 from datetime import date

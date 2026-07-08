@@ -111,6 +111,7 @@ CLI exit codes:
     2 = input error (file missing, parse error, malformed cascade_map,
         IO error)
 """
+# @component Codex[ingest]
 
 import difflib
 import re

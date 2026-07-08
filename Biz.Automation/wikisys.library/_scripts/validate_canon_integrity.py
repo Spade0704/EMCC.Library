@@ -31,6 +31,7 @@ Exit codes (in __main__):
     1 — findings present (dashboard still written).
     2 — script-level error (missing wiki, IO error).
 """
+# @component Codex[validators]
 
 import sys
 from datetime import date

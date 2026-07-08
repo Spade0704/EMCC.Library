@@ -47,6 +47,7 @@ Diff algorithm:
     Modify finding cites `changed_fields` list (entries present in
     both but with at least one differing field).
 """
+# @component Codex[dashboards]
 
 import argparse
 import shutil

@@ -75,6 +75,7 @@ Config files:
     byte-identical to pre-M001 (load-bearing: _scripts/ OVERWRITE-ships
     to the whole portfolio before any consumer opts in).
 """
+# @component Codex[validators]
 
 import re
 import sys

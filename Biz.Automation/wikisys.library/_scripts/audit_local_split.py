@@ -31,6 +31,7 @@ Exit codes:
     1  one or more visibility-misclass suspects
     2  no wiki.*/ at all (nothing to scan)
 """
+# @component Codex[validators]
 
 import argparse
 import sys

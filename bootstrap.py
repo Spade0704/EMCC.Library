@@ -51,6 +51,7 @@ Idempotency + safety (spec c §"Idempotency + safety rules"):
 
 Pure stdlib per `CODEX_BUILD_SPEC_v1_3.md` §8 Hard Rule 1.
 """
+# @component Codex[bootstrap]
 
 import argparse
 import os

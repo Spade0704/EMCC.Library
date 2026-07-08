@@ -18,6 +18,7 @@ Public API:
 
 Pure stdlib per spec §8 Hard Rule 1.
 """
+# @component Codex[validators]
 
 import sys
 from datetime import date

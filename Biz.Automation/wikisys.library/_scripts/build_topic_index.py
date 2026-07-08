@@ -35,6 +35,7 @@ Public API:
 
 Pure stdlib per AC1 + spec §8 Hard Rule 1.
 """
+# @component Codex[cross-link-graph]
 
 import importlib
 import math

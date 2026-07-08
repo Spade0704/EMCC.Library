@@ -33,6 +33,7 @@ DRY: reuses `_lib.frontmatter.parse_config_yaml` for raw YAML parsing
 layer; custom topics-specific validation layer here per AC3 halt-loud
 directive (config_loader's WARN-skip semantic does not fit).
 """
+# @component Codex[cross-link-graph]
 
 from dataclasses import dataclass, field
 from pathlib import Path

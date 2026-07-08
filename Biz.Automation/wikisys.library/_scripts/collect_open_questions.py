@@ -18,6 +18,7 @@ The script lives at <wiki>/_scripts/collect_open_questions.py.
 WIKI_ROOT = parent.parent (one fewer level than _lib/, which sits one
 directory deeper inside _scripts/).
 """
+# @component Codex[dashboards]
 
 from datetime import date
 from pathlib import Path

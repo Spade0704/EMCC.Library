@@ -24,6 +24,7 @@ The script lives at <wiki>/_scripts/build_completion_dashboard.py.
 WIKI_ROOT = parent.parent (one fewer level than _lib/, which sits one
 directory deeper inside _scripts/).
 """
+# @component Codex[dashboards]
 
 from datetime import date
 from pathlib import Path

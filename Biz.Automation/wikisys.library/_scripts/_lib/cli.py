@@ -8,6 +8,7 @@ consumer's `wiki.mentor/git/`) without `cd`-ing or editing the module. This
 helper standardises the override across all standalone P-script `__main__`
 blocks. Pure stdlib.
 """
+# @component Library-infra[cli]
 
 import argparse
 from pathlib import Path

@@ -59,6 +59,7 @@ _config/*.yaml (S034-T9 R2 DISCIPLINE-3 EXHIBIT: pre-dispatch
 fact-check + plan-stage independent verification reverted T8
 Craftsman+Auditor next_risk INCORRECT claim).
 """
+# @component Codex[validators]
 
 import sys
 from datetime import date

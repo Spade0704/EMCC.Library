@@ -56,6 +56,7 @@ Exit codes (in __main__):
     1 — findings present (dashboard still written).
     2 — script-level error (missing wiki, IO error, malformed canon yaml).
 """
+# @component Codex[validators]
 
 import re
 import sys
