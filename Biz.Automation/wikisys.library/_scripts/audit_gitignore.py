@@ -19,6 +19,7 @@ Exit codes:
     1  one or more findings
     2  no .gitignore at all (block-level)
 """
+# @component Codex[validators]
 
 import argparse
 import sys

@@ -45,6 +45,7 @@ Exit codes (in __main__):
     1 — findings present (dashboard still written).
     2 — script-level error (missing wiki_root, IO error).
 """
+# @component Codex[validators]
 
 import posixpath
 import re

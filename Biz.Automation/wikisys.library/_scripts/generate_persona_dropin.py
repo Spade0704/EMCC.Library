@@ -25,6 +25,7 @@ Exit codes:
 
 Pure stdlib.
 """
+# @component Codex[persona-gen]
 
 import argparse
 import sys

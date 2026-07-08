@@ -57,6 +57,7 @@ Exit codes:
     1  --enforce run with one or more ESCALATE (ambiguous / unresolved-HIGH) rows
     2  no content root resolved (malformed/empty tree)
 """
+# @component Codex[dashboards]
 from __future__ import annotations
 
 import argparse

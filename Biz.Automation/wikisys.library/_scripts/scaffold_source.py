@@ -22,6 +22,7 @@ existing file.
 
 Pure stdlib per spec §8 Hard Rule 1.
 """
+# @component Codex[scaffold]
 
 import argparse
 import sys

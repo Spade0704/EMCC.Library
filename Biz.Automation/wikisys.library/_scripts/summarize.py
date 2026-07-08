@@ -40,6 +40,7 @@ Public API:
 
 Stdlib only. Deterministic (stable tie-breaks; no reliance on dict/hash ordering).
 """
+# @component Codex[summarize]
 
 import argparse
 import re

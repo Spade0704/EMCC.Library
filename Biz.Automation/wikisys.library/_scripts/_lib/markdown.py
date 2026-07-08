@@ -28,6 +28,7 @@ Public API:
         _canon/, _brain_dump/, _sources/, _inbox/, _template/, _context/,
         _scripts/).
 """
+# @component Library-infra[parsing]
 
 import re
 from pathlib import Path

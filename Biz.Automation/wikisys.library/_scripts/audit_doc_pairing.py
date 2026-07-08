@@ -37,6 +37,7 @@ Exit codes:
     1  one or more findings emitted (pairing OR stale-path, per mode)
     2  malformed tree (e.g. no Biz.Automation/, no wiki.*/)
 """
+# @component Codex[validators]
 
 import argparse
 import fnmatch

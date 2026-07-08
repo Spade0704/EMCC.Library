@@ -47,6 +47,7 @@ Render conventions: `dashboard.render_fm_header` called with required
 `today=date.today().isoformat()` named-arg (P19 = 13th consumer per
 S037-T2 sig-tightening + S035 hotfix a6ce5e1 LOCAL-date lock).
 """
+# @component Codex[dashboards]
 
 import sys
 from datetime import date

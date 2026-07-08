@@ -33,6 +33,7 @@ Behavioral contracts:
   not raise. If a future P1 change introduces an exception path, callers of
   s1_doc will see it propagate uncaught; revisit then.
 """
+# @component Codex[semantic-lint]
 
 import re
 import time

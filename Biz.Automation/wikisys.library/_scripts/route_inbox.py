@@ -30,6 +30,7 @@ Exit codes:
        hard error: they are reported as status="skipped" in the report.
     3  inbox not found / not a directory
 """
+# @component Codex[ingest]
 
 import argparse
 import hashlib

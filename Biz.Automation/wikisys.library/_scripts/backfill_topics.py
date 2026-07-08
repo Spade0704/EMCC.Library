@@ -40,6 +40,7 @@ Modes:
     python backfill_topics.py <wiki_root>            # DRY-RUN (counts + unmapped)
     python backfill_topics.py <wiki_root> --apply
 """
+# @component Codex[cross-link-graph]
 
 import argparse
 import re

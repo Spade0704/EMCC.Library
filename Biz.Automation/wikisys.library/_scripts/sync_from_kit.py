@@ -91,6 +91,7 @@ Notes:
       either (a) migrate to v1.1 first via the S004 Mentor-pattern playbook
       or (b) freeze at v1.0 and run a pre-S004 build of sync_from_kit.py.
 """
+# @component Codex[sync]
 
 import argparse
 import hashlib

@@ -32,6 +32,7 @@ Exit codes (in __main__):
 Pages with `allow_forbidden_terms: true` in frontmatter are skipped
 entirely (no scan, no findings, not counted in pages_scanned).
 """
+# @component Codex[validators]
 
 import re
 import sys

@@ -31,6 +31,7 @@ Public API:
         frontmatter.ConfigYamlError` is True. Consumers may import from
         either module; `except ConfigYamlError` catches both spellings.
 """
+# @component Library-infra[config]
 
 import sys
 from pathlib import Path

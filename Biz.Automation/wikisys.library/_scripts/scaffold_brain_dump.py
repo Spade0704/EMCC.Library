@@ -13,6 +13,7 @@ Creates `_brain_dump/<slug>.md` relative to the current working directory
 
 Pure stdlib per spec §8 Hard Rule 1.
 """
+# @component Codex[scaffold]
 
 import argparse
 import sys

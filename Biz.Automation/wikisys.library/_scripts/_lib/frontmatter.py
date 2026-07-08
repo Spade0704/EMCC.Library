@@ -17,6 +17,7 @@ lists were previously out of scope (tasks/lessons.md 2026-05-01) but caused
 silent data loss — a block `canon_sources:` parsed to None — so flat scalar
 block lists are now supported; structured block items still are not.
 """
+# @component Codex[frontmatter]
 
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union

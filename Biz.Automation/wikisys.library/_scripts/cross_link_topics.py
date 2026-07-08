@@ -33,6 +33,7 @@ Public API:
 
 Pure stdlib per spec §8 Hard Rule 1.
 """
+# @component Codex[cross-link-graph]
 
 from pathlib import Path
 from typing import Any, Dict, List

@@ -36,6 +36,7 @@ Exit codes (in __main__):
 `allow_forbidden_terms: true` frontmatter is a P6-only escape hatch and
 is NOT honored here (the page is scanned normally).
 """
+# @component Codex[validators]
 
 import re
 import sys

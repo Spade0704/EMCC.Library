@@ -34,6 +34,7 @@ Standalone CLI (from inside the consumer project root):
 
 Pure stdlib per `CODEX_BUILD_SPEC_v1_3.md` §8 Hard Rule 1.
 """
+# @component Codex[bootstrap]
 from __future__ import annotations
 
 import argparse

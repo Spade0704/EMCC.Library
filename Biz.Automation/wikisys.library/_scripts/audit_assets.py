@@ -16,6 +16,7 @@ Exit codes:
     1  one or more heavy files not excluded by .gitignore
     2  no assets/ folder (nothing to scan)
 """
+# @component Codex[validators]
 
 import argparse
 import fnmatch
