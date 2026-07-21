@@ -2,7 +2,7 @@
 
 > The single repo **MAP + routing header** for `EMCC.Library` (the Codex **home** — the module that owns the Codex protocol/engine + the Librarian agent). `CLAUDE.md` reads this FIRST. *(Restructured 2026-06-06 into the 3-zone wiki-as-memory form per `EMCC/framework/18-wiki-memory-routing.md`; all prior file-map content preserved below in Zone 2.)*
 >
-> **Wiki router:** `wiki.codex/git/Home.md` (the topic/semantic router over Codex's self-knowledge). **Protocol canon:** `wiki.codex/git/codex/` (the authoritative Codex spec docs — `CODEX_BUILD_SPEC_v1_3.md` is the single canonical version; **spec wins** any contradiction). **Note:** EMCC.Library is the Codex home, so its wiki dir is **`wiki.codex`** (not `wiki.EMCC.Library`).
+> **Wiki router:** `wiki.codex/git/Home.md` (the topic/semantic router over Codex's self-knowledge). **Protocol canon:** `wiki.codex/git/codex/` (the authoritative Codex spec docs — `CODEX_BUILD_SPEC_v1_4.md` is the single canonical version; **spec wins** any contradiction). **Note:** EMCC.Library is the Codex home, so its wiki dir is **`wiki.codex`** (not `wiki.EMCC.Library`).
 
 ## Routing contract (how to get full context at minimum tokens)
 
@@ -17,7 +17,7 @@
 Route any topic/domain/task question into the wiki; do not grep blindly.
 
 - **Entry: `wiki.codex/git/Home.md`** — TOC + semantic router over Codex's self-knowledge (architecture, operations, the Librarian agent, build-spec derivations).
-- Load the single relevant page, then **follow its `related_files:`/`[[wikilinks]]` one hop** to pull the related cluster (the cross-link graph is the context-expansion engine). Wiki pages are derived overviews that cite their canon via `canon_sources` — the **Codex spec docs live under `wiki.codex/git/codex/`** and are reachable as the canon drill-down (e.g. an Architecture overview cites `CODEX_BUILD_SPEC_v1_3.md`). Drill to `wiki.codex/git/codex/` for exact wording/numbers.
+- Load the single relevant page, then **follow its `related_files:`/`[[wikilinks]]` one hop** to pull the related cluster (the cross-link graph is the context-expansion engine). Wiki pages are derived overviews that cite their canon via `canon_sources` — the **Codex spec docs live under `wiki.codex/git/codex/`** and are reachable as the canon drill-down (e.g. an Architecture overview cites `CODEX_BUILD_SPEC_v1_4.md`). Drill to `wiki.codex/git/codex/` for exact wording/numbers.
 - The wiki's page list lives in `Home.md`; this Index does **not** duplicate it (the router owns it).
 
 > Cross-link note: the verbatim-shipped procedures (`INGEST_PROCEDURE.md`, `SEMANTIC_LINT_PROCEDURE.md`) under `wiki.codex/git/codex/` are **canon, not curation targets** — quote them verbatim; never paraphrase or restructure (CLAUDE.md "Verbatim discipline").
@@ -73,7 +73,7 @@ These are the spec docs the Librarian agent + consumers reference for Codex sema
 
 | File | What |
 |---|---|
-| `CODEX_BUILD_SPEC_v1_3.md` | Authoritative Codex build specification. Single canonical version. **Spec wins** any contradiction with CLAUDE.md or other docs. |
+| `CODEX_BUILD_SPEC_v1_4.md` | Authoritative Codex build specification. Single canonical version. **Spec wins** any contradiction with CLAUDE.md or other docs. |
 | `CODEX_LIBRARIAN.md` | Librarian agent specification (S002 v1.1 extension: 3 new ops — Inbox-Sort / Pairing-Audit / Cross-Project-Scan; 5 Mentor pattern codifications; Telegram auto-summary contract) |
 | `INGEST_PROCEDURE.md` | Verbatim-shipped procedure for ingesting new sources into wikis |
 | `SEMANTIC_LINT_PROCEDURE.md` | Verbatim-shipped lint procedure |
@@ -83,7 +83,7 @@ These are the spec docs the Librarian agent + consumers reference for Codex sema
 | `codex-build-plan.html` | Original Codex build plan (P1–P54 priorities) |
 | `Codex_Project_Documentation.pdf` + `Codex_Workflow_Cheatsheet_v1.txt` + `codex-build-progress.md` | Background / historical Codex materials |
 
-### `_scripts/` — automation (P-indexed per `CODEX_BUILD_SPEC_v1_3.md` §2.4)
+### `_scripts/` — automation (P-indexed per `CODEX_BUILD_SPEC_v1_4.md` §2.4)
 
 | Priority | Script | What |
 |---|---|---|

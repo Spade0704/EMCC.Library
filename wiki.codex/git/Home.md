@@ -91,7 +91,7 @@ The authoritative spec docs the overviews above drill down into (the `canon_sour
 the derived pages cite). Read these for exact wording / numbers — **spec wins** any
 contradiction with a derived page.
 
-- [[codex/CODEX_BUILD_SPEC_v1_3]] — the authoritative Codex build specification (single canonical version)
+- [[codex/CODEX_BUILD_SPEC_v1_4]] — the authoritative Codex build specification (single canonical version; v1.4 adds §9 Asset Registry — v1_3 retained with a deprecation banner)
 - [[codex/PROJECT_WIKI_BUILD_SPEC]] — what `bootstrap.py` materializes for a consuming project
 - [[codex/CODEX_LIBRARIAN]] — the Librarian agent specification (the persona this module ships)
 - [[codex/INGEST_PROCEDURE]] — source-ingest procedure (shipped verbatim into bootstrapped wikis)
