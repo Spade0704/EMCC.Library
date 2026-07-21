@@ -6,7 +6,27 @@
 
 ## Inbound gate item (2026-07-21)
 
-- [ ] **🔴 Portfolio asset-registry extension (v1.1) — run the Library gate (Level-2+; = Herald OP-4, OPERATOR-APPROVED-TO-PROCEED 2026-07-21 with expanded scope).** Triage `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1: the Librarian becomes the portfolio **asset registrar** — ALL asset classes (UGC images, professional photos, logos, certificates/badges, video), stable IDs + tags + renames + metadata pages, zone-following privacy rule, retro-ingestion mode, asset codex + crash-safe filing loop + R2 writer + generalized scheduled ingestion (the P2-2 seam) + reconciliation sweeps + persona/spec bumps. **Pilot corpus: eddyandwolff** (UGC in `wiki.eddyandwolff/local/` + pro dish/location photos + brand/certs). The gate rules the MECHANICS (schema, spec version bump, stdlib-sigv4 vs S3-SDK for R2); the direction is Operator-ratified. Marketing carries a Publicist-interim fallback, so Herald P0/P1 never blocks.
+- [x] **🔴 Portfolio asset-registry extension (v1.1) — run the Library gate.** `Gate run`
+  2026-07-21 (second pass): **council PROCEED-WITH-CHANGES** — transcript
+  `tasks/council/2026-07-21-asset-registrar-gate.md`. Rulings: schema ACCEPTED with lineage +
+  rights/consent mandatory-or-explicitly-empty; filing loop ACCEPTED with the R2 write moved
+  OUTSIDE the commit path (skippable-with-flag, `url: pending`, mint later); R2 transport =
+  R_ARCH-style carve-out plug-in, SigV4-vs-SDK deferred to the build gate (OP-5 blocks it
+  anyway); **spec bump = v1.4** (additive); **name = "asset registry"** (needs Operator
+  ratification per taxonomy). Four review-caught blind spots folded in as gate conditions:
+  ID-allocation mechanics specified in-gate (collision-safe across repos/sessions, crash-safe
+  assign-then-commit); zone-following privacy = pre-commit-point VALIDATOR, not prose;
+  pre-flight `local/` snapshot before retro-ingestion; renames documented as skip-with-flag +
+  reconciliation sweep, never "atomic". → Follow-up item below (v1.4 amendment authoring).
+- [ ] **🔴 Author the Codex v1.4 amendment (asset registry) per the gate verdict** — Level-2+
+  Lattice 3.0 work (Architect plan + Regime B persona Auditor): CODEX_BUILD_SPEC v1.3 → v1.4
+  (asset-record store class + schema incl. the NEW ID-allocation section + zone validator spec +
+  filing loop with `url: pending` R2 decoupling + retro-ingestion snapshot rule) +
+  CODEX_LIBRARIAN.md role section + drop-in regeneration. Then the eddyandwolff pilot:
+  hand-simulate the filing loop on ~20 assets (snapshot `local/` first). Blocked-on-Operator
+  residuals: ratify the "asset registry" name; OP-5 (R2 account + credential store) before any
+  R2 transport code. Original scope item (for reference): triage
+  `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1 — Triage `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1: the Librarian becomes the portfolio **asset registrar** — ALL asset classes (UGC images, professional photos, logos, certificates/badges, video), stable IDs + tags + renames + metadata pages, zone-following privacy rule, retro-ingestion mode, asset codex + crash-safe filing loop + R2 writer + generalized scheduled ingestion (the P2-2 seam) + reconciliation sweeps + persona/spec bumps. **Pilot corpus: eddyandwolff** (UGC in `wiki.eddyandwolff/local/` + pro dish/location photos + brand/certs). The gate rules the MECHANICS (schema, spec version bump, stdlib-sigv4 vs S3-SDK for R2); the direction is Operator-ratified. Marketing carries a Publicist-interim fallback, so Herald P0/P1 never blocks.
 
 ## Deferred / trigger-gated
 

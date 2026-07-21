@@ -1,6 +1,33 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-07-21 (second pass, new room) — Library gate RUN on the v1.1 asset-registrar proposal: council PROCEED-WITH-CHANGES
+
+Director session (remote, `claude/herald-marketing-publish-ru4szs`; branch carries the merged
+`claude/marketing-module-emcc-suy6e5` state). Ran the Level-2+ gate the v1.1 proposal asked for
+(= Herald OP-4 mechanics): full 5-advisor LLM Council (all seats + chairman on Fable 5,
+independent analysis → anonymous peer review → synthesis). **Verdict: PROCEED-WITH-CHANGES**,
+transcript at `tasks/council/2026-07-21-asset-registrar-gate.md`.
+
+- **Accepted:** asset-record store class + schema (lineage `derived_from[]`/`recipe` +
+  `rights/consent` mandatory-or-explicitly-empty — the non-retrofittable core); the Herald
+  filing loop; R2 writer as an R_ARCH-style carve-out plug-in; **spec bump v1.4** (unanimous);
+  **name "asset registry"** (4–1; record-vs-page distinction wins — Operator to ratify).
+- **Structural change (council's sharpest finding):** as proposed, the R2 write sat BEFORE the
+  commit point, contradicting the carve-out's log-and-degrade framing — the R2 step becomes
+  skippable-with-flag (`url: pending`, mint later) so the codex write stays the sole commit
+  point. SigV4-vs-SDK deferred to the build gate (OP-5 blocks R2 anyway).
+- **Review-caught blind spots, now gate conditions:** AST-##### ID-allocation mechanics must be
+  specified in-gate (collision-safe across repos/concurrent sessions, crash-safe
+  assign-then-commit — flagged by 4 of 5 reviewers, as non-retrofittable as lineage);
+  zone-following privacy = pre-commit-point validator, not prose; pre-flight `local/` snapshot
+  before retro-ingestion (gitignored corpus has no rollback); renames = skip-with-flag +
+  reconciliation sweep, never claimed atomic.
+- **Next:** author the Codex v1.4 amendment per the verdict (Level-2+ Lattice: Architect plan +
+  Regime B Auditor), then the eddyandwolff ~20-asset pilot simulation. Operator residuals:
+  ratify the "asset registry" name; OP-5 R2/credential setup. Todo updated (gate item ticked;
+  v1.4-amendment item added).
+
 ## 2026-07-21 — Inbound proposal drop: Librarian marketing extension (EMCC.Marketing build start; Director session, additive-only)
 
 **Not a Librarian working session** — the EMCC Director session standing up `EMCC.Marketing` (Herald v0.3 synthesis, loop contract `EMCC/Biz.Automation/LOOP-DEFINITION-marketing-module-build.md`) dropped **one untracked proposal doc** into this repo's triage zone: `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md`. Zero Library canon touched (propose-not-dispose, Principle #11).
