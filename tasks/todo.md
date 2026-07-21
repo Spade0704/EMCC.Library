@@ -4,6 +4,10 @@
 >
 > **Archived 2026-06-16:** all DONE/shipped sprint items (relpath resolver `93fe81d`; readiness cascades dir-ii/hh/jj + dir-20260614n; Codex v1.3.1 cross-link; boilerplate split + stubs; M-A structural Sync; verbatim-only policy `d2c7667`; lifted tat_app patterns; S001/S002/S004 + Post-S002/S004 closures; etc.) plus the stale TestSyncStamp cleanup → see `tasks/archive.md` (§ Archived 2026-06-16).
 
+## Inbound gate item (2026-07-21)
+
+- [ ] **🟡 Herald/Marketing Librarian-extension proposal — run the Library gate (Level-2+; = Herald OP-4).** Triage `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` (asset codex + crash-safe filing loop + R2 writer + generalized scheduled ingestion (the P2-2 seam) + asset reconciliation sweeps + persona/spec bumps). Council + Operator decide accept/trim/reject; Marketing carries a Chronicler-interim fallback either way, so this never blocks Herald P0/P1. Pre-asked dependency question: stdlib sigv4 vs an S3 SDK for the R2 writer.
+
 ## Readiness cascade tails (open)
 
 - [ ] **🔴 LLM-seam unlock (operator-gated; raises both toward 80).** lib-summary-op → 80 needs a consumer to wire a real `summarize_fn` (EMCC `librarian_summarize.py` is the seam — currently no-op without an LLM). Logged Director-side as a top systemic unlock alongside backend-hosting.

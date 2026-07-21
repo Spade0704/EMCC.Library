@@ -1,6 +1,14 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-07-21 — Inbound proposal drop: Librarian marketing extension (EMCC.Marketing build start; Director session, additive-only)
+
+**Not a Librarian working session** — the EMCC Director session standing up `EMCC.Marketing` (Herald v0.3 synthesis, loop contract `EMCC/Biz.Automation/LOOP-DEFINITION-marketing-module-build.md`) dropped **one untracked proposal doc** into this repo's triage zone: `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md`. Zero Library canon touched (propose-not-dispose, Principle #11).
+
+**Content:** the Operator ruled 2026-07-21 that Herald asset cataloging is **Librarian-owned** → the drop carries (a) a 7-capability gap audit of the current Librarian role vs the Herald-assigned role (**5 absent** — scheduled/watch ingestion across `0-Inbox/*` (= the P2-2 seam), stable asset IDs, R2 writes + public-URL minting, asset lineage codex, auto-rename; **2 partial** — binary-media hygiene (`audit_assets.py` only), reconciliation (doc-pairing only)); and (b) a 6-item proposed Codex extension scope (asset-codex store class, crash-safe filing loop, R2 writer w/ the stdlib-vs-SDK question pre-asked, generalized scheduled ingestion, asset reconciliation sweeps, persona/spec text bumps). **Disposition: gates through Library's own Level-2+ process (Herald OP-4)** — with a council-added fallback on the Marketing side (Library rejects/trims → Chronicler-interim owns the registry; Herald never blocks on this repo). Cross-refs: `EMCC.Marketing/documents/herald/emcc-marketing-spec.md` §D C3/C9 + `EMCC/tasks/council/2026-07-21-marketing-synthesis.md`.
+
+**Delivery:** `1 proposal doc -> 0-Inbox/ (untracked -> committed on claude/marketing-module-emcc-suy6e5) -> awaits Librarian triage + the Library gate`. No other file in this repo changed.
+
 ## 2026-07-10 — Portfolio 0-Inbox ingest sweep (11 repos, Director directive) + operator-ordered merge close
 
 **Librarian-of-record handoff.** Fresh Librarian room; Director (`rqzc7uhl`) confirmed this session supersedes three dead/stray prior Library peers (ys8upo3o zombie, 9o00lunt stray, eektyot1 ACK-then-stall). Standing gate noted: Sammie UGC ingest remains OPERATOR-GATED (not started).
