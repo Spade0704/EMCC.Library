@@ -9,6 +9,18 @@
 
 **Delivery:** `1 proposal doc -> 0-Inbox/ (untracked -> committed on claude/marketing-module-emcc-suy6e5) -> awaits Librarian triage + the Library gate`. No other file in this repo changed.
 
+**Same-day v1.1 addendum (Operator ratification):** JP approved OP-4 to proceed AND **expanded
+the scope portfolio-wide** — the Librarian becomes the portfolio's **asset registrar** for ALL
+asset classes (UGC images, professional photos, logos, certificates/badges, video), not only
+marketing deliverables: stable IDs, tags, normalized filenames, metadata pages; the wiki tracks
+all assets, not just docs. New elements in v1.1: the zone-following privacy rule (metadata lives
+in the asset's zone; `local/` files never surface in `git/`), a retro-ingestion mode (document
+assets already in place without moving them), and the Operator-named **pilot corpus:
+eddyandwolff** (UGC in `wiki.eddyandwolff/local/` + professional dish/location photos +
+logos/certificates). Roster note: the Marketing-side fallback interim owner is now **Publicist**
+(the roster was ratified the same day — Publicist main agent; Chronicler superseded). The Library
+gate still rules the mechanics; direction is Operator-ratified.
+
 ## 2026-07-10 — Portfolio 0-Inbox ingest sweep (11 repos, Director directive) + operator-ordered merge close
 
 **Librarian-of-record handoff.** Fresh Librarian room; Director (`rqzc7uhl`) confirmed this session supersedes three dead/stray prior Library peers (ys8upo3o zombie, 9o00lunt stray, eektyot1 ACK-then-stall). Standing gate noted: Sammie UGC ingest remains OPERATOR-GATED (not started).

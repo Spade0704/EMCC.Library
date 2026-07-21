@@ -1,9 +1,14 @@
-# Librarian marketing extension — gap report + Codex extension proposal
+# Librarian asset-registry extension — gap report + Codex extension proposal (v1.1)
 
-> **Status: PROPOSAL (propose-not-dispose, Principle #11 respected — NO Library canon file is
+> **Status: PROPOSAL v1.1 (propose-not-dispose, Principle #11 respected — NO Library canon file is
 > edited by this drop).** Authored 2026-07-21 by the EMCC Director session during the
 > EMCC.Marketing module stand-up (loop contract:
 > `EMCC/Biz.Automation/LOOP-DEFINITION-marketing-module-build.md`).
+> **v1.1 (same day): OPERATOR-APPROVED TO PROCEED with EXPANDED SCOPE** — the Operator ratified
+> Herald OP-4 and **generalized the role beyond marketing**: the Librarian becomes the
+> portfolio's **asset registrar** for ANY asset, not only marketing-produced ones (see §2b). The
+> wiki is not just framework/spec/documentation — it **tracks all the assets**. Library's own
+> Level-2+ gate still rules on the mechanics.
 > **Ask:** Library runs its own Level-2+ gate (council + Lattice Regime B) on this scope and, if
 > accepted, lands it as a Codex spec amendment (v1.3 → v1.4 or v2.0 per the spec-change rules).
 > **Why Library:** the Operator ruled 2026-07-21 that asset cataloging for the Herald protocol
@@ -11,7 +16,7 @@
 > lineage, Cloudflare R2 writes + public-URL minting, and the generalized inbox ingestion service
 > (Herald spec §D Decision Log C3; canon:
 > `EMCC.Marketing/documents/herald/herald-creation-framework.md` §§1, 4–7, 9–12 and
-> `herald-brain-framework.md` §11).
+> `herald-brain-framework.md` §11) — and then expanded it portfolio-wide (v1.1).
 
 ---
 
@@ -32,6 +37,50 @@ generated drop-in + `INGEST_PROCEDURE.md` + `_scripts/` (2026-07-21):
 
 **Net:** the Librarian today is a document/wiki curator. Of the 7 Herald-assigned capabilities:
 **5 absent, 2 partial.** All are greenfield — nothing conflicts with existing canon; they extend it.
+
+## 2b. v1.1 — the GENERALIZED scope (Operator direction, 2026-07-21)
+
+**The Librarian is the portfolio's asset registrar, not just Herald's.** Verbatim intent from the
+Operator: assets dropped into any inbox — or already resident in a repo — get documented in the
+wiki with tags, a renamed readable filename, and metadata, so they can be found, referenced, and
+used (for marketing or anything else). "Where do I find the logo / the certificate / that photo?"
+must be answerable from the wiki.
+
+**Asset classes in scope (beyond marketing deliverables):**
+- **UGC images** (customer-generated; note a `rights/consent` metadata field — UGC carries reuse
+  constraints a logo doesn't).
+- **Professionally-shot photos** — dishes, locations, interiors, staff.
+- **Brand assets** — logos (and their variants), brand guidelines, fonts.
+- **Credentials** — certificates, accreditation badges, awards (e.g. Coeliac Australia
+  certification, Chef Hat).
+- **Video / audio** and any other binary the portfolio produces or receives.
+
+**Pilot corpus (Operator-named): eddyandwolff.** Large UGC image sets live in
+`wiki.eddyandwolff/local/`, plus professional dish/location photos and brand/cert assets. The
+pilot documents all of them: stable ID + tags + normalized filename + metadata page → referenced
+from the wiki index.
+
+**Metadata schema (per asset — extends the Herald codex schema §1(e) with general fields):**
+`id` (stable, opaque) · `tags[]` (controlled vocab) · `name`/`description` · `asset_class` (ugc |
+professional-photo | brand | credential | deliverable | …) · `subject` (dish name, location,
+person-role) · `zone` (git | local) · `path` · `source` (who shot/submitted it, when) ·
+`rights/consent` (esp. UGC) · `derived_from[]`/`recipe` where applicable · `created_at`/`updated_at`.
+
+**Zone rule (privacy-preserving by construction):** metadata FOLLOWS the asset's zone. A
+`local/` asset (gitignored — e.g. the eddyandwolff UGC) gets its index/metadata page in the
+repo's `local/` zone; only public-safe assets get `git/`-zone pages. **Files never change zones
+during registration**, and no `wiki.*/local/` gitignore rule is ever weakened. Public `git/`
+indexes may carry a count/pointer row ("N UGC images — see local index") without item-level PII.
+
+**Retro-ingestion mode (new operation):** unlike the inbox filing loop (new drops), the pilot
+requires documenting assets **already in place** — register + tag + rename (with the same
+atomic path-update discipline) + index, WITHOUT moving files across zones or breaking existing
+references. Renames of referenced files update referrers or are skipped-with-flag.
+
+**Relationship to Herald:** the Herald marketing asset codex (§2 below) becomes the FIRST
+INSTANCE of this general asset registry — same store class, same filing loop, same
+reconciliation; marketing deliverables are the only class that additionally takes the R2
+public-URL step and the certification/ratification block.
 
 ## 2. Proposed Codex extension scope (what Library's gate should rule on)
 

@@ -6,7 +6,7 @@
 
 ## Inbound gate item (2026-07-21)
 
-- [ ] **🟡 Herald/Marketing Librarian-extension proposal — run the Library gate (Level-2+; = Herald OP-4).** Triage `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` (asset codex + crash-safe filing loop + R2 writer + generalized scheduled ingestion (the P2-2 seam) + asset reconciliation sweeps + persona/spec bumps). Council + Operator decide accept/trim/reject; Marketing carries a Chronicler-interim fallback either way, so this never blocks Herald P0/P1. Pre-asked dependency question: stdlib sigv4 vs an S3 SDK for the R2 writer.
+- [ ] **🔴 Portfolio asset-registry extension (v1.1) — run the Library gate (Level-2+; = Herald OP-4, OPERATOR-APPROVED-TO-PROCEED 2026-07-21 with expanded scope).** Triage `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1: the Librarian becomes the portfolio **asset registrar** — ALL asset classes (UGC images, professional photos, logos, certificates/badges, video), stable IDs + tags + renames + metadata pages, zone-following privacy rule, retro-ingestion mode, asset codex + crash-safe filing loop + R2 writer + generalized scheduled ingestion (the P2-2 seam) + reconciliation sweeps + persona/spec bumps. **Pilot corpus: eddyandwolff** (UGC in `wiki.eddyandwolff/local/` + pro dish/location photos + brand/certs). The gate rules the MECHANICS (schema, spec version bump, stdlib-sigv4 vs S3-SDK for R2); the direction is Operator-ratified. Marketing carries a Publicist-interim fallback, so Herald P0/P1 never blocks.
 
 ## Readiness cascade tails (open)
 
