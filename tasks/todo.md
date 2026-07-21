@@ -8,6 +8,18 @@
 
 - [ ] **🔴 Portfolio asset-registry extension (v1.1) — run the Library gate (Level-2+; = Herald OP-4, OPERATOR-APPROVED-TO-PROCEED 2026-07-21 with expanded scope).** Triage `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1: the Librarian becomes the portfolio **asset registrar** — ALL asset classes (UGC images, professional photos, logos, certificates/badges, video), stable IDs + tags + renames + metadata pages, zone-following privacy rule, retro-ingestion mode, asset codex + crash-safe filing loop + R2 writer + generalized scheduled ingestion (the P2-2 seam) + reconciliation sweeps + persona/spec bumps. **Pilot corpus: eddyandwolff** (UGC in `wiki.eddyandwolff/local/` + pro dish/location photos + brand/certs). The gate rules the MECHANICS (schema, spec version bump, stdlib-sigv4 vs S3-SDK for R2); the direction is Operator-ratified. Marketing carries a Publicist-interim fallback, so Herald P0/P1 never blocks.
 
+## Deferred / trigger-gated
+
+- [ ] **⚪ Anvil asset-registry onboarding — DEFERRED until the Operator starts working on Anvil
+  (trigger: JP says so; Operator-flagged 2026-07-21).** When Anvil (`spade0704/iron-soul-anvil`
+  — game engine for Iron Soul + future game-dev; assets created by Grok Imagine per its
+  `docs/GROK_WORKFLOW.md`, engine loads-only from `assetsRoot`) goes active, extend the portfolio
+  asset registry to manage its asset creation: register Grok Imagine outputs (identities →
+  pose/variant frame-sets → cinematics) with IDs/tags/lineage/recipe-provenance + filing into the
+  engine's media-contract layout (`anvil/docs/design/09_ASSETS_AND_MEDIA.md`). Until then the only
+  cost is keeping the registry schema game-dev-extensible (noted in the v1.1 proposal §2b). Do not
+  build anything Anvil-specific before the trigger.
+
 ## Readiness cascade tails (open)
 
 - [ ] **🔴 LLM-seam unlock (operator-gated; raises both toward 80).** lib-summary-op → 80 needs a consumer to wire a real `summarize_fn` (EMCC `librarian_summarize.py` is the seam — currently no-op without an LLM). Logged Director-side as a top systemic unlock alongside backend-hosting.

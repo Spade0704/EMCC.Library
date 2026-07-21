@@ -82,6 +82,20 @@ INSTANCE of this general asset registry — same store class, same filing loop, 
 reconciliation; marketing deliverables are the only class that additionally takes the R2
 public-URL step and the certification/ratification block.
 
+**Flagged FUTURE consumer — Anvil (DEFERRED; Operator 2026-07-21):** the **Anvil** game engine
+(`spade0704/iron-soul-anvil` — agent-native multi-genre TypeScript engine, used by Iron Soul's
+game work and intended for other game-dev projects) creates its assets via **Grok Imagine**
+(`image_gen` new identities / `image_edit` pose+variant frames / `image_to_video` cinematics —
+`docs/GROK_WORKFLOW.md`), while the engine itself only *loads* files from `assetsRoot` (media
+contract: `anvil/docs/design/09_ASSETS_AND_MEDIA.md`; hard rule: no image-generation APIs inside
+Anvil). That division of labor is exactly this registry's shape: generators create, the
+**Librarian registers** — stable IDs, tags, lineage (`derived_from` across identity → pose/variant
+frames → cinematic), recipe/provenance (Grok Imagine job + prompt), filing + metadata. **Do NOT
+scope Anvil into the gate now** — the Operator flagged it as a TODO to be activated **when he
+starts working on Anvil** (the engine's M10/M11 authoring integration is still landing). Design
+consequence today: keep the registry's `asset_class` vocabulary and store class game-dev-extensible
+(sprites / audio / identities / frame-sets), nothing more.
+
 ## 2. Proposed Codex extension scope (what Library's gate should rule on)
 
 1. **Asset-codex store + schema** — a new Codex-managed store class for asset records (the Herald
