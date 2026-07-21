@@ -23,9 +23,10 @@
   (asset-record store class + schema incl. the NEW ID-allocation section + zone validator spec +
   filing loop with `url: pending` R2 decoupling + retro-ingestion snapshot rule) +
   CODEX_LIBRARIAN.md role section + drop-in regeneration. Then the eddyandwolff pilot:
-  hand-simulate the filing loop on ~20 assets (snapshot `local/` first). Blocked-on-Operator
-  residuals: ratify the "asset registry" name; OP-5 (R2 account + credential store) before any
-  R2 transport code. Original scope item (for reference): triage
+  hand-simulate the filing loop on ~20 assets (snapshot `local/` first). **Name "asset registry"
+  RATIFIED by the Operator 2026-07-21 (recorded EMCC taxonomy §4(a)) — the amendment is
+  UNBLOCKED.** Remaining Operator residual: OP-5 (R2 account + credential store) before any R2
+  transport code (does not block the amendment or the pilot simulation). Original scope item (for reference): triage
   `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1 — Triage `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1: the Librarian becomes the portfolio **asset registrar** — ALL asset classes (UGC images, professional photos, logos, certificates/badges, video), stable IDs + tags + renames + metadata pages, zone-following privacy rule, retro-ingestion mode, asset codex + crash-safe filing loop + R2 writer + generalized scheduled ingestion (the P2-2 seam) + reconciliation sweeps + persona/spec bumps. **Pilot corpus: eddyandwolff** (UGC in `wiki.eddyandwolff/local/` + pro dish/location photos + brand/certs). The gate rules the MECHANICS (schema, spec version bump, stdlib-sigv4 vs S3-SDK for R2); the direction is Operator-ratified. Marketing carries a Publicist-interim fallback, so Herald P0/P1 never blocks.
 
 ## Deferred / trigger-gated
