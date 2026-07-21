@@ -18,15 +18,21 @@
   assign-then-commit); zone-following privacy = pre-commit-point VALIDATOR, not prose;
   pre-flight `local/` snapshot before retro-ingestion; renames documented as skip-with-flag +
   reconciliation sweep, never "atomic". → Follow-up item below (v1.4 amendment authoring).
-- [ ] **🔴 Author the Codex v1.4 amendment (asset registry) per the gate verdict** — Level-2+
-  Lattice 3.0 work (Architect plan + Regime B persona Auditor): CODEX_BUILD_SPEC v1.3 → v1.4
-  (asset-record store class + schema incl. the NEW ID-allocation section + zone validator spec +
-  filing loop with `url: pending` R2 decoupling + retro-ingestion snapshot rule) +
-  CODEX_LIBRARIAN.md role section + drop-in regeneration. Then the eddyandwolff pilot:
-  hand-simulate the filing loop on ~20 assets (snapshot `local/` first). **Name "asset registry"
-  RATIFIED by the Operator 2026-07-21 (recorded EMCC taxonomy §4(a)) — the amendment is
-  UNBLOCKED.** Remaining Operator residual: OP-5 (R2 account + credential store) before any R2
-  transport code (does not block the amendment or the pilot simulation). Original scope item (for reference): triage
+- [x] **🔴 Author the Codex v1.4 amendment (asset registry) per the gate verdict.** `Done`
+  2026-07-21 (same session as the gate): `CODEX_BUILD_SPEC_v1_4.md` supersedes v1_3 (deprecation
+  banner; purely additive — new §9 Asset Registry: schema w/ mandatory-or-explicitly-empty
+  `rights_consent`/`derived_from`/`recipe`, per-repo namespaced crash-safe AST-ID allocation,
+  filing loop w/ registry write as sole commit point + `url: pending` remote-store decoupling,
+  pre-commit zone validator, retro-ingestion snapshot rule, reconciliation shape, `remote_store`
+  carve-out) + CODEX_LIBRARIAN v1.4 extension (3 registrar ops + hard rules) + drop-in
+  regenerated + current-spec pointers swept. Evidence: 874 tests OK (skipped=7); drift guard in
+  sync (re-verified post-fix). **Regime B Auditor verdict: `concerns` (proceed) —
+  `tasks/audits/2026-07-21-codex-v1.4-asset-registry-audit.md`; both warnings FIXED on top**
+  (recipe in the malformed clause; footer version string). Lands via PR #68 (human-at-merge).
+- [ ] **🔴 eddyandwolff asset-registry pilot (~20 assets)** — hand-simulate the §9.3 filing
+  loop (retro-ingestion mode; take the §9.5 `local/` snapshot FIRST). **Blocked-out-of-room:**
+  the eddyandwolff repo is not in this session's source set — run from a room that has it.
+  R2/`url` minting stays out of the pilot (OP-5 still open; deliverable-class only anyway). Original scope item (for reference): triage
   `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1 — Triage `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1: the Librarian becomes the portfolio **asset registrar** — ALL asset classes (UGC images, professional photos, logos, certificates/badges, video), stable IDs + tags + renames + metadata pages, zone-following privacy rule, retro-ingestion mode, asset codex + crash-safe filing loop + R2 writer + generalized scheduled ingestion (the P2-2 seam) + reconciliation sweeps + persona/spec bumps. **Pilot corpus: eddyandwolff** (UGC in `wiki.eddyandwolff/local/` + pro dish/location photos + brand/certs). The gate rules the MECHANICS (schema, spec version bump, stdlib-sigv4 vs S3-SDK for R2); the direction is Operator-ratified. Marketing carries a Publicist-interim fallback, so Herald P0/P1 never blocks.
 
 ## Deferred / trigger-gated

@@ -796,8 +796,10 @@ created_at: ""
 updated_at: ""
 ```
 
-`rights_consent` and `derived_from` are **mandatory-or-explicitly-empty**: a record missing
-either field is malformed (flagged, not written). All other consumers of the vocabulary
+`rights_consent`, `derived_from`, and `recipe` are **mandatory-or-explicitly-empty**: a record
+missing any of the three is malformed (flagged, not written). Explicit-empty forms: `""` /
+`unknown` for `rights_consent`, `[]` for `derived_from` (verified root asset), `{}` for
+`recipe` (no known generation/derivation data). All other consumers of the vocabulary
 (future game-dev classes for Anvil: sprites / audio / identities / frame-sets) arrive by
 config addition only — zero speculative fields ship in v1.4.
 
@@ -956,6 +958,6 @@ python _scripts/update_dashboards.py
 
 *— END OF CODEX BUILD SPECIFICATION —*
 
-*Codex Build Spec v1.3 — April 2026*
+*Codex Build Spec v1.4 — July 2026 (v1.3 — April 2026)*
 *Reference implementation: Iron Soul / Planet Scoria Prime wiki v3.3*
 *v1.1 additions: Ingest operation (§4.3), `_sources/raw/` archive, concept-coverage validator, scaffold_source.py, shipped `_context/` procedures*

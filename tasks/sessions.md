@@ -28,6 +28,24 @@ transcript at `tasks/council/2026-07-21-asset-registrar-gate.md`.
   ratify the "asset registry" name; OP-5 R2/credential setup. Todo updated (gate item ticked;
   v1.4-amendment item added).
 
+**SAME SESSION, LATER — name ratified + v1.4 amendment SHIPPED (Lattice cycle closed):**
+- Operator ratified **"asset registry"** (recorded EMCC taxonomy §4(a)) → amendment unblocked
+  and authored: `CODEX_BUILD_SPEC_v1_4.md` (supersedes v1_3, which keeps a deprecation banner;
+  purely additive §9 Asset Registry) + `CODEX_LIBRARIAN.md` v1.4 extension (Register-Assets /
+  Retro-Ingest-Assets / Reconcile-Assets + registrar hard rules) + drop-in regenerated +
+  current-spec pointers swept (CLAUDE.md / Index.md / Home.md router row; historical §-cites
+  deliberately untouched — v1.4 changes no pre-existing section). Commit `5181b35`.
+- **Executes-clean evidence:** `python3 -m unittest discover -s tests -t .` → 874 tests OK
+  (skipped=7); `generate_persona_dropin.py --check` → in sync (run pre-commit AND re-run by the
+  Auditor AND re-run after the fix-on-top pass).
+- **Regime B audit (independent persona Auditor): verdict `concerns` (proceed)** —
+  `tasks/audits/2026-07-21-codex-v1.4-asset-registry-audit.md`. All 7 gate conditions verified
+  met with line cites; additivity verified mechanically; both warning findings **fixed on top**
+  (recipe added to the malformed-record clause with explicit-empty forms; stale v1.3 footer
+  string corrected).
+- **Next:** the eddyandwolff pilot is **blocked-out-of-room** (repo not in this session's
+  sources) — queued on todo for a room that has it. Merge boundary: PR #68 (human-at-merge).
+
 ## 2026-07-21 — Inbound proposal drop: Librarian marketing extension (EMCC.Marketing build start; Director session, additive-only)
 
 **Not a Librarian working session** — the EMCC Director session standing up `EMCC.Marketing` (Herald v0.3 synthesis, loop contract `EMCC/Biz.Automation/LOOP-DEFINITION-marketing-module-build.md`) dropped **one untracked proposal doc** into this repo's triage zone: `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md`. Zero Library canon touched (propose-not-dispose, Principle #11).
