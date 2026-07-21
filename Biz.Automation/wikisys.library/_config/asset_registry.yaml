@@ -1,0 +1,38 @@
+# _config/asset_registry.yaml — asset-registry behavior (CODEX_BUILD_SPEC_v1_4 §9).
+# Consumed by:
+#   _scripts/asset_registry.py   (v1.4 core: allocator / record store / zone
+#                                 validator / filing loop / CLI)
+#
+# Schema (all keys optional with documented defaults; parsed by
+# _lib/frontmatter.py::parse_config_yaml):
+#   asset_classes  (list; REQUIRED in practice) — the §9.1 `asset_class`
+#                  controlled vocabulary. Config-extensible, never enum-locked
+#                  in code (spec §9.1). v1.4 ships ONLY the ratified classes;
+#                  future game-dev classes (Anvil: sprites / audio / identities /
+#                  frame-sets) arrive by config addition only, on the Operator's
+#                  trigger (spec §9.8).
+#   allocator:
+#     stale_lock_minutes (int; default 15) — a `_counter.lock` older than this
+#                  is SURFACED to the operator (path + age + pid) per spec §9.2.
+#                  It is never auto-broken.
+#   remote_store:
+#     enabled    (bool; default false) — gate for the §9.7 remote-store seam.
+#                  v1.4 core ships a config-gated stub only (zero network
+#                  imports); enabling it yields a not-configured result until
+#                  the implementing build gate lands (Herald OP-5).
+#     backend    (str|null; default null) — reserved (first backend: Cloudflare
+#                  R2 per spec §9.7). Unused by the v1.4 core stub.
+
+asset_classes:
+  - ugc
+  - professional-photo
+  - brand
+  - credential
+  - deliverable
+
+allocator:
+  stale_lock_minutes: 15
+
+remote_store:
+  enabled: false
+  backend: ~

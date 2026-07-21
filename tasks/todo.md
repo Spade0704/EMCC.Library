@@ -29,6 +29,28 @@
   sync (re-verified post-fix). **Regime B Auditor verdict: `concerns` (proceed) —
   `tasks/audits/2026-07-21-codex-v1.4-asset-registry-audit.md`; both warnings FIXED on top**
   (recipe in the malformed clause; footer version string). Lands via PR #68 (human-at-merge).
+- [ ] **🔴 Asset-registry v1.4 CORE — BUILT, awaiting Auditor (Regime B) + Grok cert.**
+  `dir-20260721-library-asset-registry-core` (Delta Force gate
+  `EMCC.DFDU/tasks/delta-force/2026-07-21-library-asset-registry-core.md`, chairman scope 1–5):
+  `Biz.Automation/wikisys.library/_scripts/asset_registry.py` + `_config/asset_registry.yaml` +
+  `tests/test_asset_registry.py` (43 tests; gate-mandated first test
+  `test_crash_between_move_and_registry_write_resumes_idempotently` green). Hardened §9.2
+  allocator (atomic counter, scan-recovery, stale-lock surfaced never broken), §9.1 record store
+  via shared `_lib/frontmatter.py` (REQUIRED_EXPLICIT; opaque git-index rows), §9.4 zone
+  validator, `file_inbox` filing loop (registry write = sole commit point; lineage skip-chaining),
+  CLI (`file`/`status`) + config-gated `remote_store` stub (zero network imports). Module
+  EXCLUDED from `sync_from_kit` propagation this build (gate change 4; explicit wiring decision
+  later). Executes-clean evidence: `tasks/evidence/2026-07-21-asset-registry-core-tests.txt`
+  (917 tests OK, skipped=7 — baseline 874 + 43 new; + real CLI smoke). Next gate steps:
+  Auditor (Regime B) → Grok `/cross-check` → Director DUAL-PASS close (framework/22).
+- [ ] **🔴 Asset-registry follow-up build (DEFERRED per the Delta Force gate):** `retro_ingest`
+  + §9.5 pre-flight snapshot; `reconcile` v0 (§9.6 sweep); any snapshot verb. Spec-conformant
+  per §9.5/§9.6; sequenced after the core lands + the eddyandwolff pilot. Also carries the
+  gate's three Operator spec-amendment escalations (registry-derived allocation; multi-machine/
+  git-push ID-collision handling; stateless ID schemes — spec unchanged meanwhile) and the
+  builder-surfaced YAML-subset residual: §9.1 `recipe` values are restricted to scalars (a
+  nested `params:` sub-mapping doesn't fit the shared `_lib/frontmatter.py` subset and is
+  refused with a prose flag, never flattened).
 - [ ] **🔴 eddyandwolff asset-registry pilot (~20 assets)** — hand-simulate the §9.3 filing
   loop (retro-ingestion mode; take the §9.5 `local/` snapshot FIRST). **Blocked-out-of-room:**
   the eddyandwolff repo is not in this session's source set — run from a room that has it.
