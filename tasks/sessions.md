@@ -1,6 +1,21 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-07-21 (third pass) — asset-registry v1.4 CORE built through the full gate chain
+
+Operator directive: complete the Marketing module — this is its Library-side P1 dependency.
+Chain: Delta Force PROCEED-WITH-CHANGES (7 changes;
+`EMCC.DFDU/tasks/delta-force/2026-07-21-library-asset-registry-core.md`) → directive
+`dir-20260721-library-asset-registry-core` → Lattice builder (sole coder) → commit `c87f323`
+(`asset_registry.py` ~1,000 lines + config + 43 tests + sync-exclusion) → executes-clean 917
+tests OK (skipped=7; 874 baseline intact) + CLI smoke → **Regime B Auditor: concerns-proceed**
+(`tasks/audits/2026-07-21-asset-registry-core-auditor.md`; W1 late representability refusal →
+pre-pass fix queued; W2 missing newline test) → cert drop
+`0-Inbox/grok-audit/2026-07-21-asset-registry-core.md` (validator PASS; **Grok slot OPEN**).
+Deferred per gate (spec-conformant §9.5/§9.6): retro_ingest + reconcile v0 (+ W1/W2 fixes).
+Spec-amendment candidates escalated to the Operator: registry-derived allocation,
+multi-machine/git ID-collision handling, stateless ID schemes.
+
 ## 2026-07-21 (second pass, new room) — Library gate RUN on the v1.1 asset-registrar proposal: council PROCEED-WITH-CHANGES
 
 Director session (remote, `claude/herald-marketing-publish-ru4szs`; branch carries the merged

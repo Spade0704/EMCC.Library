@@ -29,7 +29,11 @@
   sync (re-verified post-fix). **Regime B Auditor verdict: `concerns` (proceed) —
   `tasks/audits/2026-07-21-codex-v1.4-asset-registry-audit.md`; both warnings FIXED on top**
   (recipe in the malformed clause; footer version string). Lands via PR #68 (human-at-merge).
-- [ ] **🔴 Asset-registry v1.4 CORE — BUILT, awaiting Auditor (Regime B) + Grok cert.**
+- [ ] **🔴 Asset-registry v1.4 CORE — BUILT + Auditor CONCERNS-proceed 2026-07-21; Grok slot OPEN.**
+  Auditor verdict `tasks/audits/2026-07-21-asset-registry-core-auditor.md` (all criteria Met,
+  evidence re-run 917 OK; W1 late representability refusal orphans a moved file — pre-pass fix
+  at follow-up; W2 newline-refusal test missing). Cert drop
+  `0-Inbox/grok-audit/2026-07-21-asset-registry-core.md` (validator PASS). Original build record:
   `dir-20260721-library-asset-registry-core` (Delta Force gate
   `EMCC.DFDU/tasks/delta-force/2026-07-21-library-asset-registry-core.md`, chairman scope 1–5):
   `Biz.Automation/wikisys.library/_scripts/asset_registry.py` + `_config/asset_registry.yaml` +
@@ -48,7 +52,8 @@
   per §9.5/§9.6; sequenced after the core lands + the eddyandwolff pilot. Also carries the
   gate's three Operator spec-amendment escalations (registry-derived allocation; multi-machine/
   git-push ID-collision handling; stateless ID schemes — spec unchanged meanwhile) and the
-  builder-surfaced YAML-subset residual: §9.1 `recipe` values are restricted to scalars (a
+  Auditor W1 (pre-pass representability check before ID/move) + W2 (newline-refusal +
+  file-stays-in-inbox test assertions) + builder-surfaced YAML-subset residual: §9.1 `recipe` values are restricted to scalars (a
   nested `params:` sub-mapping doesn't fit the shared `_lib/frontmatter.py` subset and is
   refused with a prose flag, never flattened).
 - [ ] **🔴 eddyandwolff asset-registry pilot (~20 assets)** — hand-simulate the §9.3 filing
