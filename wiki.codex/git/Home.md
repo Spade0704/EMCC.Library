@@ -4,7 +4,7 @@ type: overview
 visibility: internal
 completion: 30
 status: outlined
-last_updated: 2026-06-18
+last_updated: 2026-07-22
 dependencies: ["01-Architecture/Overview", "02-Operations/Bootstrap", "02-Operations/Librarian"]
 public_pair: null
 blocking_questions: []
@@ -51,7 +51,7 @@ What Codex is — folders, schema, scripts, principles.
 - [[Frontmatter-Schema]] — the YAML header contract + meta-schema enums
 - [[Input-Validation]] — fail-closed tree-confinement + projectname validation (route_inbox + bootstrap)
 - [[Link-Graph-Integrity]] — link-resolver coherence, escapes-root signal, whole-graph integrity validator
-- [[Automation-Scripts]] — 15 base + 3 v1.3 cross-link scripts, orchestrator pipeline, health-summary
+- [[Automation-Scripts]] — 15 base + 3 v1.3 cross-link scripts + 5 audit scripts + the v1.4 asset-registry engine (`asset_registry.py`, Auditor concerns-proceed), orchestrator pipeline, health-summary
 - [[Configuration-Files]] — `_config/` and `_canon/` schemas (+ `cross_link.yaml`, `topics.yaml`)
 - [[Cross-Link-Generation]] — v1.3 marker contract, plug-in interface, idempotency
 - [[Design-Principles]] — the 13 load-bearing rules

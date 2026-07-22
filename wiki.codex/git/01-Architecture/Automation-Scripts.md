@@ -4,7 +4,7 @@ type: reference
 visibility: internal
 completion: 40
 status: outlined
-last_updated: 2026-05-27
+last_updated: 2026-07-22
 dependencies: ["01-Architecture/Configuration-Files", "01-Architecture/Cross-Link-Generation"]
 public_pair: null
 blocking_questions: []
@@ -74,6 +74,14 @@ Five new P0/P1 audit scripts shipped in Library S002 Phase B6 alongside the cano
 | `audit_local_split.py` | Misclassification suspects in `wiki.*/local/` vs `wiki.*/git/` — flags content in wrong zone. |
 
 All 5 emit 0 findings against Library's own tree (Library is a well-formed canonical-shape project per S002 close verification).
+
+## v1.4 asset-registry engine (2026-07-22)
+
+| Script | Purpose |
+|---|---|
+| `asset_registry.py` | The v1.4 §9 Asset Registry implementation — ID allocator (atomic counter, scan-recovery, surfaced-never-broken locks), per-zone record store, zone validator, inbox filing loop, CLI. Single file alongside the scripts above in `Biz.Automation/wikisys.library/_scripts/`. |
+
+Status (honest): CORE shipped 2026-07-21 (commit `c87f323`); Regime B Auditor verdict **concerns-proceed** — W1 (representability refusals fire at the commit point, after ID burn + move, orphaning the moved file until retry/sweep) + W2 (missing refusal regression test) are folded into the follow-up build item; the Grok `/cross-check` cert slot is still OPEN. Spec canon: [[codex/CODEX_BUILD_SPEC_v1_4]] §9.
 
 ## Orchestrator pipeline (`update_dashboards.py`)
 
