@@ -20,7 +20,7 @@ The bus root is relative; `SessionManager` resolves it against this repo root at
 
 The Library module ships **two distinct things**; keep them separate.
 
-- **Codex** is the **protocol / engine** — the *HOW*: the ingest + semantic-lint procedures, the frontmatter schema, the validators + dashboards, R-XXXXX numbering, and the cross-link graph. It defines how raw material becomes a structured, validated wiki. Canon lives in `wiki.codex/git/codex/` (spec `CODEX_BUILD_SPEC_v1_3.md`).
+- **Codex** is the **protocol / engine** — the *HOW*: the ingest + semantic-lint procedures, the frontmatter schema, the validators + dashboards, R-XXXXX numbering, and the cross-link graph. It defines how raw material becomes a structured, validated wiki. Canon lives in `wiki.codex/git/codex/` (spec `CODEX_BUILD_SPEC_v1_4.md`).
 - **Librarian** is the **agent / persona** that *operates* Codex — the *WHO*: it ingests sources, curates pages, maintains canon, and runs the dashboards. Declared canonically in `wiki.codex/git/codex/CODEX_LIBRARIAN.md`; the `.claude/personas/CLAUDE.librarian.md` drop-in is **generated** from it (`generate_persona_dropin.py`).
 
 This module is the **home** of both: changes to Codex (protocol) or the Librarian (persona) are made here and propagate to consumer projects (DFDU, Mentor, etc.) via Sync (`sync_from_kit.py`). Consumers never re-invent either — they vendor the engine and operate as the Librarian. Codex = the machine; the Librarian = the operator of the machine; the consuming project supplies the material + curation judgment.
@@ -30,7 +30,7 @@ This module is the **home** of both: changes to Codex (protocol) or the Libraria
 1. **`Index.md` — read FIRST.** File-map / routing table. Tells you where every folder + key file lives + when to load each. Avoids unnecessary searching; gives the operator + agent a shared mental model. Per portfolio spec section (a) RECOMMENDED set; `bootstrap.py` auto-emits this for new consumer projects (this Library copy was backfilled post-S002 since Library was hand-bootstrapped before the canonical-output rewrite landed).
 2. `tasks/sessions.md` — most recent session entry for current operational context.
 3. `tasks/todo.md` — current sprint + active tasks.
-4. `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` — authoritative Codex build specification. **Spec wins** any contradiction with this file; flag conflicts rather than resolving silently. Load on demand for spec-related work (don't pre-load for unrelated tasks). (S002: relocated from Library root per spec section (b) — see `REORGANIZATION-INSTRUCTIONS.md` pattern P2.)
+4. `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_4.md` — authoritative Codex build specification. **Spec wins** any contradiction with this file; flag conflicts rather than resolving silently. Load on demand for spec-related work (don't pre-load for unrelated tasks). (S002: relocated from Library root per spec section (b) — see `REORGANIZATION-INSTRUCTIONS.md` pattern P2.)
 5. `wiki.codex/git/codex/INGEST_PROCEDURE.md` + `wiki.codex/git/codex/SEMANTIC_LINT_PROCEDURE.md` — ship **verbatim** into bootstrapped wikis' `_context/` folder. Never paraphrase, shorten, or "improve" them. Load on demand for ingest / lint work.
 6. `wiki.codex/git/codex/CODEX_LIBRARIAN.md` — Librarian agent specification (the persona this module ships; S002 v1.1 extension adds 3 new ops + 5 Mentor patterns + Telegram auto-summary contract). Load on demand for Librarian-related work.
 7. `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` — wiki build spec (what `bootstrap.py` materializes for consuming projects). Load on demand for bootstrap behavior changes.
@@ -63,7 +63,7 @@ machine-readable old-path → new-path manifest.
 | Room | Contents | When to Load |
 |---|---|---|
 | `Index.md` | **File-map / routing table. Read FIRST every session.** Comprehensive list of every folder + key file + when-to-load guidance. Source of truth for "where is X?" lookups. | Every session start; updated as files/folders land |
-| `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_3.md` | Authoritative Codex spec. The single canonical version. | Any spec change; clarifying scope |
+| `wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_4.md` | Authoritative Codex spec. The single canonical version. | Any spec change; clarifying scope |
 | `wiki.codex/git/codex/INGEST_PROCEDURE.md` + `…/SEMANTIC_LINT_PROCEDURE.md` | Verbatim procedures shipped into bootstrapped wikis | Never edit without an explicit spec amendment |
 | `wiki.codex/git/codex/CODEX_LIBRARIAN.md` | Librarian agent specification (S002 v1.1 extension: 3 new ops + 5 Mentor patterns + Telegram contract) | Persona / agent work |
 | `wiki.codex/git/codex/PROJECT_WIKI_BUILD_SPEC.md` | Wiki build spec (what bootstrap.py creates) | Bootstrap behavior changes |
@@ -100,7 +100,7 @@ R_STATE is **not** cached here — it lives in `tasks/*` as the canonical source
 
 Codex is built under its own spec (§7 + §8): stdlib-only Python, `pathlib.Path` everywhere, Windows-safe path math, no external dependencies. Library inherits this discipline verbatim:
 
-- **Spec wins.** If `CODEX_BUILD_SPEC_v1_3.md` contradicts anything here, the spec is authoritative — flag the conflict, don't resolve silently.
+- **Spec wins.** If `CODEX_BUILD_SPEC_v1_4.md` contradicts anything here, the spec is authoritative — flag the conflict, don't resolve silently.
 - **Stdlib only.** No `pip install`. Tests use `python -m unittest discover -s tests -t .` (matches Codex spec §7 Phase 3; matches `.github/workflows/test.yml`).
 - **Verbatim discipline.** `INGEST_PROCEDURE.md` + `SEMANTIC_LINT_PROCEDURE.md` ship into bootstrapped wikis byte-identical. No paraphrasing, no "improvements," no shortening.
 - **Lattice 3.0 protocol governs Library's own sessions.** When Library work is Level-2+ (cross-module touches, spec changes, etc.), Library boots a Lattice 3.0 session per the `LATTICE_PROFILE` block above. Architect plan + Auditor verdict required. Persona files in `.claude/personas/` (project-codex layout preserved per AC8; DFDU-style `personas/` flat layout is a Step 4 v1.1 follow-up).

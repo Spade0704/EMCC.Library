@@ -4,6 +4,76 @@
 >
 > **Archived 2026-06-16:** all DONE/shipped sprint items (relpath resolver `93fe81d`; readiness cascades dir-ii/hh/jj + dir-20260614n; Codex v1.3.1 cross-link; boilerplate split + stubs; M-A structural Sync; verbatim-only policy `d2c7667`; lifted tat_app patterns; S001/S002/S004 + Post-S002/S004 closures; etc.) plus the stale TestSyncStamp cleanup → see `tasks/archive.md` (§ Archived 2026-06-16).
 
+## Inbound gate item (2026-07-21)
+
+- [x] **🔴 Portfolio asset-registry extension (v1.1) — run the Library gate.** `Gate run`
+  2026-07-21 (second pass): **council PROCEED-WITH-CHANGES** — transcript
+  `tasks/council/2026-07-21-asset-registrar-gate.md`. Rulings: schema ACCEPTED with lineage +
+  rights/consent mandatory-or-explicitly-empty; filing loop ACCEPTED with the R2 write moved
+  OUTSIDE the commit path (skippable-with-flag, `url: pending`, mint later); R2 transport =
+  R_ARCH-style carve-out plug-in, SigV4-vs-SDK deferred to the build gate (OP-5 blocks it
+  anyway); **spec bump = v1.4** (additive); **name = "asset registry"** (needs Operator
+  ratification per taxonomy). Four review-caught blind spots folded in as gate conditions:
+  ID-allocation mechanics specified in-gate (collision-safe across repos/sessions, crash-safe
+  assign-then-commit); zone-following privacy = pre-commit-point VALIDATOR, not prose;
+  pre-flight `local/` snapshot before retro-ingestion; renames documented as skip-with-flag +
+  reconciliation sweep, never "atomic". → Follow-up item below (v1.4 amendment authoring).
+- [x] **🔴 Author the Codex v1.4 amendment (asset registry) per the gate verdict.** `Done`
+  2026-07-21 (same session as the gate): `CODEX_BUILD_SPEC_v1_4.md` supersedes v1_3 (deprecation
+  banner; purely additive — new §9 Asset Registry: schema w/ mandatory-or-explicitly-empty
+  `rights_consent`/`derived_from`/`recipe`, per-repo namespaced crash-safe AST-ID allocation,
+  filing loop w/ registry write as sole commit point + `url: pending` remote-store decoupling,
+  pre-commit zone validator, retro-ingestion snapshot rule, reconciliation shape, `remote_store`
+  carve-out) + CODEX_LIBRARIAN v1.4 extension (3 registrar ops + hard rules) + drop-in
+  regenerated + current-spec pointers swept. Evidence: 874 tests OK (skipped=7); drift guard in
+  sync (re-verified post-fix). **Regime B Auditor verdict: `concerns` (proceed) —
+  `tasks/audits/2026-07-21-codex-v1.4-asset-registry-audit.md`; both warnings FIXED on top**
+  (recipe in the malformed clause; footer version string). Lands via PR #68 (human-at-merge).
+- [ ] **🔴 Asset-registry v1.4 CORE — BUILT + Auditor CONCERNS-proceed 2026-07-21; Grok slot OPEN.**
+  Auditor verdict `tasks/audits/2026-07-21-asset-registry-core-auditor.md` (all criteria Met,
+  evidence re-run 917 OK; W1 late representability refusal orphans a moved file — pre-pass fix
+  at follow-up; W2 newline-refusal test missing). Cert drop
+  `0-Inbox/grok-audit/2026-07-21-asset-registry-core.md` (validator PASS). Original build record:
+  `dir-20260721-library-asset-registry-core` (Delta Force gate
+  `EMCC.DFDU/tasks/delta-force/2026-07-21-library-asset-registry-core.md`, chairman scope 1–5):
+  `Biz.Automation/wikisys.library/_scripts/asset_registry.py` + `_config/asset_registry.yaml` +
+  `tests/test_asset_registry.py` (43 tests; gate-mandated first test
+  `test_crash_between_move_and_registry_write_resumes_idempotently` green). Hardened §9.2
+  allocator (atomic counter, scan-recovery, stale-lock surfaced never broken), §9.1 record store
+  via shared `_lib/frontmatter.py` (REQUIRED_EXPLICIT; opaque git-index rows), §9.4 zone
+  validator, `file_inbox` filing loop (registry write = sole commit point; lineage skip-chaining),
+  CLI (`file`/`status`) + config-gated `remote_store` stub (zero network imports). Module
+  EXCLUDED from `sync_from_kit` propagation this build (gate change 4; explicit wiring decision
+  later). Executes-clean evidence: `tasks/evidence/2026-07-21-asset-registry-core-tests.txt`
+  (917 tests OK, skipped=7 — baseline 874 + 43 new; + real CLI smoke). Next gate steps:
+  Auditor (Regime B) → Grok `/cross-check` → Director DUAL-PASS close (framework/22).
+- [ ] **🔴 Asset-registry follow-up build (DEFERRED per the Delta Force gate):** `retro_ingest`
+  + §9.5 pre-flight snapshot; `reconcile` v0 (§9.6 sweep); any snapshot verb. Spec-conformant
+  per §9.5/§9.6; sequenced after the core lands + the eddyandwolff pilot. Also carries the
+  gate's three Operator spec-amendment escalations (registry-derived allocation; multi-machine/
+  git-push ID-collision handling; stateless ID schemes — spec unchanged meanwhile) and the
+  Auditor W1 (pre-pass representability check before ID/move) + W2 (newline-refusal +
+  file-stays-in-inbox test assertions) + builder-surfaced YAML-subset residual: §9.1 `recipe` values are restricted to scalars (a
+  nested `params:` sub-mapping doesn't fit the shared `_lib/frontmatter.py` subset and is
+  refused with a prose flag, never flattened).
+- [ ] **🔴 eddyandwolff asset-registry pilot (~20 assets)** — hand-simulate the §9.3 filing
+  loop (retro-ingestion mode; take the §9.5 `local/` snapshot FIRST). **Blocked-out-of-room:**
+  the eddyandwolff repo is not in this session's source set — run from a room that has it.
+  R2/`url` minting stays out of the pilot (OP-5 still open; deliverable-class only anyway). Original scope item (for reference): triage
+  `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1 — Triage `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` v1.1: the Librarian becomes the portfolio **asset registrar** — ALL asset classes (UGC images, professional photos, logos, certificates/badges, video), stable IDs + tags + renames + metadata pages, zone-following privacy rule, retro-ingestion mode, asset codex + crash-safe filing loop + R2 writer + generalized scheduled ingestion (the P2-2 seam) + reconciliation sweeps + persona/spec bumps. **Pilot corpus: eddyandwolff** (UGC in `wiki.eddyandwolff/local/` + pro dish/location photos + brand/certs). The gate rules the MECHANICS (schema, spec version bump, stdlib-sigv4 vs S3-SDK for R2); the direction is Operator-ratified. Marketing carries a Publicist-interim fallback, so Herald P0/P1 never blocks.
+
+## Deferred / trigger-gated
+
+- [ ] **⚪ Anvil asset-registry onboarding — DEFERRED until the Operator starts working on Anvil
+  (trigger: JP says so; Operator-flagged 2026-07-21).** When Anvil (`spade0704/iron-soul-anvil`
+  — game engine for Iron Soul + future game-dev; assets created by Grok Imagine per its
+  `docs/GROK_WORKFLOW.md`, engine loads-only from `assetsRoot`) goes active, extend the portfolio
+  asset registry to manage its asset creation: register Grok Imagine outputs (identities →
+  pose/variant frame-sets → cinematics) with IDs/tags/lineage/recipe-provenance + filing into the
+  engine's media-contract layout (`anvil/docs/design/09_ASSETS_AND_MEDIA.md`). Until then the only
+  cost is keeping the registry schema game-dev-extensible (noted in the v1.1 proposal §2b). Do not
+  build anything Anvil-specific before the trigger.
+
 ## Readiness cascade tails (open)
 
 - [ ] **🔴 LLM-seam unlock (operator-gated; raises both toward 80).** lib-summary-op → 80 needs a consumer to wire a real `summarize_fn` (EMCC `librarian_summarize.py` is the seam — currently no-op without an LLM). Logged Director-side as a top systemic unlock alongside backend-hosting.

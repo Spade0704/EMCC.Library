@@ -1,0 +1,906 @@
+== Executes-clean evidence: dir-20260721-library-asset-registry-core ==
+== date: 2026-07-21T13:31:10Z | cmd: python3 -m unittest discover -s tests -t . ==
+...........................................................................................................................................# Citation-presence audit
+
+Root: `/tmp/tmptanyssx2` · mode: **enforce** · findings: **0**
+
+> **Presence-Not-Accuracy:** this audit confirms a HIGH-`consequence` page carries a non-empty `cite_anchor`. It does NOT verify the quote is verbatim, that the anchor resolves, or that a refusal was correct.
+
+_No HIGH page is missing a cite_anchor._
+.# Citation-presence audit
+
+Root: `/tmp/tmpex_kmag1` · mode: **enforce** · findings: **1**
+
+> **Presence-Not-Accuracy:** this audit confirms a HIGH-`consequence` page carries a non-empty `cite_anchor`. It does NOT verify the quote is verbatim, that the anchor resolves, or that a refusal was correct.
+
+| Page | Tier | Severity | Finding |
+|---|---|---|---|
+| `p.md` | high | error | consequence: HIGH page missing required cite_anchor (add a verbatim source ref, or set consequence: low) |
+...# Citation-presence audit
+
+Root: `/tmp/tmp52r9qudt` · mode: **report-only** · findings: **1**
+
+> **Presence-Not-Accuracy:** this audit confirms a HIGH-`consequence` page carries a non-empty `cite_anchor`. It does NOT verify the quote is verbatim, that the anchor resolves, or that a refusal was correct.
+
+| Page | Tier | Severity | Finding |
+|---|---|---|---|
+| `p.md` | high | warning | consequence: HIGH page missing required cite_anchor (add a verbatim source ref, or set consequence: low) |
+........................................................s..usage: bootstrap.py [-h] [--full | --minimal | --code | --website] [--assets]
+                    [--dry-run] [--yes]
+                    projectname
+bootstrap.py: error: argument --code: not allowed with argument --minimal
+.usage: bootstrap.py [-h] [--full | --minimal | --code | --website] [--assets]
+                    [--dry-run] [--yes]
+                    projectname
+bootstrap.py: error: the following arguments are required: projectname
+.[DONE] Bootstrap: /tmp/tmpf8t_v8y9/myproj (mode=code)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created myproj/ with the canonical portfolio frame (mode=code).
+
+Next steps:
+  1. cd myproj
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.myproj.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.myproj/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmpqwmz8zq6/myproj (mode=code)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created myproj/ with the canonical portfolio frame (mode=code).
+
+Next steps:
+  1. cd myproj
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.myproj.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.myproj/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmppfmn_u8h/mentor (mode=full)
+  Folders: 16
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 48
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmp1mp75raz/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmprccfp4r0/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+concept_coverage: entities_scanned=0 pages_scanned=6 findings=0 -> _dashboards/concept_coverage.md
+.[DONE] Bootstrap: /tmp/tmpjwy0kvbt/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmp3eeszqsc/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmpms7wbx0s/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmpds9wdmeq/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmpa9020axv/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmpw66q1dy3/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmpbl26zq3b/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmp_c5y_1n9/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmp3c3wkds5/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmpbk82rq74/thin (mode=minimal)
+  Folders: 4
+  Root stubs: 3
+  Task stubs: 4
+  Canon stubs: 0
+  Boilerplate pages: 0
+  Total ops: 15
+
+Created thin/ with the canonical portfolio frame (mode=minimal).
+
+Next steps:
+  1. cd thin
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.thin.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.thin/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmp4jxvks71/mentor (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created mentor/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd mentor
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.mentor.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.mentor/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmp5z226t3b/thin (mode=minimal)
+  Folders: 10
+  Root stubs: 3
+  Task stubs: 4
+  Canon stubs: 0
+  Boilerplate pages: 0
+  Total ops: 27
+
+Created thin/ with the canonical portfolio frame (mode=minimal).
+
+Next steps:
+  1. cd thin
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.thin.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.thin/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmpw0qwyz9x/thin (mode=minimal)
+  Folders: 4
+  Root stubs: 3
+  Task stubs: 4
+  Canon stubs: 0
+  Boilerplate pages: 0
+  Total ops: 15
+
+Created thin/ with the canonical portfolio frame (mode=minimal).
+
+Next steps:
+  1. cd thin
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.thin.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.thin/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmpazqmdwt6/thin (mode=minimal)
+  Folders: 4
+  Root stubs: 3
+  Task stubs: 4
+  Canon stubs: 0
+  Boilerplate pages: 0
+  Total ops: 15
+
+Created thin/ with the canonical portfolio frame (mode=minimal).
+
+Next steps:
+  1. cd thin
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.thin.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.thin/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmpfd65efli/myweb (mode=website)
+  Folders: 11
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 38
+
+Created myweb/ with the canonical portfolio frame (mode=website).
+
+Next steps:
+  1. cd myweb
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.myweb.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.myweb/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmp09apu8h3/myweb (mode=website)
+  Folders: 11
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 38
+
+Created myweb/ with the canonical portfolio frame (mode=website).
+
+Next steps:
+  1. cd myweb
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.myweb.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.myweb/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DRY-RUN] Bootstrap: /tmp/tmpxp701fw6/preview (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+.[DONE] Bootstrap: /tmp/tmp233goftj/proj (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created proj/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd proj
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.proj.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.proj/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.[DONE] Bootstrap: /tmp/tmppqd6uu84/proj (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created proj/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd proj
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.proj.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.proj/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+ERROR: target /tmp/tmppqd6uu84/proj exists and is non-empty; pass --yes to override (spec c §Idempotency rule #1)
+.ERROR: projectname '/tmp/tmp_94_0lkx' contains a path separator; pass a bare filesystem-safe name (allowed: letters, digits, '.', '_', '-')
+.[DONE] Bootstrap: /tmp/tmpqq1txupi/proj (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created proj/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd proj
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.proj.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.proj/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+[DONE] Bootstrap: /tmp/tmpqq1txupi/proj (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 0
+  Total ops: 30
+
+Created proj/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd proj
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.proj.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.proj/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.ERROR: projectname 'bad name' has illegal characters; allowed: letters, digits, '.', '_', '-' (Filesystem-safe characters only)
+ERROR: projectname 'weird*name' has illegal characters; allowed: letters, digits, '.', '_', '-' (Filesystem-safe characters only)
+ERROR: projectname 'tab\tname' has illegal characters; allowed: letters, digits, '.', '_', '-' (Filesystem-safe characters only)
+.ERROR: projectname 'foo/bar' contains a path separator; pass a bare filesystem-safe name (allowed: letters, digits, '.', '_', '-')
+.ERROR: projectname '../escape' contains a path separator; pass a bare filesystem-safe name (allowed: letters, digits, '.', '_', '-')
+.ERROR: projectname '..' is a path-traversal token; pass a bare filesystem-safe name (allowed: letters, digits, '.', '_', '-')
+ERROR: projectname '.' is a path-traversal token; pass a bare filesystem-safe name (allowed: letters, digits, '.', '_', '-')
+.[DONE] Bootstrap: /tmp/tmpsnv6hdkg/my-proj_2.0 (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created my-proj_2.0/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd my-proj_2.0
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.my-proj_2.0.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.my-proj_2.0/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+.............................# Caution index (tiered, deterministic)
+
+Root: `/tmp/tmpnrncmn9x` · mode: **enforce** · HIGH pages: **1** (surfaced **1**, escalate **0**)
+
+> **Deterministic router, fail-closed.** Caution text below is a VERBATIM slice of the source page (grep/keyword retrieval, no neural picker). When a HIGH page can't be resolved to a verbatim caution+cite it is **ESCALATEd** — surfaced with NO caution text and a pointer to load the full source. This index never paraphrases, never substitutes, and never picks one caution when several match — it lists them all.
+
+> **Presence-Not-Accuracy.** A surfaced row proves a caution block is PRESENT and copied verbatim — it does NOT verify the caution is the correct one for the reader's effectivity/variant. Load the cited source before acting.
+
+## Escalate — load the full source (do not trust a summary)
+
+_No HIGH page escalated — every HIGH page resolved to a verbatim caution+cite._
+
+## Surfaced — verbatim caution + cite (the cheap tier)
+
+| Source page | cite_anchor | Caution (verbatim) | grep keys |
+|---|---|---|---|
+| `p.md` | ref | > [!CAUTION] x. | caution ref |
+
+.# Caution index (tiered, deterministic)
+
+Root: `/tmp/tmp0jzonwlu` · mode: **enforce** · HIGH pages: **1** (surfaced **0**, escalate **1**)
+
+> **Deterministic router, fail-closed.** Caution text below is a VERBATIM slice of the source page (grep/keyword retrieval, no neural picker). When a HIGH page can't be resolved to a verbatim caution+cite it is **ESCALATEd** — surfaced with NO caution text and a pointer to load the full source. This index never paraphrases, never substitutes, and never picks one caution when several match — it lists them all.
+
+> **Presence-Not-Accuracy.** A surfaced row proves a caution block is PRESENT and copied verbatim — it does NOT verify the caution is the correct one for the reader's effectivity/variant. Load the cited source before acting.
+
+## Escalate — load the full source (do not trust a summary)
+
+| Source page | cite_anchor | Why escalated | grep keys |
+|---|---|---|---|
+| `p.md` | _none_ | HIGH page has no cite_anchor — cannot anchor a verbatim caution; load source |  |
+
+## Surfaced — verbatim caution + cite (the cheap tier)
+
+_No HIGH page carries a surfaceable verbatim caution block._
+
+.build_caution_index: no content root resolved
+.# Caution index (tiered, deterministic)
+
+Root: `/tmp/tmpjn7v_p9z` · mode: **report-only** · HIGH pages: **1** (surfaced **0**, escalate **1**)
+
+> **Deterministic router, fail-closed.** Caution text below is a VERBATIM slice of the source page (grep/keyword retrieval, no neural picker). When a HIGH page can't be resolved to a verbatim caution+cite it is **ESCALATEd** — surfaced with NO caution text and a pointer to load the full source. This index never paraphrases, never substitutes, and never picks one caution when several match — it lists them all.
+
+> **Presence-Not-Accuracy.** A surfaced row proves a caution block is PRESENT and copied verbatim — it does NOT verify the caution is the correct one for the reader's effectivity/variant. Load the cited source before acting.
+
+## Escalate — load the full source (do not trust a summary)
+
+| Source page | cite_anchor | Why escalated | grep keys |
+|---|---|---|---|
+| `p.md` | _none_ | HIGH page has no cite_anchor — cannot anchor a verbatim caution; load source |  |
+
+## Surfaced — verbatim caution + cite (the cheap tier)
+
+_No HIGH page carries a surfaceable verbatim caution block._
+
+.................................................................................................................................................................................................................................................................................................................................................................s...error: refusing to demote the canonical Codex wiki (EMCC.Library)
+.error: refusing to demote the canonical Codex wiki (EMCC.Library)
+.....................................s......................................[DONE] Bootstrap: /tmp/tmpa1c6e9da/demo (mode=full)
+  Folders: 10
+  Root stubs: 5
+  Task stubs: 4
+  Canon stubs: 1
+  Boilerplate pages: 6
+  Total ops: 36
+
+Created demo/ with the canonical portfolio frame (mode=full).
+
+Next steps:
+  1. cd demo
+  2. Edit CLAUDE.md: one-line description + hard rules.
+  3. Edit Index.md: rows for any non-stub folders you add.
+  4. Edit reorganization-instructions.demo.md: fill in the move table
+     once any pre-canonical content is migrated. Greenfield projects can
+     leave the stub intact or write "Greenfield — no pre-migration content".
+  5. Initialize Claude Code: copy a sibling project's .claude/ or run claude init.
+  6. git init && git add -A && git commit -m "bootstrap"
+  7. First real session: populate tasks/todo.md with the actual first task.
+
+Notes:
+  - wiki.demo/local/ is gitignored. Use it for confidential content.
+  - If you passed --assets: assets/ heavy-file patterns are commented in .gitignore — uncomment as needed.
+  - If your project ships a public website, use the --website flag (or add website/ manually).
+  - If your project ships product code (mobile app, CLI, library), use --code (or add <product-code-root>/ manually).
+........drift: CLAUDE.librarian.md is out of sync with wiki.codex/git/codex/CODEX_LIBRARIAN.md — run generate_persona_dropin.py
+.wrote /tmp/tmpdh0i85jo/.claude/personas/CLAUDE.librarian.md from wiki.codex/git/codex/CODEX_LIBRARIAN.md
+in sync: CLAUDE.librarian.md matches wiki.codex/git/codex/CODEX_LIBRARIAN.md
+.in sync: CLAUDE.librarian.md matches wiki.codex/git/codex/CODEX_LIBRARIAN.md
+......s...warning: skipping entry — destination escapes root /tmp/tmp95s7lnon: /tmp/tmpk45y7ttc/stolen.md
+.warning: skipping entry — destination escapes root /tmp/tmpkbzvt_ft/project: /tmp/tmpkbzvt_ft/project/../escaped.md
+.....created: _brain_dump/reactor-cascade-theory.md
+.created: _brain_dump/my-idea.md
+.created: _brain_dump/field-check.md
+.created: _brain_dump/same-title.md
+error: file already exists: _brain_dump/same-title.md
+..created: _inbox/doc.md
+.created: _inbox/x.md
+.created: _inbox/notes.md
+.created: _inbox/incoming.md
+.created: _inbox/twice.md
+error: file already exists: _inbox/twice.md
+.created placeholder: _inbox/https-example-com-foo-bar.md
+next step: paste source content into _inbox/https-example-com-foo-bar.md before running ingest.
+..................................................................sss...info: _canon/topics.yaml not found; topic registry validation skipped.
+.info: _canon/topics.yaml not found; topic registry validation skipped.
+.WARN: cross-link pipeline step #17 cross_link_topics failed: RuntimeError: simulated #17 failure
+.WARN: cross-link pipeline step #16 build_topic_index failed: RuntimeError: simulated #16 failure
+info: _canon/topics.yaml not found; topic registry validation skipped.
+..info: _canon/topics.yaml not found; topic registry validation skipped.
+.info: _canon/topics.yaml not found; topic registry validation skipped.
+.info: _canon/topics.yaml not found; topic registry validation skipped.
+.info: _canon/topics.yaml not found; topic registry validation skipped.
+.info: _canon/topics.yaml not found; topic registry validation skipped.
+.info: _canon/topics.yaml not found; topic registry validation skipped.
+.info: _canon/topics.yaml not found; topic registry validation skipped.
+................................................................................................info: _canon/topics.yaml not found; topic registry validation skipped.
+..
+----------------------------------------------------------------------
+Ran 917 tests in 2.965s
+
+OK (skipped=7)
+
+== CLI smoke (real run against tmp fixture wiki) ==
+$ python3 asset_registry.py file --root <tmpfixture> --batch manifest.json
+2 filed, 0 flagged, 0 skipped (chained), 0 already filed
+  AST-EDDYANDWOLFF-00001 <- 0-Inbox/IMG_4471 guest photo.jpg -> wiki.eddyandwolff/local/assets/ugc/guest-adobo-photo.jpg
+  remote-store (not-configured): remote_store disabled in config; AST-EDDYANDWOLFF-00002 stays url: pending
+  AST-EDDYANDWOLFF-00002 <- 0-Inbox/teaser_v3 FINAL.mp4 -> wiki.eddyandwolff/git/assets/deliverables/menu-teaser-v3.mp4
+exit=0
+
+$ python3 asset_registry.py status --root <tmpfixture>
+wiki.eddyandwolff:
+  counter: 2
+  lock: free
+  git zone: 1 record(s), 1 pending mint(s)
+  local zone: 1 record(s), 0 pending mint(s)
+exit=0
+
+-- git-zone asset-index.md (opaque local rows) --
+# Asset Index — git zone
+
+Generated by `asset_registry.py` (spec §9). Do not hand-edit.
+
+| ID | Class | Name | Path |
+|---|---|---|---|
+| AST-EDDYANDWOLFF-00002 | deliverable | Menu Teaser v3 | `wiki.eddyandwolff/git/assets/deliverables/menu-teaser-v3.mp4` |
+
+## Local-zone assets (opaque pointer rows)
+
+1 local-zone asset(s) — item-level metadata lives in `wiki.eddyandwolff/local/_registry/asset-index.md` (gitignored).
+- AST-EDDYANDWOLFF-00001
+-- record AST-EDDYANDWOLFF-00002.md --
+---
+id: AST-EDDYANDWOLFF-00002
+asset_class: deliverable
+name: "Menu Teaser v3"
+description: "marketing teaser cut"
+tags: ["teaser"]
+subject: "menu"
+zone: git
+path: "wiki.eddyandwolff/git/assets/deliverables/menu-teaser-v3.mp4"
+source:
+  by: "publicist"
+  date: "2026-07-21"
+rights_consent: "owned"
+derived_from: ["AST-EDDYANDWOLFF-00001"]
+recipe:
+  tool: "higgsfield"
+  job_ref: "hf-teaser-3"
+version: 1
+supersedes: ""
+url: pending
+created_at: "2026-07-21T13:31:28.880231+00:00"
+updated_at: "2026-07-21T13:31:28.880231+00:00"
+---
+
+# AST-EDDYANDWOLFF-00002
+
+Asset record (CODEX_BUILD_SPEC_v1_4 §9.1). The frontmatter above is the authoritative ledger entry; this body is a human-readable stub. Written by asset_registry.py — the Librarian is the sole writer.

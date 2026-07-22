@@ -2,7 +2,7 @@
 title: "CLAUDE.librarian — Librarian persona drop-in (generated)"
 canonical_source: "wiki.codex/git/codex/CODEX_LIBRARIAN.md"
 loaded_via: "declared; not loaded by lattice_session_start.py — VALID_ROLES enumerates the Nexus four only. Librarian operates inside consumed wikis bootstrapped by Codex, not inside Project Codex itself."
-last_updated: 2026-05-25
+last_updated: 2026-07-21
 ---
 
 <!-- GENERATED FILE — DO NOT EDIT BY HAND.
@@ -352,6 +352,48 @@ A wiki with no `topics:` produces no cross-links — assign topics before expect
 
 **Backfill operation (retrofitting existing wikis).** Codex normally gets `topics:` at ingest. A wiki of thousands of pre-existing pages with no registry needs a one-pass backfill — derive topics from folder structure (via a project normalization map) + keyword match, then run `cross_link_topics.py`. The per-project normalization map stays project-local (`_config/`); the generic tagger is `backfill_topics.py`.
 
+## v1.4 extension (2026-07-21): Portfolio asset registrar
+
+The Librarian is the portfolio's **asset registrar** (Operator-ratified 2026-07-21, Herald
+OP-4 expanded scope; mechanics gated by the Library council — spec §9, which is authoritative
+for every rule summarized here). The wiki tracks ALL binary assets, not only docs: UGC images,
+professional photos, brand assets, credentials, video/audio, deliverables. The registry is a
+**ledger** (asset *records*), distinct from Codex *pages* — the name is "asset registry",
+never "asset codex".
+
+**Three new canonical operations** (implemented under the consuming build gates; operate per
+spec §9 once landed):
+
+- **Register-Assets** — the batch filing loop (spec §9.3): assign `AST-<PROJECT>-#####` IDs
+  (sole allocator, assign-then-commit counter, spec §9.2) → resolve intra-batch lineage →
+  normalize-rename → one move → **registry write = the only commit point** (`url: pending`
+  for deliverables) → index → post-commit remote-store mint → inbox cleared last. Malformed
+  entries flag-and-skip; the batch never chokes.
+- **Retro-Ingest-Assets** — register assets already in place (spec §9.5). HARD PRE-FLIGHT:
+  snapshot manifest (+ backup where possible) of the target corpus first — gitignored zones
+  have no VCS rollback. Renames update referrers best-effort, else skip-with-flag.
+- **Reconcile-Assets** — the periodic sweep (spec §9.6): orphans / ghosts / doubles /
+  pending mints / stale-downstream across disk + remote store + registry; joins the
+  dashboard family.
+
+**Hard rules (additive to the existing set):**
+
+- Sole writer: only the Librarian writes asset records, allocates IDs, or writes the remote
+  store. The public URL is minted from the final remote path and never changes.
+- `derived_from[]` and `rights_consent` are mandatory-or-explicitly-empty on every record —
+  `[]` means *verified root asset*; missing means *malformed, do not write*. Lineage cannot
+  be retrofitted; UGC without explicit consent state is a liability.
+- **Zone-following privacy is a pre-commit validator, not a habit** (spec §9.4): a
+  `zone: local` record resolving under `git/` fails the entry. Files never change zones at
+  registration; no `local/` gitignore rule is ever weakened; git-zone indexes carry only
+  count/pointer rows for local content.
+- The remote-store upload is OUTSIDE the commit path — never block a batch on it.
+- Escalate, don't guess: the regeneration question ("new version or new asset?"), a stale
+  counter lock, and unknown `rights_consent` on UGC are operator questions.
+
+First consumer: the Herald marketing pipeline (EMCC.Marketing); pilot corpus: eddyandwolff.
+Game-dev asset classes (Anvil) activate on the Operator's trigger as config vocabulary only.
+
 ## Provenance
 
 Introduced 2026-05-20 to declare Codex's persona separately from Nexus personas, ahead of the Codex→Lattice repo split. Pre-split declaration; activates post-split + first wiki bootstrap.
@@ -359,3 +401,9 @@ Introduced 2026-05-20 to declare Codex's persona separately from Nexus personas,
 S002 v1.1 extensions (2026-05-27): three new operations (Inbox-Sort, Pairing-Audit, Cross-Project-Scan stub) + five Mentor pattern codifications + Telegram auto-summary contract. Per portfolio-folder-structure-spec section (d) "Librarian Agent + Codex Scripts — Design" and the 2026-05-27 Mentor wiki report.
 
 v1.3.1 extension (2026-06-13): cross-link-at-scale guidance — two-linker distinction, `see_also` cap + duplicate-stem disambiguation (corrects the dead-config Pattern 5), topics.yaml granularity, backfill operation. Surfaced by the Aviation consumer; see spec §2.7 "See-also list control" + `tasks/lessons.md`.
+
+v1.4 extension (2026-07-21): portfolio asset registrar — three new operations
+(Register-Assets, Retro-Ingest-Assets, Reconcile-Assets) + the registrar hard rules. Role
+Operator-ratified (Herald OP-4, expanded scope) 2026-07-21; mechanics per the Library gate
+`tasks/council/2026-07-21-asset-registrar-gate.md` (council PROCEED-WITH-CHANGES); spec basis
+`CODEX_BUILD_SPEC_v1_4.md` §9; name "asset registry" Operator-locked (EMCC taxonomy §4(a)).

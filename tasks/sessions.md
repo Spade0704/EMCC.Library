@@ -1,6 +1,86 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-07-21 (third pass) — asset-registry v1.4 CORE built through the full gate chain
+
+Operator directive: complete the Marketing module — this is its Library-side P1 dependency.
+Chain: Delta Force PROCEED-WITH-CHANGES (7 changes;
+`EMCC.DFDU/tasks/delta-force/2026-07-21-library-asset-registry-core.md`) → directive
+`dir-20260721-library-asset-registry-core` → Lattice builder (sole coder) → commit `c87f323`
+(`asset_registry.py` ~1,000 lines + config + 43 tests + sync-exclusion) → executes-clean 917
+tests OK (skipped=7; 874 baseline intact) + CLI smoke → **Regime B Auditor: concerns-proceed**
+(`tasks/audits/2026-07-21-asset-registry-core-auditor.md`; W1 late representability refusal →
+pre-pass fix queued; W2 missing newline test) → cert drop
+`0-Inbox/grok-audit/2026-07-21-asset-registry-core.md` (validator PASS; **Grok slot OPEN**).
+Deferred per gate (spec-conformant §9.5/§9.6): retro_ingest + reconcile v0 (+ W1/W2 fixes).
+Spec-amendment candidates escalated to the Operator: registry-derived allocation,
+multi-machine/git ID-collision handling, stateless ID schemes.
+
+## 2026-07-21 (second pass, new room) — Library gate RUN on the v1.1 asset-registrar proposal: council PROCEED-WITH-CHANGES
+
+Director session (remote, `claude/herald-marketing-publish-ru4szs`; branch carries the merged
+`claude/marketing-module-emcc-suy6e5` state). Ran the Level-2+ gate the v1.1 proposal asked for
+(= Herald OP-4 mechanics): full 5-advisor LLM Council (all seats + chairman on Fable 5,
+independent analysis → anonymous peer review → synthesis). **Verdict: PROCEED-WITH-CHANGES**,
+transcript at `tasks/council/2026-07-21-asset-registrar-gate.md`.
+
+- **Accepted:** asset-record store class + schema (lineage `derived_from[]`/`recipe` +
+  `rights/consent` mandatory-or-explicitly-empty — the non-retrofittable core); the Herald
+  filing loop; R2 writer as an R_ARCH-style carve-out plug-in; **spec bump v1.4** (unanimous);
+  **name "asset registry"** (4–1; record-vs-page distinction wins — Operator to ratify).
+- **Structural change (council's sharpest finding):** as proposed, the R2 write sat BEFORE the
+  commit point, contradicting the carve-out's log-and-degrade framing — the R2 step becomes
+  skippable-with-flag (`url: pending`, mint later) so the codex write stays the sole commit
+  point. SigV4-vs-SDK deferred to the build gate (OP-5 blocks R2 anyway).
+- **Review-caught blind spots, now gate conditions:** AST-##### ID-allocation mechanics must be
+  specified in-gate (collision-safe across repos/concurrent sessions, crash-safe
+  assign-then-commit — flagged by 4 of 5 reviewers, as non-retrofittable as lineage);
+  zone-following privacy = pre-commit-point validator, not prose; pre-flight `local/` snapshot
+  before retro-ingestion (gitignored corpus has no rollback); renames = skip-with-flag +
+  reconciliation sweep, never claimed atomic.
+- **Next:** author the Codex v1.4 amendment per the verdict (Level-2+ Lattice: Architect plan +
+  Regime B Auditor), then the eddyandwolff ~20-asset pilot simulation. Operator residuals:
+  ratify the "asset registry" name; OP-5 R2/credential setup. Todo updated (gate item ticked;
+  v1.4-amendment item added).
+
+**SAME SESSION, LATER — name ratified + v1.4 amendment SHIPPED (Lattice cycle closed):**
+- Operator ratified **"asset registry"** (recorded EMCC taxonomy §4(a)) → amendment unblocked
+  and authored: `CODEX_BUILD_SPEC_v1_4.md` (supersedes v1_3, which keeps a deprecation banner;
+  purely additive §9 Asset Registry) + `CODEX_LIBRARIAN.md` v1.4 extension (Register-Assets /
+  Retro-Ingest-Assets / Reconcile-Assets + registrar hard rules) + drop-in regenerated +
+  current-spec pointers swept (CLAUDE.md / Index.md / Home.md router row; historical §-cites
+  deliberately untouched — v1.4 changes no pre-existing section). Commit `5181b35`.
+- **Executes-clean evidence:** `python3 -m unittest discover -s tests -t .` → 874 tests OK
+  (skipped=7); `generate_persona_dropin.py --check` → in sync (run pre-commit AND re-run by the
+  Auditor AND re-run after the fix-on-top pass).
+- **Regime B audit (independent persona Auditor): verdict `concerns` (proceed)** —
+  `tasks/audits/2026-07-21-codex-v1.4-asset-registry-audit.md`. All 7 gate conditions verified
+  met with line cites; additivity verified mechanically; both warning findings **fixed on top**
+  (recipe added to the malformed-record clause with explicit-empty forms; stale v1.3 footer
+  string corrected).
+- **Next:** the eddyandwolff pilot is **blocked-out-of-room** (repo not in this session's
+  sources) — queued on todo for a room that has it. Merge boundary: PR #68 (human-at-merge).
+
+## 2026-07-21 — Inbound proposal drop: Librarian marketing extension (EMCC.Marketing build start; Director session, additive-only)
+
+**Not a Librarian working session** — the EMCC Director session standing up `EMCC.Marketing` (Herald v0.3 synthesis, loop contract `EMCC/Biz.Automation/LOOP-DEFINITION-marketing-module-build.md`) dropped **one untracked proposal doc** into this repo's triage zone: `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md`. Zero Library canon touched (propose-not-dispose, Principle #11).
+
+**Content:** the Operator ruled 2026-07-21 that Herald asset cataloging is **Librarian-owned** → the drop carries (a) a 7-capability gap audit of the current Librarian role vs the Herald-assigned role (**5 absent** — scheduled/watch ingestion across `0-Inbox/*` (= the P2-2 seam), stable asset IDs, R2 writes + public-URL minting, asset lineage codex, auto-rename; **2 partial** — binary-media hygiene (`audit_assets.py` only), reconciliation (doc-pairing only)); and (b) a 6-item proposed Codex extension scope (asset-codex store class, crash-safe filing loop, R2 writer w/ the stdlib-vs-SDK question pre-asked, generalized scheduled ingestion, asset reconciliation sweeps, persona/spec text bumps). **Disposition: gates through Library's own Level-2+ process (Herald OP-4)** — with a council-added fallback on the Marketing side (Library rejects/trims → Chronicler-interim owns the registry; Herald never blocks on this repo). Cross-refs: `EMCC.Marketing/documents/herald/emcc-marketing-spec.md` §D C3/C9 + `EMCC/tasks/council/2026-07-21-marketing-synthesis.md`.
+
+**Delivery:** `1 proposal doc -> 0-Inbox/ (untracked -> committed on claude/marketing-module-emcc-suy6e5) -> awaits Librarian triage + the Library gate`. No other file in this repo changed.
+
+**Same-day v1.1 addendum (Operator ratification):** JP approved OP-4 to proceed AND **expanded
+the scope portfolio-wide** — the Librarian becomes the portfolio's **asset registrar** for ALL
+asset classes (UGC images, professional photos, logos, certificates/badges, video), not only
+marketing deliverables: stable IDs, tags, normalized filenames, metadata pages; the wiki tracks
+all assets, not just docs. New elements in v1.1: the zone-following privacy rule (metadata lives
+in the asset's zone; `local/` files never surface in `git/`), a retro-ingestion mode (document
+assets already in place without moving them), and the Operator-named **pilot corpus:
+eddyandwolff** (UGC in `wiki.eddyandwolff/local/` + professional dish/location photos +
+logos/certificates). Roster note: the Marketing-side fallback interim owner is now **Publicist**
+(the roster was ratified the same day — Publicist main agent; Chronicler superseded). The Library
+gate still rules the mechanics; direction is Operator-ratified.
+
 ## 2026-07-10 — Portfolio 0-Inbox ingest sweep (11 repos, Director directive) + operator-ordered merge close
 
 **Librarian-of-record handoff.** Fresh Librarian room; Director (`rqzc7uhl`) confirmed this session supersedes three dead/stray prior Library peers (ys8upo3o zombie, 9o00lunt stray, eektyot1 ACK-then-stall). Standing gate noted: Sammie UGC ingest remains OPERATOR-GATED (not started).

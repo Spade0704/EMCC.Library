@@ -124,6 +124,14 @@ CODEX_LIBRARIAN_FILE = "CODEX_LIBRARIAN.md"
 # is metadata ABOUT the kit, not kit content (underscore dirs read as kit).
 SYNC_STAMP_FILE = "SYNC-STAMP.json"
 
+# Asset-registry module EXCLUDED from propagation this build (Delta Force gate
+# EMCC.DFDU/tasks/delta-force/2026-07-21-library-asset-registry-core.md,
+# chairman change 4: explicit wiring decision later). The `_scripts/` lane
+# copies wholesale and `_config/` merges per-file, so without these exclusions
+# the module would ship to every consumer on next sync.
+SYNC_EXCLUDED_SCRIPTS = ("asset_registry.py",)
+SYNC_EXCLUDED_CONFIG = ("asset_registry.yaml",)
+
 
 class Action(NamedTuple):
     kind: str  # 'OVERWRITE' | 'MERGE-NEW' | 'SKIP'
@@ -261,6 +269,8 @@ def _build_plan(library: Path, consumer: Path, consumer_name: str) -> List[Actio
         for src in sorted(src_root.iterdir()):
             if not src.is_file():
                 continue
+            if class_dir == CONFIG_DIR and src.name in SYNC_EXCLUDED_CONFIG:
+                continue  # asset-registry exclusion (gate change 4)
             target_rel = "Biz.Automation/wikisys.{}/{}/{}".format(consumer_name, class_dir, src.name)
             target_abs = consumer_wikisys / class_dir / src.name
             kind = "SKIP" if target_abs.exists() else "MERGE-NEW"
@@ -298,7 +308,7 @@ def _apply_action(action: Action) -> None:
         shutil.copytree(
             action.source_abs,
             action.target_abs,
-            ignore=shutil.ignore_patterns("__pycache__"),
+            ignore=shutil.ignore_patterns("__pycache__", *SYNC_EXCLUDED_SCRIPTS),
         )
         _wipe_pycache(action.target_abs)
     else:
