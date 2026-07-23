@@ -1,6 +1,6 @@
-# Librarian asset-registry extension — gap report + Codex extension proposal (v1.1)
+# Librarian asset-registry extension — gap report + Codex extension proposal (v1.2)
 
-> **Status: PROPOSAL v1.1 (propose-not-dispose, Principle #11 respected — NO Library canon file is
+> **Status: PROPOSAL v1.2 (propose-not-dispose, Principle #11 respected — NO Library canon file is
 > edited by this drop).** Authored 2026-07-21 by the EMCC Director session during the
 > EMCC.Marketing module stand-up (loop contract:
 > `EMCC/Biz.Automation/LOOP-DEFINITION-marketing-module-build.md`).
@@ -9,6 +9,13 @@
 > portfolio's **asset registrar** for ANY asset, not only marketing-produced ones (see §2b). The
 > wiki is not just framework/spec/documentation — it **tracks all the assets**. Library's own
 > Level-2+ gate still rules on the mechanics.
+> **v1.2 (2026-07-23): GAME/ANVIL SCOPE ACTIVATED (Operator ruling, Iron Soul asset-creation-loop
+> session).** The §2b "Flagged FUTURE consumer — Anvil (DEFERRED)" TODO is flipped ON: the
+> Operator has started on the game track, and the Library gate now rules on a registry covering
+> **Scoria production assets AND game assets** (sprite / identity / frame-set / audio classes) in
+> ONE schema — see §2c. Iron Soul asset creation becomes the second named consumer (after the
+> Herald marketing codex). Council transcript for the gate:
+> `EMCC/tasks/council/2026-07-23-asset-registry-scope.md`.
 > **Ask:** Library runs its own Level-2+ gate (council + Lattice Regime B) on this scope and, if
 > accepted, lands it as a Codex spec amendment (v1.3 → v1.4 or v2.0 per the spec-change rules).
 > **Why Library:** the Operator ruled 2026-07-21 that asset cataloging for the Herald protocol
@@ -82,7 +89,8 @@ INSTANCE of this general asset registry — same store class, same filing loop, 
 reconciliation; marketing deliverables are the only class that additionally takes the R2
 public-URL step and the certification/ratification block.
 
-**Flagged FUTURE consumer — Anvil (DEFERRED; Operator 2026-07-21):** the **Anvil** game engine
+**Flagged FUTURE consumer — Anvil (~~DEFERRED; Operator 2026-07-21~~ → ACTIVATED 2026-07-23, see
+§2c below):** the **Anvil** game engine
 (`spade0704/iron-soul-anvil` — agent-native multi-genre TypeScript engine, used by Iron Soul's
 game work and intended for other game-dev projects) creates its assets via **Grok Imagine**
 (`image_gen` new identities / `image_edit` pose+variant frames / `image_to_video` cinematics —
@@ -90,11 +98,40 @@ game work and intended for other game-dev projects) creates its assets via **Gro
 contract: `anvil/docs/design/09_ASSETS_AND_MEDIA.md`; hard rule: no image-generation APIs inside
 Anvil). That division of labor is exactly this registry's shape: generators create, the
 **Librarian registers** — stable IDs, tags, lineage (`derived_from` across identity → pose/variant
-frames → cinematic), recipe/provenance (Grok Imagine job + prompt), filing + metadata. **Do NOT
+frames → cinematic), recipe/provenance (Grok Imagine job + prompt), filing + metadata. ~~**Do NOT
 scope Anvil into the gate now** — the Operator flagged it as a TODO to be activated **when he
 starts working on Anvil** (the engine's M10/M11 authoring integration is still landing). Design
 consequence today: keep the registry's `asset_class` vocabulary and store class game-dev-extensible
-(sprites / audio / identities / frame-sets), nothing more.
+(sprites / audio / identities / frame-sets), nothing more.~~ **SUPERSEDED by v1.2 §2c — the
+activation condition fired 2026-07-23 (the Operator started the game asset-creation track).**
+
+## 2c. v1.2 — GAME/ANVIL SCOPE ACTIVATED (Operator ruling, 2026-07-23)
+
+The §2b deferral's stated activation condition — "when he starts working on Anvil" — fired: the
+Operator validated a loop-driven asset-creation pipeline for Iron Soul / Planet Scoria Prime / the
+Anvil autobattler (decision record:
+`Iron_Soul/0-Inbox/Iron_Soul_Asset_Creation_Loop_Summary_v0_1.md`; formal loop contract:
+`Iron_Soul/Biz.Automation/LOOP-DEFINITION-asset-creation.md` DRAFT v0.1) and ruled the registry's
+game scope IN for the Library gate.
+
+**What enters the gate's scope (beyond v1.1):**
+- **Game-dev asset classes** join the `asset_class` vocabulary as first-class (not just
+  "extensible"): `sprite` · `identity` (character/MAP reference identity) · `frame-set`
+  (pose/variant frames) · `game-audio` — alongside the v1.1 classes (ugc / professional-photo /
+  brand / credential / deliverable).
+- **Lineage examples extended** to the generation-pipeline shape: identity → pose/variant frames →
+  cinematic, with `recipe`/provenance = the generation job + prompt (Grok Imagine job for final
+  game assets; Higgsfield job for ingredient/reference assets — per the Operator's 2026-07-23
+  hybrid tooling ruling recorded in `Iron_Soul/tasks/todo.md`).
+- **Second named consumer:** Iron Soul asset creation (the loop above) — the Herald marketing
+  codex remains the FIRST instance; the loop's registration contract explicitly targets this
+  registry *only once the gate lands it* (interim truth stays `maps_index.json`).
+
+**What does NOT change:** one schema, one store class, one filing loop — the v1.1 generalized
+design already anticipated this (its "game-dev-extensible" consequence); v1.2 promotes it from
+design headroom to gated scope. The division of labor holds: **generators create, the Librarian
+registers.** No R2/credential work is added by this bump (still OP-5 / Operator items); no
+implementation in this drop (scope + gate only).
 
 ## 2. Proposed Codex extension scope (what Library's gate should rule on)
 
@@ -137,6 +174,10 @@ consequence today: keep the registry's `asset_class` vocabulary and store class 
 
 - Herald P1 (first renders) is the consumer deadline; until this lands, the Herald spec forbids
   building against these capabilities as if they exist (`EMCC.Marketing/CLAUDE.md` Module wiring).
+- (v1.2) Iron Soul's asset-creation loop is the second consumer; its loop contract carries the
+  same "do not build against the registry as if it exists" fence and runs on `maps_index.json`
+  until this gate lands — so the loop can start (once its own asset-audit gate clears) without
+  waiting on the registry; a one-time retro-registration pass migrates existing rows later.
 - Depends on: OP-4 (this gate), OP-5 (R2 + credential store), the roster lock (C1 — determines
   which Marketing-side agent hands off to the Librarian).
 - Cross-refs: Herald spec §D C3/C9, `herald-creation-framework.md` (the filing-loop canon),
