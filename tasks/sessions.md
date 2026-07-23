@@ -1,6 +1,23 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-07-23 — game/Anvil scope ACTIVATED (proposal v1.2) + game-scope gate PROCEED
+
+Operator ruling (Iron Soul asset-creation-loop session): the §2b Anvil/game deferral's activation
+condition fired — game-dev asset classes (sprite / identity / frame-set / game-audio) enter the
+registry's gated scope; Iron Soul's asset-creation loop becomes the second named consumer.
+Proposal bumped v1.1 → v1.2 (0-Inbox doc; includes a RECONCILIATION NOTE — the doc's "gate still
+pending" framing was stale vs. this todo: v1.4 §9 has been canon since 2026-07-21 with the core
+built; only the game scope was deferred). Council gate on the game-scope activation RAN:
+**PROCEED at v1.2 scope** — transcript `EMCC/tasks/council/2026-07-23-asset-registry-scope.md`,
+verdict + rulings recorded in the proposal's gate-verdict block. Key outputs: Q4 game-class
+schema amendments required pre-implementation (frame-set grouping/ordering; typed recipe +
+`tool_version`; capture-at-generation-time); Q3 adds two mechanical checks (pointer-row leak
+lint; zone-anomaly sweep); Q1 adds the 30-min stdlib-R2 spike; naming already locked ("asset
+registry", concur 4-1). FLAGGED to Operator: amendment class (v1.5-additive per the 2026-07-21
+precedent vs. the new council's v2.0 call) + deletion/takedown policy vs. URL permanence + OP-5
+critical-path ownership. New todo item added below. No implementation this session (scope + gate
+only). Branch `claude/game-asset-generation-workflow-3l30ls`, draft PR, human-at-merge.
 ## 2026-07-21 (third pass) — asset-registry v1.4 CORE built through the full gate chain
 
 Operator directive: complete the Marketing module — this is its Library-side P1 dependency.

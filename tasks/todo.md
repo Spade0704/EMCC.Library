@@ -4,6 +4,32 @@
 >
 > **Archived 2026-06-16:** all DONE/shipped sprint items (relpath resolver `93fe81d`; readiness cascades dir-ii/hh/jj + dir-20260614n; Codex v1.3.1 cross-link; boilerplate split + stubs; M-A structural Sync; verbatim-only policy `d2c7667`; lifted tat_app patterns; S001/S002/S004 + Post-S002/S004 closures; etc.) plus the stale TestSyncStamp cleanup → see `tasks/archive.md` (§ Archived 2026-06-16).
 
+## Inbound gate item (2026-07-23) — game-scope activation
+
+- [x] **🔴 Asset-registry GAME/ANVIL scope — gate run (2026-07-23): council PROCEED at proposal
+  v1.2 scope.** Operator activated the §2b deferral (Iron Soul asset-creation loop = second
+  consumer); transcript `EMCC/tasks/council/2026-07-23-asset-registry-scope.md`; verdict block in
+  `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` (v1.2). Rulings layer on the
+  2026-07-21 v1.4 verdict (consistent on R2 carve-out, naming, zone validator).
+- [ ] **🔴 Author the game-class spec amendment per the 2026-07-23 gate** (BEFORE any game-class
+  implementation): (a) frame-set grouping/ordering semantics in the lineage model; (b) recipe as
+  a first-class typed object incl. `tool_version`; (c) capture-at-generation-time rule
+  (lineage populated-or-explicitly-null-with-reason, incl. interim `maps_index.json` rows at
+  retro-registration); (d) game-dev `asset_class` values (sprite / identity / frame-set /
+  game-audio). **Amendment class = OPERATOR CALL (flagged conflict):** v1.5 if additive (per the
+  unanimous 2026-07-21 "v2.0 = breaking only" precedent) vs. the 2026-07-23 council's v2.0 call.
+  Precondition: the two-chain paper walk (eddyandwolff cert flat + Iron Soul
+  identity→frames→cinematic deep, real prompt as recipe) — its output confirms or widens (a)–(c).
+- [ ] **🟡 R2 empirical spike (30 min, per gate Q1):** upload one real file to R2 with the
+  stdlib-only sigv4 adapter → settles ugly-vs-untenable with evidence. Blocked on OP-5
+  (credentials — Operator).
+- [ ] **🟡 Two Q3 mechanical checks** join the validator/sweep family: public pointer-row leak
+  lint + zone-anomaly hunt in the reconciliation sweep (sweeps never delete; orphans quarantined).
+- [ ] **⚪ OPERATOR — deletion/takedown policy vs. URL permanence** (new open item from the gate:
+  pilot corpus holds UGC/certs/personal photos; "immutable public URL" has no unpublish story).
+- [ ] **⚪ OPERATOR — OP-5 R2 provisioning owner + trigger** sequenced against Herald P1 (gate
+  flagged it as an unowned critical-path item).
+
 ## Inbound gate item (2026-07-21)
 
 - [x] **🔴 Portfolio asset-registry extension (v1.1) — run the Library gate.** `Gate run`

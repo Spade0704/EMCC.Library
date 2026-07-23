@@ -18,6 +18,40 @@
 > `EMCC/tasks/council/2026-07-23-asset-registry-scope.md`.
 > **Ask:** Library runs its own Level-2+ gate (council + Lattice Regime B) on this scope and, if
 > accepted, lands it as a Codex spec amendment (v1.3 → v1.4 or v2.0 per the spec-change rules).
+> **RECONCILIATION NOTE (v1.2, 2026-07-23):** this doc's v1.0/v1.1 framing ("gate still rules on
+> the mechanics") is STALE — the Library gate on the v1.1 generalized scope RAN 2026-07-21
+> (second pass, transcript `tasks/council/2026-07-21-asset-registrar-gate.md`, verdict
+> PROCEED-WITH-CHANGES): the **Codex v1.4 amendment is canon** (`CODEX_BUILD_SPEC_v1_4.md` §9
+> Asset Registry; name **"asset registry" Operator-locked** in-spec), and the v1.4 CORE is BUILT
+> (`_scripts/asset_registry.py`, Auditor concerns-proceed; Grok cert slot + OP-5/R2 still open —
+> see `tasks/todo.md`). What the prior gate explicitly kept OUT was the game/Anvil scope
+> ("vocabulary-extensible, zero code now"). **This v1.2 bump + the 2026-07-23 gate cover exactly
+> that remainder.**
+> **GATE VERDICT — GAME-SCOPE ACTIVATION (council run 2026-07-23 — transcript
+> `EMCC/tasks/council/2026-07-23-asset-registry-scope.md`): PROCEED at v1.2 scope** (game classes
+> as schema-forcing test cases; Iron Soul fenced on `maps_index.json` until the registrar service
+> is operational). Rulings, reconciled against the 2026-07-21 verdict:
+> **Q1** R2 writes — consistent with the prior carve-out ruling; adds the empirical spike (30-min:
+> upload one real file to R2 stdlib-only; if untenable, the seam permits SDK/CLI inside the
+> adapter only). **Q2** naming — council concurs 4-1 with the ALREADY-LOCKED "asset registry"
+> (spec §9); no action. **Q3** zone rules — sufficient ONLY WITH two named mechanical checks
+> layered on the v1.4 pre-commit zone validator: a public pointer-row leak lint + a zone-anomaly
+> hunt in the reconciliation sweep; sweeps never delete — orphans quarantined. **Q4** lineage —
+> NOT adequate for the game shape as drafted: amend before game-class implementation: (a)
+> frame-set grouping/ordering semantics (ordered, grouped derivations — a flat `derived_from[]`
+> can't express them); (b) recipe as a first-class typed object incl. `tool_version`; (c)
+> capture-at-generation-time rule (no asset registers without lineage
+> populated-or-explicitly-null-with-reason, incl. the interim `maps_index.json` rows at
+> retro-registration). **Amendment class — FLAGGED CONFLICT, Operator to rule:** the 2026-07-23
+> council called this v2.0 territory; the 2026-07-21 gate unanimously reserved v2.0 for changes
+> that break existing consumers (v1.4 precedent). If (a)–(c) land additively, the precedent says
+> **v1.5**; if frame-set semantics force a breaking lineage-model change, v2.0. Flag, don't
+> silently resolve. Pre-implementation obligations: the two-chain paper walk (eddyandwolff cert
+> flat case + Iron Soul identity→frames→cinematic deep case) + the R2 spike. **New Operator open
+> items:** (1) deletion/takedown policy vs. URL permanence (pilot corpus holds UGC/certs/personal
+> photos); (2) OP-5 R2 credential provisioning is on the critical path — needs owner + trigger
+> sequenced against Herald P1. Lattice Regime B (Auditor) still applies at the implementation
+> build, per framework/22.
 > **Why Library:** the Operator ruled 2026-07-21 that asset cataloging for the Herald protocol
 > (EMCC.Marketing) is **Librarian-owned** — stable IDs, filing, renames, the asset codex with
 > lineage, Cloudflare R2 writes + public-URL minting, and the generalized inbox ingestion service
