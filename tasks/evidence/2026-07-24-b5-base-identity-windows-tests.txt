@@ -1,0 +1,13 @@
+# B5 Windows executes-clean evidence — §9.10 base-identity binding + style-bible
+# host: Windows 11 / Python 3.13.14
+# branch feat/visual-evidence-ingest @ committed 8f9f555
+# stack: 4763b0a fsync#70 -> 25eb936 schema#71 -> ec5960c B3+B4 -> HEAD B5
+# cmd: python -m unittest discover -s tests -t .
+
+## new visual-evidence suite (targeted)
+Ran 39 tests in 0.046s
+OK
+
+## full suite
+Ran 956 tests in 17.417s
+OK (skipped=6)
