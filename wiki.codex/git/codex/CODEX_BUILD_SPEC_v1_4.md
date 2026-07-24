@@ -947,6 +947,34 @@ structurally + records the attestation (matches the v0.1 check-6 disposition —
 legal validator in v0.1). Game asset classes (`sprite`/`base-identity`/`pose-anim-frame`/
 `audio-cue`) were added to `_config/asset_registry.yaml` per §9.8 in B3.
 
+### 9.10 Base-identity binding + style-bible conformance (v0.1)
+
+The **base-identity registry** is the crown jewel — "locked names for pixels."
+A base identity is just a registered asset of class `base-identity` (§9.1 record,
+its own `AST-<PROJECT>-#####`). Derived frames (sprites / pose-anim frames)
+declare `base_asset_ref: {ast_id, path, sha256}` in their sidecar and thereby
+BIND to that approved base.
+
+**Registry-side binding validation** (stdlib, `validate_visual_evidence.py`):
+given a frame whose `base_asset_ref` names an `ast_id`, the validator
+- resolves the `ast_id` to a registered record (scans both zones' `_registry/`);
+- asserts that record's `asset_class` is `base-identity`;
+- re-hashes the base asset on disk (the record's `path`, under the wiki root) and
+  requires it to equal the frame's declared `base_asset_ref.sha256` — the frame
+  provably declares the same base bytes the registry holds.
+
+`fresh-gen` (string) and a null `ast_id` (pending backfill) carry no binding to
+assert. **Perceptual-hash distance** — the gross-mismatch FAIL the council named —
+is *recorded evidence produced by Anvil's pixel floor*, not computed registry-side
+(no image tooling in the stdlib registry; §9.10 / v0.1).
+
+**Style-bible conformance:** the registry validates that the declared
+`style_bible_ref.path` RESOLVES (exists under the bible root; `commit_sha` presence
+is schema-required). The **palette-subset diff** (check-4) is pixel work owned by
+Anvil `--strict-assets`; the registry asserts the reference is well-formed and
+resolvable and records the attestation. Same one-schema / two-validator split as
+§9.9: the registry proves what records + bytes can prove; Anvil proves pixels.
+
 ---
 
 
