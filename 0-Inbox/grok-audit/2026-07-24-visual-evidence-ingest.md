@@ -7,10 +7,10 @@ director_id: director:EMCC
 directive_ref: dir-20260724-library-visual-evidence-ingest
 slug: 2026-07-24-visual-evidence-ingest
 attempt: 1
-status: pending
+status: done
 phase: build
 created_at: 2026-07-24T06:25:00Z
-updated_at: 2026-07-24T06:45:00Z
+updated_at: 2026-07-24T10:45:00Z
 target_repo: D:/Projects/Enterprise Matrix/EMCC.Library
 range: 25eb936a887ea133bd35fe973a135756a36bfecb..616c9cb
 base: 25eb936a887ea133bd35fe973a135756a36bfecb
@@ -19,6 +19,8 @@ proposal: wiki.codex/git/codex/CODEX_BUILD_SPEC_v1_4.md §9.9 + §9.10 + council
 auditor_verdict: PASS
 auditor_ref: tasks/audits/2026-07-24-visual-evidence-ingest-auditor.md + tasks/audits/2026-07-24-b5-base-identity-auditor.md
 evidence_ref: tasks/evidence/2026-07-24-visual-evidence-ingest-windows-tests.txt + tasks/evidence/2026-07-24-b5-base-identity-windows-tests.txt
+verdict: PASS
+verdict_ref: tasks/audits/2026-07-24-visual-evidence-ingest-grok-cert.md
 cert_class: cross-model-certified
 certifier_model: grok
 builder_model: lattice
