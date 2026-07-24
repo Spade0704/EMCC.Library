@@ -927,16 +927,25 @@ PASS* (what bytes can prove) + a *named human ACCEPTED* (a record, not a cert).
 `style_bible_commit_sha` (recipe values must be scalars — a nested object is 3-level, refused
 by `parse_config_yaml`); `base_asset_ref`→`derived_from` (fresh-gen→`[]`; object→resolve
 `ast_id`, backfilled on base-identity registration). `style_tokens_declared` (palette LIST) and
-`aesthetic_signoff` (nested) are **sidecar-only** — the record points at the sidecar by
-`visual_evidence_ref: {path, sha256}`.
+`aesthetic_signoff` (nested) are **sidecar-only** — the record points at the sidecar via the
+`recipe:` scalars `visual_evidence_path` + `visual_evidence_sha256`.
 
-**Record-side additions + validator land in B4** (this subsection lands the canonical schema
-artifact only — B2). B4: add `sha256` (asset content-hash) + `visual_evidence_ref` to the §9.1
-record; ship `validate_visual_evidence.py` (stdlib walker over the schema + checks 1–6 + R1/R2;
-check-6 legal/likeness screen is Anvil-side mechanical + human-attested per the v0.1 disposition
-— the registry records the attestation, no registry-side legal validator in v0.1). Game asset
-classes (`sprite`/`base-identity`/`pose-anim-frame`/`audio-cue`) are added to
-`_config/asset_registry.yaml` per §9.8 (Operator-triggered vocabulary addition) in B3.
+**No RECORD_FIELDS change.** `recipe:` is a freeform scalar mapping (`{}` = no generation data),
+so the whole sidecar folds into the EXISTING §9.1 record with no schema-field addition: the
+provenance scalars + `visual_evidence_path` + `visual_evidence_sha256` (pointer to the sidecar)
++ the asset's own `sha256` all ride `recipe:`; `base_asset_ref` rides `derived_from`. This keeps
+the field-for-field-diffed §9.1 schema and its suite stable.
+
+**Validator lands in B4** (this subsection lands the canonical schema artifact only — B2). B4
+ships `validate_visual_evidence.py`: a stdlib walker over the schema (type incl. unions /
+required / enum / nested objects / arrays) + rules **R1**/**R2** + the two registry-side
+mechanical checks it can do stdlib-only — **check-1** (re-hash the asset on disk, compare
+`sha256`) and **check-3** (path-binding: the `asset_path` must exist). **Checks 2/4/6**
+(format+dimensions on-disk, palette-subset, legal/likeness) require pixel tooling and are the
+**Anvil `--strict-assets`** floor; the registry validates the DECLARED sidecar values
+structurally + records the attestation (matches the v0.1 check-6 disposition — no registry-side
+legal validator in v0.1). Game asset classes (`sprite`/`base-identity`/`pose-anim-frame`/
+`audio-cue`) were added to `_config/asset_registry.yaml` per §9.8 in B3.
 
 ---
 
