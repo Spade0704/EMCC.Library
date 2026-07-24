@@ -895,6 +895,49 @@ under the consuming project's build gates (Lattice 3.0 / EMCC framework-22) with
 consumer = the Herald marketing pipeline, pilot corpus = eddyandwolff. Anvil/game-dev classes
 activate only on the Operator's trigger, as vocabulary additions.
 
+### 9.9 Visual-evidence sidecar (generated visual assets — v0.1)
+
+Generated visual assets (Grok Imagine sprites / base-identities / pose-anim frames / audio
+cues — the Anvil/game-dev classes activated per §9.8) carry a provenance **sidecar** beside the
+asset: `<asset>.visual-evidence.json`. The sidecar is the portfolio's single **visual-evidence
+standard** — ONE artifact consumed by BOTH the game-build mechanical floor
+(`pnpm anvil test --strict-assets`) AND this §9 registry ingest. Provenance: LLM Council SHIP
+v0.1 (`EMCC/tasks/council/2026-07-24-visual-evidence-standard.md`).
+
+**Canonical schema (single source of truth):**
+`wiki.codex/git/codex/schemas/visual-evidence.schema.json` (JSON-Schema draft-07, stdlib-safe
+subset). Codex §9 **owns** it; iron-soul-anvil (and any future consumer) **vendors** it
+SHA-pinned via Sync and codes its checks against the vendored copy — never a divergent second
+definition.
+
+**Two-leg discipline (honest by construction — never "certified" for visuals):** a *mechanical
+PASS* (what bytes can prove) + a *named human ACCEPTED* (a record, not a cert).
+- `cert_class` is **NOT a sidecar field** — a settable sidecar `cert_class` would let a
+  generator self-declare a pass before any gate runs. It is set POST-facto on the **cert-handoff
+  only**, locked data-side enum `{mechanical-pass-human-aesthetic, mechanical-fail}`;
+  `certified` is BANNED for visuals.
+- Two rules both validators hard-code in CODE (not expressible in the stdlib-safe schema
+  subset): **R1** `base_asset_ref` XOR fresh-gen (string form == `"fresh-gen"`; object form
+  MUST carry `path`+`sha256`; unflagged AND no base = FAIL); **R2** `aesthetic_signoff.name`
+  MUST be non-empty (no name = no pass).
+
+**§9-record mapping (sidecar → §9.1 record):** `asset_path`→`path`; provenance scalars
+(`prompt`/`seed`/`model_id`/`generator`/`generated_at`)→`recipe:` 1:1; `style_bible_ref`
+`{path, commit_sha}` object→flattened to `recipe:` scalars `style_bible_path` +
+`style_bible_commit_sha` (recipe values must be scalars — a nested object is 3-level, refused
+by `parse_config_yaml`); `base_asset_ref`→`derived_from` (fresh-gen→`[]`; object→resolve
+`ast_id`, backfilled on base-identity registration). `style_tokens_declared` (palette LIST) and
+`aesthetic_signoff` (nested) are **sidecar-only** — the record points at the sidecar by
+`visual_evidence_ref: {path, sha256}`.
+
+**Record-side additions + validator land in B4** (this subsection lands the canonical schema
+artifact only — B2). B4: add `sha256` (asset content-hash) + `visual_evidence_ref` to the §9.1
+record; ship `validate_visual_evidence.py` (stdlib walker over the schema + checks 1–6 + R1/R2;
+check-6 legal/likeness screen is Anvil-side mechanical + human-attested per the v0.1 disposition
+— the registry records the attestation, no registry-side legal validator in v0.1). Game asset
+classes (`sprite`/`base-identity`/`pose-anim-frame`/`audio-cue`) are added to
+`_config/asset_registry.yaml` per §9.8 (Operator-triggered vocabulary addition) in B3.
+
 ---
 
 
