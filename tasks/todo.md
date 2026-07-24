@@ -4,6 +4,24 @@
 >
 > **Archived 2026-06-16:** all DONE/shipped sprint items (relpath resolver `93fe81d`; readiness cascades dir-ii/hh/jj + dir-20260614n; Codex v1.3.1 cross-link; boilerplate split + stubs; M-A structural Sync; verbatim-only policy `d2c7667`; lifted tat_app patterns; S001/S002/S004 + Post-S002/S004 closures; etc.) plus the stale TestSyncStamp cleanup → see `tasks/archive.md` (§ Archived 2026-06-16).
 
+## Lane-6 — visual-evidence asset ingest (2026-07-24, Orchestrator cascade)
+
+Whole registry-side asset pipeline stood up this session (framework/22, Windows-mandatory
+executes-clean). Details: `tasks/sessions.md` 2026-07-24 entry.
+
+- [x] **🔴 B1 — fsync fix (`_move_asset` Windows EBADF).** `DUAL PASS` (Auditor + Grok, real
+  Windows). **PR #70** — awaiting operator merge (first in order).
+- [x] **🔴 B2 — shared visual-evidence schema landed in §9 canon** (§9.9; sha256 `8c6eb411…`;
+  Anvil vendors SHA-pinned). **PR #71** — awaiting merge (after #70).
+- [x] **🔴 B3+B4+B5 — registry-side ingest** `validate_visual_evidence.py` (§9.9 walker+R1/R2+
+  checks 1/3+recipe fold; §9.10 base-identity binding + style-bible) + game asset_classes.
+  Auditor Regime-B PASS. **PR #72** (folded, Grok range `25eb936..616c9cb`).
+- [ ] **🟡 Grok Windows cross-check of #72** — `status:pending` handoff on main; on PASS =
+  dual-PASS → merge **#70 → #71 → #72** → Library fully asset-ready (P0c done).
+- [ ] **🟢 Follow-ups (deferred):** CODEX_LIBRARIAN.md persona op for base-identity
+  registration + visual-evidence ingest (+ regen drop-in); B4-info-finding parity already
+  folded; base-identity `ast_id` backfill-on-registration path (design noted in §9.10).
+
 ## Inbound gate item (2026-07-21)
 
 - [x] **🔴 Portfolio asset-registry extension (v1.1) — run the Library gate.** `Gate run`

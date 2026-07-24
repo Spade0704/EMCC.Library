@@ -1,6 +1,36 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-07-24 — Lane-6: whole asset registry stood up (fsync fix + visual-evidence ingest B2–B5)
+
+EMCC Orchestrator cascade (Director `vsaig3uw` over `claude-peers`; Anvil/Iron Soul game-asset
+pipeline dependency, "Lane 6" / P0c). Five gated units this session, framework/22 throughout
+(builder ≠ certifier; **executes-clean MANDATORY ON WINDOWS** — the Linux false-PASS class from
+2026-07-21 is what this beats):
+
+- **B1 — fsync fix (`_move_asset` Windows EBADF).** Root cause: `os.fsync` on a read-only
+  reopened handle → `OSError [Errno 9]` on Windows, RED'd the asset-registry CORE (Grok FAILED
+  `7e7e53c` correctly caught it, superseding false-PASS `3b87e43`). Fix: fsync the WRITABLE
+  mkstemp fd (`os.fdopen(fd,"wb")` + copyfileobj), mirrors `atomic_write_text`. **DUAL PASS** —
+  Auditor Regime-B + Grok both real-Windows (43 OK / 917 full). **PR #70**.
+- **B2 — shared schema landed in §9 canon.** `wiki.codex/git/codex/schemas/visual-evidence.schema.json`
+  (council SHIP v0.1, `EMCC/tasks/council/2026-07-24-visual-evidence-standard.md`). Co-authored
+  with fwojames (iron-soul-anvil `--strict-assets` consumer); Library OWNS it, Anvil vendors
+  SHA-pinned (Director ruling). Content sha256 `8c6eb411…`. Spec §9.9. **PR #71**.
+- **B3–B5 — registry-side ingest (`validate_visual_evidence.py`).** B3 game asset_classes
+  (sprite/base-identity/pose-anim-frame/audio-cue, §9.8). B4 stdlib schema walker + R1/R2 +
+  checks 1/3 + recursive cert_class reject + `sidecar_to_recipe` (recipe-scalar fold, NO
+  RECORD_FIELDS change) — §9.9. B5 base-identity binding (frame→registered base: resolve/class/
+  re-hash) + style-bible resolution — §9.10. Perceptual-hash + palette = Anvil pixel floor
+  (one-schema/two-validator anti-drift split). **Auditor Regime-B PASS** (B4 + B5; B4 hardened
+  per 2 info findings). **PR #72** (folded B3-B5, Grok cert range `25eb936..616c9cb` PENDING).
+
+Merge order **#70 → #71 → #72** → Library fully asset-ready. Honesty note: caught + DISCLOSED a
+reset-soft/working-tree commit race (intermediate commit message claimed hardening its tree
+lacked) — re-committed so artifact == audited code (lesson: [[reset-soft-working-tree-race]]).
+Also: Grok pre-gate needs `directive_ref` resolvable in `orchestrator-log.jsonl` + handoff on
+MAIN (Hermes polls main only) — both directives registered, handoffs on main.
+
 ## 2026-07-21 (third pass) — asset-registry v1.4 CORE built through the full gate chain
 
 Operator directive: complete the Marketing module — this is its Library-side P1 dependency.
