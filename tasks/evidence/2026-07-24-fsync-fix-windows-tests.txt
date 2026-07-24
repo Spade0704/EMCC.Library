@@ -1,0 +1,12 @@
+# Windows executes-clean evidence — fsync-fix (_move_asset EBADF)
+# host: Windows 11 / Python 3.13.14
+# HEAD (pre-commit working tree): 7e7e53cdfddd4ecf1252a689a0b72f58c464b4e7
+# cmd: python -m unittest discover -s tests -t .
+
+## targeted tests.test_asset_registry
+Ran 43 tests in 1.253s
+OK
+
+## full suite
+Ran 917 tests in 17.138s
+OK (skipped=6)
