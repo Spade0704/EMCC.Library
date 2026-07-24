@@ -278,6 +278,102 @@ class TestValidateSidecarAndCli(unittest.TestCase):
             self.assertEqual(vve._cli(["validate", "--sidecar", str(broken)]), 2)
 
 
+def _write_base_record(wiki_root: Path, ast_id: str, asset_class: str,
+                       rel_path: str):
+    """Create a minimal §9.1 base-identity record at git/_registry/<id>.md."""
+    reg = wiki_root / "git" / "_registry"
+    reg.mkdir(parents=True, exist_ok=True)
+    fm = (
+        "---\n"
+        "id: {}\n".format(ast_id) +
+        "asset_class: {}\n".format(asset_class) +
+        "name: base\n"
+        "zone: git\n"
+        "path: {}\n".format(rel_path) +
+        "rights_consent: unknown\n"
+        "derived_from: []\n"
+        "recipe: {}\n"
+        "url: \"\"\n"
+        "---\n"
+        "base record\n"
+    )
+    (reg / "{}.md".format(ast_id)).write_text(fm, encoding="utf-8")
+
+
+def _derived_sidecar(ast_id, base_rel, base_sha):
+    s = _valid_sidecar()
+    s["base_asset_ref"] = {"ast_id": ast_id, "path": base_rel, "sha256": base_sha}
+    return s
+
+
+class TestBaseIdentityBinding(unittest.TestCase):
+    def test_fresh_gen_needs_no_binding(self):
+        with tempfile.TemporaryDirectory() as td:
+            self.assertEqual(
+                vve.check_base_identity_binding(_valid_sidecar(), Path(td)), [])
+
+    def test_null_ast_id_is_pending_no_binding(self):
+        with tempfile.TemporaryDirectory() as td:
+            s = _valid_sidecar()
+            s["base_asset_ref"] = {"ast_id": None, "path": "p", "sha256": "a" * 64}
+            self.assertEqual(vve.check_base_identity_binding(s, Path(td)), [])
+
+    def test_registered_base_matching_sha_passes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            base_rel = "assets/base/marauder.png"
+            base = root / base_rel
+            base.parent.mkdir(parents=True, exist_ok=True)
+            base.write_bytes(b"BASEBYTES")
+            sha = hashlib.sha256(b"BASEBYTES").hexdigest()
+            _write_base_record(root, "AST-IRONSOUL-00001", "base-identity", base_rel)
+            s = _derived_sidecar("AST-IRONSOUL-00001", base_rel, sha)
+            self.assertEqual(vve.check_base_identity_binding(s, root), [])
+
+    def test_unregistered_ast_id_fails(self):
+        with tempfile.TemporaryDirectory() as td:
+            s = _derived_sidecar("AST-IRONSOUL-99999", "p", "a" * 64)
+            errs = vve.check_base_identity_binding(s, Path(td))
+            self.assertTrue(any("not registered" in e for e in errs))
+
+    def test_wrong_class_fails(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            base_rel = "assets/x.png"
+            (root / base_rel).parent.mkdir(parents=True, exist_ok=True)
+            (root / base_rel).write_bytes(b"X")
+            _write_base_record(root, "AST-IRONSOUL-00002", "sprite", base_rel)
+            s = _derived_sidecar("AST-IRONSOUL-00002", base_rel,
+                                 hashlib.sha256(b"X").hexdigest())
+            errs = vve.check_base_identity_binding(s, root)
+            self.assertTrue(any("not 'base-identity'" in e for e in errs))
+
+    def test_sha_mismatch_with_registered_base_fails(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            base_rel = "assets/base/m.png"
+            (root / base_rel).parent.mkdir(parents=True, exist_ok=True)
+            (root / base_rel).write_bytes(b"REALBASE")
+            _write_base_record(root, "AST-IRONSOUL-00003", "base-identity", base_rel)
+            # frame declares a DIFFERENT base sha
+            s = _derived_sidecar("AST-IRONSOUL-00003", base_rel, "f" * 64)
+            errs = vve.check_base_identity_binding(s, root)
+            self.assertTrue(any("hashes to" in e for e in errs))
+
+
+class TestStyleBible(unittest.TestCase):
+    def test_existing_bible_path_passes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "IRON_SOUL_STYLE.md").write_text("bible", encoding="utf-8")
+            self.assertEqual(vve.check_style_bible(_valid_sidecar(), root), [])
+
+    def test_missing_bible_path_flagged(self):
+        with tempfile.TemporaryDirectory() as td:
+            errs = vve.check_style_bible(_valid_sidecar(), Path(td))
+            self.assertTrue(any("style-bible" in e for e in errs))
+
+
 class TestConfigGameClasses(unittest.TestCase):
     """B3: the game-dev asset classes are in the real config vocabulary."""
 

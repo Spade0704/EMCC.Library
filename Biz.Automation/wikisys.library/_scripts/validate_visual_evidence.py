@@ -54,6 +54,13 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+# Sibling module (same _scripts dir, sync-excluded together) — the record
+# parser + zone helpers used by the B5 base-identity binding check.
+_SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
+import asset_registry  # noqa: E402
+
 # Canonical schema location, relative to the repo root (this file lives at
 # Biz.Automation/wikisys.library/_scripts/; the schema at wiki.codex/git/codex/
 # schemas/). Resolved lazily so the module imports without the file present.
@@ -246,6 +253,96 @@ def check_mechanical(sidecar: Dict[str, Any], asset_root: Path) -> List[str]:
     return errors
 
 
+# =========================================================================
+# Section: B5 — base-identity binding + style-bible reference (§9.10)
+# =========================================================================
+
+def resolve_base_identity(ast_id: str, wiki_root: Path) -> Optional[Dict[str, Any]]:
+    """Find the registered record for `ast_id` by scanning both zones'
+    `_registry/AST-*.md` (git + local). Returns the parsed record dict or
+    None if no record carries that id. Registry-aware (reads asset_registry
+    records); read-only."""
+    for zone in asset_registry.ZONES:
+        for record in asset_registry.load_zone_records(Path(wiki_root), zone):
+            if record.get("id") == ast_id:
+                return record
+    return None
+
+
+def check_base_identity_binding(sidecar: Dict[str, Any],
+                                wiki_root: Path) -> List[str]:
+    """The crown-jewel binding (§9.10): a derived frame's `base_asset_ref`
+    object must bind to an APPROVED, REGISTERED base-identity — locked names
+    for pixels. Findings (prose):
+      - the `ast_id` must resolve to a registered record;
+      - that record's `asset_class` must be `base-identity`;
+      - the base asset on disk (record `path`, under wiki_root) must re-hash to
+        the frame's declared `base_asset_ref.sha256` (the frame declares the
+        same base bytes the registry holds).
+    fresh-gen (string) and a null/absent ast_id (pending backfill) carry no
+    binding to check — [] returned. Perceptual-hash distance (a gross-mismatch
+    FAIL) is recorded evidence produced by Anvil's pixel floor, not computed
+    here (§9.10 / v0.1)."""
+    errors: List[str] = []
+    ref = sidecar.get("base_asset_ref")
+    if not isinstance(ref, dict):
+        return errors  # "fresh-gen" or malformed (structural check owns that)
+    ast_id = ref.get("ast_id")
+    if not (isinstance(ast_id, str) and ast_id):
+        return errors  # pending backfill — no binding asserted yet
+
+    record = resolve_base_identity(ast_id, wiki_root)
+    if record is None:
+        errors.append(
+            "base-identity binding: ast_id '{}' is not registered in the "
+            "asset registry".format(ast_id))
+        return errors
+
+    if record.get("asset_class") != "base-identity":
+        errors.append(
+            "base-identity binding: ast_id '{}' is class '{}', not "
+            "'base-identity'".format(ast_id, record.get("asset_class")))
+
+    base_path = record.get("path")
+    if not isinstance(base_path, str) or not base_path:
+        errors.append(
+            "base-identity binding: registered base '{}' has no path".format(
+                ast_id))
+        return errors
+    resolved = (Path(wiki_root) / base_path)
+    if not resolved.is_file():
+        errors.append(
+            "base-identity binding: base asset for '{}' missing on disk at "
+            "'{}'".format(ast_id, base_path))
+        return errors
+    actual = _sha256_file(resolved)
+    if ref.get("sha256") != actual:
+        errors.append(
+            "base-identity binding: frame declares base sha256 {!r} but the "
+            "registered base '{}' hashes to {!r}".format(
+                ref.get("sha256"), ast_id, actual))
+    return errors
+
+
+def check_style_bible(sidecar: Dict[str, Any],
+                      bible_root: Path) -> List[str]:
+    """§9.10 structural style-bible conformance: the declared `style_bible_ref`
+    path must exist under `bible_root`. The palette-subset diff (check-4) is
+    pixel work owned by Anvil `--strict-assets`; the registry asserts the
+    reference RESOLVES (commit_sha presence is already schema-required)."""
+    errors: List[str] = []
+    bible = sidecar.get("style_bible_ref")
+    if not isinstance(bible, dict):
+        return errors
+    path = bible.get("path")
+    if isinstance(path, str) and path:
+        if not (Path(bible_root) / path).is_file():
+            errors.append(
+                "style-bible: style_bible_ref.path '{}' does not exist under "
+                "{}".format(path, bible_root))
+    return errors
+
+
 def sidecar_to_recipe(sidecar: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
     """§9 ingest mapping (spec §9.9): fold the sidecar into an EXISTING §9.1
     record's `recipe:` (freeform scalar mapping) + `derived_from` (list).
@@ -287,10 +384,17 @@ def sidecar_to_recipe(sidecar: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str
 
 
 def validate_sidecar(sidecar_path: Path, asset_root: Optional[Path] = None,
-                     schema_path: Optional[Path] = None) -> Dict[str, Any]:
+                     schema_path: Optional[Path] = None,
+                     wiki_root: Optional[Path] = None,
+                     bible_root: Optional[Path] = None) -> Dict[str, Any]:
     """Full validation of one sidecar file. Returns
     {"ok": bool, "errors": [str], "sidecar": dict}. Raises ValueError on a
-    malformed sidecar/schema (exit-2 class, not a finding)."""
+    malformed sidecar/schema (exit-2 class, not a finding).
+
+    Optional roots enable progressively more checks:
+      - asset_root  -> checks 1 (sha256) + 3 (path-binding)
+      - wiki_root   -> B5 base-identity binding (§9.10)
+      - bible_root  -> B5 style-bible reference resolution (§9.10)"""
     try:
         with open(sidecar_path, "r", encoding="utf-8") as handle:
             sidecar = json.load(handle)
@@ -308,6 +412,10 @@ def validate_sidecar(sidecar_path: Path, asset_root: Optional[Path] = None,
     errors.extend(check_rules(sidecar))
     if asset_root is not None:
         errors.extend(check_mechanical(sidecar, Path(asset_root)))
+    if wiki_root is not None:
+        errors.extend(check_base_identity_binding(sidecar, Path(wiki_root)))
+    if bible_root is not None:
+        errors.extend(check_style_bible(sidecar, Path(bible_root)))
 
     return {"ok": not errors, "errors": errors, "sidecar": sidecar}
 
@@ -321,6 +429,10 @@ def _cli(argv: Optional[List[str]] = None) -> int:
     val.add_argument("--sidecar", required=True, help="path to *.visual-evidence.json")
     val.add_argument("--asset-root", default=None,
                      help="root to resolve asset_path against (enables checks 1+3)")
+    val.add_argument("--wiki-root", default=None,
+                     help="wiki root for base-identity binding (§9.10)")
+    val.add_argument("--bible-root", default=None,
+                     help="root to resolve style_bible_ref.path against (§9.10)")
     val.add_argument("--schema", default=None,
                      help="override schema path (default: §9 canonical)")
     args = parser.parse_args(argv)
@@ -329,13 +441,18 @@ def _cli(argv: Optional[List[str]] = None) -> int:
         result = validate_sidecar(
             Path(args.sidecar),
             Path(args.asset_root) if args.asset_root else None,
-            Path(args.schema) if args.schema else None)
+            Path(args.schema) if args.schema else None,
+            Path(args.wiki_root) if args.wiki_root else None,
+            Path(args.bible_root) if args.bible_root else None)
     except ValueError as exc:
         print("malformed: {}".format(exc))
         return 2
 
     if result["ok"]:
-        mode = "schema+rules+mechanical" if args.asset_root else "schema+rules"
+        extras = [name for name, on in (
+            ("mechanical", args.asset_root), ("base-identity", args.wiki_root),
+            ("style-bible", args.bible_root)) if on]
+        mode = "+".join(["schema", "rules"] + extras)
         print("OK ({}) -- {}".format(mode, args.sidecar))
         return 0
     print("INVALID -- {} ({} finding(s)):".format(args.sidecar, len(result["errors"])))
