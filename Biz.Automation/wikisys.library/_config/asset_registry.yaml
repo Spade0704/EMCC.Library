@@ -24,11 +24,19 @@
 #                  R2 per spec §9.7). Unused by the v1.4 core stub.
 
 asset_classes:
+  # v1.4 ratified (marketing / Herald pilot)
   - ugc
   - professional-photo
   - brand
   - credential
   - deliverable
+  # game-dev classes (§9.8 Operator-trigger 2026-07-24: Anvil/Iron Soul).
+  # Generated visuals in these classes carry a <asset>.visual-evidence.json
+  # sidecar (spec §9.9); ingest maps it into recipe:/derived_from.
+  - sprite
+  - base-identity
+  - pose-anim-frame
+  - audio-cue
 
 allocator:
   stale_lock_minutes: 15
