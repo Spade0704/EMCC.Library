@@ -895,6 +895,86 @@ under the consuming project's build gates (Lattice 3.0 / EMCC framework-22) with
 consumer = the Herald marketing pipeline, pilot corpus = eddyandwolff. Anvil/game-dev classes
 activate only on the Operator's trigger, as vocabulary additions.
 
+### 9.9 Visual-evidence sidecar (generated visual assets — v0.1)
+
+Generated visual assets (Grok Imagine sprites / base-identities / pose-anim frames / audio
+cues — the Anvil/game-dev classes activated per §9.8) carry a provenance **sidecar** beside the
+asset: `<asset>.visual-evidence.json`. The sidecar is the portfolio's single **visual-evidence
+standard** — ONE artifact consumed by BOTH the game-build mechanical floor
+(`pnpm anvil test --strict-assets`) AND this §9 registry ingest. Provenance: LLM Council SHIP
+v0.1 (`EMCC/tasks/council/2026-07-24-visual-evidence-standard.md`).
+
+**Canonical schema (single source of truth):**
+`wiki.codex/git/codex/schemas/visual-evidence.schema.json` (JSON-Schema draft-07, stdlib-safe
+subset). Codex §9 **owns** it; iron-soul-anvil (and any future consumer) **vendors** it
+SHA-pinned via Sync and codes its checks against the vendored copy — never a divergent second
+definition.
+
+**Two-leg discipline (honest by construction — never "certified" for visuals):** a *mechanical
+PASS* (what bytes can prove) + a *named human ACCEPTED* (a record, not a cert).
+- `cert_class` is **NOT a sidecar field** — a settable sidecar `cert_class` would let a
+  generator self-declare a pass before any gate runs. It is set POST-facto on the **cert-handoff
+  only**, locked data-side enum `{mechanical-pass-human-aesthetic, mechanical-fail}`;
+  `certified` is BANNED for visuals.
+- Two rules both validators hard-code in CODE (not expressible in the stdlib-safe schema
+  subset): **R1** `base_asset_ref` XOR fresh-gen (string form == `"fresh-gen"`; object form
+  MUST carry `path`+`sha256`; unflagged AND no base = FAIL); **R2** `aesthetic_signoff.name`
+  MUST be non-empty (no name = no pass).
+
+**§9-record mapping (sidecar → §9.1 record):** `asset_path`→`path`; provenance scalars
+(`prompt`/`seed`/`model_id`/`generator`/`generated_at`)→`recipe:` 1:1; `style_bible_ref`
+`{path, commit_sha}` object→flattened to `recipe:` scalars `style_bible_path` +
+`style_bible_commit_sha` (recipe values must be scalars — a nested object is 3-level, refused
+by `parse_config_yaml`); `base_asset_ref`→`derived_from` (fresh-gen→`[]`; object→resolve
+`ast_id`, backfilled on base-identity registration). `style_tokens_declared` (palette LIST) and
+`aesthetic_signoff` (nested) are **sidecar-only** — the record points at the sidecar via the
+`recipe:` scalars `visual_evidence_path` + `visual_evidence_sha256`.
+
+**No RECORD_FIELDS change.** `recipe:` is a freeform scalar mapping (`{}` = no generation data),
+so the whole sidecar folds into the EXISTING §9.1 record with no schema-field addition: the
+provenance scalars + `visual_evidence_path` + `visual_evidence_sha256` (pointer to the sidecar)
++ the asset's own `sha256` all ride `recipe:`; `base_asset_ref` rides `derived_from`. This keeps
+the field-for-field-diffed §9.1 schema and its suite stable.
+
+**Validator lands in B4** (this subsection lands the canonical schema artifact only — B2). B4
+ships `validate_visual_evidence.py`: a stdlib walker over the schema (type incl. unions /
+required / enum / nested objects / arrays) + rules **R1**/**R2** + the two registry-side
+mechanical checks it can do stdlib-only — **check-1** (re-hash the asset on disk, compare
+`sha256`) and **check-3** (path-binding: the `asset_path` must exist). **Checks 2/4/6**
+(format+dimensions on-disk, palette-subset, legal/likeness) require pixel tooling and are the
+**Anvil `--strict-assets`** floor; the registry validates the DECLARED sidecar values
+structurally + records the attestation (matches the v0.1 check-6 disposition — no registry-side
+legal validator in v0.1). Game asset classes (`sprite`/`base-identity`/`pose-anim-frame`/
+`audio-cue`) were added to `_config/asset_registry.yaml` per §9.8 in B3.
+
+### 9.10 Base-identity binding + style-bible conformance (v0.1)
+
+The **base-identity registry** is the crown jewel — "locked names for pixels."
+A base identity is just a registered asset of class `base-identity` (§9.1 record,
+its own `AST-<PROJECT>-#####`). Derived frames (sprites / pose-anim frames)
+declare `base_asset_ref: {ast_id, path, sha256}` in their sidecar and thereby
+BIND to that approved base.
+
+**Registry-side binding validation** (stdlib, `validate_visual_evidence.py`):
+given a frame whose `base_asset_ref` names an `ast_id`, the validator
+- resolves the `ast_id` to a registered record (scans both zones' `_registry/`);
+- asserts that record's `asset_class` is `base-identity`;
+- re-hashes the base asset on disk (the record's `path`, under the wiki root) and
+  requires it to equal the frame's declared `base_asset_ref.sha256` — the frame
+  provably declares the same base bytes the registry holds.
+
+`fresh-gen` (string) and a null `ast_id` (pending backfill) carry no binding to
+assert. **Perceptual-hash distance** — the gross-mismatch FAIL the council named —
+is *recorded evidence produced by Anvil's pixel floor*, not computed registry-side
+(no image tooling in the stdlib registry; §9.10 / v0.1).
+
+**Style-bible conformance:** the registry validates that the declared
+`style_bible_ref.path` RESOLVES (exists under the bible root; `commit_sha` presence
+is schema-required). The **palette-subset diff** (check-4) is pixel work owned by
+Anvil `--strict-assets`; the registry asserts the reference is well-formed and
+resolvable and records the attestation. Same one-schema / two-validator split as
+§9.9: the registry proves what records + bytes can prove; Anvil proves pixels.
+
 ---
 
 
