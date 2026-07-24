@@ -807,10 +807,15 @@ def _move_asset(source: Path, dest: Path, expected_sha: str) -> str:
     dest.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_name = tempfile.mkstemp(prefix=dest.name + ".", suffix=".tmp",
                                     dir=str(dest.parent))
-    os.close(fd)
     try:
-        shutil.copyfile(str(source), tmp_name)
-        with open(tmp_name, "rb") as handle:
+        # Copy through the writable temp handle we own, then flush + fsync
+        # THAT handle before replace. fsync must run on a writable fd —
+        # reopening the temp "rb" and fsync'ing it raises EBADF on Windows
+        # (matches the atomic_write_text durability pattern above).
+        with os.fdopen(fd, "wb") as handle:
+            with open(str(source), "rb") as src:
+                shutil.copyfileobj(src, handle)
+            handle.flush()
             os.fsync(handle.fileno())
         os.replace(tmp_name, str(dest))
     except Exception:
