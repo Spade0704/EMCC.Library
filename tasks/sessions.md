@@ -25,6 +25,12 @@ pipeline dependency, "Lane 6" / P0c). Five gated units this session, framework/2
   (one-schema/two-validator anti-drift split). **Auditor Regime-B PASS** (B4 + B5; B4 hardened
   per 2 info findings). **PR #72** (folded B3-B5, Grok cert range `25eb936..616c9cb` PENDING).
 
+**MERGED 2026-07-25** (operator standing stack-authorization; #72's hold-condition — its Grok
+cert — verified genuinely closed, real-Windows dual-PASS, before merge): #70 `03c0a8a` → #71
+`21d4b17` → #72 `96ef6c1`, in order, each rebased onto the advancing main (fsync/schema commits
+patch-id-deduped on the #72 rebase; superseded coord commits skipped on #70). Main GREEN 956 OK.
+**Library fully asset-ready — P0c DONE** (clears one of the 3 Anvil game-pipeline prereqs).
+
 Merge order **#70 → #71 → #72** → Library fully asset-ready. Honesty note: caught + DISCLOSED a
 reset-soft/working-tree commit race (intermediate commit message claimed hardening its tree
 lacked) — re-committed so artifact == audited code (lesson: [[reset-soft-working-tree-race]]).
