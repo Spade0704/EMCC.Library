@@ -1,0 +1,14 @@
+# B3+B4 Windows executes-clean evidence — §9.9 visual-evidence validator + game classes
+# host: Windows 11 / Python 3.13.14
+# branch feat/visual-evidence-ingest @ committed ec5960c (hardened; working tree == commit)
+# base: 4763b0a (fsync #70) -> 25eb936 (schema B2 #71) -> HEAD (B3+B4, Auditor-hardened)
+# cmd: python -m unittest discover -s tests -t .
+
+## new B4 suite (targeted)
+Ran 31 tests in 0.040s
+OK (schema+rules) -- C:\Users\Jayps\AppData\Local\Temp\tmpop91xuty\asset.png.visual-evidence.json
+
+## full suite
+Ran 948 tests in 20.335s
+OK (skipped=6)
+OK (schema+rules) -- C:\Users\Jayps\AppData\Local\Temp\tmp4u6_q12f\asset.png.visual-evidence.json

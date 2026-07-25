@@ -129,7 +129,7 @@ SYNC_STAMP_FILE = "SYNC-STAMP.json"
 # chairman change 4: explicit wiring decision later). The `_scripts/` lane
 # copies wholesale and `_config/` merges per-file, so without these exclusions
 # the module would ship to every consumer on next sync.
-SYNC_EXCLUDED_SCRIPTS = ("asset_registry.py",)
+SYNC_EXCLUDED_SCRIPTS = ("asset_registry.py", "validate_visual_evidence.py")
 SYNC_EXCLUDED_CONFIG = ("asset_registry.yaml",)
 
 

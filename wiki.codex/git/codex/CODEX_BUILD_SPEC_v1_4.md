@@ -927,16 +927,53 @@ PASS* (what bytes can prove) + a *named human ACCEPTED* (a record, not a cert).
 `style_bible_commit_sha` (recipe values must be scalars — a nested object is 3-level, refused
 by `parse_config_yaml`); `base_asset_ref`→`derived_from` (fresh-gen→`[]`; object→resolve
 `ast_id`, backfilled on base-identity registration). `style_tokens_declared` (palette LIST) and
-`aesthetic_signoff` (nested) are **sidecar-only** — the record points at the sidecar by
-`visual_evidence_ref: {path, sha256}`.
+`aesthetic_signoff` (nested) are **sidecar-only** — the record points at the sidecar via the
+`recipe:` scalars `visual_evidence_path` + `visual_evidence_sha256`.
 
-**Record-side additions + validator land in B4** (this subsection lands the canonical schema
-artifact only — B2). B4: add `sha256` (asset content-hash) + `visual_evidence_ref` to the §9.1
-record; ship `validate_visual_evidence.py` (stdlib walker over the schema + checks 1–6 + R1/R2;
-check-6 legal/likeness screen is Anvil-side mechanical + human-attested per the v0.1 disposition
-— the registry records the attestation, no registry-side legal validator in v0.1). Game asset
-classes (`sprite`/`base-identity`/`pose-anim-frame`/`audio-cue`) are added to
-`_config/asset_registry.yaml` per §9.8 (Operator-triggered vocabulary addition) in B3.
+**No RECORD_FIELDS change.** `recipe:` is a freeform scalar mapping (`{}` = no generation data),
+so the whole sidecar folds into the EXISTING §9.1 record with no schema-field addition: the
+provenance scalars + `visual_evidence_path` + `visual_evidence_sha256` (pointer to the sidecar)
++ the asset's own `sha256` all ride `recipe:`; `base_asset_ref` rides `derived_from`. This keeps
+the field-for-field-diffed §9.1 schema and its suite stable.
+
+**Validator lands in B4** (this subsection lands the canonical schema artifact only — B2). B4
+ships `validate_visual_evidence.py`: a stdlib walker over the schema (type incl. unions /
+required / enum / nested objects / arrays) + rules **R1**/**R2** + the two registry-side
+mechanical checks it can do stdlib-only — **check-1** (re-hash the asset on disk, compare
+`sha256`) and **check-3** (path-binding: the `asset_path` must exist). **Checks 2/4/6**
+(format+dimensions on-disk, palette-subset, legal/likeness) require pixel tooling and are the
+**Anvil `--strict-assets`** floor; the registry validates the DECLARED sidecar values
+structurally + records the attestation (matches the v0.1 check-6 disposition — no registry-side
+legal validator in v0.1). Game asset classes (`sprite`/`base-identity`/`pose-anim-frame`/
+`audio-cue`) were added to `_config/asset_registry.yaml` per §9.8 in B3.
+
+### 9.10 Base-identity binding + style-bible conformance (v0.1)
+
+The **base-identity registry** is the crown jewel — "locked names for pixels."
+A base identity is just a registered asset of class `base-identity` (§9.1 record,
+its own `AST-<PROJECT>-#####`). Derived frames (sprites / pose-anim frames)
+declare `base_asset_ref: {ast_id, path, sha256}` in their sidecar and thereby
+BIND to that approved base.
+
+**Registry-side binding validation** (stdlib, `validate_visual_evidence.py`):
+given a frame whose `base_asset_ref` names an `ast_id`, the validator
+- resolves the `ast_id` to a registered record (scans both zones' `_registry/`);
+- asserts that record's `asset_class` is `base-identity`;
+- re-hashes the base asset on disk (the record's `path`, under the wiki root) and
+  requires it to equal the frame's declared `base_asset_ref.sha256` — the frame
+  provably declares the same base bytes the registry holds.
+
+`fresh-gen` (string) and a null `ast_id` (pending backfill) carry no binding to
+assert. **Perceptual-hash distance** — the gross-mismatch FAIL the council named —
+is *recorded evidence produced by Anvil's pixel floor*, not computed registry-side
+(no image tooling in the stdlib registry; §9.10 / v0.1).
+
+**Style-bible conformance:** the registry validates that the declared
+`style_bible_ref.path` RESOLVES (exists under the bible root; `commit_sha` presence
+is schema-required). The **palette-subset diff** (check-4) is pixel work owned by
+Anvil `--strict-assets`; the registry asserts the reference is well-formed and
+resolvable and records the attestation. Same one-schema / two-validator split as
+§9.9: the registry proves what records + bytes can prove; Anvil proves pixels.
 
 ---
 
