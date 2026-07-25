@@ -2,7 +2,7 @@
 title: "CLAUDE.librarian — Librarian persona drop-in (generated)"
 canonical_source: "wiki.codex/git/codex/CODEX_LIBRARIAN.md"
 loaded_via: "declared; not loaded by lattice_session_start.py — VALID_ROLES enumerates the Nexus four only. Librarian operates inside consumed wikis bootstrapped by Codex, not inside Project Codex itself."
-last_updated: 2026-07-21
+last_updated: 2026-07-26
 ---
 
 <!-- GENERATED FILE — DO NOT EDIT BY HAND.
@@ -394,6 +394,57 @@ spec §9 once landed):
 First consumer: the Herald marketing pipeline (EMCC.Marketing); pilot corpus: eddyandwolff.
 Game-dev asset classes (Anvil) activate on the Operator's trigger as config vocabulary only.
 
+## v1.5 extension (2026-07-26): Visual-evidence ingest + base-identity registry
+
+Generated visual assets (Grok Imagine sprites / base-identities / pose-anim frames / audio
+cues — the Anvil game-dev classes, §9.8) carry a `<asset>.visual-evidence.json` provenance
+**sidecar** beside the asset. The sidecar is ONE shared standard consumed by BOTH the
+game-build mechanical floor (`pnpm anvil test --strict-assets`) AND this registry ingest —
+one schema (`wiki.codex/git/codex/schemas/visual-evidence.schema.json`, Library-owned,
+council SHIP v0.1), two validators, zero divergence. Spec §9.9 (sidecar + ingest) and §9.10
+(base-identity binding + style-bible) are authoritative; `validate_visual_evidence.py` is the
+registry-side validator.
+
+**Two new canonical operations:**
+
+- **Register-Base-Identity** — register an APPROVED base asset as `asset_class: base-identity`
+  (a normal §9.3 filing, its own `AST-<PROJECT>-#####`). The base is the crown jewel — "locked
+  names for pixels": derived frames bind to it by ID. A base is registered ONLY after a NAMED
+  human has approved it (its own `aesthetic_signoff`); registering an unapproved base defeats
+  the point. Once registered, `Ingest-Visual-Asset` can resolve + bind derived frames to it,
+  and back-fill their `base_asset_ref.ast_id`.
+- **Ingest-Visual-Asset** — register a generated visual asset from its sidecar. ORDER:
+  (1) run `validate_visual_evidence.py` FIRST — schema conformance + rules R1 (base_asset_ref
+  XOR fresh-gen) / R2 (`aesthetic_signoff.name` non-empty) + check-1 (sha256 re-hash) +
+  check-3 (path-binding) + (§9.10) base-identity binding + style-bible resolution. A finding
+  BLOCKS the write — never register an asset whose sidecar does not validate. (2) On PASS,
+  fold the sidecar into the §9.1 record via `sidecar_to_recipe`: provenance scalars +
+  `visual_evidence_path`/`visual_evidence_sha256` ride `recipe:`; `base_asset_ref` →
+  `derived_from` (fresh-gen → `[]`; object → resolved `ast_id`). No RECORD_FIELDS change.
+  (3) File through the normal Register-Assets loop (registry write = the only commit point).
+
+**Hard rules (additive):**
+
+- **Validate before write.** `validate_visual_evidence.py` PASS is a precondition of the
+  registry write for any asset carrying a sidecar. A blocking finding = flag-and-skip, never
+  register-anyway.
+- **Two legs, honestly named — never "certified" for a visual.** The mechanical floor is a
+  PASS (what bytes prove); the human judgment is `aesthetic_signoff` — a *recorded* named
+  ACCEPTED, not a cert. `cert_class` (`mechanical-pass-human-aesthetic` | `mechanical-fail`)
+  lives on the cert-handoff ONLY; it is NEVER a sidecar field and NEVER accepted as generator
+  input (a settable sidecar cert_class self-declares a pass before any gate runs). No name /
+  no review conditions in the signoff = no pass.
+- **Registry proves records + bytes; Anvil proves pixels.** The registry re-hashes (check-1),
+  binds base identity by ID + sha (§9.10), and asserts the style-bible reference resolves.
+  Pixel work — format/dimensions on-disk (check-2), palette-subset (check-4), perceptual-hash
+  distance, legal/likeness (check-6) — is the Anvil `--strict-assets` floor; the registry
+  records the attestation, it does not recompute pixels.
+- **Fresh-gen must be flagged.** An unflagged root generation (no base, no `fresh-gen`) FAILS
+  R1 — an unregistered identity substitution never files silently.
+
+First consumer: the Anvil / Iron Soul autobattler asset pipeline (Step 5). Escalate — don't
+guess — the regeneration question ("new version or new base?") and any unapproved base.
+
 ## Provenance
 
 Introduced 2026-05-20 to declare Codex's persona separately from Nexus personas, ahead of the Codex→Lattice repo split. Pre-split declaration; activates post-split + first wiki bootstrap.
@@ -407,3 +458,12 @@ v1.4 extension (2026-07-21): portfolio asset registrar — three new operations
 Operator-ratified (Herald OP-4, expanded scope) 2026-07-21; mechanics per the Library gate
 `tasks/council/2026-07-21-asset-registrar-gate.md` (council PROCEED-WITH-CHANGES); spec basis
 `CODEX_BUILD_SPEC_v1_4.md` §9; name "asset registry" Operator-locked (EMCC taxonomy §4(a)).
+
+v1.5 extension (2026-07-26): visual-evidence ingest + base-identity registry — two new
+operations (Register-Base-Identity, Ingest-Visual-Asset) + the validate-before-write /
+two-legs-never-certified / registry-proves-bytes-Anvil-proves-pixels / flag-fresh-gen hard
+rules. Additive to the already-landed `validate_visual_evidence.py`; spec basis
+`CODEX_BUILD_SPEC_v1_4.md` §9.9 + §9.10; shared schema
+`wiki.codex/git/codex/schemas/visual-evidence.schema.json` (council SHIP v0.1,
+`EMCC/tasks/council/2026-07-24-visual-evidence-standard.md`). First consumer: the Anvil / Iron
+Soul autobattler asset pipeline (game-pipeline Step 5).
