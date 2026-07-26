@@ -4,10 +4,10 @@
 >
 > **Archived 2026-06-16:** all DONE/shipped sprint items (relpath resolver `93fe81d`; readiness cascades dir-ii/hh/jj + dir-20260614n; Codex v1.3.1 cross-link; boilerplate split + stubs; M-A structural Sync; verbatim-only policy `d2c7667`; lifted tat_app patterns; S001/S002/S004 + Post-S002/S004 closures; etc.) plus the stale TestSyncStamp cleanup → see `tasks/archive.md` (§ Archived 2026-06-16).
 
-## Lane-6 — visual-evidence asset ingest (2026-07-24 → MERGED 2026-07-25; P0c DONE)
+## Lane-6 — visual-evidence asset ingest (2026-07-24 → MERGED 2026-07-25/26; P0c DONE)
 
-Whole registry-side asset pipeline stood up + landed this session (framework/22,
-Windows-mandatory executes-clean). All merged in order #70 → #71 → #72; main GREEN 956 OK.
+Whole registry-side asset pipeline + the operating persona stood up + landed (framework/22,
+Windows-mandatory executes-clean). Merged in order #70 → #71 → #72 → #73; main GREEN 956 OK.
 **Library fully asset-ready.** Details: `tasks/sessions.md` 2026-07-24 entry.
 
 - [x] **🔴 B1 — fsync fix (`_move_asset` Windows EBADF).** DUAL PASS (Auditor + Grok, real
@@ -18,10 +18,19 @@ Windows-mandatory executes-clean). All merged in order #70 → #71 → #72; main
   checks 1/3+recipe fold; §9.10 base-identity binding + style-bible) + game asset_classes.
   Auditor Regime-B PASS + **Grok real-Windows PASS** (`d2e9284`; 39+956 OK). **PR #72 MERGED**
   → `96ef6c1`.
-- [ ] **🟢 Follow-ups (deferred):** CODEX_LIBRARIAN.md persona op for base-identity
-  registration + visual-evidence ingest (+ regen drop-in); base-identity `ast_id`
-  backfill-on-registration path (design noted in §9.10); vendor the schema to iron-soul-anvil
-  via Sync when fwojames' `--strict-assets` build lands (SHA-pin `8c6eb411…`).
+- [x] **🔴 v1.5 persona op — base-identity registration + visual-evidence ingest** (+ regen
+  drop-in). CODEX_LIBRARIAN.md v1.5 (Register-Base-Identity, Ingest-Visual-Asset + hard rules).
+  Auditor Regime-B PASS (no findings) + **Grok chat-floor PASS** (drift+956 OK, Execute
+  deferred-CISO — doc-class). **PR #73 MERGED** → `e978b77`.
+- [ ] **🟡 ★ OWED before any real Grok-Imagine visual-asset cert (cross-repo, EMCC):**
+  `validate_cert_handoff.py`'s `CERT_CLASSES` enum does NOT include
+  `mechanical-pass-human-aesthetic` → P0b's visual-asset cert FAILED the pre-gate on it. Owed:
+  add the enum value + the decorrelation rule for the human-aesthetic leg. NOT a Library file —
+  flag to the Director/EMCC (validate_cert_handoff.py lives in EMCC). See handover.
+- [ ] **🟢 Follow-ups (deferred, no consumer yet):** base-identity `ast_id`
+  backfill-on-registration path (design noted in §9.10; no consumer until real assets ingest
+  post-G0/art); vendor the schema to iron-soul-anvil via Sync when fwojames' `--strict-assets`
+  (P0b) MERGES (SHA-pin `8c6eb411…`; not yet).
 
 ## Inbound gate item (2026-07-21)
 

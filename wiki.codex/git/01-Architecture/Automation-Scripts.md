@@ -4,7 +4,7 @@ type: reference
 visibility: internal
 completion: 40
 status: outlined
-last_updated: 2026-07-22
+last_updated: 2026-07-26
 dependencies: ["01-Architecture/Configuration-Files", "01-Architecture/Cross-Link-Generation"]
 public_pair: null
 blocking_questions: []
@@ -79,9 +79,10 @@ All 5 emit 0 findings against Library's own tree (Library is a well-formed canon
 
 | Script | Purpose |
 |---|---|
-| `asset_registry.py` | The v1.4 §9 Asset Registry implementation — ID allocator (atomic counter, scan-recovery, surfaced-never-broken locks), per-zone record store, zone validator, inbox filing loop, CLI. Single file alongside the scripts above in `Biz.Automation/wikisys.library/_scripts/`. |
+| `asset_registry.py` | The v1.4 §9 Asset Registry implementation — ID allocator (atomic counter, scan-recovery, surfaced-never-broken locks), per-zone record store, zone validator, inbox filing loop, CLI. |
+| `validate_visual_evidence.py` | §9.9/§9.10 visual-evidence sidecar validator — stdlib walker over the shared schema (`codex/schemas/visual-evidence.schema.json`, the same artifact Anvil `--strict-assets` consumes) + rules R1/R2 + registry-side checks 1 (sha256 re-hash) & 3 (path-binding) + base-identity binding + style-bible resolution. Pixel checks (2/4/6) are the Anvil floor. Sync-excluded. |
 
-Status (honest): CORE shipped 2026-07-21 (commit `c87f323`); Regime B Auditor verdict **concerns-proceed** — W1 (representability refusals fire at the commit point, after ID burn + move, orphaning the moved file until retry/sweep) + W2 (missing refusal regression test) are folded into the follow-up build item; the Grok `/cross-check` cert slot is still OPEN. Spec canon: [[codex/CODEX_BUILD_SPEC_v1_4]] §9.
+Status (honest, 2026-07-26): the §9 asset registry is **fully landed + dual-PASS**. B1 fsync fix (`_move_asset` Windows EBADF, PR #70), B2 shared visual-evidence schema (§9.9, PR #71), B3-B5 registry-side ingest (§9.9/§9.10 validator + game asset_classes, PR #72), and the v1.5 Librarian persona op (base-identity registration + visual-evidence ingest, PR #73) all merged through the full framework/22 gate (executes-clean on Windows → Regime B Auditor → Grok cross-model). **Library is fully asset-ready.** The original CORE W1/W2 were superseded by the landed validators + hardening. Deferred (no consumer yet): base-identity `ast_id` backfill-on-registration; vendoring the schema to iron-soul-anvil via Sync on P0b merge. Spec canon: [[codex/CODEX_BUILD_SPEC_v1_4]] §9 (incl. §9.9 visual-evidence + §9.10 base-identity).
 
 ## Orchestrator pipeline (`update_dashboards.py`)
 

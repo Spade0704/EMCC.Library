@@ -4,6 +4,22 @@
 
 ---
 
+## A new data-side cert_class must be added to `validate_cert_handoff.py`'s enum BEFORE it can be certified (2026-07-26, Lane-6 / P0b)
+
+The visual-evidence standard locked a new `cert_class` value `mechanical-pass-human-aesthetic`
+(data-side enum, "certified" banned for visuals). But the cross-repo cert-handoff pre-gate
+validator (`validate_cert_handoff.py`, in EMCC) enumerates a fixed `CERT_CLASSES` set that did
+NOT include it → P0b's real Grok-Imagine visual-asset cert FAILED the pre-gate purely on the
+unknown cert_class, before any substance check. Lesson: **coining a new cert_class in a spec/
+council is only half the work — the mechanical pre-gate that guards every handoff must learn the
+value in the same change, or the first real cert of that class fails closed.** The owed fix:
+add the enum value + the decorrelation rule for the human-aesthetic leg (the mechanical floor and
+the named human sign-off must be independently sourced — the leg is a *recorded* judgment, never
+a second correlated LLM opinion in a cert costume). Generalizes the pre-gate lesson from
+[[grok-cert-handoff-pregate]] (directive_ref) to the cert_class enum: **the pre-gate is a
+fail-closed allowlist for BOTH directive_ref AND cert_class.** (Library note: our handoffs use
+`cross-model-certified`, which is in the enum — this only bites visual-asset certs.)
+
 ## `_lib/markdown.strip_code` is load-bearing for the see-also markers — don't strip HTML comments (2026-06-14, dir-20260614n)
 
 `strip_code` feeds the validators (terminology / reveal / canon / cross-refs) AND `cross_link_topics.replace_or_append_marker_block`, which locates the `<!-- codex:see-also:start/end -->` markers **in code-stripped text**. The markers are HTML comments. Extending `strip_code` to blank HTML comments (a "correct markdown" instinct, to kill wikilinks inside commented-out template blocks) silently broke marker detection → `cross_link_topics` appended a *second* see-also block every run (9-test regression in `test_cross_link_topics`). Lesson: **before touching a shared `_lib` helper, grep its callers** — `strip_code` has a non-obvious second consumer whose contract is "comments survive." The Glossary comment false-positives were better fixed by *curating the page* (removing the template residue) than by changing the shared helper. The Surgeon's rule held: a shared-helper change must be justified by a named false-positive AND re-verified against every caller's tests.

@@ -31,6 +31,18 @@ cert — verified genuinely closed, real-Windows dual-PASS, before merge): #70 `
 patch-id-deduped on the #72 rebase; superseded coord commits skipped on #70). Main GREEN 956 OK.
 **Library fully asset-ready — P0c DONE** (clears one of the 3 Anvil game-pipeline prereqs).
 
+**Overnight follow-up + close-out (2026-07-26).** Built deferred follow-up (1): the **v1.5
+persona op** — `CODEX_LIBRARIAN.md` v1.5 (Register-Base-Identity + Ingest-Visual-Asset + hard
+rules: validate-before-write / two-legs-never-certified / registry-proves-bytes-Anvil-proves-
+pixels / flag-fresh-gen) + regenerated drop-in. Full framework/22: executes-clean (drift guard
+8 OK + full 956 OK) → Auditor Regime-B PASS (no findings) → Grok chat-floor PASS (Execute
+deferred-CISO, doc-class) → **PR #73 MERGED** `e978b77`. Grok cert landed on the Library plane
+(confirms Library-plane Hermes discovery still works). Held deferred (2) ast_id-backfill + (3)
+Anvil Sync-vendor (no consumer / not-yet-triggered). **★ Cross-repo item surfaced:**
+`validate_cert_handoff.py`'s `CERT_CLASSES` enum lacks `mechanical-pass-human-aesthetic` → P0b's
+visual-asset cert FAILED pre-gate; enum-add + decorrelation rule owed (EMCC file) before any
+real Grok-Imagine visual cert — see `tasks/lessons.md` + handover.
+
 Merge order **#70 → #71 → #72** → Library fully asset-ready. Honesty note: caught + DISCLOSED a
 reset-soft/working-tree commit race (intermediate commit message claimed hardening its tree
 lacked) — re-committed so artifact == audited code (lesson: [[reset-soft-working-tree-race]]).
