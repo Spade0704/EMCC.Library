@@ -1,0 +1,12 @@
+# v1.5 persona op — Windows executes-clean evidence
+# host: Windows 11 / Python 3.13.14
+# branch feat/librarian-visual-evidence-op @ 1d56be2
+
+## persona drift guard
+generate_persona_dropin.py --check -> in sync (exit 0)
+Ran 8 tests in 0.028s
+OK
+
+## full suite
+Ran 956 tests in 25.318s
+OK (skipped=6)
