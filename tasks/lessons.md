@@ -4,6 +4,56 @@
 
 ---
 
+## A control that cannot fail is worse than a missing one — it manufactures assurance (2026-07-27, MOD-2 sweep + supplystationusa lane)
+
+Both lanes this session produced the same defect class in different media, and the pattern is
+worth stating once: **mechanisms that appear to do work and don't.**
+
+- **Data plane (our engine):** `validate_topic_registry` emits *"All topic-registry checks passed.
+  Errors: 0 Warnings: 0"* when its input file is **absent** — byte-identical to a real pass.
+  `cross_manual` is documented in spec §2.5, type-checked by the loader, and read by no consumer;
+  *the type check is itself a present-and-vacuous control* — passing it proves only that a value
+  nobody reads has the right shape. See-also truncation drops routes with no log.
+- **Test plane (EMCC family):** a test asserting *the thing that happens anyway when the control
+  is absent*. Delete a push-guard entirely and three "must be allowed" tests still pass — **because**
+  the guard is gone. A skipped control at least announces it went dark; a vacuous pass announces
+  nothing and is indistinguishable from a working guard.
+
+**The rule that falls out (now EMCC cert-plane-wide as Rule 9/9b):**
+
+1. **A falsifier must prove it applied before a green result may be interpreted.** I nearly filed a
+   CONFIRMED finding on a tree I had never mutated — a string replacement silently missed, and
+   `Ran 275 tests ... OK` is indistinguishable from a real falsifier showing nothing went red. The
+   asymmetry that makes this cheap: **red is self-proving**; only green needs proof-of-application.
+2. **Mutate the world, not the expectation.** When the candidate is drift between a literal and the
+   world it describes, add the file/module/enum member and ask whether the assertion *follows*.
+   Editing the literal only re-proves that `assertEqual` compares two things. This is precisely why
+   the reference failure survived five days: the expectation was the thing that was wrong, so it was
+   invisible to any mutation *of the expectation*.
+3. **An instrument that reports a defect needs a positive AND a negative control** — proven to fire,
+   proven not to fire spuriously. My name-based screen had neither and produced 5 false positives
+   against healthy suites; only hand-verification stopped them being filed. That was *discipline
+   downstream of a defective instrument, not a sound instrument* — and downstream discipline does
+   not survive budget pressure. Move the guarantee into the instrument, the same move framework/22
+   makes for builds. **Care is not a control.**
+
+**Corollaries worth keeping:** a name screen picks the FILE, never the verdict. The
+self-consistency signature is *necessary but not sufficient* — two values on one object can still
+be independently derived, and only execution separates those cases. And **a negative result buys
+the right to keep a fix small**: two clean repos under the same instrument are what stopped a point
+defect being generalised into a fleet-wide remediation nobody needed.
+
+## Filed beats mentioned — a defect living only in a peer message is invisible to a fresh room (2026-07-27)
+
+I reported two engine defects to the Director as "unfiled and mine, just visibility." He filed them
+anyway (MOD-14/15) and was right: visibility that depends on someone remembering a chat is not
+visibility. Filing does not reassign ownership — they stayed ours. This is the same structural
+failure I had spent that morning *correcting* in supplystationusa, where a shadowing ingest-log
+meant the dashboards read the wrong file for weeks. Recognising a pattern in someone else's repo
+does not inoculate you against committing it in your own two hours later.
+
+---
+
 ## A new data-side cert_class must be added to `validate_cert_handoff.py`'s enum BEFORE it can be certified (2026-07-26, Lane-6 / P0b)
 
 The visual-evidence standard locked a new `cert_class` value `mechanical-pass-human-aesthetic`

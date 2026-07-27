@@ -1,6 +1,47 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-07-27 — Two external lanes: supplystationusa Codex resync + EMCC MOD-2 dead-coverage sweep
+
+**No Library code changed this session.** Both lanes were service-to-other-repos; the Library-side
+output is three filed engine defects (MOD-13/14/15) and a queued independent audit of this repo.
+
+### Lane A — supplystationusa Codex-engine resync (their PM gated + shipped every commit)
+
+Their PM reported "wiki bootstrapped but missing the Codex engine." **Wrong diagnosis** — under
+v1.1 the engine lives at `Biz.Automation/wikisys.<name>/`, outside the wiki
+(`_lib/frontmatter.py::_find_layout_dir`, direct-child-first then install-root glob). Corrected it
+and found three real defects instead. Shipped as `55acece → 62c01b6 → 947b71a → ca29a07`:
+
+- **Stale kit** — resynced to `ddf6796` (5 overwrite / 1 merge-new / 35 skip), `SYNC-STAMP.json`
+  written so `check_drift.py` can audit them. `INGEST_PROCEDURE.md` + `SEMANTIC_LINT_PROCEDURE.md`
+  overwrote to **zero diff** — the verbatim-shipped procedures had never drifted.
+- **Shadowing `_decisions/`** — a wiki-side `ingest-log.md` created that day *shadowed* the
+  install-side canonical one, so dashboards read the wrong file. Merged install-side and deleted
+  the shadow **including its directory** — `_find_layout_dir` tests `is_dir()`, so an empty dir
+  still wins discovery and would have turned a wrong signal into no signal.
+- **Canon over-claim** — the 2026-07-02 ingest log claimed `taxonomy.yaml` was created;
+  `git log --all --diff-filter=A` shows it never existed on any ref. Corrected in place, dated.
+- Seeded `taxonomy.yaml` (29) + `topics.yaml` (7), extended roster/timeline/counts, and built a
+  **curated cross-link graph**: 0% → 82% coverage, 22 edges, mean 2.4. Every edge human-ratified.
+
+### Lane B — EMCC MOD-2 dead-coverage sweep (Director-assigned, read-only)
+
+Swept EMCC, DFDU, Marketing, Cartometrics, CRW, Guard-House. **~950 tests, 8 falsifiers,
+2 findings** — and *the negative result is the headline*: both findings are single vacuous tests
+in otherwise sound suites, which is what scope-bound MOD-11 against a fleet-wide remediation.
+Filed: **MOD-11** (DFDU, HIGH), **MOD-12** (CRW, MED-HIGH), plus this repo's engine defects as
+**MOD-13/14/15**. Own ledger: **5 false positives, all caught by execution, none filed, zero
+misses.** Method + shapes → `tasks/lessons.md`.
+
+**Refused to self-audit EMCC.Library** — raised the seat-independence boundary unprompted and the
+Director routed it to a separate seat. Handover lead recorded there:
+`tests/test_t1_p52_bootstrap_operation.py::EXPECTED_SCRIPT_COUNT` (= 27) +
+`EXPECTED_TOP_LEVEL_FOLDERS`, deliberately unassessed by me.
+
+**Delivery:** `0 Library files changed · 4 commits shipped in supplystationusa (their gate) ·
+5 MOD items filed at EMCC · 1 branch deleted here (landed) · PR #69 left open (draft, conflicting)`.
+
 ## 2026-07-24 — Lane-6: whole asset registry stood up (fsync fix + visual-evidence ingest B2–B5)
 
 EMCC Orchestrator cascade (Director `vsaig3uw` over `claude-peers`; Anvil/Iron Soul game-asset

@@ -4,6 +4,55 @@
 >
 > **Archived 2026-06-16:** all DONE/shipped sprint items (relpath resolver `93fe81d`; readiness cascades dir-ii/hh/jj + dir-20260614n; Codex v1.3.1 cross-link; boilerplate split + stubs; M-A structural Sync; verbatim-only policy `d2c7667`; lifted tat_app patterns; S001/S002/S004 + Post-S002/S004 closures; etc.) plus the stale TestSyncStamp cleanup → see `tasks/archive.md` (§ Archived 2026-06-16).
 
+## Engine defects — filed at EMCC 2026-07-27 (MOD-13/14/15), fixes owed by THIS repo
+
+Found in the supplystationusa lane; the Director filed them so they are visible to a fresh room
+(a defect living only in a peer message is invisible — filed beats mentioned). Filing did **not**
+reassign them. One family: **mechanisms that appear to do work and don't.** Grouped because they
+share a fix surface — whoever takes MOD-13 gets all three. Fixes route via PR (`_scripts/` is not
+on the cert-push-guard coordination-plane allowlist).
+
+- [ ] **🔴 MOD-13 — `validate_topic_registry` reports success on ABSENT input.** With
+  `_canon/topics.yaml` missing it emits `_dashboards/topic_registry_validation.md` reading
+  *"All topic-registry checks passed. Errors: 0 Warnings: 0"* — **byte-identical to a real pass**;
+  the only evidence is one stdout line no dashboard reader sees. Ranked highest of the three: it
+  is kit code that **runs for real and Syncs**, so any consumer wiring it into a gate inherits a
+  permanent green meaning "I found nothing to check". Generalises: any validator reporting success
+  on absent input asserts something it never checked.
+- [ ] **🔴 MOD-14 — `cross_manual` is inert.** Documented in spec §2.5 as behaviour, type-checked
+  by `_lib/topics.py` (46/57/210-213/251), stored on the `Topic` dataclass, and **read by no
+  consumer** — `build_topic_index.py` and `cross_link_topics.py` never reference it. There is no
+  folder scoping in the kit at all. Harm is **realised, not hypothetical**: two seats reasoned
+  from it to opposite wrong conclusions in one session. Sharper than "unused field" — *the type
+  check is itself a present-and-vacuous control*: passing it proves only that a value nobody reads
+  has the right shape. Either wire it or delete it from schema **and** spec.
+- [ ] **🟡 MOD-15 — see-also truncation is silent.** `cross_link_topics.py:293-296` does
+  `rank_related(...)[:max_links]` with no counter, no log, nothing in the `run()` summary. Filed
+  **not cosmetic**: the cross-link graph *is* the routing substrate per `framework/18`, so a
+  silently dropped see-also is a route that quietly does not exist.
+- [ ] **🟢 Two related reference defects (lower priority, same lane):** (a) vendored
+  `PROJECT_WIKI_BUILD_SPEC.md:748` ships a `[[Frontmatter-Schema]]` wikilink that resolves only
+  inside Library's own wiki → a broken link + a permanent `citation_audit` finding in **every**
+  consumer that syncs. Rule: **a portable artifact must not contain wikilinks at all** — `[[…]]`
+  resolves against the consuming wiki's page set, a namespace the author cannot enumerate.
+  (b) nothing under `_sources/` or `raw/` can be a wikilink target
+  (`_lib/markdown.py::iter_content_pages` skips them), so a split-ingest source stub — which
+  carries the withheld-field disclosure — has no resolvable location. Workaround shipped
+  (relative links); engine has no story yet.
+
+## MOD-2 pass on THIS repo — needs an INDEPENDENT seat (do NOT self-audit)
+
+- [ ] **🟡 EMCC.Library dead-coverage sweep — assigned away from the Librarian seat on purpose.**
+  I refused to be both the sweep's subject and its instrument (that would be a vacuous control,
+  performed by the hunter). Strongest Shape-B candidates, **deliberately unassessed by me**:
+  `tests/test_t1_p52_bootstrap_operation.py::EXPECTED_SCRIPT_COUNT` (= 27) and
+  `EXPECTED_TOP_LEVEL_FOLDERS`. **Method is pinned** — sibling-adjacent `git worktree`, a watched
+  `-v` baseline (target must show `ok`, not `skipped`), Rule 9 on every green falsifier, and
+  **Rule 9b: run it as ADD A 28TH SCRIPT, not edit-the-constant.** Plus the applicability guard:
+  read the actual side first — if it reads a fixture rather than enumerating the kit, 9b is **not
+  applicable** and constant-vs-constant is itself the finding, established without running
+  anything.
+
 ## Lane-6 — visual-evidence asset ingest (2026-07-24 → MERGED 2026-07-25/26; P0c DONE)
 
 Whole registry-side asset pipeline + the operating persona stood up + landed (framework/22,
