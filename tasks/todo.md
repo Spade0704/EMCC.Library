@@ -116,6 +116,24 @@ Windows-mandatory executes-clean). Merged in order #70 → #71 → #72 → #73; 
   matters. Fix belongs on the Library side (assert the canon hash + a documented reconcile path so
   a canon bump is forced to notice its vendors); it is code, so it routes via PR under framework/22,
   and it wants an independent seat since I am the writer it would be constraining.
+  - **Second half, surfaced by the Anvil PM 2026-07-28 and verified here — the schema carries no
+    machine-readable identity.** Top-level keys are exactly
+    `['$schema','title','description','type','required','properties']`: **no `$id`, no `version`,
+    no date** (also no `schema_version` / `last_updated` / `$comment`). REFINEMENT on the PM's
+    read, and it makes the point worse rather than better: the version is not missing, it is
+    **present and unaddressable** — `description` opens *"Shared visual-evidence sidecar schema
+    v0.1 (council SHIP 2026-07-24)"*. A human opening the file sees a version and reasonably
+    concludes it is versioned; no tool can compare it. Same family as everything else on this
+    list — the *appearance* of a control with none of its function.
+    Consequence: the hash fix above can only ever report **DIFFERENT** — never older/newer, never
+    how far behind — so a drift alarm sends a human to eyeball two 5770-byte files. Ship `$id` +
+    `version` in the SAME PR or the fix is half-blind.
+  - **⚠ Ordering trap in that PR, noted before anyone builds it:** adding `$id`/`version` changes
+    the schema bytes, which changes the sha256, which breaks Anvil's pin — i.e. **the fix is itself
+    the first canon bump the missing reconcile path was supposed to handle**, and it will present
+    as *"hash changed, version string unchanged (still v0.1)"*, which is exactly the shape a naive
+    new control would flag as tampering. The reconcile path must handle a re-stamp explicitly, and
+    Anvil must be told before it lands (PM v6u2ccqi has agreed to re-vendor on notice).
 
 ## Inbound gate item (2026-07-21)
 
