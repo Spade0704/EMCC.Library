@@ -34,6 +34,36 @@ lane stopped for a fix that already shipped. Corollaries from the same exchange:
    nobody had listed — the range allowlist fence incl. its *empty-range* refusal, and the HIGH-risk
    refusal. Worth noting the fence encodes **"an empty range cannot prove anything"** as a live
    control rather than as a lesson — the move this file keeps arguing for, already made upstream.
+4. **Point corollary 1 at CONTROLS, not just blockers.** Before this repo argues a principle into a
+   lessons entry again, check whether it is already executable somewhere — `an empty range cannot
+   prove anything` circulates as prose in three repos' `lessons.md` while
+   `validate_cert_handoff.py:777-800` has enforced it all along. A lesson is the consolation prize
+   for a control you did not know you had.
+
+### Recorded so the next Library seat does not re-file it: the push-bypass line is BY DESIGN
+
+Pushing an allowlisted coordination-plane file direct-to-main prints
+`remote: Bypassed rule violations for refs/heads/main: - Changes must be made through a pull request.`
+**This is not a misconfiguration and needs no action.** Portfolio Path-B fence, live on 22/22 repos:
+`emcc-main-require-pr` carries `bypass: RepositoryRole:always` *deliberately* — it is what makes
+coordination-on-main (and the certifier loop's working-tree-on-main visibility) work at all — while
+`emcc-main-history-protection` (deletion, non-fast-forward) has **no bypass and binds admins**, so
+the coordination record stays tamper-evident. Verified Director-side 2026-07-27
+(`close-20260727-day-close-all-lanes`).
+
+Two things survive that are worth more than the answer:
+
+- **Four independent seats read this line as a failure** (Anvil, Cartometrics, SSUSA, then me). That
+  is the family at the top of this file, one rotation further: **a control whose success message is
+  indistinguishable from its failure message** manufactures false alarms, and then trains seats to
+  ignore the line — which is precisely when a real refusal is missed.
+- **The asymmetry is the durable half:** `cert_push_guard`'s coordination-plane carve-out has **no
+  remote counterpart**, so every legitimate allowlisted push logs as a bypass. Two policies disagree
+  about the same push and only one of them is the one we reason about locally. Carried up; ruleset
+  unchanged.
+
+Residual, accepted rather than fixed: require-PR is **advisory** for anyone holding admin and will
+not stop a mistake.
 
 ## A control that cannot fail is worse than a missing one — it manufactures assurance (2026-07-27, MOD-2 sweep + supplystationusa lane)
 
