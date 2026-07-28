@@ -71,11 +71,23 @@ Windows-mandatory executes-clean). Merged in order #70 → #71 → #72 → #73; 
   drop-in). CODEX_LIBRARIAN.md v1.5 (Register-Base-Identity, Ingest-Visual-Asset + hard rules).
   Auditor Regime-B PASS (no findings) + **Grok chat-floor PASS** (drift+956 OK, Execute
   deferred-CISO — doc-class). **PR #73 MERGED** → `e978b77`.
-- [ ] **🟡 ★ OWED before any real Grok-Imagine visual-asset cert (cross-repo, EMCC):**
-  `validate_cert_handoff.py`'s `CERT_CLASSES` enum does NOT include
-  `mechanical-pass-human-aesthetic` → P0b's visual-asset cert FAILED the pre-gate on it. Owed:
-  add the enum value + the decorrelation rule for the human-aesthetic leg. NOT a Library file —
-  flag to the Director/EMCC (validate_cert_handoff.py lives in EMCC). See handover.
+- [x] **🟡 ★ DISCHARGED 2026-07-28 — `mechanical-pass-human-aesthetic` shipped EMCC-side.** Was
+  filed 2026-07-26 as owed-before-any-real-Grok-Imagine-visual-asset-cert: `CERT_CLASSES` lacked
+  the enum value, so P0b's visual-asset cert FAILED the pre-gate. **Both halves landed in EMCC
+  PR #366 (`dir-20260726-validator-enum-build`) — i.e. it was already fixed on the same day this
+  repo filed it as owed, and the entry has been stale ever since.** Director flagged the staleness
+  2026-07-28; verified here against `EMCC/scripts/validate_cert_handoff.py` on EMCC main
+  `95ae091` (not from memory): enum `CERT_CLASS_MECH` :136, class contract :78-83, decorrelation
+  `human-attester` **enforced** :724-728, `certifier_model` must be EMPTY :729-732, `certifier_id`
+  = human attester matching the ATTESTED line :750-753.
+  **Two extra gates on this class that the original filing did not know about** — a re-run will
+  meet them too: an asset-path ALLOWlist fence on the git range (:777-800 — non-asset paths,
+  unverifiable/empty ranges all refuse) and a HIGH-risk refusal for aegis/security paths (:768).
+  **Not a Library re-run:** no P0b drop exists under `0-Inbox/grok-audit/` (4 drops, all
+  Library-authored) — P0b is Anvil-side (`iron-soul-anvil`, fwojames' `--strict-assets`), so
+  re-running it against the new validator belongs to that repo. Carry-forward for whoever does:
+  a pre-#366 drop will now fail for a *different* reason — most likely non-empty `certifier_model`
+  or a model name in `certifier_id` — which is informative, not a regression.
 - [ ] **🟢 Follow-ups (deferred, no consumer yet):** base-identity `ast_id`
   backfill-on-registration path (design noted in §9.10; no consumer until real assets ingest
   post-G0/art); vendor the schema to iron-soul-anvil via Sync when fwojames' `--strict-assets`

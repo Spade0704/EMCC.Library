@@ -4,6 +4,37 @@
 
 ---
 
+## The record does not report its own obsolescence (2026-07-28, census exchange)
+
+A blocker filed here on 2026-07-26 — `validate_cert_handoff.py`'s `CERT_CLASSES` missing
+`mechanical-pass-human-aesthetic` — was fixed EMCC-side by PR #366 **the same day it was filed**.
+The entry then sat open through a session close, a handover, and a peer-identity census, and I
+relayed it to the Director as a live blocker that would have parked the visual-asset lane. The
+filing was never wrong. It simply never learned it had been closed by someone else.
+
+**The defect is not carelessness — it is a representation gap.** An item closed by another repo is
+**byte-identical** to an open one: same checkbox, same prose, same file. Nothing in the record
+changes when the world does. This is the same shape as the vacuous-control family above (a green
+that proves nothing) rotated onto the time axis: **a stale TRUE and a live TRUE are indistinguishable
+at read time, and the cost is paid downstream by whoever acts on it.**
+
+**Rule:** *an open blocker that names a specific file must be re-verified against that file before it
+is relayed, escalated, or used to park work.* Cheap — one grep — and the failure it prevents is a
+lane stopped for a fix that already shipped. Corollaries from the same exchange:
+
+1. **Cross-repo items rot fastest.** This repo cannot see EMCC merges. Any item whose fix lives in
+   another repo has no closing signal at all — it is *structurally* unable to self-close, so it is
+   the class that must be re-verified, not merely the class that happened to break this time.
+2. **Verify the relay, not just the record.** The Director's correction to me was right; his *next*
+   instruction ("re-run it") was wrong — P0b is Anvil-side, not ours. Re-grepping caught the stale
+   filing; reading `git ls-files 0-Inbox/grok-audit` caught the misroute. Both directions of a
+   two-way exchange needed checking, and being handed a correct fact is not evidence the next one
+   is correct.
+3. **Verification overshoots usefully.** Confirming the enum surfaced four gates on that cert class
+   nobody had listed — the range allowlist fence incl. its *empty-range* refusal, and the HIGH-risk
+   refusal. Worth noting the fence encodes **"an empty range cannot prove anything"** as a live
+   control rather than as a lesson — the move this file keeps arguing for, already made upstream.
+
 ## A control that cannot fail is worse than a missing one — it manufactures assurance (2026-07-27, MOD-2 sweep + supplystationusa lane)
 
 Both lanes this session produced the same defect class in different media, and the pattern is
