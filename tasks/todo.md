@@ -97,8 +97,17 @@ Windows-mandatory executes-clean). Merged in order #70 → #71 → #72 → #73; 
   (--strict-assets) (#3)"*, 2026-07-26, `git branch --contains` confirms it is **on Anvil main**.
   Vendoring already happened by hand, so no Sync action is owed. Verified by hash, not by report —
   Library canon `wiki.codex/git/codex/schemas/visual-evidence.schema.json` = sha256
-  `8c6eb411faa8…52bd`, 5770 bytes; **all three** Anvil checkouts (`iron-soul-anvil`,
-  `anvil-arena1-tip-wt`, `anvil-cli1-wt`) byte-identical. Zero drift.
+  `8c6eb411faa8…52bd`, 5770 bytes. **Zero drift**, and the evidence is now the COMMITTED blob:
+  `git show main:` / `origin/main:` / `HEAD:` on iron-soul-anvil all hash to `8c6eb411…52bd`,
+  5770 bytes, `committed-main == canon → True`.
+  **Correction to my own first pass (2026-07-28):** I originally reported "all three Anvil
+  checkouts byte-identical" across `iron-soul-anvil` + `anvil-arena1-tip-wt` + `anvil-cli1-wt`.
+  Two of those are **not checkouts** — no `.git` at all, and `git worktree list` returns exactly
+  one entry. They are orphaned source copies that read as git identities purely by the `-wt`
+  naming convention (the Anvil PM found the same thing independently: ~653M of them). So their
+  agreement was never triangulation — it was two stale disk copies agreeing, presented in a
+  phrasing that made the evidence sound broader than it was. The claim survives on better
+  evidence, not on that one.
   **Second stale cross-repo item found today** — same class as the ★ cert-class blocker, same
   cause: the closing event happened in a repo this one cannot observe. Corollary 1 confirmed twice
   in one session.

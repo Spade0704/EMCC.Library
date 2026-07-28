@@ -51,6 +51,18 @@ lane stopped for a fix that already shipped. Corollaries from the same exchange:
    `validate_cert_handoff.py:777-800` has enforced it all along. A lesson is the consolation prize
    for a control you did not know you had.
 
+**Near-miss worth keeping, because the instrument was the defect (same session).** Re-verifying the
+vendored schema against Anvil's *committed* blob, my first command was
+`git show main:<path> > $tmp` in PowerShell and it reported sha256 `3f0f55ff…`, **5885 bytes** —
+apparent drift on a schema I own, against a repo whose PM was waiting on my answer. It was not
+drift. PS 5.1's `>` re-encodes: CRLF translation + BOM, +115 bytes on a ~115-line file. The tell was
+arithmetic — *the byte delta equalled the line count* — not suspicion. Re-run byte-exact through
+`subprocess` binary stdout: `8c6eb411…52bd`, 5770 bytes, `crlf=0`, `committed-main == canon → True`.
+**A measurement is a control too, and a shell that silently rewrites bytes is a falsifier that
+never applied.** Rule 9 generalises past tests: *red is not self-proving when the instrument can
+manufacture red.* See [[powershell-utf8-bulk-edit-mojibake]] — same shell, same class, different
+verb; hashing was simply the first place it produced a false POSITIVE rather than a corrupted file.
+
 ### Recorded so the next Library seat does not re-file it: the push-bypass line is BY DESIGN
 
 Pushing an allowlisted coordination-plane file direct-to-main prints
