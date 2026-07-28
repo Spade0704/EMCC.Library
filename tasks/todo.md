@@ -85,6 +85,36 @@ Fix (code → PR under framework/22, wants a seat other than mine):
 Anvil is filing the mirror atom (`.gitattributes -text` on their vendored copy) to the Director.
 Ours is not a mirror: theirs protects one pinned file, ours protects everything the kit ships.
 
+**★ Why this is not "tidy-up" — the detector we currently depend on is itself accident-conditioned
+(Anvil PM, 2026-07-28).** With Library's guard newline-blind, Anvil's byte-exact pin is presently
+the portfolio's *only* line-ending detector on the §9.9 schema. But that pin only functions while
+**their** box keeps `core.autocrlf=input` — the same unasserted installer default. A seat installed
+with the commoner `autocrlf=true` gets a pin that goes red on the CURRENT, CORRECT canon, i.e.
+**permanently red — and a permanently-red check is indistinguishable from a broken one.** It gets
+muted, waived, or "fixed" by re-stamping the pin to the local CRLF bytes, at which point the only
+detector is not merely gone: **it reports green on converted bytes.** So the pair is: our guard
+cannot fail on the drift it exists to catch, and theirs can be made to fail on everything, which
+destroys it just as thoroughly. **Neither failure needs anyone to make a mistake — only a seat
+installed with a different default.**
+
+**Negative result, with its scope stated (verified 2026-07-28, whole-file reads not tails):** Library
+is currently clean — every tracked `*.json`/`*.jsonl` (5 files incl. `tasks/orchestrator-log.jsonl`,
+8/8 rows valid) plus all 7 ignored JSON files: **BOM=False, CR=0, all parse**; zero BOMs across
+tracked `*.md`/`*.py`/`*.yaml`/`*.ts`/`*.txt`. **This proves the current state, NOT that the repo is
+protected** — it is clean by the same `core.autocrlf=input` accident, and nothing here would stop or
+report a BOM/CRLF arriving tomorrow. Prompted by the Anvil PM finding a UTF-8 BOM that had sat in
+his `orchestrator-log.jsonl` since its first row on 2026-07-24, written by PS `>` redirection and
+missed for four days because **every prior validation was `tail -3 | json.loads`** — he validated
+the rows he had just written, never the file. Note the discriminator supports the shipping-side
+thesis sideways: **his rot was in the UNTRACKED log; the tracked one was clean.** Ours is tracked
+(it is on `cert_push_guard`'s `ALLOWED_MAIN_EXACT_FILES`), so it passes through diffs. *The artifact
+outside every gate is where the encoding defect lives* — quiet because nothing reads it whole, the
+same way ours is quiet because text mode normalises before comparing.
+
+**Build note for fix-item 2** (Anvil PM, and it is right): put the reason bytes-not-text in the
+**test body**, not the PR description — converting a green test to red will read as a regression to
+anyone reviewing the diff later, and the PR scrolls away while the test file does not.
+
 ## MOD-2 pass on THIS repo — needs an INDEPENDENT seat (do NOT self-audit)
 
 - [ ] **🟡 EMCC.Library dead-coverage sweep — assigned away from the Librarian seat on purpose.**
