@@ -88,10 +88,34 @@ Windows-mandatory executes-clean). Merged in order #70 → #71 → #72 → #73; 
   re-running it against the new validator belongs to that repo. Carry-forward for whoever does:
   a pre-#366 drop will now fail for a *different* reason — most likely non-empty `certifier_model`
   or a model name in `certifier_id` — which is informative, not a regression.
-- [ ] **🟢 Follow-ups (deferred, no consumer yet):** base-identity `ast_id`
+- [ ] **🟢 Follow-up (deferred, no consumer yet):** base-identity `ast_id`
   backfill-on-registration path (design noted in §9.10; no consumer until real assets ingest
-  post-G0/art); vendor the schema to iron-soul-anvil via Sync when fwojames' `--strict-assets`
-  (P0b) MERGES (SHA-pin `8c6eb411…`; not yet).
+  post-G0/art).
+- [x] **🟢 Anvil schema vendoring — trigger FIRED 2026-07-26, item was stale (closed 2026-07-28).**
+  Read *"vendor the schema to iron-soul-anvil via Sync when fwojames' `--strict-assets` (P0b)
+  MERGES … not yet."* It merged: `76f79a1` *"P0b: visual-evidence v0.1 mechanical floor
+  (--strict-assets) (#3)"*, 2026-07-26, `git branch --contains` confirms it is **on Anvil main**.
+  Vendoring already happened by hand, so no Sync action is owed. Verified by hash, not by report —
+  Library canon `wiki.codex/git/codex/schemas/visual-evidence.schema.json` = sha256
+  `8c6eb411faa8…52bd`, 5770 bytes; **all three** Anvil checkouts (`iron-soul-anvil`,
+  `anvil-arena1-tip-wt`, `anvil-cli1-wt`) byte-identical. Zero drift.
+  **Second stale cross-repo item found today** — same class as the ★ cert-class blocker, same
+  cause: the closing event happened in a repo this one cannot observe. Corollary 1 confirmed twice
+  in one session.
+- [ ] **🔴 Schema pin is ONE-DIRECTIONAL — canon→vendor drift is undetectable by either side.**
+  Found while verifying the above; **this is Library's to fix, because Library is the single writer
+  on the schema.** Anvil's `visual-evidence.pin.test.ts` is a *good* control — raw bytes, no newline
+  translation, and it carries the right instruction (*"do NOT edit the pin to match; reconcile with
+  Librarian"*, i.e. Rule 9b in the artifact). But it compares **Anvil's copy against a constant
+  Anvil holds**, so it detects only *Anvil-side* edits. If **I** change the canonical §9.9 schema,
+  the vendored file and the pin both stay at the old value, Anvil's suite stays **green**, and
+  `grep 8c6eb411 EMCC.Library/` returns **nothing** — Library asserts its own schema's hash
+  **nowhere** (confirmed: zero hits under `tests/` and `Biz.Automation/`). So the direction that is
+  actually likely — canon moves, vendor doesn't — is unguarded at both ends, and the green pin
+  reads as though it were covered. Shape-A: a control that cannot fail in the direction that
+  matters. Fix belongs on the Library side (assert the canon hash + a documented reconcile path so
+  a canon bump is forced to notice its vendors); it is code, so it routes via PR under framework/22,
+  and it wants an independent seat since I am the writer it would be constraining.
 
 ## Inbound gate item (2026-07-21)
 
