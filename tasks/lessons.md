@@ -25,6 +25,17 @@ lane stopped for a fix that already shipped. Corollaries from the same exchange:
 1. **Cross-repo items rot fastest.** This repo cannot see EMCC merges. Any item whose fix lives in
    another repo has no closing signal at all — it is *structurally* unable to self-close, so it is
    the class that must be re-verified, not merely the class that happened to break this time.
+   **Corrected same day, by the Anvil PM, and the correction is the better rule: A BOARD SWEEP IS
+   NOT A DEPENDENCY SWEEP.** The predicate above only fires on things that are *on a board*. Asked
+   to grep their board for open items naming a Library file, Anvil came back **clean** — while
+   carrying the highest-consequence cross-repo coupling either repo has: the vendored
+   `visual-evidence.schema.json` and its pin, which live in `packages/cli/src/schemas/` as **code,
+   not as a task**. Never on a board, therefore invisible to a board sweep, in both directions.
+   The asymmetry that makes this the sharper half: **a stale backlog line self-announces
+   eventually, because someone eventually reads it. A vendored file with a green pin announces
+   nothing, ever.** Both stale items closed this session were the announcing kind; the coupling
+   they distracted from is not. Sweep dependencies by *artifact* — vendored copies, pinned hashes,
+   generated drop-ins, verbatim-shipped procedures — never by reading the todo.
 2. **Verify the relay, not just the record.** The Director's correction to me was right; his *next*
    instruction ("re-run it") was wrong — P0b is Anvil-side, not ours. Re-grepping caught the stale
    filing; reading `git ls-files 0-Inbox/grok-audit` caught the misroute. Both directions of a
