@@ -40,6 +40,51 @@ on the cert-push-guard coordination-plane allowlist).
   carries the withheld-field disclosure — has no resolvable location. Workaround shipped
   (relative links); engine has no story yet.
 
+## 🔴 Line-ending identity is unasserted repo-wide — Library ships byte-identical files and has NO `.gitattributes` (filed 2026-07-28)
+
+Surfaced by the Anvil PM finding the same gap in his repo; **Library's exposure is larger, because
+Library is the kit that ships copies.** Verified here, not inherited from his report:
+
+```
+git ls-files .gitattributes **/.gitattributes   -> (nothing; the repo has NONE)
+core.autocrlf   local: UNSET   global: UNSET   system: input
+git check-attr text eol working-tree-encoding -- <canon schema>
+    text: unspecified   eol: unspecified   working-tree-encoding: unspecified
+```
+
+`input` comes from the **Git-for-Windows installer**, not from this repo. So every byte-identity
+claim Library makes holds **by machine accident**. A seat cloning onto a box with the commoner
+`core.autocrlf=true` gets CRLF at checkout and every one of these changes meaning:
+
+- **§9.9 `visual-evidence.schema.json`** — pinned byte-exact by Anvil's `visual-evidence.pin.test.ts`.
+  Their pin goes red, Rule 9b correctly routes the seat to me, and I field a drift report caused by
+  an installer default.
+- **`INGEST_PROCEDURE.md` + `SEMANTIC_LINT_PROCEDURE.md`** — CLAUDE.md's verbatim discipline says
+  these ship *byte-identical* into bootstrapped wikis. Nothing enforces the byte claim.
+- **`.claude/personas/CLAUDE.librarian.md`** — generated, with a drift guard.
+
+★ **AND THE DRIFT GUARD FAILS THE OPPOSITE WAY FROM ANVIL'S PIN — this is the sharp part.**
+`tests/test_persona_dropin.py` compares via `read_text(encoding="utf-8")` (:66, :68). Python text
+mode applies **universal newlines**, so `\r\n` is normalised to `\n` before the comparison. The
+guard is therefore **newline-blind**: a CRLF-converted drop-in passes it. Anvil's byte-exact pin
+false-**REDS** on line-ending drift; Library's text-mode guard false-**GREENS** on it. *Same
+missing `.gitattributes`, two opposite symptoms, and only one of them announces itself.* Ours is
+the quiet one — and Library is the side that SHIPS, so a CRLF-converted verbatim procedure would
+clear our checks and then break the consumer's.
+
+Fix (code → PR under framework/22, wants a seat other than mine):
+1. Add `.gitattributes` marking the byte-pinned artifacts `-text` (no conversion either direction —
+   what a byte-pinned artifact actually needs): the §9.9 schema, the two verbatim procedures, the
+   persona drop-in, and `_template/` payloads.
+2. Decide deliberately whether `test_persona_dropin` should assert BYTES (`read_bytes`) rather than
+   normalised text — if "generated verbatim" is the claim, the guard must test the claim. Flag: this
+   may turn a currently-green test red on some clones, which is the point.
+3. Sweep for other byte-identity claims with text-mode checks (`sync_from_kit` verbatim overwrite,
+   SYNC-STAMP manifest) — same shape, unexamined.
+
+Anvil is filing the mirror atom (`.gitattributes -text` on their vendored copy) to the Director.
+Ours is not a mirror: theirs protects one pinned file, ours protects everything the kit ships.
+
 ## MOD-2 pass on THIS repo — needs an INDEPENDENT seat (do NOT self-audit)
 
 - [ ] **🟡 EMCC.Library dead-coverage sweep — assigned away from the Librarian seat on purpose.**
