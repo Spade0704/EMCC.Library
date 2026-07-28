@@ -60,7 +60,23 @@ arithmetic — *the byte delta equalled the line count* — not suspicion. Re-ru
 `subprocess` binary stdout: `8c6eb411…52bd`, 5770 bytes, `crlf=0`, `committed-main == canon → True`.
 **A measurement is a control too, and a shell that silently rewrites bytes is a falsifier that
 never applied.** Rule 9 generalises past tests: *red is not self-proving when the instrument can
-manufacture red.* See [[powershell-utf8-bulk-edit-mojibake]] — same shell, same class, different
+manufacture red.*
+
+**Two sharpenings from the Anvil PM (v6u2ccqi), same hour, both his:**
+
+- **When a suspicious number equals the line count, suspect the instrument before the artifact.**
+  He ran `git show main:$p | grep -c $'\r'` and got **112 CR-bearing lines** on a file with **112
+  lines and zero CR bytes** — `$'\r'` collapsed to an empty pattern, which matches every line. My
+  PS `>` gave +115 bytes on a ~115-line file. Two shells, two operations, two false signals equal
+  to the line count, inside one hour. Not a coincidence about tooling: **line-oriented instruments
+  fail line-shaped**, so any per-line artifact lands on the line count.
+- **Recency is not evidence rank.** He took that false red on a file whose sha256 he had *already*
+  matched to canon in the same terminal — the correct answer was three lines up and the fresh
+  number still read as news. **A later measurement does not supersede an earlier, stronger one
+  merely by being later.** Note the correct reading required no re-run at all; it required
+  ranking evidence already in hand. This is the failure my own "three checkouts" over-claim also
+  had, from the other end: he held the disproof (two dirs with no `.git`) and did not connect it
+  to my claim. See [[powershell-utf8-bulk-edit-mojibake]] — same shell, same class, different
 verb; hashing was simply the first place it produced a false POSITIVE rather than a corrupted file.
 
 ### Recorded so the next Library seat does not re-file it: the push-bypass line is BY DESIGN
