@@ -1,6 +1,72 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-07-28 — Librarian seat + peer census; two stale items closed, six findings, one 🔴 filed in our own lane
+
+**No Library code changed.** Role adopted per CLAUDE.md + `EMCC/framework/09` §4.2; advertised
+`[ROLE:librarian][REPO:EMCC.Library]`. Everything below is backlog/lessons on the coordination
+plane (`tasks/todo.md`, `tasks/lessons.md`, both on `cert_push_guard`'s `ALLOWED_MAIN_EXACT_FILES`),
+8 commits `5708dbd..434254e`. **Filed, not built** — the one 🔴 is code and wants a seat that is not
+the writer it constrains.
+
+**Peer identity census (CRW Chief via Director).** Answered all 12 fields. Own peer_id `g84bgwcz`
+resolved two independent ways (`peers.pid` is the **bun** MCP pid → parent `7676 claude.exe`;
+corroborated by an ancestor walk from the shell). Three qualifications refused flattening:
+`builder_id` is not one string (`lattice:EMCC.Library/registry-builder-01` current, bare `lattice`
+archived, and **this session NEVER-AUTHORED**); persona *current* ≠ persona *loaded*; and
+`write_authority` ≠ push rights (PR-gated for code).
+
+**Two stale cross-repo items closed — same cause both times.**
+1. The ★ `mechanical-pass-human-aesthetic` blocker was fixed EMCC-side by PR #366 **the same day
+   this repo filed it as owed**, and survived a session close, a handover, and the census into a
+   relay that would have parked the visual lane. Verified against `validate_cert_handoff.py`
+   @`95ae091` (not from memory) — and the check overshot usefully, surfacing **four gates** on that
+   class nobody had listed (range allowlist fence incl. its empty-range refusal :777-800; HIGH-risk
+   refusal :768).
+2. Anvil schema vendoring: trigger had fired 2026-07-26 (`76f79a1`, `#3`, on Anvil main).
+
+**Lesson recorded + corrected in-session.** *The record does not report its own obsolescence* — an
+item closed by another repo is byte-identical to an open one. My corollary ("closer outside this
+repo's field of view") was then **corrected by the Anvil PM to the better rule: a board sweep is not
+a dependency sweep.** His board was clean while carrying the highest-consequence coupling either
+repo has — a vendored file + pin living as *code, not a task*. **A stale backlog line self-announces
+eventually; a vendored file with a green pin announces nothing, ever.**
+
+**🔴 OPEN, ours: line-ending identity is unasserted repo-wide.** Library has **no `.gitattributes`**
+(`core.autocrlf` local/global UNSET, `system: input` — the Git-for-Windows installer), so every
+byte-identity claim the kit makes holds *by machine accident*: the §9.9 schema, both verbatim-shipped
+procedures, the persona drop-in, `_template/`. **And our guard fails the opposite way from Anvil's
+pin** — `tests/test_persona_dropin.py` compares via `read_text` (:66,:68), and Python text mode
+normalises `\r\n`→`\n`, so it is **newline-blind**: their byte pin false-REDs on line-ending drift,
+ours false-GREENs. *The side that ships has the quiet failure.* Justification escalated by the PM:
+their pin is presently our only detector, and it only works while their box keeps `autocrlf=input`
+— a seat installed with `true` gets a permanently-red pin, which gets muted or re-stamped to local
+CRLF bytes, after which **the only detector reports green on converted bytes.** Neither failure
+needs a mistake, only a different install default. Also filed: the schema has **no `$id`/`version`**
+— the version sits as prose `v0.1` in `description`, i.e. *present and unaddressable*, worse than
+absent — plus the ordering trap that stamping it breaks Anvil's pin (the fix is its own first test
+of the reconcile path).
+
+**Honesty note — two corrections to my own work, both disclosed to the peer who had recorded them.**
+(a) "All three Anvil checkouts byte-identical" was wrong in kind: two have **no `.git`**
+(`git worktree list` → one entry), so it was two stale disk copies agreeing, phrased as
+triangulation. Re-verified on the **committed blob** instead (`main`/`origin/main`/`HEAD` →
+`8c6eb411…52bd`, 5770, `committed-main == canon → True`). (b) My first attempt at that check used
+PS `>` redirection and reported `3f0f55ff…`/5885 bytes — **apparent drift on a schema I own, with
+the PM waiting**. Shell re-encoding (CRLF+BOM); the tell was arithmetic, *the byte delta equalled the
+line count*. Had I shipped it, Anvil would have re-vendored, it would have **worked**, and both of us
+would have concluded the process was sound. Recorded: **a measurement is a control too — red is not
+self-proving when the instrument can manufacture red.**
+
+**Sweep (negative result, scope stated):** whole-file BOM/CR/parse across all tracked `*.json`/
+`*.jsonl` (incl. `orchestrator-log.jsonl`, 8/8 rows) + 7 ignored JSON + tracked md/py/yaml/ts —
+**all clean**. Proves *state*, not protection; the `.gitattributes` 🔴 is what would cover tomorrow.
+
+**Delivery:** `0 code files changed · 8 commits (coordination plane, direct-to-main) · 2 stale items
+closed · 1 🔴 + 1 🟡 filed in our lane · MOD-14 confirmed to lead MOD-13/14/15 on realised harm ·
+asset-registry v1.4 CORE Grok slot still OPEN, not routed · MOD-2 sweep still with an independent
+seat (self-audit refused, stands)`.
+
 ## 2026-07-27 — Two external lanes: supplystationusa Codex resync + EMCC MOD-2 dead-coverage sweep
 
 **No Library code changed this session.** Both lanes were service-to-other-repos; the Library-side
