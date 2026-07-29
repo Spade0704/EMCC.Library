@@ -219,6 +219,32 @@ Windows-mandatory executes-clean). Merged in order #70 → #71 → #72 → #73; 
     new control would flag as tampering. The reconcile path must handle a re-stamp explicitly, and
     Anvil must be told before it lands (PM v6u2ccqi has agreed to re-vendor on notice).
 
+## Inbound gate item (2026-07-23) — game-scope activation
+
+- [x] **🔴 Asset-registry GAME/ANVIL scope — gate run (2026-07-23): council PROCEED at proposal
+  v1.2 scope.** Operator activated the §2b deferral (Iron Soul asset-creation loop = second
+  consumer); transcript `EMCC/tasks/council/2026-07-23-asset-registry-scope.md`; verdict block in
+  `0-Inbox/2026-07-21-librarian-marketing-extension-proposal.md` (v1.2). Rulings layer on the
+  2026-07-21 v1.4 verdict (consistent on R2 carve-out, naming, zone validator).
+- [ ] **🔴 Author the game-class spec amendment per the 2026-07-23 gate** (BEFORE any game-class
+  implementation): (a) frame-set grouping/ordering semantics in the lineage model; (b) recipe as
+  a first-class typed object incl. `tool_version`; (c) capture-at-generation-time rule
+  (lineage populated-or-explicitly-null-with-reason, incl. interim `maps_index.json` rows at
+  retro-registration); (d) game-dev `asset_class` values (sprite / identity / frame-set /
+  game-audio). **Amendment class = OPERATOR CALL (flagged conflict):** v1.5 if additive (per the
+  unanimous 2026-07-21 "v2.0 = breaking only" precedent) vs. the 2026-07-23 council's v2.0 call.
+  Precondition: the two-chain paper walk (eddyandwolff cert flat + Iron Soul
+  identity→frames→cinematic deep, real prompt as recipe) — its output confirms or widens (a)–(c).
+- [ ] **🟡 R2 empirical spike (30 min, per gate Q1):** upload one real file to R2 with the
+  stdlib-only sigv4 adapter → settles ugly-vs-untenable with evidence. Blocked on OP-5
+  (credentials — Operator).
+- [ ] **🟡 Two Q3 mechanical checks** join the validator/sweep family: public pointer-row leak
+  lint + zone-anomaly hunt in the reconciliation sweep (sweeps never delete; orphans quarantined).
+- [ ] **⚪ OPERATOR — deletion/takedown policy vs. URL permanence** (new open item from the gate:
+  pilot corpus holds UGC/certs/personal photos; "immutable public URL" has no unpublish story).
+- [ ] **⚪ OPERATOR — OP-5 R2 provisioning owner + trigger** sequenced against Herald P1 (gate
+  flagged it as an unowned critical-path item).
+
 ## Inbound gate item (2026-07-21)
 
 - [x] **🔴 Portfolio asset-registry extension (v1.1) — run the Library gate.** `Gate run`
@@ -279,15 +305,29 @@ Windows-mandatory executes-clean). Merged in order #70 → #71 → #72 → #73; 
 
 ## Deferred / trigger-gated
 
-- [ ] **⚪ Anvil asset-registry onboarding — DEFERRED until the Operator starts working on Anvil
-  (trigger: JP says so; Operator-flagged 2026-07-21).** When Anvil (`spade0704/iron-soul-anvil`
+- [x] **⚪→🔴 Anvil asset-registry onboarding — TRIGGER FIRED 2026-07-23; this item was STALE on
+  main for six days (reconciled 2026-07-29 at the PR #69 merge).** It read *"DEFERRED until the
+  Operator starts working on Anvil (trigger: JP says so; Operator-flagged 2026-07-21)"*. The
+  Operator activated the §2b deferral on **2026-07-23** — game-dev asset classes entered gated
+  scope and Iron Soul's asset-creation loop became the second named consumer — and the council
+  gate returned **PROCEED at proposal v1.2 scope**. The correction was written the same day but
+  sat unmerged on a **draft** branch, so main kept asserting the trigger had not fired while
+  Lane-6 shipped a whole visual-evidence pipeline against Anvil on top of it.
+  **Third stale item of this sweep, and the only one whose cause was our own unmerged branch** —
+  the other two were closed by events in repos this one cannot observe. This one was fully
+  visible and still missed, which is the sharper case: *a draft PR is a record that has been
+  written and does not count yet, and nothing distinguishes it from one that was never written.*
+  Live work is now tracked in the merged **§ Inbound gate item (2026-07-23) — game-scope
+  activation** above (game-class spec amendment pending; amendment class v1.5-vs-v2.0 is an
+  OPERATOR call). Original deferral text kept below for provenance:
+  > When Anvil (`spade0704/iron-soul-anvil`
   — game engine for Iron Soul + future game-dev; assets created by Grok Imagine per its
   `docs/GROK_WORKFLOW.md`, engine loads-only from `assetsRoot`) goes active, extend the portfolio
   asset registry to manage its asset creation: register Grok Imagine outputs (identities →
   pose/variant frame-sets → cinematics) with IDs/tags/lineage/recipe-provenance + filing into the
-  engine's media-contract layout (`anvil/docs/design/09_ASSETS_AND_MEDIA.md`). Until then the only
-  cost is keeping the registry schema game-dev-extensible (noted in the v1.1 proposal §2b). Do not
-  build anything Anvil-specific before the trigger.
+  > engine's media-contract layout (`anvil/docs/design/09_ASSETS_AND_MEDIA.md`). Until then the
+  > only cost is keeping the registry schema game-dev-extensible (noted in the v1.1 proposal §2b).
+  > Do not build anything Anvil-specific before the trigger.
 
 ## Readiness cascade tails (open)
 
