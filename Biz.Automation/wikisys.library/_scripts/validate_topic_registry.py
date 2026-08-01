@@ -39,6 +39,13 @@ TOPICS_RELATIVE = "_canon/topics.yaml"
 SEVERITY_ERROR = "error"
 SEVERITY_WARNING = "warning"
 
+# A4-MOD-13: absent input must not look like a clean pass (MOD-13 vacuity).
+ABSENT_INPUT_MESSAGE = (
+    "ERROR: _canon/topics.yaml not found — cannot validate topic registry "
+    "(absent input is a failure, not a skip-green)."
+)
+SUCCESS_MESSAGE = "All topic-registry checks passed."
+
 
 def build_topic_to_pages_index(wiki_root: Path) -> Dict[str, List[Path]]:
     """Re-derive topic → [pages] from page fm `topics:` fields.
@@ -131,7 +138,7 @@ def render_validation_report(
     lines.append("")
 
     if not findings:
-        lines.append("All topic-registry checks passed.")
+        lines.append(SUCCESS_MESSAGE)
         lines.append("")
         return "\n".join(lines)
 
@@ -166,33 +173,60 @@ def render_validation_report(
     return "\n".join(lines)
 
 
+def render_absent_input_report(wiki_root: Path) -> str:
+    """Dashboard body when the registry file is missing — never SUCCESS_MESSAGE.
+
+    A4-MOD-13: absent input ranks as ERROR (fail-closed), not skip-green.
+    """
+    today = date.today().isoformat()
+    lines: List[str] = list(
+        dashboard.render_fm_header(
+            "Topic Registry Validation Dashboard", today=today
+        )
+    )
+    lines.append("")
+    lines.append("# Topic Registry Validation — " + today)
+    lines.append("")
+    lines.append("**Errors:** 1")
+    lines.append("**Warnings:** 0")
+    lines.append("")
+    lines.append("## Errors")
+    lines.append("")
+    lines.append("- " + ABSENT_INPUT_MESSAGE)
+    lines.append("")
+    return "\n".join(lines)
+
+
 def run(wiki_root: Path) -> Dict[str, Any]:
-    """Orchestrator entry-point — run both checks + emit dashboard."""
+    """Orchestrator entry-point — run both checks + emit dashboard.
+
+    A4-MOD-13: missing `_canon/topics.yaml` is ERROR + non-zero process exit
+    from ``__main__`` — not a success-shaped zero-summary.
+    """
     wiki_root = Path(wiki_root)
 
     # S004 MI-18: discovery via frontmatter.find_canon_dir() handles v1.0 +
-    # v1.1 layouts. Missing canon dir -> graceful early-exit.
+    # v1.1 layouts. Missing canon dir -> fail-closed absent-input path.
     try:
         canon_dir = frontmatter.find_canon_dir(wiki_root)
         topics_path = canon_dir / "topics.yaml"
     except FileNotFoundError:
         topics_path = wiki_root / TOPICS_RELATIVE  # sentinel; will fail is_file()
     if not topics_path.is_file():
-        # Graceful early-exit: emit empty dashboard, return zero-summary.
-        content = render_validation_report([], wiki_root)
+        content = render_absent_input_report(wiki_root)
+        assert SUCCESS_MESSAGE not in content
         out_path = dashboard.write_dashboard(
             wiki_root, DASHBOARD_RELATIVE, content
         )
-        print(
-            "info: _canon/topics.yaml not found; topic registry validation skipped.",
-            file=sys.stderr,
-        )
+        print(ABSENT_INPUT_MESSAGE, file=sys.stderr)
         return {
             "pages_seen": 0,
             "registry_topics": 0,
-            "errors_count": 0,
+            "errors_count": 1,
             "warnings_count": 0,
             "dashboard_path": out_path,
+            "input_absent": True,
+            "exit_code": 2,
         }
 
     topics_list = load_topics(topics_path)
@@ -244,3 +278,6 @@ if __name__ == "__main__":
             summary["warnings_count"],
         )
     )
+    # A4-MOD-13: absent input → non-zero. Present valid with zero errors → 0.
+    if summary.get("input_absent") or summary.get("exit_code"):
+        sys.exit(int(summary.get("exit_code") or 2))
