@@ -7,19 +7,32 @@ prevention (T-XL-3 + T-XL-4 prior exhibits; 3rd-exhibit triggers S035
 codification).
 """
 
+import io
+import subprocess
+import sys
 import unittest
+from contextlib import redirect_stderr
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import validate_topic_registry
 from _lib.topics import Topic, build_alias_index
 from validate_topic_registry import (
+    ABSENT_INPUT_MESSAGE,
     SEVERITY_ERROR,
     SEVERITY_WARNING,
+    SUCCESS_MESSAGE,
     build_topic_to_pages_index,
     check_orphan_topics,
     check_page_topics_resolve,
     render_validation_report,
+)
+
+_SCRIPTS = (
+    Path(__file__).resolve().parent.parent
+    / "Biz.Automation"
+    / "wikisys.library"
+    / "_scripts"
 )
 
 
@@ -239,15 +252,61 @@ class RunOrchestratorTests(unittest.TestCase):
             self.assertEqual(summary["warnings_count"], 1)
             self.assertEqual(summary["registry_topics"], 2)
 
-    def test_topics_yaml_absent_graceful(self):
+    def test_topics_yaml_absent_is_error_not_success(self):
+        """A4-MOD-13: absent topics.yaml must not look like a clean pass."""
         with TemporaryDirectory() as t:
             wiki = Path(t)
             _write_page(wiki, "01-Domain/A.md", ["smoke"])
-            summary = validate_topic_registry.run(wiki)
+            err = io.StringIO()
+            with redirect_stderr(err):
+                summary = validate_topic_registry.run(wiki)
+            self.assertTrue(summary.get("input_absent"))
             self.assertEqual(summary["registry_topics"], 0)
-            self.assertEqual(summary["errors_count"], 0)
+            self.assertEqual(summary["errors_count"], 1)
             self.assertEqual(summary["warnings_count"], 0)
+            self.assertEqual(summary.get("exit_code"), 2)
             self.assertTrue(summary["dashboard_path"].exists())
+            dash = summary["dashboard_path"].read_text(encoding="utf-8")
+            self.assertNotIn(SUCCESS_MESSAGE, dash)
+            self.assertIn(ABSENT_INPUT_MESSAGE, dash)
+            self.assertIn("ERROR", err.getvalue())
+            self.assertNotIn(SUCCESS_MESSAGE, err.getvalue())
+
+    def test_absent_input_process_exit_nonzero(self):
+        """A4-MOD-13: CLI process exit non-zero when registry file is missing."""
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            _write_page(wiki, "01-Domain/A.md", ["smoke"])
+            script = _SCRIPTS / "validate_topic_registry.py"
+            env = {**dict(**{k: v for k, v in __import__("os").environ.items()}),
+                   "PYTHONPATH": str(_SCRIPTS)}
+            # Prefer explicit wiki via argv if CLI supports it; else cwd.
+            r = subprocess.run(
+                [sys.executable, str(script), str(wiki)],
+                capture_output=True,
+                text=True,
+                cwd=str(wiki),
+                env=env,
+            )
+            # Some CLIs take no path and use discovery from cwd — retry without arg
+            # only if argparse rejected the path.
+            if r.returncode == 2 and "unrecognized" in (r.stderr or "").lower():
+                r = subprocess.run(
+                    [sys.executable, str(script)],
+                    capture_output=True,
+                    text=True,
+                    cwd=str(wiki),
+                    env=env,
+                )
+            self.assertNotEqual(
+                r.returncode, 0,
+                "absent topics.yaml must be non-zero exit; stdout={!r} stderr={!r}".format(
+                    r.stdout, r.stderr,
+                ),
+            )
+            combined = (r.stdout or "") + (r.stderr or "")
+            self.assertNotIn(SUCCESS_MESSAGE, combined)
+            self.assertIn("ERROR", combined)
 
 
 if __name__ == "__main__":
