@@ -10,7 +10,10 @@ director_id: grok:EMCC-Director
 directive_ref: tasks/orchestrator-log.jsonl#dir-20260801-a4-mod13-topic-registry-absent-input
 slug: 2026-08-01-a4-mod13-topic-registry-absent-input
 attempt: 1
-status: pending
+status: done
+verdict: PASS
+verdict_ref: tasks/audits/2026-08-01-a4-mod13-topic-registry-absent-input-lattice-certifier.md
+range_certified_note: certifier certified 2da101df..df07e98e; declared tip f677ae2f is the product commit itself (see C2). Certified tip df07e98e is UNPUSHED at cert time (see C3). Product blob identical at f677ae2f/df07e98e.
 phase: build
 created_at: 2026-08-01T22:05:00Z
 updated_at: 2026-08-01T18:00:00Z
@@ -26,11 +29,14 @@ auditor_ref: tasks/audits/2026-08-01-a4-mod13-topic-registry-absent-input-audito
 evidence_ref: tasks/audits/2026-08-01-a4-mod13-topic-registry-absent-input-evidence.md
 spec_author_llm: grok
 spec_author_seat: grok:EMCC-Director
-cert_class: parked-awaiting-cross-model
+cert_class: cross-model-certified
 decorrelation: cross
 wake_build: false
-caveat: "parked-awaiting-cross-model is NOT cross-model certified. Regime-B AUDITOR_PASS (auditor wave). External cert Claude (builder_llm=grok). Coordination root 0-Inbox/grok-audit."
 ---
+# CERT_REQ - A4-MOD-13 dual-PASS closed (human merge next)
+
+**Closed.** Claude CERT_PASS + Regime-B AUDITOR_PASS + Director DUAL_PASS. Human squash-merge **Library #74 only**.
+
 
 # CERT_REQ - A4-MOD-13 topic registry absent-input fail-closed (PR #74)
 
