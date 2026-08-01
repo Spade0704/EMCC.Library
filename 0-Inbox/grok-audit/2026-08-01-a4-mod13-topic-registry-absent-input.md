@@ -15,9 +15,9 @@ phase: build
 created_at: 2026-08-01T22:05:00Z
 updated_at: 2026-08-01T22:05:00Z
 target_repo: D:/Projects/Enterprise Matrix/EMCC.Library
-range: PLACEHOLDER
+range: 2da101dfdadb93b2c5bd504af9c6887e58a36069..f677ae2ff128cfd999f3711ec63eec9b14bb9a36
 branch: grok/a4-mod13-topic-registry-absent-input
-pr: 0
+pr: 74
 proposal: A4-MOD-13 validate_topic_registry ERROR+nonzero when topics.yaml absent; present valid stays green
 auditor_verdict: pending
 auditor_id: ""
