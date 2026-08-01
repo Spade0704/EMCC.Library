@@ -1,0 +1,4 @@
+﻿W2-MOD-14 attempt 2 rework evidence
+policy: unset-means-allow
+suite: pytest tests/test_cross_link_topics.py tests/_lib/test_topics.py → 86 passed
+product: topics.py Optional[bool]; cross_link_topics explicit map + WARNING drops

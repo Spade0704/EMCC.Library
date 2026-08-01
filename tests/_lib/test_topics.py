@@ -34,7 +34,7 @@ class TopicDataclassTests(unittest.TestCase):
     def test_topic_defaults(self):
         t = Topic(name="minimal", keywords=["a"])
         self.assertEqual(t.aliases, [])
-        self.assertFalse(t.cross_manual)
+        self.assertIsNone(t.cross_manual)  # unset ⇒ allow (W2-MOD-14 policy)
         self.assertIsNone(t.min_similarity)
 
     def test_topic_immutable_frozen(self):
@@ -79,7 +79,7 @@ class ParseTopicsValidTests(unittest.TestCase):
         result = parse_topics(text)
         self.assertEqual(result[0].name, "minimal")
         self.assertEqual(result[0].aliases, [])
-        self.assertFalse(result[0].cross_manual)
+        self.assertIsNone(result[0].cross_manual)  # key omitted ⇒ None/allow
         self.assertIsNone(result[0].min_similarity)
 
     def test_full_optional(self):
