@@ -1,6 +1,16 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-08-01 — MOD-13 dual-PASS merged (A4-MOD-13 topic registry absent-input)
+
+**Atom:** A4-MOD-13. Product PR **#74** merged to main (d90063\).
+
+**Change:** \alidate_topic_registry\ ERROR + non-zero when \_canon/topics.yaml\ absent; present valid green; falsifier in evidence.
+
+**Chain:** Lattice Phase A → Auditor wave → Certifier wave → dual-PASS close → merge.
+
+**Next:** Library MOD-14/15 and Shape B pass remain open backlog (not Phase 1-4 autonomous unless amended).
+
 ## 2026-07-28 — Librarian seat + peer census; two stale items closed, six findings, one 🔴 filed in our own lane
 
 **No Library code changed.** Role adopted per CLAUDE.md + `EMCC/framework/09` §4.2; advertised
