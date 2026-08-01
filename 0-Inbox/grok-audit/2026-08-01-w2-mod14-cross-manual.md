@@ -15,10 +15,10 @@ phase: build
 created_at: 2026-08-01T20:30:00Z
 updated_at: 2026-08-01T23:30:00Z
 target_repo: D:/Projects/Enterprise Matrix/EMCC.Library
-range: PLACEHOLDER
+range: 3782f5eab606e2d63f1d20205b03e5e484e91760..d4d9c5e13bd5a272c6b430eeab62cf1d9f96ad58
 branch: grok/w2-mod14-cross-manual-consume
 pr: 76
-proposal: W2-MOD-14 rework — cross_manual unset-means-allow + loud drops (CERT_FAIL B1)
+proposal: W2-MOD-14 rework ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â cross_manual unset-means-allow + loud drops (CERT_FAIL B1)
 auditor_verdict: pending
 auditor_id: ""
 auditor_seat: grok:EMCC-Auditor
@@ -45,9 +45,9 @@ Hold for Regime-B Auditor. Not claimable until `status: pending`.
 
 ## Success criteria
 
-1. Registry present + field **unset** → cross-container edges **kept** (no silent mass drop)
-2. Explicit `cross_manual: false` → same-container only + **loud** WARNING + `cross_manual_drops > 0`
-3. Explicit `true` / no registry → allow cross (back-compat)
+1. Registry present + field **unset** ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ cross-container edges **kept** (no silent mass drop)
+2. Explicit `cross_manual: false` ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ same-container only + **loud** WARNING + `cross_manual_drops > 0`
+3. Explicit `true` / no registry ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ allow cross (back-compat)
 4. Tests cover unset-with-registry branch (attempt-1 gap)
 5. MOD-15 not bundled
 
