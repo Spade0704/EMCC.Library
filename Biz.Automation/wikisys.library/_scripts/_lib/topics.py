@@ -11,10 +11,12 @@ Schema (CODEX_BUILD_SPEC_v1_3.md §2.5):
         aliases: [alt_name]                 # alternate names
         keywords:                           # word-boundary patterns scanned in H1/H2/intro
           - "example"
-        cross_manual: true                  # cross top-level folder boundaries; default false
+        cross_manual: true                  # cross top-level folder boundaries; omit = allow
         min_similarity: 0.35                # per-topic TF-IDF override; defaults from cross_link.yaml
 
 Required: name + keywords. Optional: aliases / cross_manual / min_similarity.
+cross_manual (Director ruling 2026-08-01 unset-means-allow): absent/None = allow
+cross-container links; true = allow; false = deny (opt-in restriction).
 
 Public API:
     Topic                                       # @dataclass(frozen=True) immutable record
@@ -54,7 +56,8 @@ class Topic:
     name: str
     keywords: List[str]
     aliases: List[str] = field(default_factory=list)
-    cross_manual: bool = False
+    # None = key omitted (allow cross); True = allow; False = deny (opt-in).
+    cross_manual: Optional[bool] = None
     min_similarity: Optional[float] = None
 
 
@@ -207,11 +210,15 @@ def _validate_topic_entry(raw: Any, idx: int) -> Topic:
             "topic {} ({!r}): 'aliases' must be List[str]".format(idx, name)
         )
 
-    cross_manual = raw.get("cross_manual", False)
-    if not isinstance(cross_manual, bool):
-        raise ValueError(
-            "topic {} ({!r}): 'cross_manual' must be bool".format(idx, name)
-        )
+    # Unset key → None (allow). Only explicit bool is binding (W2-MOD-14 policy).
+    if "cross_manual" not in raw:
+        cross_manual = None
+    else:
+        cross_manual = raw.get("cross_manual")
+        if not isinstance(cross_manual, bool):
+            raise ValueError(
+                "topic {} ({!r}): 'cross_manual' must be bool".format(idx, name)
+            )
 
     min_similarity_raw = raw.get("min_similarity")
     if min_similarity_raw is not None:

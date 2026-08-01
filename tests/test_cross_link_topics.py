@@ -561,6 +561,76 @@ class CrossManualConsumeTests(unittest.TestCase):
         self.assertNotIn(c, restricted)
         self.assertIn(c, open_all)
 
+    def test_registry_present_field_unset_allows_cross(self):
+        """Cert B1 branch: registry exists, cross_manual omitted → cross kept."""
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            (wiki / "_canon").mkdir(parents=True)
+            (wiki / "_canon" / "topics.yaml").write_text(
+                "topics:\n"
+                "  - name: smoke\n"
+                "    keywords: [smoke]\n",
+                encoding="utf-8",
+            )
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            _write_page(wiki, "m1/B.md", ["smoke"])
+            _write_page(wiki, "m2/C.md", ["smoke"])
+            summary = cross_link_topics.run(wiki)
+            body = _see_also_body(a.read_text(encoding="utf-8"))
+        self.assertTrue(summary["topic_cross_manual_loaded"])
+        self.assertEqual(summary.get("cross_manual_drops", 0), 0)
+        self.assertIn("[[B]]", body)
+        self.assertIn("[[C]]", body)
+
+    def test_cross_manual_false_drop_is_loud(self):
+        """Explicit false drops emit WARNING + non-zero cross_manual_drops."""
+        import io
+        import contextlib
+
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            (wiki / "_canon").mkdir(parents=True)
+            (wiki / "_canon" / "topics.yaml").write_text(
+                "topics:\n"
+                "  - name: smoke\n"
+                "    keywords: [smoke]\n"
+                "    cross_manual: false\n",
+                encoding="utf-8",
+            )
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            _write_page(wiki, "m1/B.md", ["smoke"])
+            _write_page(wiki, "m2/C.md", ["smoke"])
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                summary = cross_link_topics.run(wiki)
+            body = _see_also_body(a.read_text(encoding="utf-8"))
+            stderr = err.getvalue()
+        self.assertIn("[[B]]", body)
+        self.assertNotIn("[[C]]", body)
+        self.assertGreater(summary["cross_manual_drops"], 0)
+        self.assertIn("WARNING: codex cross_manual drop", stderr)
+        self.assertIn("cross_manual:false", stderr)
+
+    def test_compute_records_drop_events_on_explicit_false(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            c = _write_page(wiki, "m2/C.md", ["smoke"])
+            idx = {"smoke": [a, c]}
+            events = []
+            related = compute_related_files(
+                a,
+                ["smoke"],
+                idx,
+                wiki_root=wiki,
+                topic_cross_manual={"smoke": False},
+                drop_events=events,
+            )
+        self.assertNotIn(c, related)
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["reason"], "cross_manual_false")
+        self.assertEqual(events[0]["topic"], "smoke")
+
 
 class CapTests(unittest.TestCase):
     """max_links caps the related set; default 0 = uncapped (back-compat)."""

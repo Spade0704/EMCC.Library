@@ -79,14 +79,19 @@ def compute_related_files(
     topic_to_pages: Dict[str, List[Path]],
     wiki_root: Optional[Path] = None,
     topic_cross_manual: Optional[Dict[str, bool]] = None,
+    drop_events: Optional[List[Dict[str, Any]]] = None,
 ) -> List[Path]:
     """Union pages sharing ≥1 topic with this page (excluding self).
 
-    W2-MOD-14: when ``topic_cross_manual`` is provided (registry present), a topic
-    with ``cross_manual: false`` (schema default) only links to pages in the same
-    top-level container. ``cross_manual: true`` allows cross-container links.
-    Topics absent from the map keep pre-MOD-14 back-compat (allow cross).
-    ``wiki_root`` is required for container checks when the map is used.
+    W2-MOD-14 (Director unset-means-allow): ``topic_cross_manual`` maps only
+    **explicit** registry values. Topics absent from the map (key omitted or
+    unknown) keep allow-cross. Explicit ``false`` denies cross-container links;
+    ``true`` allows them. ``wiki_root`` is required for container checks when
+    the map is used.
+
+    When an edge is dropped by explicit ``false``, append a record to
+    ``drop_events`` (if provided) so callers can emit a loud WARNING summary.
+    Never silent mass-delete.
 
     Returns sorted+deduped list of related page paths.
     """
@@ -95,7 +100,7 @@ def compute_related_files(
         _container_of(page_path, wiki_root) if wiki_root is not None else ""
     )
     for topic in page_topics:
-        # Unknown-to-registry topics: allow cross (byte-compat when no registry).
+        # Absent from map (unset key / unknown topic / no registry): allow cross.
         allow_cross = True
         if topic_cross_manual is not None and topic in topic_cross_manual:
             allow_cross = bool(topic_cross_manual[topic])
@@ -107,6 +112,15 @@ def compute_related_files(
                 and wiki_root is not None
                 and _container_of(other, wiki_root) != page_container
             ):
+                if drop_events is not None:
+                    drop_events.append(
+                        {
+                            "page": page_path,
+                            "candidate": other,
+                            "topic": topic,
+                            "reason": "cross_manual_false",
+                        }
+                    )
                 continue
             related.add(other)
     return sorted(related, key=lambda p: p.as_posix())
@@ -297,6 +311,7 @@ def process_page(
     max_links: int = 0,
     ambiguous_stems=None,
     topic_cross_manual: Optional[Dict[str, bool]] = None,
+    drop_events: Optional[List[Dict[str, Any]]] = None,
 ) -> bool:
     """Atomic update: fm related_files + body marker block. Idempotent.
 
@@ -311,7 +326,8 @@ def process_page(
     to rendering for duplicate-stem disambiguation. Both `related_files:` fm
     and the see-also block reflect the same (possibly capped) set.
 
-    W2-MOD-14: ``topic_cross_manual`` gates cross-container candidates.
+    W2-MOD-14: ``topic_cross_manual`` gates cross-container candidates
+    (explicit false only); drops append to ``drop_events`` when provided.
     """
     if not page_topics:
         return False
@@ -321,6 +337,7 @@ def process_page(
         topic_to_pages,
         wiki_root=wiki_root,
         topic_cross_manual=topic_cross_manual,
+        drop_events=drop_events,
     )
     if max_links and max_links > 0 and len(related) > max_links:
         related = rank_related(
@@ -363,7 +380,8 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     ambiguous_stems = build_ambiguous_stems(wiki_root) if disambiguate else None
 
     # W2-MOD-14: load topic registry so cross_manual is a real consumer (not type-only).
-    # Missing/malformed registry → None map → compute_related_files back-compat (allow cross).
+    # Missing/malformed registry → None map → compute_related_files allow-cross.
+    # Explicit keys only: unset field is NOT written into the map (allow).
     topic_cross_manual: Optional[Dict[str, bool]] = None
     try:
         from _lib.frontmatter import find_canon_dir
@@ -375,6 +393,8 @@ def run(wiki_root: Path) -> Dict[str, Any]:
             loaded = load_topics(topics_path)
             topic_cross_manual = {}
             for t in loaded:
+                if t.cross_manual is None:
+                    continue  # unset ⇒ allow (absent from map)
                 topic_cross_manual[t.name] = bool(t.cross_manual)
                 for a in t.aliases:
                     topic_cross_manual[a] = bool(t.cross_manual)
@@ -408,6 +428,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     pages_seen = 0
     pages_updated = 0
     idempotent_pages = 0
+    drop_events: List[Dict[str, Any]] = []
 
     for page_path in pages:
         pages_seen += 1
@@ -423,11 +444,26 @@ def run(wiki_root: Path) -> Dict[str, Any]:
             max_links,
             ambiguous_stems,
             topic_cross_manual=topic_cross_manual,
+            drop_events=drop_events,
         )
         if changed:
             pages_updated += 1
         else:
             idempotent_pages += 1
+
+    cross_manual_drops = len(drop_events)
+    if cross_manual_drops:
+        pages_hit = len({e["page"] for e in drop_events})
+        topics_hit = sorted({e["topic"] for e in drop_events})
+        print(
+            "WARNING: codex cross_manual drop: edges={} pages={} "
+            "topics={} (explicit cross_manual:false only; unset allows)".format(
+                cross_manual_drops,
+                pages_hit,
+                ",".join(topics_hit) if topics_hit else "-",
+            ),
+            file=sys.stderr,
+        )
 
     return {
         "topic_to_pages": topic_to_pages,
@@ -435,6 +471,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
         "pages_updated": pages_updated,
         "idempotent_pages": idempotent_pages,
         "topic_cross_manual_loaded": topic_cross_manual is not None,
+        "cross_manual_drops": cross_manual_drops,
     }
 
 

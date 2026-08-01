@@ -12,8 +12,9 @@
 #   - per-entry optional keys:
 #       aliases        (list)        — alternate names accepted in frontmatter `topics:` lists.
 #                                       Counted alongside canonical name in match scanning.
-#       cross_manual   (bool)        — if true, allow cross-links across top-level folder
-#                                       boundaries; default false (folder-scoped linking).
+#       cross_manual   (bool)        — opt-in restriction: true = allow cross-container;
+#                                       false = same-container only; omitted = allow
+#                                       (Director ruling 2026-08-01 unset-means-allow).
 #       min_similarity (float|None)  — per-topic TF-IDF cosine threshold override;
 #                                       defaults from _config/cross_link.yaml when null.
 #
@@ -38,4 +39,4 @@ topics: []
 # - name: another_topic
 #   keywords:
 #     - "another"
-#   # aliases / cross_manual / min_similarity omitted → defaults applied.
+#   # aliases / cross_manual / min_similarity omitted → cross_manual allows cross.
