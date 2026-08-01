@@ -249,7 +249,7 @@ topics:
     aliases: [alt_name]                 # alternate names accepted in frontmatter topics: lists
     keywords:                           # word-boundary case-insensitive patterns scanned in H1/H2/intro
       - "example"
-    cross_manual: true                  # if true, links across top-level folder boundaries; default false
+    cross_manual: true                  # optional; omit=ALLOW cross-container; false=deny (W2-MOD-14)
     min_similarity: 0.35                # optional per-topic TF-IDF override; defaults from _config/cross_link.yaml
 ```
 
