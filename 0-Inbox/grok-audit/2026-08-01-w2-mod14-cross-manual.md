@@ -15,9 +15,9 @@ phase: build
 created_at: 2026-08-01T20:30:00Z
 updated_at: 2026-08-01T20:30:00Z
 target_repo: D:/Projects/Enterprise Matrix/EMCC.Library
-range: PLACEHOLDER
+range: 3782f5eab606e2d63f1d20205b03e5e484e91760..f61959508a7b75777c49d75392a12a57994ba0bb
 branch: grok/w2-mod14-cross-manual-consume
-pr: 0
+pr: 76
 proposal: W2-MOD-14 wire Topic.cross_manual into cross_link_topics cross-container filter
 auditor_verdict: pending
 auditor_id: ""
