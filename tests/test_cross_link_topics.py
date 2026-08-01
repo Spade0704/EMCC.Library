@@ -487,6 +487,81 @@ class RankRelatedTests(unittest.TestCase):
         self.assertEqual(ranked, [A, B])
 
 
+class CrossManualConsumeTests(unittest.TestCase):
+    """W2-MOD-14: Topic.cross_manual gates cross-container related_files."""
+
+    def test_cross_manual_false_same_container_only(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            b = _write_page(wiki, "m1/B.md", ["smoke"])
+            c = _write_page(wiki, "m2/C.md", ["smoke"])
+            idx = {"smoke": [a, b, c]}
+            flags = {"smoke": False}
+            related = compute_related_files(
+                a, ["smoke"], idx, wiki_root=wiki, topic_cross_manual=flags
+            )
+        self.assertIn(b, related)
+        self.assertNotIn(c, related)
+
+    def test_cross_manual_true_allows_cross_container(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            b = _write_page(wiki, "m1/B.md", ["smoke"])
+            c = _write_page(wiki, "m2/C.md", ["smoke"])
+            idx = {"smoke": [a, b, c]}
+            flags = {"smoke": True}
+            related = compute_related_files(
+                a, ["smoke"], idx, wiki_root=wiki, topic_cross_manual=flags
+            )
+        self.assertIn(b, related)
+        self.assertIn(c, related)
+
+    def test_no_registry_map_back_compat_allows_cross(self):
+        """Absent topic_cross_manual (no registry) preserves pre-MOD-14 allow-all."""
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            c = _write_page(wiki, "m2/C.md", ["smoke"])
+            idx = {"smoke": [a, c]}
+            related = compute_related_files(a, ["smoke"], idx)
+        self.assertIn(c, related)
+
+    def test_run_loads_cross_manual_from_topics_yaml(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            (wiki / "_canon").mkdir(parents=True)
+            (wiki / "_canon" / "topics.yaml").write_text(
+                "topics:\n"
+                "  - name: smoke\n"
+                "    keywords: [smoke]\n"
+                "    cross_manual: false\n",
+                encoding="utf-8",
+            )
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            _write_page(wiki, "m1/B.md", ["smoke"])
+            _write_page(wiki, "m2/C.md", ["smoke"])
+            cross_link_topics.run(wiki)
+            body = _see_also_body(a.read_text(encoding="utf-8"))
+        self.assertIn("[[B]]", body)
+        self.assertNotIn("[[C]]", body)
+
+    def test_falsifier_ignoring_flag_would_include_cross(self):
+        """Falsifier direction: without the flag map, cross-container is admitted again."""
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            c = _write_page(wiki, "m2/C.md", ["smoke"])
+            idx = {"smoke": [a, c]}
+            restricted = compute_related_files(
+                a, ["smoke"], idx, wiki_root=wiki, topic_cross_manual={"smoke": False}
+            )
+            open_all = compute_related_files(a, ["smoke"], idx)
+        self.assertNotIn(c, restricted)
+        self.assertIn(c, open_all)
+
+
 class CapTests(unittest.TestCase):
     """max_links caps the related set; default 0 = uncapped (back-compat)."""
 

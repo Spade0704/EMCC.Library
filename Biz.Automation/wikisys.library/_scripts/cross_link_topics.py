@@ -35,13 +35,14 @@ Pure stdlib per spec §8 Hard Rule 1.
 """
 # @component Codex[cross-link-graph]
 
+import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from _lib import cli
 from _lib import frontmatter
 from _lib import markdown
-from _lib.topics import load_cross_link_config
+from _lib.topics import load_cross_link_config, load_topics
 
 
 WIKI_ROOT = frontmatter.find_wiki_content_root()
@@ -76,16 +77,38 @@ def compute_related_files(
     page_path: Path,
     page_topics: List[str],
     topic_to_pages: Dict[str, List[Path]],
+    wiki_root: Optional[Path] = None,
+    topic_cross_manual: Optional[Dict[str, bool]] = None,
 ) -> List[Path]:
-    """Union all pages sharing ≥1 topic with this page (excluding self).
+    """Union pages sharing ≥1 topic with this page (excluding self).
+
+    W2-MOD-14: when ``topic_cross_manual`` is provided (registry present), a topic
+    with ``cross_manual: false`` (schema default) only links to pages in the same
+    top-level container. ``cross_manual: true`` allows cross-container links.
+    Topics absent from the map keep pre-MOD-14 back-compat (allow cross).
+    ``wiki_root`` is required for container checks when the map is used.
 
     Returns sorted+deduped list of related page paths.
     """
     related: set = set()
+    page_container = (
+        _container_of(page_path, wiki_root) if wiki_root is not None else ""
+    )
     for topic in page_topics:
+        # Unknown-to-registry topics: allow cross (byte-compat when no registry).
+        allow_cross = True
+        if topic_cross_manual is not None and topic in topic_cross_manual:
+            allow_cross = bool(topic_cross_manual[topic])
         for other in topic_to_pages.get(topic, []):
-            if other != page_path:
-                related.add(other)
+            if other == page_path:
+                continue
+            if (
+                not allow_cross
+                and wiki_root is not None
+                and _container_of(other, wiki_root) != page_container
+            ):
+                continue
+            related.add(other)
     return sorted(related, key=lambda p: p.as_posix())
 
 
@@ -273,6 +296,7 @@ def process_page(
     wiki_root: Path,
     max_links: int = 0,
     ambiguous_stems=None,
+    topic_cross_manual: Optional[Dict[str, bool]] = None,
 ) -> bool:
     """Atomic update: fm related_files + body marker block. Idempotent.
 
@@ -286,10 +310,18 @@ def process_page(
     (default 0 = uncapped, original behavior). `ambiguous_stems` is forwarded
     to rendering for duplicate-stem disambiguation. Both `related_files:` fm
     and the see-also block reflect the same (possibly capped) set.
+
+    W2-MOD-14: ``topic_cross_manual`` gates cross-container candidates.
     """
     if not page_topics:
         return False
-    related = compute_related_files(page_path, page_topics, topic_to_pages)
+    related = compute_related_files(
+        page_path,
+        page_topics,
+        topic_to_pages,
+        wiki_root=wiki_root,
+        topic_cross_manual=topic_cross_manual,
+    )
     if max_links and max_links > 0 and len(related) > max_links:
         related = rank_related(
             page_path, related, page_topics, page_topics_by_path, wiki_root
@@ -330,6 +362,30 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     disambiguate = bool(see_cfg.get("disambiguate_duplicate_stems", False))
     ambiguous_stems = build_ambiguous_stems(wiki_root) if disambiguate else None
 
+    # W2-MOD-14: load topic registry so cross_manual is a real consumer (not type-only).
+    # Missing/malformed registry → None map → compute_related_files back-compat (allow cross).
+    topic_cross_manual: Optional[Dict[str, bool]] = None
+    try:
+        from _lib.frontmatter import find_canon_dir
+        topics_path = find_canon_dir(wiki_root) / "topics.yaml"
+    except Exception:
+        topics_path = wiki_root / "_canon" / "topics.yaml"
+    if topics_path.is_file():
+        try:
+            loaded = load_topics(topics_path)
+            topic_cross_manual = {}
+            for t in loaded:
+                topic_cross_manual[t.name] = bool(t.cross_manual)
+                for a in t.aliases:
+                    topic_cross_manual[a] = bool(t.cross_manual)
+        except Exception as e:
+            print(
+                "WARNING: topics.yaml unreadable for cross_manual ({}); "
+                "cross-container links unrestricted (back-compat)".format(e),
+                file=sys.stderr,
+            )
+            topic_cross_manual = None
+
     # Walk + load each page exactly once. Both topic_to_pages and
     # page_topics_by_path are pure functions of each page's fm `topics:` list,
     # so build them in a single pass and invert in-memory. This replaces the
@@ -366,6 +422,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
             wiki_root,
             max_links,
             ambiguous_stems,
+            topic_cross_manual=topic_cross_manual,
         )
         if changed:
             pages_updated += 1
@@ -377,6 +434,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
         "pages_seen": pages_seen,
         "pages_updated": pages_updated,
         "idempotent_pages": idempotent_pages,
+        "topic_cross_manual_loaded": topic_cross_manual is not None,
     }
 
 

@@ -1,0 +1,48 @@
+---
+schema: cert-handoff/v1.1
+certifier_id: claude
+producer_id: grok:EMCC-dfdu
+builder_id: grok:EMCC-dfdu
+builder_llm: grok
+builder_model: grok
+certifier_model: claude
+director_id: grok:EMCC-Director
+directive_ref: tasks/orchestrator-log.jsonl#dir-20260801-w2-mod14-cross-manual
+slug: 2026-08-01-w2-mod14-cross-manual
+attempt: 1
+status: awaiting_auditor
+phase: build
+created_at: 2026-08-01T20:30:00Z
+updated_at: 2026-08-01T20:30:00Z
+target_repo: D:/Projects/Enterprise Matrix/EMCC.Library
+range: PLACEHOLDER
+branch: grok/w2-mod14-cross-manual-consume
+pr: 0
+proposal: W2-MOD-14 wire Topic.cross_manual into cross_link_topics cross-container filter
+auditor_verdict: pending
+auditor_id: ""
+auditor_seat: grok:EMCC-Auditor
+auditor_ref: ""
+evidence_ref: tasks/audits/2026-08-01-w2-mod14-cross-manual-evidence.md
+spec_author_llm: grok
+spec_author_seat: grok:EMCC-Director
+cert_class: parked-awaiting-cross-model
+decorrelation: cross
+wake_build: false
+caveat: "parked-awaiting-cross-model is NOT cross-model certified. status: awaiting_auditor (rul-20260801). Flip to pending only after Regime-B PASS."
+---
+
+# CERT_REQ - W2-MOD-14 cross_manual consume (attempt 1)
+
+Hold for Regime-B Auditor.
+
+## Product
+
+- `Biz.Automation/wikisys.library/_scripts/cross_link_topics.py`
+- `tests/test_cross_link_topics.py` (CrossManualConsumeTests)
+
+## Executes-clean
+
+```
+python -m unittest tests.test_cross_link_topics -q  # 52 OK
+```
