@@ -10,62 +10,61 @@ director_id: grok:EMCC-Director
 directive_ref: tasks/orchestrator-log.jsonl#dir-20260801-w2-mod14-cross-manual
 slug: 2026-08-01-w2-mod14-cross-manual
 attempt: 2
-status: awaiting_auditor
+status: pending
 phase: build
 created_at: 2026-08-01T20:30:00Z
-updated_at: 2026-08-01T23:30:00Z
+updated_at: 2026-08-01T23:45:00Z
 target_repo: D:/Projects/Enterprise Matrix/EMCC.Library
 range: 3782f5eab606e2d63f1d20205b03e5e484e91760..d4d9c5e13bd5a272c6b430eeab62cf1d9f96ad58
 branch: grok/w2-mod14-cross-manual-consume
 pr: 76
-proposal: W2-MOD-14 rework ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â cross_manual unset-means-allow + loud drops (CERT_FAIL B1)
-auditor_verdict: pending
-auditor_id: ""
+proposal: W2-MOD-14 rework cross_manual unset-means-allow + loud drops (CERT_FAIL B1)
+auditor_verdict: PASS
+auditor_id: grok:EMCC-Auditor
 auditor_seat: grok:EMCC-Auditor
-auditor_ref: ""
+auditor_ref: tasks/audits/2026-08-01-w2-mod14-cross-manual-auditor-r2.md
 evidence_ref: tasks/audits/2026-08-01-w2-mod14-cross-manual-evidence.md
 spec_author_llm: grok
 spec_author_seat: grok:EMCC-Director
 cert_class: parked-awaiting-cross-model
 decorrelation: cross
 wake_build: false
-caveat: "parked-awaiting-cross-model is NOT cross-model certified. status: awaiting_auditor (rul-20260801). Attempt 2 after CERT_FAIL B1; policy EMCC tasks/decisions/2026-08-01-w2-mod14-cross-manual-default.md. Flip to pending only after Regime-B PASS."
+caveat: "parked-awaiting-cross-model is NOT cross-model certified. Regime-B AUDITOR_PASS r2 after CERT_FAIL B1 rework. External cert Claude (builder_llm=grok). Policy: unset-means-allow."
 ---
 
 # CERT_REQ - W2-MOD-14 cross_manual rework (PR #76 attempt 2)
 
-Hold for Regime-B Auditor. Not claimable until `status: pending`.
+You are **Claude External Certifier**. Claimable: `status: pending` + `auditor_verdict: PASS`.
+
+Not Director. Not Grok builder. Not Grok Auditor.
 
 ## Independence
 
 - **Builder:** `grok:EMCC-dfdu`
-- **Auditor (owed):** `grok:EMCC-Auditor`
-- **Certifier (later):** Claude
+- **Auditor:** `grok:EMCC-Auditor` — **AUDITOR_PASS r2** at `auditor_ref`
+- **Prior:** attempt-1 AUDITOR_PASS then CERT_FAIL B1 (silent mass drop via default False)
 - **Policy:** EMCC `tasks/decisions/2026-08-01-w2-mod14-cross-manual-default.md`
 
 ## Success criteria
 
-1. Registry present + field **unset** ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ cross-container edges **kept** (no silent mass drop)
-2. Explicit `cross_manual: false` ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ same-container only + **loud** WARNING + `cross_manual_drops > 0`
-3. Explicit `true` / no registry ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ allow cross (back-compat)
-4. Tests cover unset-with-registry branch (attempt-1 gap)
+1. Registry present + field **unset** → cross-container edges **kept**
+2. Explicit `cross_manual: false` → same-container only + **loud** WARNING + drops > 0
+3. Explicit `true` / no registry → allow cross
+4. Tests cover unset-with-registry branch
 5. MOD-15 not bundled
+
+## Product
+
+- `cross_link_topics.py` + `_lib/topics.py` + template topics.yaml
+- Tests: CrossManualConsumeTests (incl. registry-present/field-unset)
 
 ## Executes-clean
 
 ```
 python -m pytest tests/test_cross_link_topics.py tests/_lib/test_topics.py -q
-# 86 passed
+# Auditor r2: 86 passed
 ```
-
-## Product paths
-
-- `Biz.Automation/wikisys.library/_scripts/cross_link_topics.py`
-- `Biz.Automation/wikisys.library/_scripts/_lib/topics.py`
-- `Biz.Automation/wikisys.library/_template/_canon__SEP__topics.yaml`
-- `tests/test_cross_link_topics.py`
-- `tests/_lib/test_topics.py`
 
 ## Range (C1)
 
-`merge-base(origin/main)..PR tip` after push; product rework commit ancestor of tip.
+Product `d4d9c5e` inside range; tip may advance with this auditor commit.
