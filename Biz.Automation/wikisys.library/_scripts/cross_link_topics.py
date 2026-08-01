@@ -1,24 +1,24 @@
-"""P18.3 cross_link_topics — marker-block 'See also' writer + idempotent.
+"""P18.3 cross_link_topics ΓÇö marker-block 'See also' writer + idempotent.
 
-Per CODEX_BUILD_SPEC_v1_3.md §2.4 #17 + §2.7 marker contract + §3
+Per CODEX_BUILD_SPEC_v1_3.md ┬º2.4 #17 + ┬º2.7 marker contract + ┬º3
 Principle #13. For each multi-page topic, writes frontmatter
 `related_files: []` (script-managed full replacement) + body
 marker-bracketed 'See also' block. Idempotent: re-run with identical
-inputs produces zero diffs per spec §2.7 idempotency requirement.
+inputs produces zero diffs per spec ┬º2.7 idempotency requirement.
 
-Marker contract (spec §2.7 byte-exact):
+Marker contract (spec ┬º2.7 byte-exact):
     <!-- codex:see-also:start -->
     ## See also
-    - [[OtherPageStem]] — *topic: smoke*
+    - [[OtherPageStem]] ΓÇö *topic: smoke*
     <!-- codex:see-also:end -->
 
 Human edits OUTSIDE markers PRESERVED. Human edits BETWEEN markers
 OVERWRITTEN by design (content is rendered view; frontmatter
-`related_files:` is canonical source per spec §2.7).
+`related_files:` is canonical source per spec ┬º2.7).
 
 T-XL-3 build_topic_index sets fm `topics:` additively; T-XL-4 reads
 those topics + computes related-page graph + writes the rendered
-view. Re-derives topic→pages from page fm (stateless-orchestrator
+view. Re-derives topicΓåÆpages from page fm (stateless-orchestrator
 discipline per Architect arbitration) rather than consuming T-XL-3
 runtime state directly.
 
@@ -31,7 +31,7 @@ Public API:
     replace_or_append_marker_block(page_text, see_also_block) -> str
     process_page(page_path, page_topics, topic_to_pages, page_topics_by_path, wiki_root) -> bool
 
-Pure stdlib per spec §8 Hard Rule 1.
+Pure stdlib per spec ┬º8 Hard Rule 1.
 """
 # @component Codex[cross-link-graph]
 
@@ -47,13 +47,13 @@ from _lib.topics import load_cross_link_config, load_topics
 
 WIKI_ROOT = frontmatter.find_wiki_content_root()
 
-# Byte-exact marker constants per spec §2.7 marker contract.
+# Byte-exact marker constants per spec ┬º2.7 marker contract.
 MARKER_START = "<!-- codex:see-also:start -->"
 MARKER_END = "<!-- codex:see-also:end -->"
 
 
 def build_topic_to_pages_index(wiki_root: Path) -> Dict[str, List[Path]]:
-    """Re-derive topic → [pages] mapping from page frontmatter `topics:` fields.
+    """Re-derive topic ΓåÆ [pages] mapping from page frontmatter `topics:` fields.
 
     Iterates content pages via _lib.markdown.iter_content_pages; reads
     each page's fm topics: list; accumulates the inverted mapping. Pages
@@ -81,7 +81,7 @@ def compute_related_files(
     topic_cross_manual: Optional[Dict[str, bool]] = None,
     drop_events: Optional[List[Dict[str, Any]]] = None,
 ) -> List[Path]:
-    """Union pages sharing ≥1 topic with this page (excluding self).
+    """Union pages sharing ΓëÑ1 topic with this page (excluding self).
 
     W2-MOD-14 (Director unset-means-allow): ``topic_cross_manual`` maps only
     **explicit** registry values. Topics absent from the map (key omitted or
@@ -142,10 +142,10 @@ def _container_of(path: Path, wiki_root: Path) -> str:
 def _link_target(path: Path, wiki_root: Path, ambiguous_stems) -> str:
     """Render the wikilink body for one related page.
 
-    Default (spec §2.7): bare `[[Stem]]`. When the stem is ambiguous
-    (occurs in >1 content page wiki-wide — passed via `ambiguous_stems`),
+    Default (spec ┬º2.7): bare `[[Stem]]`. When the stem is ambiguous
+    (occurs in >1 content page wiki-wide ΓÇö passed via `ambiguous_stems`),
     emit a path-qualified link `[[rel/path|Stem (Container)]]` so Obsidian
-    resolves it unambiguously. `ambiguous_stems` None/empty → always bare
+    resolves it unambiguously. `ambiguous_stems` None/empty ΓåÆ always bare
     (byte-identical to pre-2026-06-13 behavior).
     """
     stem = path.stem
@@ -199,12 +199,12 @@ def render_see_also_block(
 ) -> str:
     """Render marker-bracketed 'See also' block CONTENT (no markers).
 
-    Per spec §2.7 example format: H2 + bulleted wikilinks with
-    topic-annotation italics. Empty related_files → empty string
+    Per spec ┬º2.7 example format: H2 + bulleted wikilinks with
+    topic-annotation italics. Empty related_files ΓåÆ empty string
     (caller appends markers only when content non-empty).
 
     `ambiguous_stems` (optional set): stems that collide across the wiki get
-    path-qualified links per the §2.7 disambiguation clause; None preserves
+    path-qualified links per the ┬º2.7 disambiguation clause; None preserves
     the bare `[[Stem]]` default.
     """
     if not related_files:
@@ -215,7 +215,7 @@ def render_see_also_block(
         link = _link_target(path, wiki_root, ambiguous_stems)
         topics_str = ", ".join(topics)
         if topics_str:
-            lines.append("- {} — *topic: {}*".format(link, topics_str))
+            lines.append("- {} ΓÇö *topic: {}*".format(link, topics_str))
         else:
             lines.append("- {}".format(link))
     return "\n".join(lines)
@@ -226,7 +226,7 @@ def update_page_related_files_fm(
 ) -> str:
     """Update fm `related_files:` SCRIPT-MANAGED full-replacement.
 
-    Per spec §2.7 frontmatter-as-source-of-truth + §3 Principle #13.
+    Per spec ┬º2.7 frontmatter-as-source-of-truth + ┬º3 Principle #13.
     Replaces existing related_files: value with sorted+deduped computed
     value; adds field at end of fm block if absent. Pages without
     frontmatter skipped (no fm synthesis).
@@ -269,7 +269,7 @@ def replace_or_append_marker_block(
 ) -> str:
     """Replace existing marker-bracketed block OR append at end-of-file.
 
-    Per spec §2.7: locates byte-exact MARKER_START/MARKER_END pair;
+    Per spec ┬º2.7: locates byte-exact MARKER_START/MARKER_END pair;
     replaces content between (preserving markers + their position); if
     absent, appends marker_start + block + marker_end at end-of-file
     before trailing trivia. Human prose OUTSIDE markers PRESERVED
@@ -281,7 +281,7 @@ def replace_or_append_marker_block(
     # (markdown.py _blank) preserving byte offsets, so positions found
     # in scan_text are byte-identical in page_text. Branch falls through
     # to append when no unfenced pair (or only one of {start,end}
-    # unfenced) — mirrors pre-fix start_idx/end_idx == -1 semantics.
+    # unfenced) ΓÇö mirrors pre-fix start_idx/end_idx == -1 semantics.
     scan_text = markdown.strip_code(page_text)
     start_idx = scan_text.find(MARKER_START)
     end_idx = scan_text.find(MARKER_END)
@@ -312,6 +312,8 @@ def process_page(
     ambiguous_stems=None,
     topic_cross_manual: Optional[Dict[str, bool]] = None,
     drop_events: Optional[List[Dict[str, Any]]] = None,
+    truncation_events: Optional[List[Dict[str, Any]]] = None,
+    fail_on_truncation: bool = False,
 ) -> bool:
     """Atomic update: fm related_files + body marker block. Idempotent.
 
@@ -328,6 +330,8 @@ def process_page(
 
     W2-MOD-14: ``topic_cross_manual`` gates cross-container candidates
     (explicit false only); drops append to ``drop_events`` when provided.
+    W2-MOD-15: max_links truncation is LOUD (stderr WARNING + events);
+    ``fail_on_truncation`` is honored by run()/orchestrator as non-success.
     """
     if not page_topics:
         return False
@@ -340,9 +344,26 @@ def process_page(
         drop_events=drop_events,
     )
     if max_links and max_links > 0 and len(related) > max_links:
+        n_before = len(related)
         related = rank_related(
             page_path, related, page_topics, page_topics_by_path, wiki_root
         )[:max_links]
+        n_dropped = n_before - len(related)
+        msg = (
+            "WARNING: codex see-also truncation: page={!r} max_links={} "
+            "kept={} dropped={} (related_files + body capped together)".format(
+                page_path.as_posix(), max_links, len(related), n_dropped
+            )
+        )
+        print(msg, file=sys.stderr)
+        if truncation_events is not None:
+            truncation_events.append({
+                "page": page_path.as_posix(),
+                "max_links": max_links,
+                "kept": len(related),
+                "dropped": n_dropped,
+                "strict": bool(fail_on_truncation),
+            })
     page_topics_per_related = {p: page_topics_by_path.get(p, []) for p in related}
     see_also_block = render_see_also_block(
         related, page_topics_per_related, wiki_root, ambiguous_stems
@@ -359,7 +380,7 @@ def process_page(
 
 
 def run(wiki_root: Path) -> Dict[str, Any]:
-    """Orchestrator entry-point — build topic index + write related_files + see-also blocks.
+    """Orchestrator entry-point ΓÇö build topic index + write related_files + see-also blocks.
 
     Returns summary dict with pages_seen + pages_updated + idempotent_pages counts.
 
@@ -377,10 +398,12 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     except (TypeError, ValueError):
         max_links = 0
     disambiguate = bool(see_cfg.get("disambiguate_duplicate_stems", False))
+    # W2-MOD-15: strict policy → non-success when any link is dropped by the cap.
+    fail_on_truncation = bool(see_cfg.get("fail_on_truncation", False))
     ambiguous_stems = build_ambiguous_stems(wiki_root) if disambiguate else None
 
     # W2-MOD-14: load topic registry so cross_manual is a real consumer (not type-only).
-    # Missing/malformed registry → None map → compute_related_files allow-cross.
+    # Missing/malformed registry ΓåÆ None map ΓåÆ compute_related_files allow-cross.
     # Explicit keys only: unset field is NOT written into the map (allow).
     topic_cross_manual: Optional[Dict[str, bool]] = None
     try:
@@ -394,7 +417,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
             topic_cross_manual = {}
             for t in loaded:
                 if t.cross_manual is None:
-                    continue  # unset ⇒ allow (absent from map)
+                    continue  # unset ΓçÆ allow (absent from map)
                 topic_cross_manual[t.name] = bool(t.cross_manual)
                 for a in t.aliases:
                     topic_cross_manual[a] = bool(t.cross_manual)
@@ -429,6 +452,7 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     pages_updated = 0
     idempotent_pages = 0
     drop_events: List[Dict[str, Any]] = []
+    truncation_events: List[Dict[str, Any]] = []
 
     for page_path in pages:
         pages_seen += 1
@@ -445,6 +469,8 @@ def run(wiki_root: Path) -> Dict[str, Any]:
             ambiguous_stems,
             topic_cross_manual=topic_cross_manual,
             drop_events=drop_events,
+            truncation_events=truncation_events,
+            fail_on_truncation=fail_on_truncation,
         )
         if changed:
             pages_updated += 1
@@ -465,6 +491,17 @@ def run(wiki_root: Path) -> Dict[str, Any]:
             file=sys.stderr,
         )
 
+    links_truncated = sum(int(e.get("dropped", 0)) for e in truncation_events)
+    truncation_failed = bool(fail_on_truncation and links_truncated > 0)
+    if truncation_failed:
+        print(
+            "ERROR: codex see-also truncation under fail_on_truncation=true "
+            "(dropped {} link(s) across {} page(s))".format(
+                links_truncated, len(truncation_events)
+            ),
+            file=sys.stderr,
+        )
+
     return {
         "topic_to_pages": topic_to_pages,
         "pages_seen": pages_seen,
@@ -472,6 +509,9 @@ def run(wiki_root: Path) -> Dict[str, Any]:
         "idempotent_pages": idempotent_pages,
         "topic_cross_manual_loaded": topic_cross_manual is not None,
         "cross_manual_drops": cross_manual_drops,
+        "links_truncated": links_truncated,
+        "truncation_events": truncation_events,
+        "truncation_failed": truncation_failed,
     }
 
 
@@ -479,10 +519,15 @@ if __name__ == "__main__":
     WIKI_ROOT = cli.resolve_cli_wiki_root(WIKI_ROOT)
     summary = run(WIKI_ROOT)
     print(
-        "cross_link_topics: topics={} pages_seen={} updated={} idempotent={}".format(
+        "cross_link_topics: topics={} pages_seen={} updated={} idempotent={} "
+        "truncated={}".format(
             len(summary["topic_to_pages"]),
             summary["pages_seen"],
             summary["pages_updated"],
             summary["idempotent_pages"],
+            summary.get("links_truncated", 0),
         )
     )
+    # W2-MOD-15: CLI path turns strict policy into process non-success.
+    if summary.get("truncation_failed"):
+        sys.exit(1)

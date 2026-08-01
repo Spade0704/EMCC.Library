@@ -2,6 +2,7 @@
 
 import io
 import shutil
+import sys
 import unittest
 from datetime import date
 from pathlib import Path
@@ -251,6 +252,43 @@ class TestCrossLinkPipeline(unittest.TestCase):
                     wiki, stdout=stdout, stderr=stderr
                 )
             self.assertEqual(rc, 1)
+
+    def test_truncation_failed_is_orchestrator_non_success(self):
+        """W2-MOD-15 CERT B1: fail_on_truncation must not leave #17 OK / exit 0.
+
+        cross_link_topics.run returns a dict (no exception). The canonical
+        orchestrator must still put #17 on failures and exit 1, and must not
+        print a false '#17 -- OK'.
+        """
+        with TemporaryDirectory() as tmp:
+            wiki = _clone_fixture(Path(tmp) / "wiki")
+
+            def strict_trunc(wiki_root):
+                return {
+                    "pages_seen": 1,
+                    "pages_updated": 1,
+                    "idempotent_pages": 0,
+                    "links_truncated": 3,
+                    "truncation_failed": True,
+                }
+
+            stderr = io.StringIO()
+            with patch.object(
+                update_dashboards.cross_link_topics, "run", strict_trunc
+            ), patch.object(sys, "stderr", stderr):
+                summary = update_dashboards.run(wiki)
+            fail17 = [f for f in summary["failures"] if f["p_num"] == 17]
+            self.assertEqual(len(fail17), 1)
+            self.assertEqual(fail17[0]["exc_type"], "truncation_failed")
+            # Result retained for health synthesis (policy fail ≠ missing result)
+            self.assertIsInstance(summary["results"].get(17), dict)
+            self.assertEqual(1 if summary["failures"] else 0, 1)
+            stdout = io.StringIO()
+            update_dashboards._print_summary(wiki, summary, stdout)
+            out = stdout.getvalue()
+            self.assertIn("#17 cross_link_topics -- FAILED", out)
+            self.assertNotIn("#17 cross_link_topics -- OK", out)
+            self.assertIn("truncation_failed", stderr.getvalue())
 
 
 class TestCrossLinkCoverageSignal(unittest.TestCase):
