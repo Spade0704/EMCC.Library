@@ -10,41 +10,40 @@ director_id: grok:EMCC-Director
 directive_ref: tasks/orchestrator-log.jsonl#dir-20260801-a4-mod13-topic-registry-absent-input
 slug: 2026-08-01-a4-mod13-topic-registry-absent-input
 attempt: 1
-status: awaiting_auditor
+status: pending
 phase: build
 created_at: 2026-08-01T22:05:00Z
-updated_at: 2026-08-01T22:05:00Z
+updated_at: 2026-08-01T18:00:00Z
 target_repo: D:/Projects/Enterprise Matrix/EMCC.Library
 range: 2da101dfdadb93b2c5bd504af9c6887e58a36069..f677ae2ff128cfd999f3711ec63eec9b14bb9a36
 branch: grok/a4-mod13-topic-registry-absent-input
 pr: 74
 proposal: A4-MOD-13 validate_topic_registry ERROR+nonzero when topics.yaml absent; present valid stays green
-auditor_verdict: pending
-auditor_id: ""
+auditor_verdict: PASS
+auditor_id: grok:EMCC-Auditor
 auditor_seat: grok:EMCC-Auditor
-auditor_ref: ""
+auditor_ref: tasks/audits/2026-08-01-a4-mod13-topic-registry-absent-input-auditor.md
 evidence_ref: tasks/audits/2026-08-01-a4-mod13-topic-registry-absent-input-evidence.md
 spec_author_llm: grok
 spec_author_seat: grok:EMCC-Director
 cert_class: parked-awaiting-cross-model
 decorrelation: cross
 wake_build: false
-caveat: "parked-awaiting-cross-model is NOT cross-model certified. status: awaiting_auditor (rul-20260801) — flip to pending only after Regime-B Auditor PASS. External cert Claude (builder_llm=grok). Coordination root 0-Inbox/grok-audit."
+caveat: "parked-awaiting-cross-model is NOT cross-model certified. Regime-B AUDITOR_PASS (auditor wave). External cert Claude (builder_llm=grok). Coordination root 0-Inbox/grok-audit."
 ---
 
-# CERT_REQ - A4-MOD-13 topic registry absent-input fail-closed (attempt 1)
+# CERT_REQ - A4-MOD-13 topic registry absent-input fail-closed (PR #74)
 
-You are **not** claimable until Regime-B Auditor PASS and `status: pending`.
+You are **Claude External Certifier**. Claimable: `status: pending` + `auditor_verdict: PASS`.
 
-**Builder seat only** dropped this with `status: awaiting_auditor` per
-`rul-20260801-handoff-awaiting-auditor-convention`.
+Not Director. Not Grok builder. Not Grok Auditor.
 
 ## Independence
 
 - **Builder:** `grok:EMCC-dfdu`
-- **Auditor (owed):** `grok:EMCC-Auditor` != builder
-- **Certifier (after auditor):** Claude (`builder_llm=grok`)
-- **Directive:** `tasks/orchestrator-log.jsonl#dir-20260801-a4-mod13-topic-registry-absent-input` (flat kind in **this** repo)
+- **Auditor:** `grok:EMCC-Auditor` — **AUDITOR_PASS** at `auditor_ref`
+- **Certifier:** Claude (`builder_llm=grok`)
+- **Directive:** `tasks/orchestrator-log.jsonl#dir-20260801-a4-mod13-topic-registry-absent-input`
 
 ## Success criteria
 
@@ -59,11 +58,11 @@ You are **not** claimable until Regime-B Auditor PASS and `status: pending`.
 - `tests/test_validate_topic_registry.py`
 - No MOD-14/15 bundling
 
-## Executes-clean
+## Executes-clean (builder + Auditor)
 
 ```
 python -m unittest discover -s tests -t .
-# builder: Ran 957 OK (skipped=6)
+# 957 OK (skipped=6)
 
 python -m unittest tests.test_validate_topic_registry -q
 # 18 OK
@@ -73,12 +72,12 @@ python -m unittest tests.test_validate_topic_registry -q
 
 | Leg | Status |
 |-----|--------|
-| Build | this drop |
-| Regime-B Auditor | **awaiting** (do not claim pending) |
-| Claude CERT | after auditor PASS + status flip |
+| Build | DONE product `f677ae2f` |
+| Regime-B Auditor | **AUDITOR_PASS** |
+| Claude CERT | **pending this handoff** |
 | Director dual-PASS | not yet |
-| Human merge | PR only after dual-PASS |
+| Human merge | **Library #74 only** after dual-PASS |
 
 ## Range (C1)
 
-`merge-base(origin/main)..PR tip`; product commit must be ancestor of tip.
+Product `f677ae2f` must be ancestor of certified tip. Declared `2da101df..f677ae2f`; re-resolve if docs tip advances.
