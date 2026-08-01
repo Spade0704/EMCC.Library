@@ -4,14 +4,17 @@ type: reference
 visibility: internal
 completion: 40
 status: outlined
-last_updated: 2026-05-27
+last_updated: 2026-08-01
 dependencies: ["01-Architecture/Automation-Scripts", "01-Architecture/Cross-Link-Generation"]
 public_pair: null
 blocking_questions: []
 topics: [canon_discipline, codex_architecture, cross_link_generation]
 related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Cross-Link-Generation.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Overview.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md, Home.md]
 tags: [canon_discipline, codex_architecture, cross_link_generation]
-canon_sources: ["wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §2.5"]
+canon_sources:
+  - "wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §2.5"
+  - "EMCC tasks/decisions/2026-08-01-w2-mod14-cross-manual-default.md"
+  - "Library PR #76, #77 (W2-MOD-14/15)"
 unverified_claims: []
 ---
 
@@ -63,9 +66,19 @@ topics:
     aliases: [alt_name]                 # alternate names accepted in frontmatter topics: lists
     keywords:                           # word-boundary case-insensitive patterns scanned in H1/H2/intro
       - "example"
-    cross_manual: true                  # if true, links across top-level folder boundaries; default false
+    cross_manual: true                  # optional; omit = ALLOW cross-container; false = deny
     min_similarity: 0.35                # optional per-topic TF-IDF override; defaults from _config/cross_link.yaml
 ```
+
+**`cross_manual` (W2-MOD-14):** consumed by `cross_link_topics.py` when computing related pages.
+
+| Value | Meaning |
+|-------|---------|
+| **omitted / unset** | **ALLOW** cross-container links (default) |
+| `true` | ALLOW (explicit) |
+| `false` | DENY links into other top-level folders; drops are logged loud |
+
+Do not document this as "default false" — that wording caused a silent mass-delete when code briefly defaulted deny. Director lock: EMCC `tasks/decisions/2026-08-01-w2-mod14-cross-manual-default.md`. Detail: [[Cross-Link-Generation]].
 
 Matching rules:
 
@@ -82,7 +95,7 @@ All keys optional with documented defaults:
 ```yaml
 tfidf:
   min_similarity: 0.35                  # cosine threshold below which pages are not linked
-  max_links_per_page: 8                 # cap on "See also" entries per page
+  max_links_per_page: 8                 # historical TF-IDF section key; See-also cap lives under see_also
   scan_fields: [h1, h2, intro_para_1]   # which page regions feed the TF-IDF vector
 
 plugin:
@@ -95,9 +108,17 @@ tags:
   prefix_scheme: flat                   # flat | nested ; "nested" emits "topic/smoke" instead of "smoke"
   prefix_map:                           # used only when prefix_scheme: nested
     topics: topic                       # topics: [smoke] → tags: [topic/smoke]
+
+# see_also — cross_link_topics.py (#17) list control (W2-MOD-15)
+see_also:
+  max_links_per_page: 0                 # 0 = uncapped; N = top-N after rank_related
+  disambiguate_duplicate_stems: false   # path-qualify stem collisions when true
+  fail_on_truncation: false             # true = any cap drop is orchestrator/CLI non-success
 ```
 
 If `plugin.module_path` is unset, #16 runs **TF-IDF only (pure stdlib)**. If set, Codex dynamically imports the project-local module and merges its output with TF-IDF results per `plugin.weight`. Tag mirroring defaults to mirror-from-`topics`, flat prefix.
+
+**`see_also.fail_on_truncation` (W2-MOD-15):** when true, `cross_link_topics.run()` sets `truncation_failed` if any page lost links to the cap; CLI exits 1; `update_dashboards.py` marks #17 FAILED even when the step returns a result dict (not only on exceptions). See [[Cross-Link-Generation]].
 
 See [[Cross-Link-Generation]] for the full contract.
 

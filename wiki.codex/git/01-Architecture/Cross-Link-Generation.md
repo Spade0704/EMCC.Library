@@ -2,16 +2,20 @@
 title: "Cross-Link Generation Contract (v1.3)"
 type: framework
 visibility: internal
-completion: 45
-status: outlined
-last_updated: 2026-05-27
+completion: 70
+status: solid
+last_updated: 2026-08-01
 dependencies: ["01-Architecture/Frontmatter-Schema", "01-Architecture/Configuration-Files", "01-Architecture/Automation-Scripts"]
 public_pair: null
 blocking_questions: []
 topics: [cross_link_generation, framework_durability, frontmatter_schema]
 related_files: [.claude/personas/CLAUDE.librarian.md, 00-Start-Here/Glossary.md, 01-Architecture/Automation-Scripts.md, 01-Architecture/Configuration-Files.md, 01-Architecture/Design-Principles.md, 01-Architecture/File-Manifest.md, 01-Architecture/Folder-Architecture.md, 01-Architecture/Frontmatter-Schema.md, 01-Architecture/Overview.md, 01-Architecture/Reference-Implementation.md, 01-Architecture/Wiki-Structure.md, 02-Operations/Bootstrap.md, 02-Operations/Build-Workflow.md, 02-Operations/Claude-Behavior-Rules.md, 02-Operations/Ingest.md, 02-Operations/Quickstart.md, 02-Operations/Sync.md, 04-Contributing/Style-Guide.md, Home.md]
 tags: [cross_link_generation, framework_durability, frontmatter_schema]
-canon_sources: ["wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §2.7"]
+canon_sources:
+  - "wiki.codex/git/raw/CODEX_BUILD_SPEC_v1_3.md §2.7"
+  - "Biz.Automation/wikisys.library/_scripts/cross_link_topics.py (W2-MOD-14/15)"
+  - "EMCC tasks/decisions/2026-08-01-w2-mod14-cross-manual-default.md"
+  - "Library PR #76 (611662f), PR #77 (202324f)"
 unverified_claims: []
 ---
 
@@ -108,9 +112,56 @@ Inline `#tag` syntax in body prose is invisible to Codex's writers. Body-scannin
 
 Running `cross_link_topics.py` twice in succession with no source changes produces **zero diffs**. Test fixture must verify this (precedent: P4 aggregator test patterns).
 
+## `cross_manual` — cross-container gate (W2-MOD-14, dual-PASS #76)
+
+Before WAVE-E, `cross_manual` on `_canon/topics.yaml` was **type-checked and unread** — a present-and-vacuous control that misled two seats. After Library **PR #76** (`611662f`), `cross_link_topics.py` is a real consumer.
+
+| Registry value on topic | Cross-container `related_files` / See-also |
+|-------------------------|--------------------------------------------|
+| **key omitted / unset** | **ALLOW** (legacy inert behavior; default) |
+| `cross_manual: true` | ALLOW (explicit) |
+| `cross_manual: false` | **DENY** edges whose candidate page is outside the page's top-level folder ("container") |
+
+**Policy lock (Director, 2026-08-01):** unset means ALLOW — opt-in restriction only. Binding `default False` without migration caused a silent mass drop (~half of wiki.codex related edges under the inverted default). Restriction that deletes routing edges must be deliberate.
+
+**Loud drops:** when an edge is excluded solely because `cross_manual: false`, the runner appends a drop event and emits a stderr WARNING summary. Never silent mass-delete.
+
+**Load failure:** unreadable `topics.yaml` → map is not applied (allow-cross path) plus a WARNING; the field is never a silent no-op type-check only.
+
+**Implementation:** `compute_related_files(..., topic_cross_manual=...)` builds the map from **explicit keys only** — `None` fields are not written into the map.
+
+## See-also truncation is loud (W2-MOD-15, dual-PASS #77)
+
+`_config/cross_link.yaml` → `see_also.max_links_per_page` (default **0 = uncapped**) caps the related set after ranking. Cap applies to **both** frontmatter `related_files:` and the body See-also block together.
+
+| Behavior | Contract |
+|----------|----------|
+| Cap drops links | stderr WARNING per page + `truncation_events` / `links_truncated` in `run()` summary |
+| `see_also.fail_on_truncation: false` (default) | Warning only; process may still exit 0 |
+| `see_also.fail_on_truncation: true` | `truncation_failed: true` → CLI `sys.exit(1)`; orchestrator treats step as **FAILED** |
+
+**CERT B1 (closed on attempt 2):** an early fix warned inside #17 but `update_dashboards.py` only marked failures on **exceptions**, so `truncation_failed` with a result dict printed as "#17 OK" and exit 0. Product **PR #77** (`202324f` / product `00b8d18`): orchestrator inspects `result.get("truncation_failed")` and appends a policy failure even when no exception was raised.
+
+**Two drop counters (coexist):** `cross_manual_drops` (policy deny) vs `links_truncated` (max_links cap). Do not conflate them.
+
+## Operator knobs (quick)
+
+```yaml
+# _canon/topics.yaml — per topic
+cross_manual: false   # only when you intentionally forbid cross-folder See-also
+
+# _config/cross_link.yaml — see_also section
+see_also:
+  max_links_per_page: 0           # 0 = uncapped
+  fail_on_truncation: false       # true = cap drops are non-success
+  disambiguate_duplicate_stems: false
+```
+
+Full schemas: [[Configuration-Files]].
+
 ## Related
 
 - [[Frontmatter-Schema]] — `topics:`, `related_files:`, `tags:` fields and their write-discipline rules.
-- [[Configuration-Files]] — `_canon/topics.yaml` and `_config/cross_link.yaml` schemas.
+- [[Configuration-Files]] — `_canon/topics.yaml` and `_config/cross_link.yaml` schemas (including W2-MOD-14/15 keys).
 - [[Automation-Scripts]] — orchestrator pipeline order (#16 → #17 → #18 before health summary).
 - [[Design-Principles]] #13 — cross-link injection is marker-bracketed and idempotent.
