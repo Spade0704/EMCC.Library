@@ -135,6 +135,8 @@ _DEFAULT_CROSS_LINK_CONFIG: Dict[str, Any] = {
     "see_also": {
         "max_links_per_page": 0,          # 0 = uncapped (back-compat default)
         "disambiguate_duplicate_stems": False,  # collision-triggered path-qualified links
+        # W2-MOD-15: when true, any max_links drop is a non-success (run.truncation_failed).
+        "fail_on_truncation": False,
     },
 }
 

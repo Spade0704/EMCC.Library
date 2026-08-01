@@ -164,6 +164,28 @@ def run(wiki_root: Path) -> Dict[str, Any]:
     for p_num, module, label in CROSS_LINK_PIPELINE:
         try:
             results[p_num] = module.run(wiki_root)
+            # W2-MOD-15 CERT B1: #17 may return a result dict (not raise) while
+            # still being a policy non-success under fail_on_truncation.
+            # Exception-only isolation left truncation_failed as "#17 OK"/exit 0.
+            result = results[p_num]
+            if isinstance(result, dict) and result.get("truncation_failed"):
+                msg = (
+                    "see-also cap dropped {} link(s) under "
+                    "fail_on_truncation=true".format(
+                        result.get("links_truncated", "?")
+                    )
+                )
+                print(
+                    "WARN: cross-link pipeline step {} failed: "
+                    "truncation_failed: {}".format(label, msg),
+                    file=sys.stderr,
+                )
+                failures.append({
+                    "p_num": p_num,
+                    "label": label,
+                    "exc_type": "truncation_failed",
+                    "exc_msg": msg,
+                })
         except Exception as exc:
             print(
                 "WARN: cross-link pipeline step {} failed: {}: {}".format(
@@ -390,17 +412,18 @@ def _print_summary(wiki_root: Path, summary: Dict[str, Any], stdout) -> None:
     print("update_dashboards orchestrator -> {}".format(wiki_root), file=stdout)
     print("", file=stdout)
     for p_num, _module, label in list(SUBSCRIPTS) + list(CROSS_LINK_PIPELINE):
-        if results.get(p_num) is None:
-            fail = next((f for f in failures if f["p_num"] == p_num), None)
-            if fail:
-                print(
-                    "  {} -- FAILED: {}: {}".format(
-                        label, fail["exc_type"], fail["exc_msg"]
-                    ),
-                    file=stdout,
-                )
-            else:
-                print("  {} -- SKIPPED".format(label), file=stdout)
+        # Prefer failures list so policy non-success (e.g. truncation_failed
+        # with a retained result dict) prints FAILED, not false OK.
+        fail = next((f for f in failures if f["p_num"] == p_num), None)
+        if fail:
+            print(
+                "  {} -- FAILED: {}: {}".format(
+                    label, fail["exc_type"], fail["exc_msg"]
+                ),
+                file=stdout,
+            )
+        elif results.get(p_num) is None:
+            print("  {} -- SKIPPED".format(label), file=stdout)
         else:
             print("  {} -- OK".format(label), file=stdout)
     print("", file=stdout)

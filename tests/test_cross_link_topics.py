@@ -487,6 +487,89 @@ class RankRelatedTests(unittest.TestCase):
         self.assertEqual(ranked, [A, B])
 
 
+class SeeAlsoTruncationLoudTests(unittest.TestCase):
+    """W2-MOD-15: truncation must warn; strict fail_on_truncation is non-success."""
+
+    def test_process_page_truncation_warns_and_records(self):
+        import io
+        from contextlib import redirect_stderr
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            pages = [a] + [_write_page(wiki, "m1/B{}.md".format(i), ["smoke"]) for i in range(5)]
+            idx = {"smoke": pages}
+            tbp = {p: ["smoke"] for p in pages}
+            events = []
+            err = io.StringIO()
+            with redirect_stderr(err):
+                process_page(
+                    a, ["smoke"], idx, tbp, wiki, max_links=2,
+                    truncation_events=events,
+                )
+            self.assertEqual(_see_also_body(a.read_text(encoding="utf-8")).count("- [["), 2)
+            self.assertIn("WARNING: codex see-also truncation", err.getvalue())
+            self.assertEqual(len(events), 1)
+            self.assertEqual(events[0]["dropped"], 3)
+
+    def test_run_fail_on_truncation_sets_failed(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            (wiki / "_config").mkdir(parents=True)
+            (wiki / "_config" / "cross_link.yaml").write_text(
+                "see_also:\n  max_links_per_page: 2\n  fail_on_truncation: true\n",
+                encoding="utf-8",
+            )
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            for i in range(5):
+                _write_page(wiki, "m1/B{}.md".format(i), ["smoke"])
+            import io
+            from contextlib import redirect_stderr
+            err = io.StringIO()
+            with redirect_stderr(err):
+                summary = cross_link_topics.run(wiki)
+            self.assertTrue(summary["truncation_failed"])
+            self.assertGreater(summary["links_truncated"], 0)
+            self.assertIn("WARNING: codex see-also truncation", err.getvalue())
+            self.assertIn("ERROR: codex see-also truncation under fail_on_truncation", err.getvalue())
+
+    def test_uncapped_no_truncation_success(self):
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            a = _write_page(wiki, "m1/A.md", ["smoke"])
+            for i in range(3):
+                _write_page(wiki, "m1/B{}.md".format(i), ["smoke"])
+            summary = cross_link_topics.run(wiki)
+            self.assertEqual(summary.get("links_truncated", 0), 0)
+            self.assertFalse(summary.get("truncation_failed", False))
+            self.assertEqual(_see_also_body(a.read_text(encoding="utf-8")).count("- [["), 3)
+
+    def test_cli_process_exits_1_on_fail_on_truncation(self):
+        """Process-level: __main__ turns truncation_failed into sys.exit(1)."""
+        import subprocess
+        import sys
+
+        script = Path(cross_link_topics.__file__).resolve()
+        with TemporaryDirectory() as t:
+            wiki = Path(t)
+            (wiki / "_config").mkdir(parents=True)
+            (wiki / "_config" / "cross_link.yaml").write_text(
+                "see_also:\n  max_links_per_page: 2\n  fail_on_truncation: true\n",
+                encoding="utf-8",
+            )
+            _write_page(wiki, "m1/A.md", ["smoke"])
+            for i in range(5):
+                _write_page(wiki, "m1/B{}.md".format(i), ["smoke"])
+            proc = subprocess.run(
+                [sys.executable, str(script), "--wiki-root", str(wiki)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertEqual(proc.returncode, 1, msg=proc.stderr + proc.stdout)
+        self.assertIn("WARNING: codex see-also truncation", proc.stderr)
+        self.assertIn("ERROR: codex see-also truncation under fail_on_truncation", proc.stderr)
+
+
 class CrossManualConsumeTests(unittest.TestCase):
     """W2-MOD-14: Topic.cross_manual gates cross-container related_files."""
 
