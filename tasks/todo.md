@@ -12,21 +12,21 @@ reassign them. One family: **mechanisms that appear to do work and don't.** Grou
 share a fix surface — whoever takes MOD-13 gets all three. Fixes route via PR (`_scripts/` is not
 on the cert-push-guard coordination-plane allowlist).
 
-- [ ] **🔴 MOD-13 — `validate_topic_registry` reports success on ABSENT input.** With
+- [x] **🔴 MOD-13 — `validate_topic_registry` reports success on ABSENT input.** With
   `_canon/topics.yaml` missing it emits `_dashboards/topic_registry_validation.md` reading
   *"All topic-registry checks passed. Errors: 0 Warnings: 0"* — **byte-identical to a real pass**;
   the only evidence is one stdout line no dashboard reader sees. Ranked highest of the three: it
   is kit code that **runs for real and Syncs**, so any consumer wiring it into a gate inherits a
   permanent green meaning "I found nothing to check". Generalises: any validator reporting success
   on absent input asserts something it never checked.
-- [ ] **🔴 MOD-14 — `cross_manual` is inert.** Documented in spec §2.5 as behaviour, type-checked
+- [x] **🔴 MOD-14 — `cross_manual` is inert.** Documented in spec §2.5 as behaviour, type-checked
   by `_lib/topics.py` (46/57/210-213/251), stored on the `Topic` dataclass, and **read by no
   consumer** — `build_topic_index.py` and `cross_link_topics.py` never reference it. There is no
   folder scoping in the kit at all. Harm is **realised, not hypothetical**: two seats reasoned
   from it to opposite wrong conclusions in one session. Sharper than "unused field" — *the type
   check is itself a present-and-vacuous control*: passing it proves only that a value nobody reads
   has the right shape. Either wire it or delete it from schema **and** spec.
-- [ ] **🟡 MOD-15 — see-also truncation is silent.** `cross_link_topics.py:293-296` does
+- [x] **🟡 MOD-15 — see-also truncation is silent.** `cross_link_topics.py:293-296` does
   `rank_related(...)[:max_links]` with no counter, no log, nothing in the `run()` summary. Filed
   **not cosmetic**: the cross-link graph *is* the routing substrate per `framework/18`, so a
   silently dropped see-also is a route that quietly does not exist.

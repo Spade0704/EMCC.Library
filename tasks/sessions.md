@@ -1,6 +1,20 @@
 # Session Log — EMCC.Library
 
 > Newest at top. One entry per working session. Format per `EMCC.DFDU/documents/lattice/02-PRINCIPLES-AND-WORKFLOW.md` §B.
+## 2026-08-01 - WAVE-E MOD-14 + MOD-15 dual-PASS merged (#76 + #77)
+
+**Atoms:** W2-MOD-14 (cross_manual) + W2-MOD-15 (see-also truncation).
+
+**MOD-14 #76:** consume Topic.cross_manual; CERT_FAIL B1 fixed by unset-means-allow; loud drops.
+
+**MOD-15 #77:** fail_on_truncation surfaces as update_dashboards #17 failure / non-zero exit.
+
+**Chain:** Lattice rework a2 -> Auditor r2 -> Claude CERT_PASS r2 -> Director dual-PASS -> merge #76 then #77.
+
+**Policy SoT (EMCC):** tasks/decisions/2026-08-01-w2-mod14-cross-manual-default.md.
+
+**Next:** optional /scribe for Codex cross-link docs.
+
 ## 2026-08-01 — MOD-13 dual-PASS merged (A4-MOD-13 topic registry absent-input)
 
 **Atom:** A4-MOD-13. Product PR **#74** merged to main (d90063\).
