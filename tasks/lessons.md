@@ -55,16 +55,32 @@ passes, the doc is well-formed, and the disagreement lives in the gap between th
 does not help; only a check spanning both sides does.** Same reason [[a-per-consumer-edit-to-a-distributed-artifact-is-a-fix-that-expires]]
 survives: template and consumer each look fine alone.
 
-Practical use here: when a finding lands, **name its shape first.** Shape 3 asks *"can this ever go red
-in the direction I care about?"*; shape 4 asks *"who READS this?"* (grep the consumer, never the
-declaration). Shapes 1–2 ask *"does the prose still describe the code?"* Wrong question → clean answer →
-finding survives.
+**Shape 5 — ours, accepted into the taxonomy: the control is real, RUNS, REPORTS, and is BLIND on one
+axis.** `tests/test_persona_dropin.py` compares via `read_text`, which normalises `\r\n`, so it can
+never fail on line-ending drift. Kept separate from shape 3 deliberately: **shape 3's green is an
+accident of scope** (the check *could* go red, just not where you need it); **shape 5's green is EARNED
+under its own definition** — nothing is malfunctioning, the check does exactly what it says. That makes
+it the hardest to challenge, because every objection is answered by *"the test passes and the test is
+correct."* It is also the only shape whose fix is not "add a consumer" or "widen the scope" but
+**change the instrument**.
 
-Fifth shape already on this repo's board, not in the Chief's four and worth adding:
-**the control is real and RUNS, but is blind to the drift it exists to catch** — `test_persona_dropin.py`
-compares via `read_text`, which normalises `\r\n`, so it can never fail on line-ending drift. Distinct
-from shape 4 (that one does not act at all; this one acts, reports, and is simply deaf on one axis) and
-worse than shape 3 (its green is *earned* under its own definition).
+★ **Why that 🔴 survived — producer and detector are blind on the SAME axis.** `emcc_wire.py` *emits*
+mixed line endings (5 CRLF / 3 LF across eight deployed personas, LF template) and the guard that
+should catch it *cannot see them*. Neither side is broken by its own lights. A drift with a blind
+producer and a blind detector has no announcing surface anywhere.
+
+**Diagnostic questions — the operational payoff. Name the shape, then ask its question:**
+
+| shape | question |
+|---|---|
+| 1–2 | *"does the prose still describe the code?"* |
+| 3 | *"can this ever go red in the direction I care about?"* |
+| 4 | *"who READS this?"* — grep the **consumer**, never the declaration |
+| 5 | *"what can this check NOT distinguish?"* — **test the instrument, not the artifact** |
+
+**And the reason depth of review never reached any of them: review asks whether the artifact is
+CORRECT, and all five are failures of REACH.** Wrong question → clean answer → finding survives.
+Correctness is intra-artifact; reach is not.
 
 ## Review takes the artifact's existence as its premise (2026-08-02, Chief's disclosure — finding is theirs)
 
