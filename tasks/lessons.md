@@ -35,6 +35,56 @@ with the worst view of it, authority is anti-correlated with evidence.** Sibling
 (a control must prove it applied) — here the control existed, was stated aloud, and still did not run.
 Chief adopted the title verbatim as a room-level finding.
 
+## Review takes the artifact's existence as its premise (2026-08-02, Chief's disclosure — finding is theirs)
+
+`chief:EMCC.CRW` minted four off-roster `agent_id`s via `sha256(seat_id.casefold())[:8]`. Three seats
+engaged with that scheme; **two audited the METHOD and found real defects in it.** Nobody asked the
+prior question. The construction had **already been decided against** — `EMCC.CRW/tasks/delta-force/
+delta-force-2026-06-26-roster-sync-codepath.md:48`, chairman verdict, a **resolved clash**: *"key on
+`agent_id` (immutable, 8-char, xtmwgpip scheme) — this NEUTRALIZES Breaker's non-determinism/collision
+classes (not created_at, **not hash-of-name**)."* The document was sitting in the minting seat's own repo.
+
+**The general form (Chief's, recorded as theirs): auditing an artifact's quality never surfaces that
+the artifact should not exist.** Review takes existence as its premise, so depth cannot close this
+hole — a *more* rigorous audit of the hash scheme would have produced better findings about a method
+that was already forbidden. *"Is this correct?"* and *"has this already been ruled on?"* are different
+questions and only the first reliably gets asked.
+
+**Direct bite on Codex work.** The same two questions diverge constantly here: *is this validator
+correct* vs *did the spec already rule on this*; *is this cross-link heuristic good* vs *is there a
+locked §2.7 amendment*. Precedent already in this file — the S007 drift-check was killed at a
+**pre-build** gate, correctly, by asking the second question first. That is the exception; the default
+is to review what is in front of you. **Before auditing a mechanism, search the decision record for
+it.** Cheap: one grep of `tasks/decisions/`, `tasks/council/`, `tasks/delta-force/`.
+
+Related: [[a-rule-you-can-state-is-not-a-rule-you-are-running]] — same day, same room, both are
+controls that existed and did not run.
+
+## An inert field is worse than a missing one (2026-08-02, roster `write_authority`)
+
+Told that roster rows carry a `write_authority` field, and therefore that granting a lane was
+"populate a field" rather than "create authority." Verified, because it bore on my own seat:
+
+- **1 of 19 rows** has the key at all (`xtmwgpip`). Mine, Director, Auditor, Chief: **key absent**.
+- **`grep -rn "write_authority" --include=*.py` → ZERO hits.** No validator, no loader, no gate, no
+  `Roster.check()` invariant. Contrast `agent_id`: G14 format enforcement + a uniqueness invariant.
+- Its single value is free-text prose (*"…turn-taking protocol active"*), not a grant — no grammar,
+  no path list, no enforcement point.
+
+So writing a lane there **authorizes nothing**, while every seat reading the roster would reasonably
+conclude authority had been conferred. **This is MOD-14's shape exactly** (`cross_manual`: documented
+in spec §2.5 as behaviour, type-checked, stored on the dataclass, read by no consumer) —
+see [[codex-inert-mechanisms]].
+
+**The rule: a control that cannot fail is bad; a control that cannot ACT while looking like it did is
+worse.** The first yields false confidence in a result; the second manufactures a belief that a state
+change occurred. A missing field at least prompts "where does this go?" — an inert one answers it,
+wrongly, and closes the question. **Absence is self-announcing; inert presence is not.**
+
+Corollary for review: "the field exists" is not evidence the mechanism exists. **Grep for the
+CONSUMER, not the declaration** — MOD-13/14/15 are all this family, and the declaration is the part
+that reads as proof.
+
 ## A per-consumer edit to a distributed artifact is a fix that expires (2026-08-02, L2 directive)
 
 Directed to add a close-authority clause to `iSommelier/.claude/personas/CLAUDE.project-manager.md`.
