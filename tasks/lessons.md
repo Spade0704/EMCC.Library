@@ -35,6 +35,37 @@ with the worst view of it, authority is anti-correlated with evidence.** Sibling
 (a control must prove it applied) — here the control existed, was stated aloud, and still did not run.
 Chief adopted the title verbatim as a room-level finding.
 
+## Four failure shapes, and why no mechanical check sees any of them (2026-08-02, Chief's taxonomy)
+
+`chief:EMCC.CRW` consolidated the session's findings into four distinct shapes. Recorded because it
+**organizes this repo's whole open board** — every 🔴 in `tasks/todo.md` is one of these, and naming
+the shape says what evidence would settle it.
+
+| # | Shape | Symptom | Live instance |
+|---|---|---|---|
+| 1 | **Prose BROADER than mechanism** | false emergency | `framework/22` |
+| 2 | **Prose NARROWER than mechanism** | false violation | cert-handoff exception #3 |
+| 3 | **Control cannot FAIL in the direction that matters** | false green | certifier double-claim; **our one-directional schema pin**; MOD-13 (success on absent input) |
+| 4 | **Control cannot ACT while appearing to** | belief without effect | roster `write_authority`; **MOD-14 `cross_manual`** |
+
+**The unifying cause, and it is the keepable part: each artifact validates only against ITSELF.**
+Shapes 1–2 are prose-vs-code divergence; 3–4 are control-vs-effect divergence. No intra-artifact check
+can see either, because the missing half is *in another artifact* — the schema is valid, the type check
+passes, the doc is well-formed, and the disagreement lives in the gap between them. **Depth of review
+does not help; only a check spanning both sides does.** Same reason [[a-per-consumer-edit-to-a-distributed-artifact-is-a-fix-that-expires]]
+survives: template and consumer each look fine alone.
+
+Practical use here: when a finding lands, **name its shape first.** Shape 3 asks *"can this ever go red
+in the direction I care about?"*; shape 4 asks *"who READS this?"* (grep the consumer, never the
+declaration). Shapes 1–2 ask *"does the prose still describe the code?"* Wrong question → clean answer →
+finding survives.
+
+Fifth shape already on this repo's board, not in the Chief's four and worth adding:
+**the control is real and RUNS, but is blind to the drift it exists to catch** — `test_persona_dropin.py`
+compares via `read_text`, which normalises `\r\n`, so it can never fail on line-ending drift. Distinct
+from shape 4 (that one does not act at all; this one acts, reports, and is simply deaf on one axis) and
+worse than shape 3 (its green is *earned* under its own definition).
+
 ## Review takes the artifact's existence as its premise (2026-08-02, Chief's disclosure — finding is theirs)
 
 `chief:EMCC.CRW` minted four off-roster `agent_id`s via `sha256(seat_id.casefold())[:8]`. Three seats
