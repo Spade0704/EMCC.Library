@@ -4,6 +4,44 @@
 >
 > **Archived 2026-06-16:** all DONE/shipped sprint items (relpath resolver `93fe81d`; readiness cascades dir-ii/hh/jj + dir-20260614n; Codex v1.3.1 cross-link; boilerplate split + stubs; M-A structural Sync; verbatim-only policy `d2c7667`; lifted tat_app patterns; S001/S002/S004 + Post-S002/S004 closures; etc.) plus the stale TestSyncStamp cleanup → see `tasks/archive.md` (§ Archived 2026-06-16).
 
+## Doc-class drafts DELIVERED, awaiting a write path (2026-08-02) — NOT mine to land
+
+Director (`claude:EMCC-Director` / 12a447b6) assigned three doc-class items; all three targets are
+**outside this repo**. Chief (`chief:EMCC.CRW`) ruled **NO cross-repo lane** — correctly: write
+authority is arbitrated *within* the map, not created out of another repo's canon. Drafts are
+complete and apply as-is; **the landing is the Director's to route and the Operator's to authorize.**
+Filed here so the work is a record, not a peer message ([[the record does not report its own
+obsolescence]] — a draft that exists only in a bus message is invisible).
+
+- [ ] **🟡 L1/L2/L3 drafts — `0-Inbox/2026-08-02-director-doc-class-L1-L3-drafts.md`. ALL MARKED
+  INTERIM** (Level-2+ canon locks ruled under a stalled-builder constraint; `/llm-council` proposed
+  for the permanent lock — wording may change; do NOT cite as settled canon).
+  - **L1** `EMCC/framework/22-coding-workflow.md` — verdict-close ≠ merge act. Defect is in **two**
+    places, not the one named: line 166 (step 8) **and line 20** (Roles: *"Director/PM — owns spec,
+    plan approval, and sprint close"*). Line 156 is correct, left alone. Step 8 split into two rows
+    so the merge act owns its own row and cannot be re-absorbed.
+  - **L2** PM persona close-authority + P-AUTH clause — **template-first** (see below).
+  - **L3** new § Blast classification: builder declares (an input, never a finding); Auditor
+    classifies from the diff **first**; disagreement ⇒ PARK, never averaged.
+- [ ] **🔴 Generator defect in `emcc_wire.py`'s distribution path — escalated by the Chief as ONE
+  item across three seats.** Ours is (iii): a per-consumer persona edit **expires at the next wire**.
+  Chief's (i) hardcoded capital-S repo token → eval keys miss silently; (ii) stale L0/L1 profile block
+  inside regenerated `EMCC:MODULES` markers. Not this repo's code — tracked for visibility, since the
+  same class is live here (`CLAUDE.librarian.md`).
+- [ ] **🔴 Consumer PM personas are silently STALE against their template.** iSommelier
+  `2026-06-03`/3892 B vs template `2026-06-15`/6764 B; the ~2,870-byte delta is the whole
+  **No-implementer hard rule** + L0/L1 boundary + `LATTICE_AVAILABLE` check. **Nothing reports this
+  drift** — no stamp, no manifest, no check. Directly relevant to `sync_from_kit`'s `SYNC-STAMP`
+  contract, which is this repo's answer to exactly this problem and which the `emcc_wire.py` path
+  does not have.
+- [ ] **🟡 Line-ending evidence for the existing `.gitattributes` 🔴 (below) — now measured, not
+  argued.** Across the 8 deployed PM personas: **5 CRLF / 3 LF against an LF template**. Plus `EMCC`
+  HEAD `53050a0f` carries a **UTF-8 BOM in the git COMMIT SUBJECT** (`b'\xef\xbb\xbfdocs(hand...'`,
+  byte-verified). So the distribution path **emits** the drift our own guard **cannot see**
+  (`test_persona_dropin.py` is newline-blind via `read_text`). Chief's framing: *"drift guard exists"*
+  is true; *"drift guard covers line-ending drift"* is false; and the generator actively produces what
+  the guard cannot detect. **Two halves of one hole.**
+
 ## Engine defects — filed at EMCC 2026-07-27 (MOD-13/14/15), fixes owed by THIS repo
 
 Found in the supplystationusa lane; the Director filed them so they are visible to a fresh room
