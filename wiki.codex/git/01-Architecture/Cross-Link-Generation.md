@@ -108,6 +108,50 @@ Inline `#tag` syntax in body prose is invisible to Codex's writers. Body-scannin
 
 Running `cross_link_topics.py` twice in succession with no source changes produces **zero diffs**. Test fixture must verify this (precedent: P4 aggregator test patterns).
 
+## Absent-input discipline (W2 amendments, dual-PASS 2026-08-01)
+
+Three atoms hardened this contract's behaviour when an input is **missing** rather than wrong.
+They share one question: *what should the pipeline do when it is not told?*
+
+### MOD-13 — an absent topic registry FAILS CLOSED (`#74`)
+
+`validate_topic_registry.py` previously treated an absent registry as a benign empty case. A
+missing registry now **fails closed**: no registry means no basis on which to assert a topic
+mapping, and silently generating zero links is indistinguishable from correctly generating zero
+links.
+
+### MOD-14 — `cross_manual` unset means ALLOW (`#76`)
+
+`cross_manual` controls whether a topic may cross a top-level folder boundary. It is **optional**,
+and the question was what an omitted key means.
+
+**Director ruling 2026-08-01: absent / `None` = ALLOW** (`_lib/topics.py:18`). The key is now
+tri-state — `True`, `False`, and **unset**, which is not a synonym for `False`:
+
+```yaml
+cross_manual: true      # cross top-level folder boundaries; omit = allow
+```
+
+The rework matters because the first implementation made unset mean *deny*, which **silently
+dropped links en masse** — a mass drop that looked exactly like a corpus with nothing to link.
+Required keys stay `name` + `keywords`; `aliases` / `cross_manual` / `min_similarity` are optional.
+
+### MOD-15 — `max_links` truncation is LOUD, and can fail the run (`#77`)
+
+Truncating a see-also list at `max_links` used to be silent, so a page could lose real links and
+present as complete.
+
+Truncation now emits a **stderr WARNING plus a structured event** carrying the page, the
+`max_links` value and the strict flag (`cross_link_topics.py:333`). `fail_on_truncation` is honoured
+by `run()` **and by the orchestrator as a non-success** — the original defect was that the flag
+existed but the orchestrator did not treat `truncation_failed` as a failure, so strict mode was
+strict in name only.
+
+> **The shared lesson: a quiet default is a decision nobody reviewed.** In all three cases the code
+> already had a behaviour for the absent case; what it lacked was a *stated* one, and in two of them
+> the unstated behaviour was the more destructive option.
+
+
 ## Related
 
 - [[Frontmatter-Schema]] — `topics:`, `related_files:`, `tags:` fields and their write-discipline rules.
