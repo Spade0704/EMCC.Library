@@ -1,0 +1,25 @@
+{
+  "findings_ref": "tasks/audits/2026-08-04-library-audit.json",
+  "verdicts": [
+    {"id": "OPS-01", "verdict": "corroborated", "note": "No .gitattributes in tree; byte-identity claims rely on autocrlf accident."},
+    {"id": "CODE-01", "verdict": "corroborated", "note": "test_persona_dropin.py uses read_text() both sides; newline-blind."},
+    {"id": "ARCH-01", "verdict": "corroborated", "note": "Schema hash only in prose; no pin test, no $id/version."},
+    {"id": "CVR-01", "verdict": "corroborated", "note": "Game-class amendment still unwritten while pipeline shipped."},
+    {"id": "CVR-02", "verdict": "corroborated", "note": "retro_ingest/snapshot/reconcile still deferred with W1/W2 open."},
+    {"id": "CVR-03", "verdict": "corroborated", "note": "Pilot blocked on room/credentials; zero real-corpus validation."},
+    {"id": "CVR-04", "verdict": "corroborated", "note": "summarize_fn seam remains no-op."},
+    {"id": "STALE-01", "verdict": "corroborated", "note": "module.json still points canon_docs at v1_3."},
+    {"id": "STALE-02", "verdict": "corroborated", "note": "CLAUDE.md/Index.md inventory counts drifted."},
+    {"id": "STALE-03", "verdict": "corroborated", "note": "counts.yaml still asserts v1.3 script totals."},
+    {"id": "STALE-04", "verdict": "corroborated", "note": "CLAUDE_CONTEXT_RULES.md cites missing _sources/ and v1_3."},
+    {"id": "STALE-05", "verdict": "corroborated", "note": "Dashboards frozen at 2026-05-28."},
+    {"id": "TEST-01", "verdict": "corroborated", "note": "Five MI-16 SkipTest modules still present post-S004."},
+    {"id": "WFG-01", "verdict": "corroborated", "note": "CI lacks ruff step; lint debt deferred."},
+    {"id": "WFG-02", "verdict": "corroborated", "note": "Asset-registry core merged without recorded DUAL-PASS close."},
+    {"id": "OPS-02", "verdict": "corroborated", "note": "sessions.md contains control bytes in 2026-08-01 entry."},
+    {"id": "DOC-01", "verdict": "corroborated", "note": "CODEX_LIBRARIAN.md prose still names v1_3."},
+    {"id": "SEC-01", "verdict": "corroborated", "note": "Healthy SEC note accepted; fail-closed confinement observed."},
+    {"id": "PERF-01", "verdict": "corroborated", "note": "Healthy PERF note; suite ~3s."},
+    {"id": "DEP-01", "verdict": "corroborated", "note": "Healthy DEP note; zero runtime deps."}
+  ]
+}
