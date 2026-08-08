@@ -4,7 +4,7 @@ type: guide
 visibility: internal
 completion: 0
 status: gap
-last_updated: <YYYY-MM-DD>
+last_updated: 2026-08-08
 dependencies: []
 public_pair: null
 blocking_questions: []
@@ -57,6 +57,7 @@ Only include when relevant; omit otherwise to keep frontmatter compact:
 
 - **Headings** — One H1 per page, matching the `title` frontmatter field. Use H2 for top-level sections, H3 for subsections; reserve H4+ for deep nesting.
 - **Wikilinks** — Use `[[Folder/Page-Name]]` (with the folder prefix when ambiguous) so cross-reference checks resolve targets correctly. Bare `[[Page-Name]]` is acceptable only when the target is unambiguous wiki-wide.
+- **Wikilinks are LOCAL-ONLY** — never point one at another repo's wiki, at a file outside the wiki, or write one in a document that ships to consumers. See the rule below.
 - **Inline code vs fenced code** — Inline `` `like-this` `` for short identifiers (filenames, frontmatter keys, command fragments). Fenced blocks with a language tag for multi-line code:
 
   ```yaml
@@ -78,6 +79,35 @@ If you genuinely need a forbidden term in a page (a quote, a historical citation
 - Prefer wikilinks to bare URLs for intra-wiki references.
 - Cite specific sections of long pages with `[[Page-Name#Section-Heading]]` when supported by the renderer.
 - For `canon_sources`, cite the source path *plus* the relevant section anchor: `"_sources/raw/<file>.md §2.1"`.
+
+### A wikilink is a promise of local resolution
+
+**Ruled 2026-08-08 (EMCC WIKI-2), added here so it binds every Codex consumer rather than one wiki.**
+
+A wikilink resolves against **the page set of the wiki it is rendered in**. Writing one therefore
+promises that the reader's one-hop expansion will land. Three places that promise cannot be kept:
+
+| context | why it breaks | write instead |
+|---|---|---|
+| **another repo's wiki** | the target is not in this page set | bold repo name + path, e.g. **EMCC.Library** then `wiki.codex/git/01-Architecture/Overview.md` |
+| **a file outside the wiki** (`tasks/`, `0-Inbox/`, proposals, handoffs) | there is no page set to resolve against | a plain repo-relative path |
+| **a document vendored into consumer repos** | it resolves against **each consumer's** page set | a plain path, or the consumer-local page name only if every consumer is known to have it |
+
+> **A wikilink is a promise of local resolution. A cross-repo reference is never a wikilink.**
+
+The third row is the one that costs most, and it is specific to this protocol: a broken link written
+once in a synced artifact **ships to every consumer**, and each consumer sees it as a missing page in
+*their* wiki rather than as a mis-written link in the kit. The cost scales with the consumer count.
+
+Two failure modes worth naming, because both look like the opposite problem:
+
+- **The target exists — elsewhere.** The instance behind this rule: a consumer wiki linked two Codex
+  engine pages that are real pages in this repo. They read as missing pages, and the obvious repair —
+  creating local stubs to satisfy the links — would have made that wiki *worse*, adding duplicates of
+  canon that lives here and would immediately drift.
+- **Illustrating the rule breaks the rule.** A double-bracket token written as an *example* of a bad
+  link is still a live link to every tool that reads the corpus. Name example targets in italics or
+  prose. (Caught three times in one working session while writing this rule up, twice by its author.)
 
 ## Validation
 
